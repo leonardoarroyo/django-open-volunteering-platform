@@ -10,7 +10,7 @@ setup(
     url='https://github.com/OpenVolunteeringPlatform/django-ovp-uploads',
     download_url = 'https://github.com/OpenVolunteeringPlatform/django-ovp-core/tarball/0.1.0',
     license='AGPL',
-    description='This module has core upload functionality.'
+    description='This module has core upload functionality.',
     long_description=open('README.rst', encoding='utf-8').read(),
     zip_safe=False,
     install_requires = [

@@ -10,3 +10,4 @@ v0.1.1[unreleased]
 -----------
 * Update README
 * Add codeship badge
+* Fix setup.py syntax error
