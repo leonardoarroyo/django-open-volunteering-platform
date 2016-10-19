@@ -2,7 +2,8 @@
 OVP Uploads
 ==========
 
-.. image:: https://app.codeship.com/projects/38278120-748d-0134-a972-3a52ed362f75/status?branch=master
+
+.. image:: https://app.codeship.com/projects/468bb4d0-7850-0134-a43d-7aa8687239c4/status?branch=master
 .. image:: https://codecov.io/gh/OpenVolunteeringPlatform/django-ovp-uploads/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/OpenVolunteeringPlatform/django-ovp-uploads/
 .. image:: https://badge.fury.io/py/ovp-uploads.svg
