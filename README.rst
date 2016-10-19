@@ -8,8 +8,7 @@ OVP Uploads
 .. image:: https://badge.fury.io/py/ovp-uploads.svg
   :target: https://badge.fury.io/py/ovp-uploads
 
-This module implements core platform functionality, such as skills, causes and addresses.
-It also contains child drf classes such as schema generators.
+This module implements core upload functionality.
 
 Getting Started
 ---------------
@@ -42,8 +41,8 @@ Please read `CONTRIBUTING.md <https://github.com/OpenVolunteeringPlatform/django
 
 Versioning
 ---------------
-We use `SemVer <http://semver.org/>`_ for versioning. For the versions available, see the `tags on this repository <https://github.com/OpenVolunteeringPlatform/django-ovp-uploads/tags>`_. 
+We use `SemVer <http://semver.org/>`_ for versioning. For the versions available, see the `tags on this repository <https://github.com/OpenVolunteeringPlatform/django-ovp-/tags>`_. 
 
 License
 ---------------
-This project is licensed under the GNU GPLv3 License see the `LICENSE.md <https://github.com/OpenVolunteeringPlatform/django-ovp-uploads/blob/master/LICENSE.md>`_ file for details
+This project is licensed under the GNU GPLv3 License see the `LICENSE.md <https://github.com/OpenVolunteeringPlatform/django-ovp-users/blob/master/LICENSE.md>`_ file for details
