@@ -13,6 +13,10 @@ This module implements core upload functionality.
 
 Getting Started
 ---------------
+Requirements
+""""""""""""""
+This module uses pillow. Don't forget installing your `libjpeg` and your `zlib` through your distribution package manager.
+
 Installing
 """"""""""""""
 1. Install django-ovp-uploads::
