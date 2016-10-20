@@ -15,4 +15,4 @@ v0.1.1
 v0.1.2[unreleased]
 -----------
 * Add pillow as dep
-* Upgrade to ovp-users 1.0.1
+* Upgrade to ovp-users 1.0.3
