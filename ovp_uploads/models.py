@@ -18,7 +18,7 @@ class ImageName(object):
     def __call__(self, instance, filename):
         ext = filename.split('.')[-1]
         filename = "%s.%s" % (instance.uuid, ext)
-        return '/user-uploaded/images%s/%s' % (self.path, filename)
+        return 'user-uploaded/images%s/%s' % (self.path, filename)
 
 image = ImageName()
 image_small = ImageName("-small")
@@ -47,22 +47,22 @@ class UploadedImage(models.Model):
   def image_name(self, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (self.uuid, ext)
-    return '/user-uploaded/images/%s' % filename
+    return 'user-uploaded/images/%s' % filename
 
   def image_name_small(self, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (self.uuid, ext)
-    return '/user-uploaded/images-small/%s' % filename
+    return 'user-uploaded/images-small/%s' % filename
 
   def image_name_medium(self, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (self.uuid, ext)
-    return '/user-uploaded/images-medium/%s' % filename
+    return 'user-uploaded/images-medium/%s' % filename
 
   def image_name_large(self, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (self.uuid, ext)
-    return '/user-uploaded/images-large/%s' % filename
+    return 'user-uploaded/images-large/%s' % filename
 
   def get_image_url(self):
     return self.image.url if self.image else None
