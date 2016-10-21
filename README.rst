@@ -25,6 +25,12 @@ Installing
 
 2. Add it to `INSTALLED_APPS` on `settings.py`
 
+3. Include urls to your url_patterns
+
+4. Setup your file storage backend on settings::
+
+    DJANGO_DEFAULT_STORAGE = '...'
+
 
 Forking
 """"""""""""""
