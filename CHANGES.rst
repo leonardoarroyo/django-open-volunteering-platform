@@ -21,3 +21,4 @@ v0.1.2
 
 v0.1.3[unreleased]
 -----------
+* Assert that url methods return something(TODO: update test cases to assure format is OK).
