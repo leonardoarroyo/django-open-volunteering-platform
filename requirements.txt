@@ -5,3 +5,4 @@ djangorestframework==3.4.7
 django-resized==0.3.5
 Pillow==3.4.2
 ovp-users==1.0.7
+django-storages==1.5.1
