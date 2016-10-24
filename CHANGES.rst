@@ -12,9 +12,12 @@ v0.1.1
 * Add codeship badge
 * Fix setup.py syntax error
 
-v0.1.2[unreleased]
+v0.1.2
 -----------
 * Add pillow as dep
 * Upgrade to ovp-users 1.0.7
 * Include UploadedImage viewset
 * Include tests
+
+v0.1.3[unreleased]
+-----------
