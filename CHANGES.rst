@@ -19,6 +19,12 @@ v0.1.2
 * Include UploadedImage viewset
 * Include tests
 
-v0.1.3[unreleased]
+v0.1.3
 -----------
 * Assert that url methods return something(TODO: update test cases to assure format is OK).
+* Add django-storages
+* Fix wrong dep on setup.py
+
+v0.1.4[unreleased]
+-----------
+* TODO: Implement boto
