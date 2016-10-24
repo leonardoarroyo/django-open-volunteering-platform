@@ -28,7 +28,7 @@ image_large = ImageName("-large")
 class UploadedImage(models.Model):
   def save(self, *args, **kwargs):
     if not self.pk:
-      self.uuid = uuid.uuid4()
+      self.uuid = str(uuid.uuid4())
     # If _committed == False, it means the image is not uploaded to s3 yet
     # (will be uploaded on super.save()). This means the image is being updated
     # So we update other images accordingly
@@ -41,28 +41,8 @@ class UploadedImage(models.Model):
 
     return super(UploadedImage, self).save(*args, **kwargs)
 
-  def __unicode__(self):
-      return  '%s' % (self.image)
-
-  def image_name(self, filename):
-    ext = filename.split('.')[-1]
-    filename = "%s.%s" % (self.uuid, ext)
-    return 'user-uploaded/images/%s' % filename
-
-  def image_name_small(self, filename):
-    ext = filename.split('.')[-1]
-    filename = "%s.%s" % (self.uuid, ext)
-    return 'user-uploaded/images-small/%s' % filename
-
-  def image_name_medium(self, filename):
-    ext = filename.split('.')[-1]
-    filename = "%s.%s" % (self.uuid, ext)
-    return 'user-uploaded/images-medium/%s' % filename
-
-  def image_name_large(self, filename):
-    ext = filename.split('.')[-1]
-    filename = "%s.%s" % (self.uuid, ext)
-    return 'user-uploaded/images-large/%s' % filename
+  def __str__(self):
+    return self.uuid
 
   def get_image_url(self):
     return self.image.url if self.image else None
@@ -76,12 +56,6 @@ class UploadedImage(models.Model):
   def get_image_large_url(self):
     return self.image_large.url if self.image_large else None
 
-  def __unicode__(self):
-    if self.image:
-      return self.image.name
-    return u""
-
-
   class Meta:
     app_label = 'ovp_uploads'
     verbose_name = _('uploaded image')
@@ -94,4 +68,5 @@ class UploadedImage(models.Model):
   image_large = ResizedImageField(size=[1260, 936], upload_to=image_large, blank=True, null=True, default=None)
   created_date = models.DateTimeField(auto_now_add=True)
   modified_date = models.DateTimeField(auto_now=True)
+  uuid = models.CharField('UUID', max_length=36, default=None, null=False, blank=True)
 
