@@ -21,10 +21,11 @@ v0.1.2
 
 v0.1.3
 -----------
-* Assert that url methods return something(TODO: update test cases to assure format is OK).
+* Assert that url methods return something()
 * Add django-storages
 * Fix wrong dep on setup.py
 
-v0.1.4[unreleased]
+v1.0.0[unreleased]
 -----------
-* TODO: Implement boto
+* TODO: Fix get_image_url() for FileSystemStorage
+* TODO: update test cases to assure url format is OK
