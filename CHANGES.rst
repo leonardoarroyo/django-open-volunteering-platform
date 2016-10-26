@@ -29,6 +29,10 @@ v0.1.4
 -----------
 * Drop distutils in favor of setuptools
 
+v0.1.4b
+-----------
+* Add .egg-info to .gitignore
+
 v1.0.0[unreleased]
 -----------
 * TODO: Fix get_image_url() for FileSystemStorage
