@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name='ovp-uploads',
     version='0.1.3',
     author=u'Atados',
     author_email='arroyo@atados.com.br',
-    packages=['ovp_uploads'],
+    packages=find_packages(),
     url='https://github.com/OpenVolunteeringPlatform/django-ovp-uploads',
     download_url = 'https://github.com/OpenVolunteeringPlatform/django-ovp-core/tarball/0.1.3',
     license='AGPL',

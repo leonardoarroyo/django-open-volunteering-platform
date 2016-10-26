@@ -25,6 +25,10 @@ v0.1.3
 * Add django-storages
 * Fix wrong dep on setup.py
 
+v0.1.4
+-----------
+* Drop distutils in favor of setuptools
+
 v1.0.0[unreleased]
 -----------
 * TODO: Fix get_image_url() for FileSystemStorage
