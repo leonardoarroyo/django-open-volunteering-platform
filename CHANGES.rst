@@ -37,6 +37,10 @@ v0.1.5
 -----------
 * Move image url methods from models to serializers
 
+v0.1.6
+-----------
+* Return null on URL if no image file is associated with UploadedImage model(fix unexpected exception)
+
 v1.0.0[unreleased]
 -----------
 * TODO: update test cases to assure url format is OK
