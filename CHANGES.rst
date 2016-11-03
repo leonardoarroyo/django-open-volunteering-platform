@@ -41,6 +41,10 @@ v0.1.6
 -----------
 * Return null on URL if no image file is associated with UploadedImage model(fix unexpected exception)
 
+v0.1.7
+-----------
+* Fix 'self' reference inside function
+
 v1.0.0[unreleased]
 -----------
 * TODO: update test cases to assure url format is OK

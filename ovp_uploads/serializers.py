@@ -3,7 +3,7 @@ from ovp_uploads.models import UploadedImage
 from rest_framework import serializers
 
 def build_absolute_uri(req, image):
-  return self.context['request'].build_absolute_uri(image.url) if image else None
+  return req.build_absolute_uri(image.url) if image else None
 
 
 class UploadedImageSerializer(serializers.ModelSerializer):
