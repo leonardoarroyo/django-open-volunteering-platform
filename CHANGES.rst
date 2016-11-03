@@ -33,7 +33,10 @@ v0.1.4b
 -----------
 * Add .egg-info to .gitignore
 
+v0.1.5
+-----------
+* Move image url methods from models to serializers
+
 v1.0.0[unreleased]
 -----------
-* TODO: Fix get_image_url() for FileSystemStorage
 * TODO: update test cases to assure url format is OK

@@ -44,18 +44,6 @@ class UploadedImage(models.Model):
   def __str__(self):
     return self.uuid
 
-  def get_image_url(self):
-    return self.image.url if self.image else None
-
-  def get_image_small_url(self):
-    return self.image_small.url if self.image_small else None
-
-  def get_image_medium_url(self):
-    return self.image_medium.url if self.image_medium else None
-
-  def get_image_large_url(self):
-    return self.image_large.url if self.image_large else None
-
   class Meta:
     app_label = 'ovp_uploads'
     verbose_name = _('uploaded image')
