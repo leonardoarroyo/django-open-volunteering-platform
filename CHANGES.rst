@@ -45,6 +45,6 @@ v0.1.7
 -----------
 * Fix 'self' reference inside function
 
-v1.0.0[unreleased]
+v1.0.0
 -----------
-* TODO: update test cases to assure url format is OK
+* Add serializer test cases to assure url format is OK
