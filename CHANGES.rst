@@ -49,6 +49,6 @@ v1.0.0
 -----------
 * Add serializer test cases to assure url format is OK
 
-v1.0.1[unreleased]
+v1.0.1
 -----------
 * Use MEDIA_URL setting in test cases
