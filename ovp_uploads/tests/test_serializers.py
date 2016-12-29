@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.conf import settings
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -41,7 +42,11 @@ class UploadedImageSerializerTestCase(TestCase):
     request = factory.post('/')
     serializer = UploadedImageSerializer(instance=img, context={'request': request})
 
-    test_url = 'http://testserver/user-uploaded/images'
+    media_path = getattr(settings, "MEDIA_URL")
+    if media_path == "":
+      media_path = "/"
+
+    test_url = 'http://testserver{media_path}user-uploaded/images'.format(media_path=media_path)
 
     self.assertTrue(test_url in serializer.get_image_url(img))
     self.assertTrue(test_url in serializer.get_image_small_url(img))

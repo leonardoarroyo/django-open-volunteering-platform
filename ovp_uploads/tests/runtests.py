@@ -11,13 +11,11 @@ from django.core.management import execute_from_command_line
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(BASE_DIR, '../..')))
 
-# we need ovp_users templates dir to include in tests
-import ovp_users
-users_templates = os.path.abspath(os.path.join(ovp_users.__file__, '../templates'))
 
 # Unfortunately, apps can not be installed via ``modify_settings``
 # decorator, because it would miss the database setup.
 CUSTOM_INSTALLED_APPS = (
+    'ovp_core',
     'ovp_uploads',
     'ovp_users',
     'django.contrib.admin',
@@ -97,7 +95,7 @@ settings.configure(
     TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': [os.path.abspath(os.path.join(BASE_DIR, '../../templates')), users_templates],
+            'DIRS': [os.path.abspath(os.path.join(BASE_DIR, '../../templates'))],
             'APP_DIRS': True,
             'OPTIONS': {
                 'context_processors': [
