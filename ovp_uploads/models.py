@@ -12,13 +12,13 @@ from ovp_users.models import User
 
 @deconstructible
 class ImageName(object):
-    def __init__(self, sub_path=""):
-        self.path = sub_path
+  def __init__(self, sub_path=""):
+      self.path = sub_path
 
-    def __call__(self, instance, filename):
-        ext = filename.split('.')[-1]
-        filename = "%s.%s" % (instance.uuid, ext)
-        return 'user-uploaded/images%s/%s' % (self.path, filename)
+  def __call__(self, instance, filename):
+      ext = filename.split('.')[-1]
+      filename = "%s.%s" % (instance.uuid, ext)
+      return 'user-uploaded/images%s/%s' % (self.path, filename)
 
 image = ImageName()
 image_small = ImageName("-small")
