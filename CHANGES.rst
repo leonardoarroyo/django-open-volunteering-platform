@@ -53,7 +53,10 @@ v1.0.1
 -----------
 * Use MEDIA_URL setting in test cases
 
-v1.0.2[unreleased]
+v1.0.2
 -----------
 * Remove ovp_users as dependency
 * Upgrade all dependencies
+
+v1.0.3[unreleased]
+-----------
