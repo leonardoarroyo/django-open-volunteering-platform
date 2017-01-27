@@ -1,8 +1,8 @@
 codecov==2.0.5
-coverage==4.2
-Django==1.10.1
-djangorestframework==3.4.7
+coverage==4.3.4
+Django==1.10.5
+djangorestframework==3.5.3
 django-resized==0.3.5
-Pillow==3.4.2
-ovp_core==1.1.2
-django-storages==1.5.1
+Pillow==4.0.0
+ovp_core==1.2.1
+django-storages==1.5.2

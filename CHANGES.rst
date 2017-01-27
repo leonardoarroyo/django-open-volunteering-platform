@@ -56,3 +56,4 @@ v1.0.1
 v1.0.2[unreleased]
 -----------
 * Remove ovp_users as dependency
+* Upgrade all dependencies
