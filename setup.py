@@ -21,7 +21,6 @@ setup(
       'django-resized>=0.3.5,<0.4.0',
       'Pillow>=3.4.2,<3.5',
       'ovp-core>=1.1.0,<2.0.0',
-      'ovp-users>=1.0.0,<2.0.0',
       'django-storages>=1.5.1,<1.6',
     ]
 )

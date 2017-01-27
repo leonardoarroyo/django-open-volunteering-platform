@@ -4,8 +4,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from django.http.request import QueryDict
-
-from ovp_users.models import User
+from django.contrib.auth import get_user_model
 
 from PIL import Image
 
@@ -23,7 +22,7 @@ class UploadedImageViewSetTestCase(TestCase):
 
   def test_cant_upload_no_image(self):
     """Assert that error is raised on no image"""
-    user = User.objects.create_user('test_cant_upload_no_image@test.com', 'validpassword')
+    user = get_user_model().objects.create_user('test_cant_upload_no_image@test.com', 'validpassword')
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -34,7 +33,7 @@ class UploadedImageViewSetTestCase(TestCase):
 
   def test_can_upload_authenticated(self):
     """Assert that it's possible to upload while authenticated"""
-    user = User.objects.create_user('test_can_upload@test.com', 'validpassword')
+    user = get_user_model().objects.create_user('test_can_upload@test.com', 'validpassword')
 
     client = APIClient()
     client.force_authenticate(user=user)

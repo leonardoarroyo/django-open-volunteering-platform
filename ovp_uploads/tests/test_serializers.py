@@ -7,7 +7,7 @@ from rest_framework.test import APIRequestFactory
 
 from ovp_uploads.models import UploadedImage
 from ovp_uploads.serializers import UploadedImageSerializer
-from ovp_users.models import User
+from django.contrib.auth import get_user_model
 
 from PIL import Image
 
@@ -17,7 +17,7 @@ from tempfile import NamedTemporaryFile
 class UploadedImageSerializerTestCase(TestCase):
   def test_image_urls(self):
     """Assert that image object returns url"""
-    user = User.objects.create_user('test_image_urls@test.com', 'validpassword')
+    user = get_user_model().objects.create_user('test_image_urls@test.com', 'validpassword')
 
     client = APIClient()
     client.force_authenticate(user=user)

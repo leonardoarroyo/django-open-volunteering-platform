@@ -1,14 +1,12 @@
 import uuid
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.utils.deconstruct import deconstructible
 
 from django_resized import ResizedImageField
-
-from ovp_users.models import User
-
 
 @deconstructible
 class ImageName(object):
@@ -49,7 +47,7 @@ class UploadedImage(models.Model):
     verbose_name = _('uploaded image')
     verbose_name_plural = _('uploaded images')
 
-  user = models.ForeignKey('ovp_users.User', default=None, null=True, blank=True)
+  user = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, null=True, blank=True)
   image = models.ImageField(_('Image 350x260'), upload_to=image)
   image_small = ResizedImageField(size=[350, 260], upload_to=image_small, blank=True, null=True, default=None)
   image_medium = ResizedImageField(size=[420, 312], upload_to=image_medium, blank=True, null=True, default=None)
