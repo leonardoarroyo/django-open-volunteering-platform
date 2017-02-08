@@ -58,5 +58,9 @@ v1.0.2
 * Remove ovp_users as dependency
 * Upgrade all dependencies
 
-v1.0.3[unreleased]
+v1.0.3
+-----------
+* Fix issues with deepcopy
+
+v1.0.4[unreleased]
 -----------

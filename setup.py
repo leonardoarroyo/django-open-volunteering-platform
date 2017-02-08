@@ -3,12 +3,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='ovp-uploads',
-    version='1.0.2',
+    version='1.0.3',
     author=u'Atados',
     author_email='arroyo@atados.com.br',
     packages=find_packages(),
     url='https://github.com/OpenVolunteeringPlatform/django-ovp-uploads',
-    download_url = 'https://github.com/OpenVolunteeringPlatform/django-ovp-core/tarball/1.0.2',
+    download_url = 'https://github.com/OpenVolunteeringPlatform/django-ovp-core/tarball/1.0.3',
     license='AGPL',
     description='This module has core upload functionality.',
     long_description=open('README.rst', encoding='utf-8').read(),
