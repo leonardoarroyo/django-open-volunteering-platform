@@ -1,5 +1,3 @@
-import copy
-
 from ovp_uploads.models import UploadedImage
 from ovp_uploads.serializers import UploadedImageSerializer
 
@@ -13,12 +11,13 @@ class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
   serializer_class = UploadedImageSerializer
 
   def create(self, request, *args, **kwargs):
-    req_data, req_user, upload_data = request.data, request.user, {}
+    upload_data = {}
 
-    upload_data['image'] = req_data.get('image') # note : raise bad request (400) on image missing?
+    if request.data.get('image', None):
+      upload_data['image'] = request.data.get('image')
 
     upload_header = request.META.get('HTTP_X_UNAUTHENTICATED_UPLOAD', None)
-    is_authenticated = req_user.is_authenticated()
+    is_authenticated = request.user.is_authenticated()
 
     if is_authenticated or upload_header:
       if upload_header:
