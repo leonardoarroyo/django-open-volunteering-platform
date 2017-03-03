@@ -8,10 +8,14 @@ from rest_framework import serializers
 # As images *never* changes urls, we can concat domain, bucket and url to obtain a full qualified
 # absolute uri, preventing a #get_blog for each image
 #
+# TODO: It looks like images are stored with absolute urls
+#
 if hasattr(settings, 'GCS_BUCKET'):
   GCS_BASE_URI = str.join('/', ('https://storage.googleapis.com', settings.GCS_BUCKET))
   def build_absolute_uri(req, image):
-    return str.join('/', (GCS_BASE_URI, image.url)) if image else None
+    return image.url
+    #return str.join('/', (GCS_BASE_URI, image.url)) if image else None
+
 else:
   def build_absolute_uri(req, image):
     return req.build_absolute_uri(image.url) if image else None
