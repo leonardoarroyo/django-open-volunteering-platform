@@ -1,10 +1,20 @@
+from django.conf import settings
 from ovp_uploads.models import UploadedImage
 
 from rest_framework import serializers
 
-def build_absolute_uri(req, image):
-  return req.build_absolute_uri(image.url) if image else None
-
+#
+# GCS is actually the default ovp's bucket, so, lets try to optimize for it
+# As images *never* changes urls, we can concat domain, bucket and url to obtain a full qualified
+# absolute uri, preventing a #get_blog for each image
+#
+if hasattr(settings, 'GCS_BUCKET'):
+  GCS_BASE_URI = str.join('/', ('https://storage.googleapis.com', settings.GCS_BUCKET))
+  def build_absolute_uri(req, image):
+    return str.join('/', (GCS_BASE_URI, image.url)) if image else None
+else:
+  def build_absolute_uri(req, image):
+    return req.build_absolute_uri(image.url) if image else None
 
 class UploadedImageSerializer(serializers.ModelSerializer):
   image_url = serializers.SerializerMethodField()
