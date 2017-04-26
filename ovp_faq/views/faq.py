@@ -7,12 +7,22 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import response
 from rest_framework import status
+from rest_framework import response
 
 class FaqResourceViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 	"""
   FaqResourceViewSet resource endpoint
   """
 	queryset = Faq.objects.all()
+
+	def list(self, request):
+		params = self.request.GET
+		category = params.get('category', None)
+		
+		self.queryset = self.queryset.filter(category=category)
+		serializer = faq_serializer(self.queryset, many=True)
+
+		return response.Response(serializer.data)
 
 	def get_serializer_class(self):
 		if self.action == 'list':
