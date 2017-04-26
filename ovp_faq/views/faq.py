@@ -19,7 +19,9 @@ class FaqResourceViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 		params = self.request.GET
 		category = params.get('category', None)
 		
-		self.queryset = self.queryset.filter(category=category)
+		if category is not None:
+			self.queryset = self.queryset.filter(category=category)
+		
 		serializer = faq_serializer(self.queryset, many=True)
 
 		return response.Response(serializer.data)
