@@ -20,6 +20,7 @@ setup(
       'coverage>=4.2,<4.4.0',
       'ovp-users>=1.1.7,<2.0.0',
       'ovp-core>=1.2.4,<2.0.0',
+      'ovp-uploads==1.0.3,<2.0.0',
       'djangorestframework-jwt>=1.9.0,<2.0.0',
       'whoosh>=2.7.4,<2.8.0',
     ]
