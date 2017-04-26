@@ -10,7 +10,7 @@ class TestimonialResource(mixins.CreateModelMixin, mixins.ListModelMixin, viewse
   """
   TestimonialResource endpoint
   """
-  queryset = models.Testimonial.objects.all()
+  queryset = models.Testimonial.objects.filter(published=True)
 
   def create(self, request, *args, **kwargs):
     if not helpers.get_settings().get("CAN_CREATE_TESTIMONIAL_UNAUTHENTICATED", False):

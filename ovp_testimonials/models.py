@@ -9,8 +9,4 @@ class Testimonial(models.Model):
 
   # Meta
   published = models.BooleanField(_('Published'), default=False)
-  published_date = models.DateTimeField(_('Published date'), blank=True, null=True)
-  deleted = models.BooleanField(_('Deleted'), default=False)
-  deleted_date = models.DateTimeField(_('Deleted date'), blank=True, null=True)
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
-  modified_date = models.DateTimeField(_('Modified date'), auto_now=True)

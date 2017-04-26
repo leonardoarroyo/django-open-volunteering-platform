@@ -7,6 +7,8 @@ from rest_framework.test import APIClient
 from ovp_users.models import User
 from ovp_users.models.profile import get_profile_model
 
+from ovp_testimonials.models import Testimonial
+
 import json
 
 
@@ -75,4 +77,16 @@ class TestimonialTestCase(TestCase):
 
   def test_can_retrieve_testimonials(self):
     """ Assert can retrieve testimonials list """
-    pass
+    self.test_can_create_testimonial()
+    self.test_can_create_unauthenticated_testimonial()
+
+    response = self.client.get(reverse("testimonial-list"), format="json")
+    self.assertTrue(response.status_code == 200)
+    self.assertTrue(response.data["count"] == 0)
+
+    Testimonial.objects.all().update(published=True)
+
+    response = self.client.get(reverse("testimonial-list"), format="json")
+    self.assertTrue(response.status_code == 200)
+    self.assertTrue(response.data["count"] == 2)
+    self.assertTrue(len(response.data["results"]) == 2)
