@@ -1,0 +1,8 @@
+codecov==2.0.5
+coverage==4.3.4
+Django==1.10.5
+djangorestframework==3.5.3
+ovp-core==1.2.4
+ovp-users==1.1.7
+whoosh==2.7.4
+djangorestframework-jwt==1.9.0
