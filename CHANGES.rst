@@ -2,6 +2,7 @@
 Change log
 ===========
 
-v0.1.0
+v1.0.0
 -----------
 * Start project
+* Implement testimonial creation and retrieval routes

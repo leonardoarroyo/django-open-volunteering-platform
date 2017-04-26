@@ -3,12 +3,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='ovp-testimonials',
-    version='0.1.0',
+    version='1.0.0',
     author=u'Atados',
     author_email='arroyo@atados.com.br',
     packages=find_packages(),
     url='https://github.com/OpenVolunteeringPlatform/django-ovp-testimonials',
-    download_url='https://github.com/OpenVolunteeringPlatform/django-ovp-testimonials/tarball/0.1.0',
+    download_url='https://github.com/OpenVolunteeringPlatform/django-ovp-testimonials/tarball/1.0.0',
     license='AGPL',
     description='This module has user testimonials functionality',
     long_description=open('README.rst', encoding='utf-8').read(),
