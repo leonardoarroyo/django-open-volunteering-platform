@@ -7,5 +7,5 @@ testimonials = routers.SimpleRouter()
 testimonials.register(r'testimonials', views.TestimonialResource, 'testimonial')
 
 urlpatterns = [
-  url(r'^testimonials/', include(testimonials.urls)),
+  url(r'^', include(testimonials.urls)),
 ]
