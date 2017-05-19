@@ -35,3 +35,8 @@ class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
       return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return response.Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class ImageGalleryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+  queryset = UploadedImage.objects.filter(category__isnull=False)
+  serializer_class = UploadedImageSerializer

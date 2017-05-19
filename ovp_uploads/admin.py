@@ -31,6 +31,34 @@ class UploadedImageAdmin(admin.ModelAdmin):
   ]
 
 
+
+class ImageGalery(UploadedImage):
+  class Meta:
+    proxy = True
+
+class ImageGaleryAdmin(admin.ModelAdmin):
+  fields = [
+    'id', 'name', 'category', 'image', 'image_small', 'image_medium', 'image_large'
+  ]
+
+  list_display = [
+    'id', 'name', 'category', 'image'
+  ]
+
+  list_filter = ['category']
+
+  list_editable = []
+
+  search_fields = [
+    'id', 'name'
+  ]
+
+  readonly_fields = [
+    'id', 'image_small', 'image_medium', 'image_large'
+  ]
+  def get_queryset(self, request):
+    return super().get_queryset(request).filter(category__isnull=False)
+
+
 admin.site.register(UploadedImage, UploadedImageAdmin)
-
-
+admin.site.register(ImageGalery, ImageGaleryAdmin)

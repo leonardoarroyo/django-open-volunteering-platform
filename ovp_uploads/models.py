@@ -23,6 +23,11 @@ image_small = ImageName("-small")
 image_medium = ImageName("-medium")
 image_large = ImageName("-large")
 
+IMAGE_GALERY_CATEGORIES = (
+  ('cover', _("Cover")),
+  ('logo', _("Logo")),
+)
+
 class UploadedImage(models.Model):
   def save(self, *args, **kwargs):
     if not self.pk:
@@ -56,3 +61,5 @@ class UploadedImage(models.Model):
   modified_date = models.DateTimeField(auto_now=True)
   uuid = models.CharField('UUID', max_length=36, default=None, null=False, blank=True)
 
+  category = models.CharField(_('Category'), max_length=24, choices=IMAGE_GALERY_CATEGORIES, default=None, null=True, blank=True)
+  name = models.CharField(_('Name'),max_length=64, default=None, null=True, blank=True)
