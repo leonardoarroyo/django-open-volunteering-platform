@@ -1,5 +1,5 @@
 from ovp_uploads.models import UploadedImage
-from ovp_uploads.serializers import UploadedImageSerializer
+from ovp_uploads.serializers import UploadedImageSerializer, ImageGallerySerializer
 
 from rest_framework import mixins
 from rest_framework import viewsets
@@ -39,7 +39,7 @@ class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
 class ImageGalleryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
   queryset = UploadedImage.objects.filter(category__isnull=False)
-  serializer_class = UploadedImageSerializer
+  serializer_class = ImageGallerySerializer
 
   def get_queryset(self):
     queryset = self.queryset

@@ -43,3 +43,11 @@ class UploadedImageSerializer(serializers.ModelSerializer):
 
   def get_image_large_url(self, obj):
     return build_absolute_uri(self.context['request'], obj.image_large)
+
+class ImageGallerySerializer(UploadedImageSerializer):
+  name = serializers.CharField(read_only=True)
+  category = serializers.CharField(read_only=True)
+  class Meta:
+    model = UploadedImage
+    read_only_fields = ('image_small', 'image_medium', 'image_large')
+    fields = ('id', 'image_url', 'image_small_url', 'image_medium_url', 'image_large_url', 'name', 'category')
