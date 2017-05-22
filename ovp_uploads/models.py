@@ -24,8 +24,8 @@ image_medium = ImageName("-medium")
 image_large = ImageName("-large")
 
 IMAGE_GALERY_CATEGORIES = (
-  ('cover', _("Cover")),
-  ('logo', _("Logo")),
+  ('organization', _("Organization")),
+  ('project', _("Project")),
 )
 
 class UploadedImage(models.Model):

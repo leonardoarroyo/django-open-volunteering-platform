@@ -40,3 +40,10 @@ class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 class ImageGalleryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
   queryset = UploadedImage.objects.filter(category__isnull=False)
   serializer_class = UploadedImageSerializer
+
+  def get_queryset(self):
+    queryset = self.queryset
+    category = self.request.query_params.get('category', None)
+    if category is not None:
+      queryset = queryset.filter(category=category)
+    return queryset
