@@ -64,3 +64,4 @@ v1.0.3
 
 v1.0.4[unreleased]
 -----------
+* Implments image gallery, with admin and viewset
