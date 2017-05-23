@@ -35,6 +35,8 @@ class UploadedImageAdmin(admin.ModelAdmin):
 class ImageGalery(UploadedImage):
   class Meta:
     proxy = True
+    verbose_name = _('image gallery')
+    verbose_name_plural = _('image galleries')
 
 class ImageGaleryAdmin(admin.ModelAdmin):
   fields = [
