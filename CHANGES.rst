@@ -67,3 +67,4 @@ v1.0.4[unreleased]
 * Implments image gallery, with admin and viewset
 * Add filtering to gallery endpoint by query param 'category'
 * Add pt_BR translations
+* Implement image cropping on upload
