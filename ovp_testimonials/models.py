@@ -10,3 +10,8 @@ class Testimonial(models.Model):
   # Meta
   published = models.BooleanField(_('Published'), default=False)
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
+
+  class Meta:
+    app_label = 'ovp_testimonials'
+    verbose_name = _('Testimonial')
+    verbose_name_plural = _('Testimonials')
