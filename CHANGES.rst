@@ -68,3 +68,4 @@ v1.0.4[unreleased]
 * Add filtering to gallery endpoint by query param 'category'
 * Add pt_BR translations
 * Implement image cropping on upload
+* Add djangorestframework-jwt==1.9.0 to requirements
