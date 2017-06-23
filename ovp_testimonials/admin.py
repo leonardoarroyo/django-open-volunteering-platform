@@ -10,7 +10,9 @@ class TestimonialAdmin(admin.ModelAdmin):
     ('id', 'rating'),
     ('user'),
     ('published', 'created_date'),
-    'content'
+    'content',
+    'video_url',
+    ('image', 'image_tag'),
     ]
 
   list_display = [
@@ -27,8 +29,20 @@ class TestimonialAdmin(admin.ModelAdmin):
     'user__name', 'content'
     ]
 
-  readonly_fields = ['id', 'created_date']
+  readonly_fields = ['id', 'created_date', 'video_url', 'image_tag']
   raw_id_fields = []
+
+  def video_url(self, obj):
+    if obj.video:
+      return '<a href="https://www.youtube.com/watch?v={}" target="_blank">Link do Vídeo</a>'.format(obj.video)
+  video_url.short_description = 'Vídeo'
+  video_url.allow_tags = True
+
+  def image_tag(self, obj):
+    if obj.image.image_medium is not None:
+      return '<img style="max-width: 100%" src="{}" />'.format(obj.image.image_medium)
+  image_tag.short_description = 'Imagem'
+  image_tag.allow_tags = True
 
 
 admin.site.register(Testimonial, TestimonialAdmin)
