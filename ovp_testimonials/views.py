@@ -32,8 +32,7 @@ class TestimonialResource(mixins.CreateModelMixin, mixins.ListModelMixin, viewse
 
       data = request.FILES.get('video', None)
       if data:
-        path = default_storage.save(os.path.join(settings.MEDIA_ROOT, 'tmp_video'), ContentFile(data.read()))
-        tmp_file = os.path.join(settings.MEDIA_ROOT, path)
+        tmp_file = helpers.write_tmp_file(data.read())
         
         options = namedtuple('options',
           ('file', 'keywords', 'title', 'description', 'privacyStatus', 'logging_level', 'noauth_local_webserver', 'approval_prompt', 'category')
@@ -42,7 +41,7 @@ class TestimonialResource(mixins.CreateModelMixin, mixins.ListModelMixin, viewse
         youtube = helpers.get_authenticated_service(options)
         upload = helpers.initialize_upload(youtube, options)
 
-        default_storage.delete(tmp_file)
+        os.remove(tmp_file)
         
         if "id" in upload:
           request.data["video"] = upload["id"]

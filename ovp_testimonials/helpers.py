@@ -13,9 +13,18 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import argparser, run_flow
 
+from tempfile import mkstemp
+
 def get_settings(string="OVP_TESTIMONIALS"):
   return getattr(settings, string, {})
 
+def write_tmp_file(data = ""):
+  fd, tmp_path = mkstemp()
+  with open(tmp_path, 'wb') as file:
+    file.write(data)
+    file.close()
+  os.close(fd)
+  return tmp_path
 
 httplib2.RETRIES = 1
 
