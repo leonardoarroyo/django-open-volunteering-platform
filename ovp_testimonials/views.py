@@ -32,7 +32,7 @@ class TestimonialResource(mixins.CreateModelMixin, mixins.ListModelMixin, viewse
 
       data = request.FILES.get('video', None)
       if data:
-        path = default_storage.save('tmp_video', ContentFile(data.read()))
+        path = default_storage.save(os.path.join(settings.MEDIA_ROOT, 'tmp_video'), ContentFile(data.read()))
         tmp_file = os.path.join(settings.MEDIA_ROOT, path)
         
         options = namedtuple('options',
