@@ -3,8 +3,26 @@ from io import BytesIO
 from tempfile import TemporaryFile
 from django.core.files import uploadedfile
 from django.core.files.base import ContentFile
+from django.conf import settings
 
 from PIL import Image
+
+#
+# GCS is actually the default ovp's bucket, so, lets try to optimize for it
+# As images *never* changes urls, we can concat domain, bucket and url to obtain a full qualified
+# absolute uri, preventing a #get_blog for each image
+#
+# TODO: It looks like images are stored with absolute urls
+#
+if hasattr(settings, 'GCS_BUCKET'):
+  GCS_BASE_URI = str.join('/', ('https://storage.googleapis.com', settings.GCS_BUCKET))
+  def build_absolute_uri(req, image):
+    return image.url
+    #return str.join('/', (GCS_BASE_URI, image.url)) if image else None
+
+else:
+  def build_absolute_uri(req, image):
+    return req.build_absolute_uri(image.url) if image else None
 
 
 def perform_image_crop(image_obj, crop_rect=None):
