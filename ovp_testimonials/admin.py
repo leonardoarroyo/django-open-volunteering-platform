@@ -40,7 +40,7 @@ class TestimonialAdmin(admin.ModelAdmin):
 
   def image_tag(self, obj):
     if obj.image.image_medium is not None:
-      return '<img style="max-width: 100%" src="{}" />'.format(helpers.build_absolute_uri(self, obj.image))
+      return '<img style="max-width: 100%" src="{}" />'.format(helpers.build_absolute_uri(self, obj.image.image_medium))
   image_tag.short_description = 'Imagem'
   image_tag.allow_tags = True
 
