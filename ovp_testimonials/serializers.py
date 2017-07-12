@@ -16,4 +16,4 @@ class TestimonialRetrieveSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.Testimonial
-    fields = ["content", "rating", "user", "created_date", "image", "video"]
+    fields = ["content", "rating", "user", "created_date", "image", "video", "testimonial_date"]

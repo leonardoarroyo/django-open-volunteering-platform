@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -12,6 +13,7 @@ class Testimonial(models.Model):
   # Meta
   published = models.BooleanField(_('Published'), default=False)
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
+  testimonial_date = models.DateTimeField(_('Data do depoimento'), blank=True, null=True, default=datetime.now)
 
   class Meta:
     app_label = 'ovp_testimonials'

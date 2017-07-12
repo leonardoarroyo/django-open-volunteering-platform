@@ -13,6 +13,7 @@ class TestimonialAdmin(admin.ModelAdmin):
     'content',
     'video_url',
     ('image', 'image_tag'),
+    'testimonial_date',
     ]
 
   list_display = [
