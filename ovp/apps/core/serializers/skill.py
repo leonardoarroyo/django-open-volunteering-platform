@@ -1,5 +1,5 @@
-from ovp_core import models
-from ovp_core import validators
+from ovp.core import models
+from ovp.core import validators
 from rest_framework import serializers
 
 

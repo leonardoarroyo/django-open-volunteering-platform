@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 import csv
 from django.http import HttpResponse
 
-from ovp_core.models import Lead
+from ovp.core.models import Lead
 
 
 def export_all_as_csv(model_admin, request, queryset):

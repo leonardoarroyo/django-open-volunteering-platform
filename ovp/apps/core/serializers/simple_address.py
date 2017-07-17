@@ -1,4 +1,4 @@
-from ovp_core import models
+from ovp.core import models
 from rest_framework import serializers
 
 class SimpleAddressSerializer(serializers.ModelSerializer):

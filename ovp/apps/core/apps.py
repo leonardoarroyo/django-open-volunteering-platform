@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class UsersConfig(AppConfig):
-    name = 'ovp_core'
+class CoreConfig(AppConfig):
+    name = 'ovp.core'

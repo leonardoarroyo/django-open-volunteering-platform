@@ -53,7 +53,7 @@ def get_address_model():
     The default model returned is ovp_core.models.GoogleAddress
 
   """
-  model_name = get_settings().get("ADDRESS_MODEL", "ovp_core.models.GoogleAddress")
+  model_name = get_settings().get("ADDRESS_MODEL", "ovp.core.models.GoogleAddress")
   return import_from_string(model_name)
 
 
@@ -71,5 +71,5 @@ def get_address_serializers():
     The third is a simplified serializer containing only field 'city_state'. This is used on search.
 
   """
-  serializers = get_settings().get('ADDRESS_SERIALIZER_TUPLE', ('ovp_core.serializers.GoogleAddressSerializer', 'ovp_core.serializers.GoogleAddressLatLngSerializer', 'ovp_core.serializers.GoogleAddressCityStateSerializer'))
+  serializers = get_settings().get('ADDRESS_SERIALIZER_TUPLE', ('ovp.core.serializers.GoogleAddressSerializer', 'ovp.core.serializers.GoogleAddressLatLngSerializer', 'ovp.core.serializers.GoogleAddressCityStateSerializer'))
   return [import_from_string(s) for s in serializers]

@@ -10,7 +10,7 @@ class Skill(models.Model):
     return self.name
 
   class Meta:
-    app_label = 'ovp_core'
+    app_label = 'ovp.core'
     verbose_name = _('skill')
 
 vinaigrette.register(Skill, ['name'])

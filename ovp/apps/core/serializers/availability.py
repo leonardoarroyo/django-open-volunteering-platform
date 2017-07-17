@@ -1,5 +1,5 @@
-from ovp_core import validators
-from ovp_core.models import Availability
+from ovp.core import validators
+from ovp.core.models import Availability
 from rest_framework import serializers
 
 

@@ -3,7 +3,7 @@ from django.template import Context, Template
 from django.template.loader import get_template
 from django.conf import settings
 from django.utils import translation
-from ovp_core.helpers import get_settings, is_email_enabled, get_email_subject
+from ovp.core.helpers import get_settings, is_email_enabled, get_email_subject
 
 import threading, sys
 
