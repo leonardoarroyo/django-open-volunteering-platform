@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ovp.core.serializers import GoogleAddressSerializer
+from ovp.apps.core.serializers import GoogleAddressSerializer
 
 from ovp.core.models import Skill
 from ovp.core.models import Cause

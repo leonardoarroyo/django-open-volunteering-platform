@@ -2,7 +2,7 @@ from rest_framework import response
 from rest_framework import decorators
 from rest_framework import status
 
-from ovp.core import models
+from ovp.apps.core import models
 from ovp.core import serializers
 from ovp.core import helpers
 from ovp.core import emails

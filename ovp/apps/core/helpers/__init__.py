@@ -53,7 +53,7 @@ def get_address_model():
     The default model returned is ovp_core.models.GoogleAddress
 
   """
-  model_name = get_settings().get("ADDRESS_MODEL", "ovp.core.models.GoogleAddress")
+  model_name = get_settings().get("ADDRESS_MODEL", "ovp.apps.core.models.GoogleAddress")
   return import_from_string(model_name)
 
 

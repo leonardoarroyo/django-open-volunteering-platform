@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from ovp.core.models import GoogleAddress, SimpleAddress
+from ovp.apps.core.models import GoogleAddress, SimpleAddress
 
 
 class GoogleAddressAdmin(admin.ModelAdmin):

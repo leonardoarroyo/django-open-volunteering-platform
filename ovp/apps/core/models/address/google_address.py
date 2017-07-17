@@ -4,7 +4,7 @@ from django.db.models import Q, Count
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from ovp.core import helpers
+from ovp.apps.core import helpers
 
 import os
 import requests
