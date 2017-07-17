@@ -2,6 +2,9 @@
 import os
 import sys
 
+# We add our root directory to path so ovp module is available for our sandbox
+sys.path.insert(0, (os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))))
+
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
     try:
