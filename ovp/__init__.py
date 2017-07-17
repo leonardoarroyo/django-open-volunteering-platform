@@ -1,5 +1,5 @@
 
-def get_core_apps(self):
+def get_core_apps():
   """ Get core ovp apps list.
 
   Returns:
