@@ -1,1 +1,1 @@
-from ovp_uploads import apps
+from ovp.apps.uploads import apps

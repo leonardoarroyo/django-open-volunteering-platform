@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from ovp_uploads.models import UploadedImage
+from ovp.apps.uploads.models import UploadedImage
 
 from uuid import UUID
 

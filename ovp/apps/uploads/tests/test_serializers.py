@@ -5,8 +5,8 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 from rest_framework.test import APIRequestFactory
 
-from ovp_uploads.models import UploadedImage
-from ovp_uploads.serializers import UploadedImageSerializer
+from ovp.apps.uploads.models import UploadedImage
+from ovp.apps.uploads.serializers import UploadedImageSerializer
 from django.contrib.auth import get_user_model
 
 from PIL import Image
