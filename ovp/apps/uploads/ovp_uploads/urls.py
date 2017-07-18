@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 
-from ovp_uploads import views
+from ovp.apps.uploads import views
 
 router = routers.DefaultRouter()
 router.register(r'uploads/images', views.UploadedImageViewSet, 'upload-images')

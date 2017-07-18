@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from ovp_uploads.models import UploadedImage
+from ovp.apps.uploads.models import UploadedImage
 
 
 class UploadedImageAdmin(admin.ModelAdmin):

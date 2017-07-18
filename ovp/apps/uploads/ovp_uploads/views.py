@@ -1,7 +1,7 @@
 import json
 
-from ovp_uploads.models import UploadedImage
-from ovp_uploads.serializers import UploadedImageSerializer, ImageGallerySerializer
+from ovp.apps.uploads.models import UploadedImage
+from ovp.apps.uploads.serializers import UploadedImageSerializer, ImageGallerySerializer
 
 from rest_framework import mixins
 from rest_framework import viewsets

@@ -1,5 +1,5 @@
-from ovp_uploads import helpers
-from ovp_uploads.models import UploadedImage
+from ovp.apps.uploads import helpers
+from ovp.apps.uploads.models import UploadedImage
 
 from rest_framework import serializers
 

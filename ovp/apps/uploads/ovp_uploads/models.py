@@ -48,7 +48,7 @@ class UploadedImage(models.Model):
     return self.uuid
 
   class Meta:
-    app_label = 'ovp_uploads'
+    app_label = 'ovp.apps.uploads'
     verbose_name = _('uploaded image')
     verbose_name_plural = _('uploaded images')
 
