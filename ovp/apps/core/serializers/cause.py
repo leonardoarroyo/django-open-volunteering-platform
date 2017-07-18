@@ -1,5 +1,5 @@
 from ovp.apps.core import models
-from ovp.core import validators
+from ovp.apps.core import validators
 from rest_framework import serializers
 from ovp.apps.uploads.serializers import UploadedImageSerializer
 

@@ -3,9 +3,9 @@ from rest_framework import decorators
 from rest_framework import status
 
 from ovp.apps.core import models
-from ovp.core import serializers
-from ovp.core import helpers
-from ovp.core import emails
+from ovp.apps.core import serializers
+from ovp.apps.core import helpers
+from ovp.apps.core import emails
 from django.utils import translation
 
 @decorators.api_view(["GET"])

@@ -2,8 +2,8 @@ from rest_framework import serializers
 
 from ovp.apps.core.serializers import GoogleAddressSerializer
 
-from ovp.core.models import Skill
-from ovp.core.models import Cause
+from ovp.apps.core.models import Skill
+from ovp.apps.core.models import Cause
 
 def address_validate(address):
   address_sr = GoogleAddressSerializer(data=address)
