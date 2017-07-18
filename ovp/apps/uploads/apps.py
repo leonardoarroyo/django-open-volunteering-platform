@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class UploadsConfig(AppConfig):
-    name = 'ovp.apps.uploads'
+    name = 'uploads'
