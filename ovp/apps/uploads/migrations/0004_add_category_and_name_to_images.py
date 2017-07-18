@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_uploads', '0003_uploadedimage_uuid'),
+        ('uploads', '0003_uploadedimage_uuid'),
     ]
 
     operations = [
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             options={
                 'proxy': True,
             },
-            bases=('ovp_uploads.uploadedimage',),
+            bases=('uploads.uploadedimage',),
         ),
         migrations.AddField(
             model_name='uploadedimage',
