@@ -6,8 +6,8 @@ from django.utils import translation
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
-from ovp_core import models
-from ovp_core import serializers
+from ovp.apps.core import models
+from ovp.apps.core import serializers
 
 class TestStartupView(TestCase):
   def setUp(self):

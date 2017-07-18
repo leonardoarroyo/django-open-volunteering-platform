@@ -1,4 +1,4 @@
 # Just import to test execution
-from ovp_core import apps
-from ovp_core import urls
-from ovp_core import serializers
+from ovp.apps.core import apps
+from ovp.apps.core import urls
+from ovp.apps.core import serializers

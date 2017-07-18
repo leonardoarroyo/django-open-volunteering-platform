@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 # Just import to test execution
-from ovp_core import validators
+from ovp.apps.core import validators
 
 class TestAddressValidator(TestCase):
   def test_validation_functionn(self):

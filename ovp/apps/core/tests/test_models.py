@@ -1,11 +1,11 @@
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from ovp_core.models import GoogleAddress
-from ovp_core.models import AddressComponent
-from ovp_core.models import AddressComponentType
-from ovp_core.models import Skill
-from ovp_core.models import Cause
+from ovp.apps.core.models import GoogleAddress
+from ovp.apps.core.models import AddressComponent
+from ovp.apps.core.models import AddressComponentType
+from ovp.apps.core.models import Skill
+from ovp.apps.core.models import Cause
 
 def remove_component(address, types):
   for component in address.address_components.all():
