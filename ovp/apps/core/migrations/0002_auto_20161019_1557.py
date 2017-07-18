@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('ovp_core', '0001_initial'),
+        ('core', '0001_initial'),
     ]
 
     operations = [
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 ('city_state', models.CharField(blank=True, max_length=400, null=True)),
                 ('lat', models.FloatField(blank=True, null=True, verbose_name='lat')),
                 ('lng', models.FloatField(blank=True, null=True, verbose_name='lng')),
-                ('address_components', models.ManyToManyField(to='ovp_core.AddressComponent')),
+                ('address_components', models.ManyToManyField(to='core.AddressComponent')),
             ],
         ),
         migrations.CreateModel(
@@ -53,6 +53,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='addresscomponent',
             name='types',
-            field=models.ManyToManyField(to='ovp_core.AddressComponentType'),
+            field=models.ManyToManyField(to='core.AddressComponentType'),
         ),
     ]

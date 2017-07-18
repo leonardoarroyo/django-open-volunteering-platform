@@ -8,7 +8,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_core', '0004_load_skills_and_causes'),
+        ('core', '0004_load_skills_and_causes'),
     ]
 
     operations = [

@@ -9,6 +9,6 @@ class Lead(models.Model):
   date = models.DateTimeField(_('Date'), auto_now_add=True, null=True, blank=True)
 
   class Meta:
-    app_label = 'ovp.apps.core'
+    app_label = 'core'
     verbose_name = _('Lead')
     verbose_name_plural = _('Leads')

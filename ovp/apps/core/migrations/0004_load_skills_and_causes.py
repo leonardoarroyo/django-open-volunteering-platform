@@ -9,8 +9,8 @@ causes = ['Professional Training', 'Fight Poverty', 'Conscious consumption', 'Cu
 
 
 def load_data(apps, schema_editor):
-  Skill = apps.get_model("ovp_core", "Skill")
-  Cause = apps.get_model("ovp_core", "Cause")
+  Skill = apps.get_model("core", "Skill")
+  Cause = apps.get_model("core", "Cause")
 
   for skill in skills:
     s = Skill(name=skill)
@@ -21,8 +21,8 @@ def load_data(apps, schema_editor):
     c.save()
 
 def unload_data(apps, schema_editor): #pragma: no cover
-  Skill = apps.get_model("ovp_core", "Skill")
-  Cause = apps.get_model("ovp_core", "Cause")
+  Skill = apps.get_model("core", "Skill")
+  Cause = apps.get_model("core", "Cause")
 
   for skill in skills:
     s = Skill.objects.filter(name=skill)
@@ -35,7 +35,7 @@ def unload_data(apps, schema_editor): #pragma: no cover
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_core', '0003_cause_skill'),
+        ('core', '0003_cause_skill'),
     ]
 
     operations = [

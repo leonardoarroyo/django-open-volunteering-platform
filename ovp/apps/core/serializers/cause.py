@@ -1,7 +1,7 @@
 from ovp.apps.core import models
 from ovp.core import validators
 from rest_framework import serializers
-from ovp_uploads.serializers import UploadedImageSerializer
+from ovp.apps.uploads.serializers import UploadedImageSerializer
 
 class FullCauseSerializer(serializers.ModelSerializer):
   image = UploadedImageSerializer()

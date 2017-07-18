@@ -8,7 +8,7 @@ availability_periods = [(0, 'Manhã'), (1, 'Tarde'), (2, 'Noite')]
 availability_weekdays = [(0, 'Domingo'), (1, 'Segunda'), (2, 'Terça'), (3, 'Quarta'), (4, 'Quinta'), (5, 'Sexta'), (6, 'Sábado')]
 
 def foward_func(apps, schema_editor):
-    Availability = apps.get_model('ovp_core', 'Availability')
+    Availability = apps.get_model('core', 'Availability')
     for period in range(0, len(availability_periods)):
         for weekday in range(0, len(availability_weekdays)):
             index = weekday * len(availability_weekdays) + period
@@ -16,14 +16,14 @@ def foward_func(apps, schema_editor):
     return True
 
 def rewind_func(apps, schema_editor):
-    Availability = apps.get_model('ovp_core', 'Availability')
+    Availability = apps.get_model('core', 'Availability')
     Availability.objects.all().delete()
     return True
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_core', '0007_lead'),
+        ('core', '0007_lead'),
     ]
 
     operations = [

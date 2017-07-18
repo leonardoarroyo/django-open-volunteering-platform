@@ -8,8 +8,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_core', '0009_cause_image'),
-        ('ovp_core', '0009_lead_date'),
+        ('core', '0009_cause_image'),
+        ('core', '0009_lead_date'),
     ]
 
     operations = [
