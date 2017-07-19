@@ -2,17 +2,17 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 
-from ovp_users import models
-from ovp_users.helpers import get_settings, import_from_string
-from ovp_users.models.profile import get_profile_model
-from ovp_users.serializers.profile import get_profile_serializers
-from ovp_users.serializers.profile import ProfileSearchSerializer
-from ovp_users.validators import PasswordReuse
-from ovp_users.decorators import expired_password
-from ovp_uploads.serializers import UploadedImageSerializer
-from ovp_projects.serializers.apply_user import ApplyUserRetrieveSerializer
+from ovp.apps.users import models
+from ovp.apps.users.helpers import get_settings, import_from_string
+from ovp.apps.users.models.profile import get_profile_model
+from ovp.apps.users.serializers.profile import get_profile_serializers
+from ovp.apps.users.serializers.profile import ProfileSearchSerializer
+from ovp.apps.users.validators import PasswordReuse
+from ovp.apps.users.decorators import expired_password
+from ovp.apps.uploads.serializers import UploadedImageSerializer
 
-from ovp_projects import models as model_project
+from ovp.apps.projects.serializers.apply_user import ApplyUserRetrieveSerializer
+from ovp.apps.projects import models as model_project
 
 from rest_framework import serializers
 from rest_framework import permissions

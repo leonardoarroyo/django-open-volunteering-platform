@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
-from ovp_users import views
+from ovp.apps.users import views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserResourceViewSet, 'user')

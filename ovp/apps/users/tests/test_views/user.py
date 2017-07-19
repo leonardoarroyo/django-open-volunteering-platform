@@ -6,9 +6,9 @@ from django.test.utils import override_settings
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
-from ovp_users import models
-from ovp_users.tests.helpers import authenticate
-from ovp_users.tests.helpers import create_user
+from ovp.apps.users import models
+from ovp.apps.users.tests.helpers import authenticate
+from ovp.apps.users.tests.helpers import create_user
 
 
 

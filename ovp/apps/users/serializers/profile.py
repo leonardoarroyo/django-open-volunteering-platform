@@ -1,11 +1,11 @@
-from ovp_users.models.profile import get_profile_model
-from ovp_users.models.profile import gender_choices
-from ovp_users.helpers import get_settings, import_from_string
+from ovp.apps.users.models.profile import get_profile_model
+from ovp.apps.users.models.profile import gender_choices
+from ovp.apps.users.helpers import get_settings, import_from_string
 
-from ovp_core.models import Skill
-from ovp_core.models import Cause
-from ovp_core.serializers.skill import SkillSerializer, SkillAssociationSerializer
-from ovp_core.serializers.cause import CauseSerializer, CauseAssociationSerializer
+from ovp.apps.core.models import Skill
+from ovp.apps.core.models import Cause
+from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
+from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
 
 from rest_framework import serializers
 

@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_users', '0025_remove_userprofile_public'),
+        ('users', '0025_remove_userprofile_public'),
     ]
 
     operations = [

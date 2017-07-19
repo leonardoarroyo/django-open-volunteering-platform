@@ -1,2 +1,2 @@
-from ovp_users import urls
-from ovp_users import apps
+from ovp.apps.users import urls
+from ovp.apps.users import apps

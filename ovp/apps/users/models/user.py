@@ -1,6 +1,6 @@
-from ovp_users import emails
-from ovp_users.models.profile import get_profile_model
-from ovp_users.models.password_history import PasswordHistory
+from ovp.apps.users import emails
+from ovp.apps.users.models.profile import get_profile_model
+from ovp.apps.users.models.password_history import PasswordHistory
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
@@ -52,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
   name = models.CharField(_('Name'), max_length=200, null=False, blank=False)
   slug = models.SlugField(_('Slug'), max_length=100, null=True, blank=True, unique=True)
   phone = models.CharField(_('Phone'), max_length=30, null=True, blank=True)
-  avatar = models.ForeignKey('ovp_uploads.UploadedImage', blank=False, null=True, related_name='avatar_user', verbose_name=_('avatar'))
+  avatar = models.ForeignKey('uploads.UploadedImage', blank=False, null=True, related_name='avatar_user', verbose_name=_('avatar'))
   public = models.BooleanField(_('Public'), default=True)
   login_attempts = models.IntegerField(default=0)
   last_login_attempt = models.DateTimeField(auto_now=True, null=True, blank=True)
@@ -72,7 +72,7 @@ class User(AbstractBaseUser, PermissionsMixin):
   USERNAME_FIELD = 'email'
 
   class Meta:
-    app_label = 'ovp_users'
+    app_label = 'users'
     verbose_name = _('user')
     verbose_name_plural = _('users')
 

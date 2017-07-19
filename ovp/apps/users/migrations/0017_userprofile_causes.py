@@ -8,14 +8,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_core', '0007_lead'),
-        ('ovp_users', '0016_auto_20170216_1930'),
+        ('core', '0007_lead'),
+        ('users', '0016_auto_20170216_1930'),
     ]
 
     operations = [
         migrations.AddField(
             model_name='userprofile',
             name='causes',
-            field=models.ManyToManyField(to='ovp_core.Cause'),
+            field=models.ManyToManyField(to='core.Cause'),
         ),
     ]

@@ -4,8 +4,8 @@ from dateutil.relativedelta import relativedelta
 
 from django.utils import timezone
 
-from ovp_users.helpers import get_settings
-from ovp_users.models import PasswordHistory
+from ovp.apps.users.helpers import get_settings
+from ovp.apps.users.models import PasswordHistory
 
 def expired_password(function):
 

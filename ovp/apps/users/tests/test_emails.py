@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.core import mail
 
-from ovp_users.models import User, PasswordRecoveryToken
+from ovp.apps.users.models import User, PasswordRecoveryToken
 
 class TestEmailTriggers(TestCase):
   def test_user_creation_trigger_email(self):

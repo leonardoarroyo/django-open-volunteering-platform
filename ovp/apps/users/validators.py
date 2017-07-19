@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import get_hasher
 
-from ovp_users.models import PasswordHistory, PasswordRecoveryToken
-from ovp_users.helpers import get_settings
+from ovp.apps.users.models import PasswordHistory, PasswordRecoveryToken
+from ovp.apps.users.helpers import get_settings
 
 from rest_framework import serializers
 

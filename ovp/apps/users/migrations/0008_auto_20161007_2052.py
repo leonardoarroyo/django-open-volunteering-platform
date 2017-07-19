@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('auth', '0008_alter_user_username_max_length'),
-        ('ovp_users', '0007_auto_20161005_1741'),
+        ('users', '0007_auto_20161005_1741'),
     ]
 
     operations = [

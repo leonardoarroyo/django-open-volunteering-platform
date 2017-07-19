@@ -3,9 +3,9 @@ from django.test import TestCase
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
-from ovp_users.models import User
-from ovp_users.tests.helpers import create_user
-from ovp_users.tests.helpers import create_user_with_profile
+from ovp.apps.users.models import User
+from ovp.apps.users.tests.helpers import create_user
+from ovp.apps.users.tests.helpers import create_user_with_profile
 
 class ProfileTestCase(TestCase):
   def setUp(self):

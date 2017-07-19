@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_users', '0010_user_avatar'),
+        ('users', '0010_user_avatar'),
     ]
 
     operations = [
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='avatar',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='avatar_user', to='ovp_uploads.UploadedImage', verbose_name='avatar'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='avatar_user', to='uploads.UploadedImage', verbose_name='avatar'),
         ),
         migrations.AlterField(
             model_name='user',

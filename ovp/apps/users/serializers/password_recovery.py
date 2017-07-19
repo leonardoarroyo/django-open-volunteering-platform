@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ovp_users.validators import PasswordReuseInRecovery
+from ovp.apps.users.validators import PasswordReuseInRecovery
 
 class RecoveryTokenSerializer(serializers.Serializer):
   email = serializers.CharField(required=True)

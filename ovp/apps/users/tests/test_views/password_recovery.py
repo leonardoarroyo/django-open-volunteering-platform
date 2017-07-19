@@ -7,10 +7,10 @@ from django.core import mail
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
-from ovp_users.tests.helpers import authenticate
-from ovp_users.tests.helpers import create_user
-from ovp_users.tests.helpers import create_token
-from ovp_users.models import PasswordRecoveryToken
+from ovp.apps.users.tests.helpers import authenticate
+from ovp.apps.users.tests.helpers import create_user
+from ovp.apps.users.tests.helpers import create_token
+from ovp.apps.users.models import PasswordRecoveryToken
 
 
 class RecoveryTokenViewSetTestCase(TestCase):

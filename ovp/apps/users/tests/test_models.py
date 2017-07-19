@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from ovp_users.models import User
-from ovp_users.models import PasswordHistory
+from ovp.apps.users.models import User
+from ovp.apps.users.models import PasswordHistory
 
 from shortuuid.main import encode as encode_uuid
 

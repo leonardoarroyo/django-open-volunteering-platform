@@ -1,8 +1,8 @@
-from ovp_users import serializers
-from ovp_users import models
-from ovp_users import emails
+from ovp.apps.users import serializers
+from ovp.apps.users import models
+from ovp.apps.users import emails
 
-from ovp_core.helpers import get_settings
+from ovp.apps.core.helpers import get_settings
 
 from rest_framework import decorators
 from rest_framework import mixins
@@ -100,8 +100,8 @@ class PublicUserResourceViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewS
   def send_message(self, request, slug, pk=None):
     self.email = self.queryset.get(slug=slug)
     context = {
-                'message': request.data.get('message', None), 
-                'from_name': request.user.name, 
+                'message': request.data.get('message', None),
+                'from_name': request.user.name,
                 'from_email': request.user.email
               }
 
@@ -143,7 +143,7 @@ class UserAuthView(APIView):
         user.login_attempts = 1
 
       if user.login_attempts >= login_attempts_value:
-        user.exceeded_login_attempts = True         
+        user.exceeded_login_attempts = True
         user.last_login_attempt = timezone.now()
         user.save()
 

@@ -1,8 +1,8 @@
 from django.test import TestCase
 
-from ovp_users.tests.helpers import authenticate
-from ovp_users.tests.helpers import create_user
-from ovp_users.tests.helpers import create_token
+from ovp.apps.users.tests.helpers import authenticate
+from ovp.apps.users.tests.helpers import create_user
+from ovp.apps.users.tests.helpers import create_token
 
 
 class JWTAuthTestCase(TestCase):

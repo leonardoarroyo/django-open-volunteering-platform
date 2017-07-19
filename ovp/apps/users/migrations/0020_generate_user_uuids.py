@@ -6,7 +6,7 @@ from django.db import migrations
 import uuid
 
 def gen_uuid(apps, schema_editor):
-    Model = apps.get_model('ovp_users', 'User')
+    Model = apps.get_model('users', 'User')
     for user in Model.objects.all():
         user.uuid = uuid.uuid4()
         user.save()
@@ -14,7 +14,7 @@ def gen_uuid(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_users', '0019_userprofile_public'),
+        ('users', '0019_userprofile_public'),
     ]
 
     operations = [

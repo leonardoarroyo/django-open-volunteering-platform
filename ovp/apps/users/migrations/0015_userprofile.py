@@ -10,8 +10,8 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_core', '0007_lead'),
-        ('ovp_users', '0014_user_locale'),
+        ('core', '0007_lead'),
+        ('users', '0014_user_locale'),
     ]
 
     operations = [
@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('full_name', models.CharField(blank=True, max_length=300, null=True, verbose_name='Full name')),
                 ('about', models.TextField(blank=True, null=True, verbose_name='About me')),
-                ('skills', models.ManyToManyField(to='ovp_core.Skill')),
+                ('skills', models.ManyToManyField(to='core.Skill')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),

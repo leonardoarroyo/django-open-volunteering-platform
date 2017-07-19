@@ -4,8 +4,8 @@ from django.contrib.auth.password_validation import validate_password
 
 from dateutil.relativedelta import relativedelta
 
-from ovp_users import serializers
-from ovp_users import models
+from ovp.apps.users import serializers
+from ovp.apps.users import models
 
 from rest_framework import response
 from rest_framework import status

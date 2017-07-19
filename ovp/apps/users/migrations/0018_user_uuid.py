@@ -9,7 +9,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_users', '0017_userprofile_causes'),
+        ('users', '0017_userprofile_causes'),
     ]
 
     operations = [

@@ -22,4 +22,4 @@ class PasswordRecoveryToken(models.Model):
     super(PasswordRecoveryToken, self).save(*args, **kwargs)
 
   class Meta:
-    app_label = 'ovp_users'
+    app_label = 'users'

@@ -1,4 +1,4 @@
-from ovp_core.emails import BaseMail
+from ovp.apps.core.emails import BaseMail
 
 class UserMail(BaseMail):
   """

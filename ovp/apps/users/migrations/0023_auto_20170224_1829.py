@@ -10,13 +10,13 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_users', '0022_auto_20170222_2359'),
+        ('users', '0022_auto_20170222_2359'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='userprofile',
             name='user',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ovp_users_userprofile_profile', to=settings.AUTH_USER_MODEL),
+            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='users_userprofile_profile', to=settings.AUTH_USER_MODEL),
         ),
     ]

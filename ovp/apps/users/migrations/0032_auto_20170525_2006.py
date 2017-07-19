@@ -8,7 +8,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_users', '0031_auto_20170525_1701'),
+        ('users', '0031_auto_20170525_1701'),
     ]
 
     operations = [

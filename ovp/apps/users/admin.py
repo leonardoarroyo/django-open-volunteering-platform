@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from ovp_users.models import User
+from ovp.apps.users.models import User
 
 
 class UserAdmin(admin.ModelAdmin):
