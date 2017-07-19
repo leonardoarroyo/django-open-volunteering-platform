@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_projects', '0004_auto_20161025_1626'),
+        ('projects', '0004_auto_20161025_1626'),
     ]
 
     operations = [
@@ -26,11 +26,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='job',
             name='dates',
-            field=models.ManyToManyField(blank=True, to='ovp_projects.JobDate'),
+            field=models.ManyToManyField(blank=True, to='projects.JobDate'),
         ),
         migrations.AddField(
             model_name='work',
             name='availabilities',
-            field=models.ManyToManyField(to='ovp_projects.Availability'),
+            field=models.ManyToManyField(to='projects.Availability'),
         ),
     ]

@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_projects', '0036_merge_20170323_1944'),
+        ('projects', '0036_merge_20170323_1944'),
     ]
 
     operations = [

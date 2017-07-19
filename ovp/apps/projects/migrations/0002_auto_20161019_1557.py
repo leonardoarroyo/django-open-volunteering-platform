@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('ovp_projects', '0001_initial'),
+        ('projects', '0001_initial'),
     ]
 
     operations = [
@@ -44,6 +44,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='roles',
-            field=models.ManyToManyField(blank=True, to='ovp_projects.Role', verbose_name='Roles'),
+            field=models.ManyToManyField(blank=True, to='projects.Role', verbose_name='Roles'),
         ),
     ]

@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('ovp_uploads', '0003_uploadedimage_uuid'),
-        ('ovp_projects', '0006_auto_20161025_1726'),
+        ('projects', '0006_auto_20161025_1726'),
     ]
 
     operations = [

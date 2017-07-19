@@ -10,7 +10,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_projects', '0022_auto_20161220_1914'),
+        ('projects', '0022_auto_20161220_1914'),
     ]
 
     operations = [
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='apply',
             name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ovp_projects.Project', verbose_name='project'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='projects.Project', verbose_name='project'),
         ),
         migrations.AlterField(
             model_name='apply',
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='jobdate',
             name='job',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='dates', to='ovp_projects.Job', verbose_name='job'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='dates', to='projects.Job', verbose_name='job'),
         ),
         migrations.AlterField(
             model_name='project',

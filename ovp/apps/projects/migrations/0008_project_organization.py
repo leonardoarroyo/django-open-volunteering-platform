@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('ovp_organizations', '0003_organization_type'),
-        ('ovp_projects', '0007_project_image'),
+        ('projects', '0007_project_image'),
     ]
 
     operations = [

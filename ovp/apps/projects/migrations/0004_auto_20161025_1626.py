@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_projects', '0003_auto_20161025_1609'),
+        ('projects', '0003_auto_20161025_1609'),
     ]
 
     operations = [
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ('weekly_hours', models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Weekly hours')),
                 ('description', models.CharField(blank=True, max_length=4000, null=True, verbose_name='Description')),
                 ('can_be_done_remotely', models.BooleanField(default=False, verbose_name='This work can be done remotely.')),
-                ('project', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ovp_projects.Project')),
+                ('project', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='projects.Project')),
             ],
             options={
                 'verbose_name': 'work',
@@ -76,11 +76,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='job',
             name='dates',
-            field=models.ManyToManyField(blank=True, null=True, to='ovp_projects.JobDate'),
+            field=models.ManyToManyField(blank=True, null=True, to='projects.JobDate'),
         ),
         migrations.AddField(
             model_name='job',
             name='project',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ovp_projects.Project'),
+            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='projects.Project'),
         ),
     ]

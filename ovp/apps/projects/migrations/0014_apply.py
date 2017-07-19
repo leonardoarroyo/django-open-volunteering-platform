@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('ovp_projects', '0013_project_roles'),
+        ('projects', '0013_project_roles'),
     ]
 
     operations = [
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('canceled', models.BooleanField(default=False, verbose_name='Canceled')),
                 ('canceled_date', models.DateTimeField(blank=True, null=True, verbose_name='Canceled date')),
                 ('email', models.CharField(blank=True, max_length=200, null=True, verbose_name='Email')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ovp_projects.Project')),
+                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='projects.Project')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={

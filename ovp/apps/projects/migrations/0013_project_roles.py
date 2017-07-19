@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_projects', '0012_auto_20161115_1745'),
+        ('projects', '0012_auto_20161115_1745'),
     ]
 
     operations = [
         migrations.AddField(
             model_name='project',
             name='roles',
-            field=models.ManyToManyField(blank=True, to='ovp_projects.VolunteerRole', verbose_name='Volunteer Roles'),
+            field=models.ManyToManyField(blank=True, to='projects.VolunteerRole', verbose_name='Volunteer Roles'),
         ),
     ]

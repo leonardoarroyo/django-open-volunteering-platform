@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('ovp_core', '0004_load_skills_and_causes'),
-        ('ovp_projects', '0002_auto_20161019_1557'),
+        ('projects', '0002_auto_20161019_1557'),
     ]
 
     operations = [
