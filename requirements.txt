@@ -4,3 +4,6 @@ djangorestframework >= 3.6.3, < 3.7.0
 requests
 django-resized
 pillow
+shortuuid
+rest_framework_jwt
+dateutils
