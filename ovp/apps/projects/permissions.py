@@ -2,7 +2,7 @@ from rest_framework import permissions
 
 from ovp_organizations.models import Organization
 
-from ovp_projects.models import Project
+from ovp.apps.projects.models import Project
 
 from django.shortcuts import get_object_or_404
 

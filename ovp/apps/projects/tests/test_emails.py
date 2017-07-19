@@ -4,7 +4,7 @@ from django.test.utils import override_settings
 
 from ovp_core.helpers import get_email_subject, is_email_enabled
 from ovp_users.models import User
-from ovp_projects.models import Project, Apply
+from ovp.apps.projects.models import Project, Apply
 
 class TestEmailTriggers(TestCase):
   def test_project_creation_trigger_email(self):

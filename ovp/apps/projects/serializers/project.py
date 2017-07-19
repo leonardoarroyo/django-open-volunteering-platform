@@ -1,11 +1,11 @@
-from ovp_projects import models
-from ovp_projects import helpers
-from ovp_projects.decorators import hide_address, add_current_user_is_applied_representation
-from ovp_projects.serializers.disponibility import DisponibilitySerializer, add_disponibility_representation
-from ovp_projects.serializers.job import JobSerializer
-from ovp_projects.serializers.work import WorkSerializer
-from ovp_projects.serializers.role import VolunteerRoleSerializer
-from ovp_projects.serializers.apply import ProjectAppliesSerializer
+from ovp.apps.projects import models
+from ovp.apps.projects import helpers
+from ovp.apps.projects.decorators import hide_address, add_current_user_is_applied_representation
+from ovp.apps.projects.serializers.disponibility import DisponibilitySerializer, add_disponibility_representation
+from ovp.apps.projects.serializers.job import JobSerializer
+from ovp.apps.projects.serializers.work import WorkSerializer
+from ovp.apps.projects.serializers.role import VolunteerRoleSerializer
+from ovp.apps.projects.serializers.apply import ProjectAppliesSerializer
 
 from ovp_core import models as core_models
 from ovp_core.helpers import get_address_serializers

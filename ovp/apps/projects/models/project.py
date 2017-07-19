@@ -7,8 +7,8 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from ovp_core.helpers import get_address_model
 
-from ovp_projects import emails
-from ovp_projects.models.apply import Apply
+from ovp.apps.projects import emails
+from ovp.apps.projects.models.apply import Apply
 
 import urllib.request as request
 import urllib.parse as parse
@@ -135,7 +135,7 @@ class Project(models.Model):
       return  '%s' % (self.name)
 
   class Meta:
-    app_label = 'ovp_projects'
+    app_label = 'projects'
     verbose_name = _('project')
     verbose_name_plural = _('projects')
 
@@ -152,7 +152,7 @@ class VolunteerRole(models.Model):
 
 
   class Meta:
-    app_label = 'ovp_projects'
+    app_label = 'projects'
     verbose_name = _('volunteer role')
     verbose_name_plural = _('volunteer roles')
 

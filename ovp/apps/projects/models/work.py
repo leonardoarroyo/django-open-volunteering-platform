@@ -12,6 +12,6 @@ class Work(models.Model):
     return _('%d hours per week') % (self.weekly_hours)
 
   class Meta:
-    app_label = 'ovp_projects'
+    app_label = 'projects'
     verbose_name = _('work')
     verbose_name_plural = _('works')

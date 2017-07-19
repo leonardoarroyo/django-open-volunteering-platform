@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
-from ovp_projects import emails
+from ovp.apps.projects import emails
 
 apply_status_choices = (
     ('applied', 'Applied'),
@@ -13,7 +13,7 @@ apply_status_choices = (
 
 class Apply(models.Model):
   user = models.ForeignKey('ovp_users.User', blank=True, null=True, verbose_name=_('user'))
-  project = models.ForeignKey('ovp_projects.Project', verbose_name=_('project'))
+  project = models.ForeignKey('projects.Project', verbose_name=_('project'))
   status = models.CharField(_('status'), max_length=30, choices=apply_status_choices, default="applied")
   date = models.DateTimeField(_('created date'), auto_now_add=True, blank=True)
   canceled = models.BooleanField(_("canceled"), default=False)
@@ -71,7 +71,7 @@ class Apply(models.Model):
 
 
   class Meta:
-    app_label = 'ovp_projects'
+    app_label = 'projects'
     verbose_name = _('apply')
     verbose_name_plural = _('applies')
     unique_together = (("email", "project"), )

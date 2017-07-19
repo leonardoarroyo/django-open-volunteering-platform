@@ -1,8 +1,8 @@
 test:
-	@python ovp_projects/tests/runtests.py
+	@python ovp.apps.projects/tests/runtests.py
 
 lint:
-	@pylint ovp_projects
+	@pylint ovp.apps.projects
 
 clean-pycache:
 	@rm -r **/__pycache__

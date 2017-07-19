@@ -1,6 +1,6 @@
 from functools import wraps
 from ovp_organizations.models import Organization
-from ovp_projects import models
+from ovp.apps.projects import models
 
 def hide_address(func):
   """ Used to decorate Serializer.to_representation method.

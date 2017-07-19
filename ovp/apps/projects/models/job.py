@@ -13,7 +13,7 @@ class JobDate(models.Model):
     return "{}: {} ~ {}".format(self.name, start_date, end_date)
 
   class Meta:
-    app_label = 'ovp_projects'
+    app_label = 'projects'
     verbose_name = _('job date')
     verbose_name_plural = _('job dates')
 
@@ -38,7 +38,7 @@ class Job(models.Model):
     self.save()
 
   class Meta:
-    app_label = 'ovp_projects'
+    app_label = 'projects'
     verbose_name = _('job')
     verbose_name_plural = _('jobs')
 

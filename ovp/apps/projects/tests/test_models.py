@@ -1,11 +1,11 @@
 from django.test import TestCase
 from django.utils import timezone
 
-from ovp_projects.models import Project
-from ovp_projects.models import VolunteerRole
-from ovp_projects.models import Work
-from ovp_projects.models import Job
-from ovp_projects.models import JobDate
+from ovp.apps.projects.models import Project
+from ovp.apps.projects.models import VolunteerRole
+from ovp.apps.projects.models import Work
+from ovp.apps.projects.models import Job
+from ovp.apps.projects.models import JobDate
 from ovp_users.models import User
 
 class ProjectModelTestCase(TestCase):

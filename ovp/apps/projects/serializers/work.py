@@ -1,4 +1,4 @@
-from ovp_projects import models
+from ovp.apps.projects import models
 from rest_framework import serializers
 
 class WorkSerializer(serializers.ModelSerializer):

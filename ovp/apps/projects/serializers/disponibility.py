@@ -1,6 +1,6 @@
-from ovp_projects import models
-from ovp_projects.serializers.job import JobSerializer
-from ovp_projects.serializers.work import WorkSerializer
+from ovp.apps.projects import models
+from ovp.apps.projects.serializers.job import JobSerializer
+from ovp.apps.projects.serializers.work import WorkSerializer
 
 from rest_framework import serializers
 

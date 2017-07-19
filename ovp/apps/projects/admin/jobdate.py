@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from ovp_projects.models import JobDate
+from ovp.apps.projects.models import JobDate
 
 
 class JobDateInline(admin.TabularInline):

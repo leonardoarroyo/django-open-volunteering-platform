@@ -3,7 +3,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
-from ovp_projects.models import Job, JobDate
+from ovp.apps.projects.models import Job, JobDate
 
 from .jobdate import JobDateAdmin, JobDateInline
 

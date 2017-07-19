@@ -2,7 +2,7 @@ from django.conf.urls import url, include
 from rest_framework import routers
 from rest_framework_nested.routers import NestedSimpleRouter, NestedDefaultRouter
 
-from ovp_projects import views
+from ovp.apps.projects import views
 
 router = routers.DefaultRouter()
 router.register(r'projects', views.ProjectResourceViewSet, 'project')

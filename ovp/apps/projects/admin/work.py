@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from ovp_projects.models import Work
+from ovp.apps.projects.models import Work
 
 
 class WorkAdmin(admin.ModelAdmin):

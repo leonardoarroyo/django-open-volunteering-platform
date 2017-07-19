@@ -1,10 +1,10 @@
 from django.db.models import Q
 
-from ovp_projects.serializers import project as serializers
-from ovp_projects import models
-from ovp_projects import helpers
-from ovp_projects.permissions import ProjectCreateOwnsOrIsOrganizationMember
-from ovp_projects.permissions import ProjectRetrieveOwnsOrIsOrganizationMember
+from ovp.apps.projects.serializers import project as serializers
+from ovp.apps.projects import models
+from ovp.apps.projects import helpers
+from ovp.apps.projects.permissions import ProjectCreateOwnsOrIsOrganizationMember
+from ovp.apps.projects.permissions import ProjectRetrieveOwnsOrIsOrganizationMember
 
 from ovp_core.helpers.xls import Response as XLSResponse
 

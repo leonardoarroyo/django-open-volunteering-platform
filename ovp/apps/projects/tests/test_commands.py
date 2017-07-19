@@ -5,8 +5,8 @@ from django.test import TestCase
 from django.utils import timezone
 
 from ovp_users.models import User
-from ovp_projects.models import Project, Job
-from ovp_projects.management.commands.close_finished_projects import Command as CloseFinishedProjects
+from ovp.apps.projects.models import Project, Job
+from ovp.apps.projects.management.commands.close_finished_projects import Command as CloseFinishedProjects
 
 
 

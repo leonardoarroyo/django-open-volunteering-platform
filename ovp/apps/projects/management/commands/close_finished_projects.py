@@ -3,7 +3,7 @@ import sys
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from ovp_projects.models import Project
+from ovp.apps.projects.models import Project
 
 class Command(BaseCommand):
   help = "Close projects which have a Job and end_date has already passed"

@@ -2,10 +2,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
-from ovp_projects.serializers import apply as serializers
-from ovp_projects import models
-from ovp_projects import helpers
-from ovp_projects.permissions import ProjectApplyPermission
+from ovp.apps.projects.serializers import apply as serializers
+from ovp.apps.projects import models
+from ovp.apps.projects import helpers
+from ovp.apps.projects.permissions import ProjectApplyPermission
 
 from rest_framework import decorators
 from rest_framework import viewsets

@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.test import RequestFactory
 
-from ovp_projects.models import Project
-from ovp_projects.serializers.project import ProjectRetrieveSerializer
-from ovp_projects.serializers.project import ProjectSearchSerializer
+from ovp.apps.projects.models import Project
+from ovp.apps.projects.serializers.project import ProjectRetrieveSerializer
+from ovp.apps.projects.serializers.project import ProjectSearchSerializer
 
 from ovp_users.models import User
 from ovp_core.models import GoogleAddress

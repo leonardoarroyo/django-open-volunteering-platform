@@ -19,7 +19,7 @@ CUSTOM_INSTALLED_APPS = (
     'ovp_users',
     'ovp_uploads',
     'ovp_organizations',
-    'ovp_projects',
+    'ovp.apps.projects',
     'django.contrib.admin',
 )
 
@@ -78,7 +78,7 @@ settings.configure(
     ALLOWED_HOSTS=[],
     INSTALLED_APPS=ALWAYS_INSTALLED_APPS + CUSTOM_INSTALLED_APPS,
     MIDDLEWARE_CLASSES=ALWAYS_MIDDLEWARE_CLASSES,
-    ROOT_URLCONF='ovp_projects.urls',
+    ROOT_URLCONF='ovp.apps.projects.urls',
     DATABASES={
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
