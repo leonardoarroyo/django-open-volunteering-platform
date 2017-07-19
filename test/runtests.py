@@ -66,6 +66,8 @@ gettext = lambda s: s
 
 settings.configure(
     SECRET_KEY="django_tests_secret_key",
+    DEFAULT_FILE_STORAGE="django.core.files.storage.FileSystemStorage",
+    MEDIA_ROOT="/tmp",
     DEBUG=False,
     TEMPLATE_DEBUG=False,
     ALLOWED_HOSTS=[],
