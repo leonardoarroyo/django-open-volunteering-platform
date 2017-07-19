@@ -1,1 +1,6 @@
-django >= 1.11
+django == 1.10.5
+django-vinaigrette >= 1.0.1, < 1.1.0
+djangorestframework >= 3.6.3, < 3.7.0
+requests
+django-resized
+pillow
