@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_organizations', '0003_organization_type'),
+        ('organizations', '0003_organization_type'),
         ('projects', '0007_project_image'),
     ]
 
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='organization',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='ovp_organizations.Organization'),
+            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='organizations.Organization'),
             preserve_default=False,
         ),
     ]

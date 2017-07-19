@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_uploads', '0003_uploadedimage_uuid'),
+        ('uploads', '0003_uploadedimage_uuid'),
         ('projects', '0006_auto_20161025_1726'),
     ]
 
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='image',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='ovp_uploads.UploadedImage'),
+            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='uploads.UploadedImage'),
             preserve_default=False,
         ),
     ]

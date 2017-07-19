@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_core', '0004_load_skills_and_causes'),
+        ('core', '0004_load_skills_and_causes'),
         ('projects', '0002_auto_20161019_1557'),
     ]
 
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='causes',
-            field=models.ManyToManyField(to='ovp_core.Cause'),
+            field=models.ManyToManyField(to='core.Cause'),
         ),
         migrations.AddField(
             model_name='project',
@@ -33,11 +33,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='googleaddress',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ovp_core.GoogleAddress'),
+            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.GoogleAddress'),
         ),
         migrations.AddField(
             model_name='project',
             name='skills',
-            field=models.ManyToManyField(to='ovp_core.Skill'),
+            field=models.ManyToManyField(to='core.Skill'),
         ),
     ]

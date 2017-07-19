@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='address',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ovp_core.GoogleAddress', verbose_name='address'),
+            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.GoogleAddress', verbose_name='address'),
         ),
         migrations.AlterField(
             model_name='project',
@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='causes',
-            field=models.ManyToManyField(to='ovp_core.Cause', verbose_name='causes'),
+            field=models.ManyToManyField(to='core.Cause', verbose_name='causes'),
         ),
         migrations.AlterField(
             model_name='project',
@@ -86,7 +86,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='image',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='ovp_uploads.UploadedImage', verbose_name='image'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='uploads.UploadedImage', verbose_name='image'),
         ),
         migrations.AlterField(
             model_name='project',
@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='organization',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='ovp_organizations.Organization', verbose_name='organization'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='organizations.Organization', verbose_name='organization'),
         ),
         migrations.AlterField(
             model_name='project',
@@ -106,6 +106,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='skills',
-            field=models.ManyToManyField(to='ovp_core.Skill', verbose_name='skills'),
+            field=models.ManyToManyField(to='core.Skill', verbose_name='skills'),
         ),
     ]
