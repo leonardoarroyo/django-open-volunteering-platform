@@ -12,7 +12,7 @@ apply_status_choices = (
 )
 
 class Apply(models.Model):
-  user = models.ForeignKey('ovp_users.User', blank=True, null=True, verbose_name=_('user'))
+  user = models.ForeignKey('users.User', blank=True, null=True, verbose_name=_('user'))
   project = models.ForeignKey('projects.Project', verbose_name=_('project'))
   status = models.CharField(_('status'), max_length=30, choices=apply_status_choices, default="applied")
   date = models.DateTimeField(_('created date'), auto_now_add=True, blank=True)

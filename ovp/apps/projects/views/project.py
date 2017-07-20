@@ -6,7 +6,7 @@ from ovp.apps.projects import helpers
 from ovp.apps.projects.permissions import ProjectCreateOwnsOrIsOrganizationMember
 from ovp.apps.projects.permissions import ProjectRetrieveOwnsOrIsOrganizationMember
 
-from ovp_core.helpers.xls import Response as XLSResponse
+from ovp.apps.core.helpers.xls import Response as XLSResponse
 
 from rest_framework import decorators
 from rest_framework import mixins

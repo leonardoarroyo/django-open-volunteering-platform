@@ -7,17 +7,17 @@ from ovp.apps.projects.serializers.work import WorkSerializer
 from ovp.apps.projects.serializers.role import VolunteerRoleSerializer
 from ovp.apps.projects.serializers.apply import ProjectAppliesSerializer
 
-from ovp_core import models as core_models
-from ovp_core.helpers import get_address_serializers
-from ovp_core.serializers.cause import CauseSerializer, CauseAssociationSerializer, FullCauseSerializer
-from ovp_core.serializers.skill import SkillSerializer, SkillAssociationSerializer
+from ovp.apps.core import models as core_models
+from ovp.apps.core.helpers import get_address_serializers
+from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer, FullCauseSerializer
+from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
 
-from ovp_uploads.serializers import UploadedImageSerializer
+from ovp.apps.uploads.serializers import UploadedImageSerializer
 
-from ovp_organizations.serializers import OrganizationSearchSerializer
-from ovp_organizations.models import Organization
+from ovp.apps.organizations.serializers import OrganizationSearchSerializer
+from ovp.apps.organizations.models import Organization
 
-from ovp_users.serializers import ShortUserPublicRetrieveSerializer, UserProjectRetrieveSerializer
+from ovp.apps.users.serializers import ShortUserPublicRetrieveSerializer, UserProjectRetrieveSerializer
 
 from rest_framework import serializers
 from rest_framework import exceptions

@@ -1,7 +1,7 @@
 from ovp.apps.projects import models
 from ovp.apps.projects.models.apply import apply_status_choices
 
-from ovp_users.serializers import ShortUserPublicRetrieveSerializer, UserApplyRetrieveSerializer
+from ovp.apps.users.serializers import ShortUserPublicRetrieveSerializer, UserApplyRetrieveSerializer
 
 from rest_framework import serializers
 

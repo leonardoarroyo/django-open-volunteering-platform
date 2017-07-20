@@ -5,7 +5,7 @@ from django.template.defaultfilters import slugify
 from django.db.models import Sum
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from ovp_core.helpers import get_address_model
+from ovp.apps.core.helpers import get_address_model
 
 from ovp.apps.projects import emails
 from ovp.apps.projects.models.apply import Apply
@@ -19,14 +19,14 @@ class Project(models.Model):
   """
   Project model
   """
-  image = models.ForeignKey('ovp_uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
+  image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
   address = models.OneToOneField(get_address_model(), blank=True, null=True, verbose_name=_('address'), db_constraint=False)
-  skills = models.ManyToManyField('ovp_core.Skill', verbose_name=_('skills'))
-  causes = models.ManyToManyField('ovp_core.Cause', verbose_name=_('causes'))
+  skills = models.ManyToManyField('core.Skill', verbose_name=_('skills'))
+  causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'))
 
   # Relationships
-  owner = models.ForeignKey('ovp_users.User', verbose_name=_('owner'))
-  organization = models.ForeignKey('ovp_organizations.Organization', blank=False, null=True, verbose_name=_('organization'))
+  owner = models.ForeignKey('users.User', verbose_name=_('owner'))
+  organization = models.ForeignKey('organizations.Organization', blank=False, null=True, verbose_name=_('organization'))
 
   # Fields
   name = models.CharField(_('Project name'), max_length=100)

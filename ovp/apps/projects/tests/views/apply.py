@@ -5,8 +5,8 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from ovp.apps.projects.models import Project, Apply
-from ovp_users.models import User
-from ovp_organizations.models import Organization
+from ovp.apps.users.models import User
+from ovp.apps.organizations.models import Organization
 
 from collections import OrderedDict
 

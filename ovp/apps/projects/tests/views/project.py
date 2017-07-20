@@ -5,8 +5,8 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from ovp.apps.projects.models import Project
-from ovp_users.models import User
-from ovp_organizations.models import Organization
+from ovp.apps.users.models import User
+from ovp.apps.organizations.models import Organization
 
 from collections import OrderedDict
 
@@ -120,7 +120,7 @@ class ProjectCloseTestCase(TestCase):
 # This tests should run if declaring the following setings on runtests.py
 # They can't work without rerunning migrations as django expects the default GoogleAddress related model
 #
-#@override_settings(OVP_CORE={"ADDRESS_MODEL": "ovp_core.models.SimpleAddress", "ADDRESS_SERIALIZER_TUPLE": ("ovp_core.serializers.SimpleAddressSerializer", "ovp_core.serializers.SimpleAddressSerializer", "ovp_core.serializers.SimpleAddressSerializer")})
+#@override_settings(OVP_CORE={"ADDRESS_MODEL": "ovp.apps.core.models.SimpleAddress", "ADDRESS_SERIALIZER_TUPLE": ("ovp.apps.core.serializers.SimpleAddressSerializer", "ovp.apps.core.serializers.SimpleAddressSerializer", "ovp.apps.core.serializers.SimpleAddressSerializer")})
 #class ProjectWithSimpleAddressTestCase(TestCase):
 #  def setUp(self):
 #    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate")

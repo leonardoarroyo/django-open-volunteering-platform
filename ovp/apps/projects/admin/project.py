@@ -6,7 +6,7 @@ from ovp.apps.projects.models import Project, VolunteerRole
 from .job import JobInline
 from .work import WorkInline
 
-from ovp_core.mixins import CountryFilterMixin
+from ovp.apps.core.mixins import CountryFilterMixin
 
 
 class VolunteerRoleInline(admin.TabularInline):

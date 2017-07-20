@@ -1,5 +1,5 @@
 from functools import wraps
-from ovp_organizations.models import Organization
+from ovp.apps.organizations.models import Organization
 from ovp.apps.projects import models
 
 def hide_address(func):

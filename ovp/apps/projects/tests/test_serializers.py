@@ -5,9 +5,9 @@ from ovp.apps.projects.models import Project
 from ovp.apps.projects.serializers.project import ProjectRetrieveSerializer
 from ovp.apps.projects.serializers.project import ProjectSearchSerializer
 
-from ovp_users.models import User
-from ovp_core.models import GoogleAddress
-from ovp_organizations.models import Organization
+from ovp.apps.users.models import User
+from ovp.apps.core.models import GoogleAddress
+from ovp.apps.organizations.models import Organization
 
 class HiddenAddressTestCase(TestCase):
   def setUp(self):

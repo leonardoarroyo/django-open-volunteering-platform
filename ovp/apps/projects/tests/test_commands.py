@@ -4,7 +4,7 @@ from io import StringIO
 from django.test import TestCase
 from django.utils import timezone
 
-from ovp_users.models import User
+from ovp.apps.users.models import User
 from ovp.apps.projects.models import Project, Job
 from ovp.apps.projects.management.commands.close_finished_projects import Command as CloseFinishedProjects
 

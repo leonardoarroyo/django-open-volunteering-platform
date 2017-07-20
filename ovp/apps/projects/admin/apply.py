@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.projects.models import Apply
 
-from ovp_core.mixins import CountryFilterMixin
+from ovp.apps.core.mixins import CountryFilterMixin
 
 
 class ApplyAdmin(admin.ModelAdmin, CountryFilterMixin):

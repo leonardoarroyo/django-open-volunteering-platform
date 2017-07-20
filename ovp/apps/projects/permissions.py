@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from ovp_organizations.models import Organization
+from ovp.apps.organizations.models import Organization
 
 from ovp.apps.projects.models import Project
 

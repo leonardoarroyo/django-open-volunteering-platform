@@ -6,7 +6,7 @@ from ovp.apps.projects.models import VolunteerRole
 from ovp.apps.projects.models import Work
 from ovp.apps.projects.models import Job
 from ovp.apps.projects.models import JobDate
-from ovp_users.models import User
+from ovp.apps.users.models import User
 
 class ProjectModelTestCase(TestCase):
   def test_project_return_owner_email_and_phone(self):
