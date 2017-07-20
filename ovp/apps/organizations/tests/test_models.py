@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from ovp_organizations.models import Organization
-from ovp_users.models import User
+from ovp.apps.organizations.models import Organization
+from ovp.apps.users.models import User
 
 class OrganizationModelTestCase(TestCase):
   def setUp(self):

@@ -4,10 +4,10 @@ from django.core import mail
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
-from ovp_core.helpers import get_email_subject, is_email_enabled
-from ovp_users.models import User
-from ovp_organizations.models import Organization, OrganizationInvite
-from ovp_projects.models import Project
+from ovp.apps.core.helpers import get_email_subject, is_email_enabled
+from ovp.apps.users.models import User
+from ovp.apps.organizations.models import Organization, OrganizationInvite
+from ovp.apps.projects.models import Project
 
 import copy
 

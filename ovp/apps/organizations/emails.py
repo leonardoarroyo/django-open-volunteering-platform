@@ -1,5 +1,5 @@
-from ovp_core.emails import BaseMail
-from ovp_core.helpers import get_settings
+from ovp.apps.core.emails import BaseMail
+from ovp.apps.core.helpers import get_settings
 
 class OrganizationMail(BaseMail):
   """

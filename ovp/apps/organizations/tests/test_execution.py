@@ -1,1 +1,1 @@
-from ovp_organizations import apps
+from ovp.apps.organizations import apps

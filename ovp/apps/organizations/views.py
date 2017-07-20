@@ -1,15 +1,15 @@
-from ovp_users.models import User
+from ovp.apps.users.models import User
 
-from ovp_core.serializers import EmptySerializer
+from ovp.apps.core.serializers import EmptySerializer
 
-from ovp_organizations import serializers
-from ovp_organizations import models
-from ovp_organizations import permissions as organization_permissions
+from ovp.apps.organizations import serializers
+from ovp.apps.organizations import models
+from ovp.apps.organizations import permissions as organization_permissions
 
-from ovp_projects.serializers.project import ProjectOnOrganizationRetrieveSerializer
-from ovp_projects.models import Project
+from ovp.apps.projects.serializers.project import ProjectOnOrganizationRetrieveSerializer
+from ovp.apps.projects.models import Project
 
-from ovp_uploads import models as upload_models
+from ovp.apps.uploads import models as upload_models
 
 from rest_framework import decorators
 from rest_framework import viewsets

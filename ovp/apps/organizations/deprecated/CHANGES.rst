@@ -19,8 +19,8 @@ v0.1.2
 
 v0.1.3
 -----------
-* Add ovp_core and ovp_users to runtests
-* Upgrade ovp_core, ovp_users and rest-framework
+* Add core and ovp.apps.users to runtests
+* Upgrade core, ovp.apps.users and rest-framework
 
 v0.1.4
 -----------

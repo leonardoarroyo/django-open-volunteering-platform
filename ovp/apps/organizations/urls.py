@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 
-from ovp_organizations import views
+from ovp.apps.organizations import views
 
 
 router = routers.DefaultRouter()

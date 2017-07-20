@@ -14,11 +14,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(BASE_DIR, '../..')))
 # Unfortunately, apps can not be installed via ``modify_settings``
 # decorator, because it would miss the database setup.
 CUSTOM_INSTALLED_APPS = (
-    'ovp_core',
-    'ovp_users',
-    'ovp_uploads',
-    'ovp_organizations',
-    'ovp_projects',
+    'ovp.apps.core',
+    'ovp.apps.users',
+    'ovp.apps.uploads',
+    'ovp.apps.organizations',
+    'ovp.apps.projects',
     'django.contrib.admin',
 )
 
@@ -73,7 +73,7 @@ settings.configure(
     ALLOWED_HOSTS=[],
     INSTALLED_APPS=ALWAYS_INSTALLED_APPS + CUSTOM_INSTALLED_APPS,
     MIDDLEWARE_CLASSES=ALWAYS_MIDDLEWARE_CLASSES,
-    ROOT_URLCONF='ovp_organizations.urls',
+    ROOT_URLCONF='ovp.apps.organizations.urls',
     DATABASES={
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

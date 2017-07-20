@@ -33,7 +33,7 @@ To test this module
 
 ::
 
-  python ovp_organizations/tests/runtests.py
+  python ovp.apps.organizations/tests/runtests.py
 
 Contributing
 ---------------

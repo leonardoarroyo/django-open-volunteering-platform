@@ -1,16 +1,16 @@
 from django.core.exceptions import ValidationError
 
-from ovp_uploads.serializers import UploadedImageSerializer
+from ovp.apps.uploads.serializers import UploadedImageSerializer
 
-from ovp_users.models.user import User
+from ovp.apps.users.models.user import User
 
-from ovp_core.models import Cause
-from ovp_core.helpers import get_address_serializers
-from ovp_core.serializers.cause import CauseSerializer, CauseAssociationSerializer
+from ovp.apps.core.models import Cause
+from ovp.apps.core.helpers import get_address_serializers
+from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
 
-from ovp_organizations import models
-from ovp_organizations import validators
-from ovp_organizations.decorators import hide_address
+from ovp.apps.organizations import models
+from ovp.apps.organizations import validators
+from ovp.apps.organizations.decorators import hide_address
 
 from rest_framework import serializers
 from rest_framework import permissions

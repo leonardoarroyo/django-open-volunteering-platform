@@ -2,9 +2,9 @@ from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from ovp_organizations.models import Organization
+from ovp.apps.organizations.models import Organization
 
-from ovp_core.mixins import CountryFilterMixin
+from ovp.apps.core.mixins import CountryFilterMixin
 
 # This file contains some "pragma: no cover" because the admin
 # class is not covered by the test suite

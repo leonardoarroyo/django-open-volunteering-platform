@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ovp_users.models import User
+from ovp.apps.users.models import User
 
 
 from django.core.exceptions import ValidationError

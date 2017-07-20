@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils import timezone
 from django.template.defaultfilters import slugify
-from ovp_core.helpers import get_address_model
+from ovp.apps.core.helpers import get_address_model
 
-from ovp_organizations.emails import OrganizationMail
-from ovp_organizations.emails import OrganizationAdminMail
+from ovp.apps.organizations.emails import OrganizationMail
+from ovp.apps.organizations.emails import OrganizationAdminMail
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -17,12 +17,12 @@ ORGANIZATION_TYPES = (
 
 class Organization(models.Model):
   # Relationships
-  owner = models.ForeignKey('ovp_users.User', verbose_name=_('owner'))
+  owner = models.ForeignKey('users.User', verbose_name=_('owner'))
   address = models.OneToOneField(get_address_model(), blank=True, null=True, verbose_name=_('address'), db_constraint=False)
-  image = models.ForeignKey('ovp_uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
-  cover = models.ForeignKey('ovp_uploads.UploadedImage', blank=True, null=True, related_name="+", verbose_name=_('cover'))
-  causes = models.ManyToManyField('ovp_core.Cause', verbose_name=_('causes'), blank=True)
-  members = models.ManyToManyField('ovp_users.User', verbose_name=_('members'), related_name="organizations_member")
+  image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
+  cover = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, related_name="+", verbose_name=_('cover'))
+  causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'), blank=True)
+  members = models.ManyToManyField('users.User', verbose_name=_('members'), related_name="organizations_member")
 
   # Fields
   slug = models.SlugField(_('Slug'), max_length=100, unique=True, blank=True, null=True)
@@ -109,16 +109,16 @@ class Organization(models.Model):
     return None
 
   class Meta:
-    app_label = 'ovp_organizations'
+    app_label = 'organizations'
     verbose_name = _('organization')
     verbose_name_plural = _('organizations')
 
 
 class OrganizationInvite(models.Model):
-  organization = models.ForeignKey("ovp_organizations.Organization")
-  invitator = models.ForeignKey("ovp_users.User", related_name="has_invited")
-  invited = models.ForeignKey("ovp_users.User", related_name="been_invited")
+  organization = models.ForeignKey("organizations.Organization")
+  invitator = models.ForeignKey("users.User", related_name="has_invited")
+  invited = models.ForeignKey("users.User", related_name="been_invited")
 
   class Meta:
-    app_label = 'ovp_organizations'
+    app_label = 'organizations'
     verbose_name = _('organization_invite')

@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.core import mail
 
-from ovp_core.helpers import get_email_subject, is_email_enabled
-from ovp_users.models import User
-from ovp_organizations.models import Organization
+from ovp.apps.core.helpers import get_email_subject, is_email_enabled
+from ovp.apps.users.models import User
+from ovp.apps.organizations.models import Organization
 
 class TestEmailTriggers(TestCase):
   def setUp(self):

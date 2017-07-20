@@ -1,6 +1,6 @@
 from rest_framework import permissions
 from rest_framework import exceptions
-from ovp_organizations.models import Organization, OrganizationInvite
+from ovp.apps.organizations.models import Organization, OrganizationInvite
 
 class OwnsOrIsOrganizationMember(permissions.BasePermission):
   def has_object_permission(self, request, view, obj):
