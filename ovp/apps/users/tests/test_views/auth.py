@@ -16,4 +16,4 @@ class JWTAuthTestCase(TestCase):
     """Assert that it's not possible to login with wrong password"""
     user = create_user('test_can_login@test.com', 'invalidpassword')
     response = authenticate()
-    self.assertTrue(response.data['non_field_errors'][0] == 'Unable to login with provided credentials.')
+    self.assertTrue(response.data['non_field_errors'][0] == 'Unable to log in with provided credentials.')
