@@ -13,8 +13,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('ovp_core', '0004_load_skills_and_causes'),
-        ('ovp_organizations', '0001_initial'),
+        ('core', '0004_load_skills_and_causes'),
+        ('organizations', '0001_initial'),
     ]
 
     operations = [
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('modified_at', models.DateTimeField(auto_now=True)),
                 ('details', models.CharField(blank=True, default=None, max_length=3000, null=True, verbose_name='Details')),
                 ('description', models.CharField(blank=True, max_length=160, null=True, verbose_name='Short description')),
-                ('address', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ovp_core.GoogleAddress')),
+                ('address', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.GoogleAddress')),
                 ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={

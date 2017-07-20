@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('ovp_organizations', '0008_auto_20161207_1941'),
+        ('organizations', '0008_auto_20161207_1941'),
     ]
 
     operations = [
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('created_date', models.DateTimeField(auto_now_add=True)),
                 ('invitator', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='has_invited', to=settings.AUTH_USER_MODEL)),
                 ('invited', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='been_invited', to=settings.AUTH_USER_MODEL)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ovp_organizations.Organization')),
+                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='organizations.Organization')),
             ],
         ),
     ]

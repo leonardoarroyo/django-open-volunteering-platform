@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_organizations', '0011_organization_cover'),
+        ('organizations', '0011_organization_cover'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='organization',
             name='causes',
-            field=models.ManyToManyField(blank=True, to='ovp_core.Cause'),
+            field=models.ManyToManyField(blank=True, to='core.Cause'),
         ),
     ]

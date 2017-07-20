@@ -9,14 +9,14 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_uploads', '0003_uploadedimage_uuid'),
-        ('ovp_organizations', '0010_auto_20161208_1619'),
+        ('uploads', '0003_uploadedimage_uuid'),
+        ('organizations', '0010_auto_20161208_1619'),
     ]
 
     operations = [
         migrations.AddField(
             model_name='organization',
             name='cover',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='ovp_uploads.UploadedImage'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='uploads.UploadedImage'),
         ),
     ]

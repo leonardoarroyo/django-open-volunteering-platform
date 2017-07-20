@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
-from ovp_organizations.models import Organization
+from ovp.apps.organizations.models import Organization
 
 def add_members(apps, schema_editor): #pragma: no cover
   for organization in Organization.objects.only('pk', 'members', 'name', 'published', 'deleted', 'owner').all():
@@ -19,7 +19,7 @@ def remove_members(apps, schema_editor): #pragma: no cover
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_organizations', '0007_organization_members'),
+        ('organizations', '0007_organization_members'),
     ]
 
     operations = [

@@ -10,7 +10,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_organizations', '0012_auto_20170109_1332'),
+        ('organizations', '0012_auto_20170109_1332'),
     ]
 
     operations = [
@@ -21,17 +21,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='organization',
             name='address',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ovp_core.GoogleAddress', verbose_name='address'),
+            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.GoogleAddress', verbose_name='address'),
         ),
         migrations.AlterField(
             model_name='organization',
             name='causes',
-            field=models.ManyToManyField(blank=True, to='ovp_core.Cause', verbose_name='causes'),
+            field=models.ManyToManyField(blank=True, to='core.Cause', verbose_name='causes'),
         ),
         migrations.AlterField(
             model_name='organization',
             name='cover',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='ovp_uploads.UploadedImage', verbose_name='cover'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='uploads.UploadedImage', verbose_name='cover'),
         ),
         migrations.AlterField(
             model_name='organization',
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='organization',
             name='image',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='ovp_uploads.UploadedImage', verbose_name='image'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='uploads.UploadedImage', verbose_name='image'),
         ),
         migrations.AlterField(
             model_name='organization',

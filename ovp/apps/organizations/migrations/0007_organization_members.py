@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('ovp_organizations', '0006_auto_20161206_1612'),
+        ('organizations', '0006_auto_20161206_1612'),
     ]
 
     operations = [

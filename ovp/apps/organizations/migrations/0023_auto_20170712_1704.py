@@ -9,13 +9,13 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_organizations', '0022_auto_20170613_1424'),
+        ('organizations', '0022_auto_20170613_1424'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='organization',
             name='address',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ovp_core.SimpleAddress', verbose_name='address'),
+            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.SimpleAddress', verbose_name='address'),
         ),
     ]

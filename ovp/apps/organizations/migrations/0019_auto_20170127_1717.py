@@ -9,18 +9,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_organizations', '0018_auto_20170127_1513'),
+        ('organizations', '0018_auto_20170127_1513'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='organization',
             name='cover',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='ovp_uploads.UploadedImage', verbose_name='cover'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='uploads.UploadedImage', verbose_name='cover'),
         ),
         migrations.AlterField(
             model_name='organization',
             name='image',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ovp_uploads.UploadedImage', verbose_name='image'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='uploads.UploadedImage', verbose_name='image'),
         ),
     ]
