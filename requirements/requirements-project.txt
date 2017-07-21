@@ -1,9 +1,10 @@
-django == 1.10.5
 django-vinaigrette >= 1.0.1, < 1.1.0
 djangorestframework >= 3.6.3, < 3.7.0
+drf-nested-routers
 requests
 django-resized
 pillow
 shortuuid
-rest_framework_jwt
+djangorestframework-jwt
 dateutils
+pyexcel_xls

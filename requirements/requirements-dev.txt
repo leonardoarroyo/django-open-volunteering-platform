@@ -1,0 +1,4 @@
+-r requirements-project.txt
+django == 1.10.5
+pudb
+django-extensions
