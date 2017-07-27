@@ -16,6 +16,8 @@ def get_core_apps():
     "ovp.apps.users",
     "ovp.apps.projects",
     "ovp.apps.organizations",
+    "ovp.apps.faq",
+    "ovp.apps.search",
   ]
 
   return CORE_APPS
