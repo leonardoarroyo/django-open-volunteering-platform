@@ -114,7 +114,7 @@ settings.configure(
     HAYSTACK_CONNECTIONS={
     'default': {
       'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-      'PATH': os.path.join('/tmp', 'whoosh_index'),
+      'PATH': os.path.join('/tmp', 'ovp_whoosh_index'),
       },
     },
     HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor',
