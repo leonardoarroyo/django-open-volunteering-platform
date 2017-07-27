@@ -10,7 +10,7 @@ import redactor.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_faq', '0001_initial'),
+        ('faq', '0001_initial'),
     ]
 
     operations = [
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='faq',
             name='category',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='ovp_faq.Category', verbose_name='Categoria'),
+            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='faq.Category', verbose_name='Categoria'),
         ),
         migrations.AlterField(
             model_name='faq',

@@ -9,13 +9,13 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ovp_faq', '0002_auto_20170425_1813'),
+        ('faq', '0002_auto_20170425_1813'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='faq',
             name='category',
-            field=models.ForeignKey(blank=True, default=0, on_delete=django.db.models.deletion.CASCADE, to='ovp_faq.Category', verbose_name='Categoria'),
+            field=models.ForeignKey(blank=True, default=0, on_delete=django.db.models.deletion.CASCADE, to='faq.Category', verbose_name='Categoria'),
         ),
     ]

@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('question', models.CharField(max_length=100, verbose_name='question')),
                 ('answer', redactor.fields.RedactorField(default='', max_length=3000, verbose_name='answer')),
-                ('category', models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='ovp_faq.Category', verbose_name='category')),
+                ('category', models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='faq.Category', verbose_name='category')),
             ],
         ),
     ]
