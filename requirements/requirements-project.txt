@@ -1,6 +1,8 @@
 django-vinaigrette >= 1.0.1, < 1.1.0
 djangorestframework >= 3.6.3, < 3.7.0
 djangorestframework-csv >= 2.0.0, < 2.1.0
+django-haystack >= 2.6.1, < 2.7.0
+whoosh >= 2.7.4, < 2.8.0
 drf-nested-routers
 requests
 django-resized
