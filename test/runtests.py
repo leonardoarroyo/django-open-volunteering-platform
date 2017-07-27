@@ -2,8 +2,9 @@
 import glob
 import os
 import sys
-
 import django
+import threading
+
 from django.conf import settings
 from django.core.management import execute_from_command_line
 
@@ -131,7 +132,7 @@ settings.configure(
     HAYSTACK_CONNECTIONS={
     'default': {
       'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-      'PATH': os.path.join('/tmp', 'ovp_whoosh_index'),
+      'PATH': os.path.join('/tmp', 'ovp_test_whoosh_index'),
       },
     },
     HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor',
