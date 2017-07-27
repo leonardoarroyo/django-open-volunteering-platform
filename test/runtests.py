@@ -19,6 +19,8 @@ CUSTOM_INSTALLED_APPS = (
     'ovp.apps.users',
     'ovp.apps.projects',
     'ovp.apps.organizations',
+    'ovp.apps.search',
+    'haystack',
     'vinaigrette',
     'django.contrib.admin',
 )
@@ -124,7 +126,14 @@ settings.configure(
     AUTH_USER_MODEL='users.User',
     OVP_CORE={
       'VALID_CONTACT_RECIPIENTS': ['testemail@1.com', 'testemail@2.com']
-    }
+    },
+    HAYSTACK_CONNECTIONS={
+    'default': {
+      'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+      'PATH': os.path.join('/tmp', 'ovp_whoosh_index'),
+      },
+    },
+    HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor',
 )
 
 django.setup()
@@ -135,6 +144,7 @@ test_cases = [
   'ovp.apps.users',
   'ovp.apps.organizations',
   'ovp.apps.projects',
+  'ovp.apps.search',
 ]
 
 # Allow accessing test options from the command line.

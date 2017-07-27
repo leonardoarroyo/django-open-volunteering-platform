@@ -5,6 +5,7 @@ import ovp.apps.uploads.urls
 import ovp.apps.users.urls
 import ovp.apps.projects.urls
 import ovp.apps.organizations.urls
+import ovp.apps.search.urls
 
 urlpatterns = [
   # Core
@@ -21,5 +22,8 @@ urlpatterns = [
 
   # Organizations
   url(r'^', include(ovp.apps.organizations.urls)),
+
+  # Search
+  url(r'^', include(ovp.apps.search.urls)),
 ]
 
