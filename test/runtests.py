@@ -16,6 +16,9 @@ sys.path.insert(0, (os.path.abspath(os.path.join(os.path.dirname(__file__), ".."
 CUSTOM_INSTALLED_APPS = (
     'ovp.apps.core',
     'ovp.apps.uploads',
+    'ovp.apps.users',
+    'ovp.apps.projects',
+    'ovp.apps.organizations',
     'vinaigrette',
     'django.contrib.admin',
 )
@@ -42,8 +45,13 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
     'PAGINATE_BY_PARAM': 'page_size',
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework_csv.renderers.CSVRenderer',
     )
 }
 
@@ -113,6 +121,7 @@ settings.configure(
     DEFAULT_SEND_EMAIL='sync',
     REST_FRAMEWORK=REST_FRAMEWORK,
     AUTH_PASSWORD_VALIDATORS=AUTH_PASSWORD_VALIDATORS,
+    AUTH_USER_MODEL='users.User',
     OVP_CORE={
       'VALID_CONTACT_RECIPIENTS': ['testemail@1.com', 'testemail@2.com']
     }
@@ -123,6 +132,9 @@ args = [sys.argv[0], 'test']
 test_cases = [
   'ovp.apps.core',
   'ovp.apps.uploads',
+  'ovp.apps.users',
+  'ovp.apps.organizations',
+  'ovp.apps.projects',
 ]
 
 # Allow accessing test options from the command line.

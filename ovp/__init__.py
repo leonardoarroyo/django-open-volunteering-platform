@@ -7,7 +7,10 @@ def get_core_apps():
   """
   CORE_APPS = [
     "ovp.apps.core",
-    "ovp.apps.uploads"
+    "ovp.apps.uploads",
+    "ovp.apps.users",
+    "ovp.apps.projects",
+    "ovp.apps.organizations",
   ]
 
   return CORE_APPS

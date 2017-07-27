@@ -14,6 +14,24 @@ We currently don't have a standard front-end for our API service, although it's 
 
 Getting Started
 ---------------
+Prerequisites
+""""""""""""""
+We are always developing and testing against the latest python and django versions.
+
+- Python 3.6
+- Django 1.11
+- Elasticsearch
+
+Development
+''''''''''''''
+- SQLite
+
+PostgreSQL
+''''''''''''''
+- PostgreSQL
+- Haystack
+
+
 Installing
 """"""""""""""
 1. Install django-ovp-core::
@@ -50,3 +68,7 @@ We use `SemVer <http://semver.org/>`_ for versioning. For the versions available
 License
 ---------------
 This project is licensed under the GNU GPLv3 License see the `LICENSE.md <https://github.com/OpenVolunteeringPlatform/django-ovp-users/blob/master/LICENSE.md>`_ file for details
+
+Thanks
+---------------
+A thanks for django-oscar for some great ideas for code structure.
