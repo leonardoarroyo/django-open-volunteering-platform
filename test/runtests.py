@@ -84,7 +84,7 @@ settings.configure(
     ALLOWED_HOSTS=[],
     INSTALLED_APPS=ALWAYS_INSTALLED_APPS + CUSTOM_INSTALLED_APPS,
     MIDDLEWARE_CLASSES=ALWAYS_MIDDLEWARE_CLASSES,
-    ROOT_URLCONF='urls',
+    ROOT_URLCONF='test.urls',
     DATABASES={
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
