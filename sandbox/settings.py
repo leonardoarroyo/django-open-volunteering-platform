@@ -138,3 +138,14 @@ REST_FRAMEWORK = {
         'rest_framework_csv.renderers.CSVRenderer',
     )
 }
+
+
+# Haystack
+
+HAYSTACK_CONNECTIONS={
+'default': {
+  'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+  'PATH': os.path.join('/tmp', 'whoosh_index'),
+  },
+}
+HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor'
