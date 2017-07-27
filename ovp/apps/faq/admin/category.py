@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 
-from ovp_faq.models import Category
+from ovp.apps.faq.models import Category
 
 class CategoryAdmin(admin.ModelAdmin):
 	list_display = ['id', 'name']

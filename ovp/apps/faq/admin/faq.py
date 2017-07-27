@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 
-from ovp_faq.models import Faq
+from ovp.apps.faq.models import Faq
 
 class FaqAdmin(admin.ModelAdmin):
 	list_display = ['id', 'question']

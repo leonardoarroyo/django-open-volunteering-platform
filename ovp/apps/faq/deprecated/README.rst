@@ -25,7 +25,7 @@ To test this module
 
 ::
 
-  python ovp_faq/tests/runtests.py
+  python faq/tests/runtests.py
 
 Contributing
 ---------------

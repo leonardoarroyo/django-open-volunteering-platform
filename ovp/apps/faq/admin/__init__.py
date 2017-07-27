@@ -1,2 +1,2 @@
-import ovp_faq.admin.faq
-import ovp_faq.admin.category
+import ovp.apps.faq.admin.faq
+import ovp.apps.faq.admin.category

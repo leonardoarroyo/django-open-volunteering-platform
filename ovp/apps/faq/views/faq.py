@@ -1,5 +1,5 @@
-from ovp_faq.models.faq import Faq
-from ovp_faq.serializers.faq import Faq as faq_serializer
+from ovp.apps.faq.models.faq import Faq
+from ovp.apps.faq.serializers.faq import Faq as faq_serializer
 
 from rest_framework import decorators
 from rest_framework import mixins
@@ -18,10 +18,10 @@ class FaqResourceViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 	def list(self, request):
 		params = self.request.GET
 		category = params.get('category', None)
-		
+
 		if category is not None:
 			self.queryset = self.queryset.filter(category=category)
-		
+
 		serializer = faq_serializer(self.queryset, many=True)
 
 		return response.Response(serializer.data)

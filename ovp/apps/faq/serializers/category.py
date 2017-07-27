@@ -1,4 +1,4 @@
-from ovp_faq.models.category import Category
+from ovp.apps.faq.models.category import Category
 
 from rest_framework import serializers
 from rest_framework import exceptions

@@ -1,5 +1,5 @@
-from ovp_faq.models.faq import Faq
-from ovp_faq.serializers.category import CategoryFaqRetrieveSerializer
+from ovp.apps.faq.models.faq import Faq
+from ovp.apps.faq.serializers.category import CategoryFaqRetrieveSerializer
 
 from rest_framework import serializers
 from rest_framework import exceptions
