@@ -3,6 +3,7 @@ Open Volunteering Platform
 ==========
 
 .. image:: https://img.shields.io/codeship/790495b0-551b-0135-2d95-0a077cc55315/master.svg?style=flat-square
+  :target: https://app.codeship.com/projects/235535
 .. image:: https://img.shields.io/codecov/c/github/OpenVolunteeringPlatform/django-open-volunteering-platform.svg?style=flat-square
   :target: https://codecov.io/gh/OpenVolunteeringPlatform/django-open-volunteering-platform
 .. image:: https://img.shields.io/pypi/v/ovp-open-volunteering-platform.svg?style=flat-square
