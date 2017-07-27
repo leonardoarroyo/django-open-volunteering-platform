@@ -6,6 +6,7 @@ import ovp.apps.users.urls
 import ovp.apps.projects.urls
 import ovp.apps.organizations.urls
 import ovp.apps.search.urls
+import ovp.apps.faq.urls
 
 urlpatterns = [
   # Core
@@ -25,5 +26,8 @@ urlpatterns = [
 
   # Search
   url(r'^', include(ovp.apps.search.urls)),
+
+  # FAQ
+  url(r'^', include(ovp.apps.faq.urls)),
 ]
 
