@@ -8,6 +8,7 @@ from ovp.apps.core import helpers
 
 import os
 import requests
+import vcr
 
 class AddressComponentType(models.Model):
   name = models.CharField(max_length=100)
@@ -113,7 +114,8 @@ def update_address(sender, instance, **kwargs):
   if key: #pragma: no cover
     url = '{}&key={}'.format(url, key)
 
-  r = requests.get(url)
+  with vcr.use_cassette("/tmp/google-address", record_mode="new_episodes"):
+    r = requests.get(url)
   data = r.json()
 
   # Iterate through address components
@@ -156,4 +158,3 @@ def update_address(sender, instance, **kwargs):
 
     # Using update to avoid post_save signal
     GoogleAddress.objects.filter(pk=instance.pk).update(address_line=instance.get_address(), city_state=instance.get_city_state())
-    #update_searchindex(instance)
