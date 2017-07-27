@@ -2,11 +2,11 @@
 Open Volunteering Platform
 ==========
 
-.. image:: https://img.shields.io/codeship/38278120-748d-0134-a972-3a52ed362f75/master.svg?style=flat-square
-.. image:: https://img.shields.io/codecov/c/github/OpenVolunteeringPlatform/django-ovp-core.svg?style=flat-square
-  :target: https://codecov.io/gh/OpenVolunteeringPlatform/django-ovp-core
-.. image:: https://img.shields.io/pypi/v/ovp-core.svg?style=flat-square
-  :target: https://pypi.python.org/pypi/ovp-core/
+.. image:: https://img.shields.io/codeship/790495b0-551b-0135-2d95-0a077cc55315/master.svg?style=flat-square
+.. image:: https://img.shields.io/codecov/c/github/OpenVolunteeringPlatform/django-open-volunteering-platform.svg?style=flat-square
+  :target: https://codecov.io/gh/OpenVolunteeringPlatform/django-open-volunteering-platform
+.. image:: https://img.shields.io/pypi/v/ovp-open-volunteering-platform.svg?style=flat-square
+  :target: https://pypi.python.org/pypi/ovp-open-volunteering-platform/
 
 django-open-volunteering-platform is a free and opensource django backend for developing volunteering platforms. It has users, organizations, projects and more baked in. 
 We currently don't have a standard front-end for our API service, although it's something we're looking forward to building.
