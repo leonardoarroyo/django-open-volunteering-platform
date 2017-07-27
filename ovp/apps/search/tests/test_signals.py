@@ -2,12 +2,12 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.core.management import call_command
 
-from ovp_users.models import User
-from ovp_users.models.profile import get_profile_model
-from ovp_projects.models import Project, Job, Work
-from ovp_organizations.models import Organization
-from ovp_core.models import GoogleAddress, Cause, Skill
-from ovp_search.helpers import whoosh_raw
+from ovp.apps.users.models import User
+from ovp.apps.users.models.profile import get_profile_model
+from ovp.apps.projects.models import Project, Job, Work
+from ovp.apps.organizations.models import Organization
+from ovp.apps.core.models import GoogleAddress, Cause, Skill
+from ovp.apps.search.helpers import whoosh_raw
 
 from haystack.query import SearchQuerySet
 

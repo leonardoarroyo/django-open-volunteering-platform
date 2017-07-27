@@ -1,10 +1,10 @@
 from haystack import indexes
 from django.db.models import Q
-from ovp_projects.models import Project, Work, Job
-from ovp_organizations.models import Organization
-from ovp_core.models import GoogleAddress, SimpleAddress
-from ovp_users.models import User
-from ovp_users.models.profile import get_profile_model
+from ovp.apps.projects.models import Project, Work, Job
+from ovp.apps.organizations.models import Organization
+from ovp.apps.core.models import GoogleAddress, SimpleAddress
+from ovp.apps.users.models import User
+from ovp.apps.users.models.profile import get_profile_model
 
 """
 Mixins(used by multiple indexes)

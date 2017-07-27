@@ -1,6 +1,6 @@
 from django.conf.urls import url, include
 from rest_framework import routers
-from ovp_search import views
+from ovp.apps.search import views
 
 
 project_search = routers.SimpleRouter()

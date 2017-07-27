@@ -1,11 +1,11 @@
 from django.db import models
 from haystack import signals
 
-from ovp_projects.models import Project, Job, Work
-from ovp_organizations.models import Organization
-from ovp_core.models import GoogleAddress
-from ovp_users.models import User
-from ovp_users.models.profile import get_profile_model
+from ovp.apps.projects.models import Project, Job, Work
+from ovp.apps.organizations.models import Organization
+from ovp.apps.core.models import GoogleAddress
+from ovp.apps.users.models import User
+from ovp.apps.users.models.profile import get_profile_model
 
 
 class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):

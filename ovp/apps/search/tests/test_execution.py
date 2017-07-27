@@ -1,4 +1,4 @@
-import ovp_search.apps
+import ovp.apps.search.apps
 from django.test import TestCase
 from django.core.management import call_command
 

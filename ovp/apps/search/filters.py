@@ -1,4 +1,4 @@
-from ovp_search import helpers
+from ovp.apps.search import helpers
 from haystack.query import SQ
 
 from rest_framework.filters import OrderingFilter

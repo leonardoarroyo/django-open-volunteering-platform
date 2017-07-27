@@ -6,11 +6,11 @@ from django.core.cache import cache
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
-from ovp_users.models import User
-from ovp_users.models.profile import get_profile_model
-from ovp_projects.models import Project, Job
-from ovp_organizations.models import Organization
-from ovp_core.models import GoogleAddress, Cause, Skill
+from ovp.apps.users.models import User
+from ovp.apps.users.models.profile import get_profile_model
+from ovp.apps.projects.models import Project, Job
+from ovp.apps.organizations.models import Organization
+from ovp.apps.core.models import GoogleAddress, Cause, Skill
 
 import json
 

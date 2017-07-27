@@ -14,12 +14,12 @@ sys.path.insert(0, os.path.abspath(os.path.join(BASE_DIR, '../..')))
 # Unfortunately, apps can not be installed via ``modify_settings``
 # decorator, because it would miss the database setup.
 CUSTOM_INSTALLED_APPS = (
-    'ovp_core',
-    'ovp_users',
+    'ovp.apps.core',
+    'ovp.apps.users',
     'ovp_uploads',
-    'ovp_projects',
-    'ovp_organizations',
-    'ovp_search',
+    'ovp.apps.projects',
+    'ovp.apps.organizations',
+    'ovp.apps.search',
     'haystack',
     'django.contrib.admin',
 )
@@ -75,7 +75,7 @@ settings.configure(
     ALLOWED_HOSTS=[],
     INSTALLED_APPS=ALWAYS_INSTALLED_APPS + CUSTOM_INSTALLED_APPS,
     MIDDLEWARE_CLASSES=ALWAYS_MIDDLEWARE_CLASSES,
-    ROOT_URLCONF='ovp_search.urls',
+    ROOT_URLCONF='ovp.apps.search.urls',
     DATABASES={
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -117,7 +117,7 @@ settings.configure(
       'PATH': os.path.join('/tmp', 'whoosh_index'),
       },
     },
-    HAYSTACK_SIGNAL_PROCESSOR='ovp_search.signals.TiedModelRealtimeSignalProcessor',
+    HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor',
 )
 
 django.setup()

@@ -1,17 +1,17 @@
 from django.core.exceptions import PermissionDenied
 
-from ovp_projects.serializers.project import ProjectSearchSerializer
-from ovp_projects.models import Project
+from ovp.apps.projects.serializers.project import ProjectSearchSerializer
+from ovp.apps.projects.models import Project
 
-from ovp_organizations.models import Organization
-from ovp_organizations.serializers import OrganizationSearchSerializer
+from ovp.apps.organizations.models import Organization
+from ovp.apps.organizations.serializers import OrganizationSearchSerializer
 
-from ovp_users.models.user import User
-from ovp_users.serializers.user import get_user_search_serializer
-from ovp_users.models.profile import get_profile_model, UserProfile
+from ovp.apps.users.models.user import User
+from ovp.apps.users.serializers.user import get_user_search_serializer
+from ovp.apps.users.models.profile import get_profile_model, UserProfile
 
-from ovp_search import helpers
-from ovp_search import filters
+from ovp.apps.search import helpers
+from ovp.apps.search import filters
 
 from django.core.cache import cache
 
@@ -73,7 +73,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     base_queryset = base_queryset if closed_clause else base_queryset.filter(closed=False)
     if len(pks) > 0:
       return base_queryset.filter(pk__in=pks)
-    
+
     return base_queryset.filter(pk__in=[])
 
   def get_queryset(self):
@@ -112,7 +112,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
         result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes').select_related('address', 'owner').filter(organization__in=org)
       else:
         result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes').select_related('address', 'owner')
-      
+
       result = filters.filter_out(result, "PROJECTS")
       cache.set(key, result, cache_ttl)
 
