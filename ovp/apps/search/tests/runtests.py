@@ -9,20 +9,18 @@ from django.core.management import execute_from_command_line
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-sys.path.insert(0, (os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))))
+sys.path.insert(0, os.path.abspath(os.path.join(BASE_DIR, '../..')))
 
 # Unfortunately, apps can not be installed via ``modify_settings``
 # decorator, because it would miss the database setup.
 CUSTOM_INSTALLED_APPS = (
     'ovp.apps.core',
-    'ovp.apps.uploads',
     'ovp.apps.users',
+    'ovp_uploads',
     'ovp.apps.projects',
     'ovp.apps.organizations',
     'ovp.apps.search',
-    'ovp.apps.faq',
     'haystack',
-    'vinaigrette',
     'django.contrib.admin',
 )
 
@@ -51,10 +49,6 @@ REST_FRAMEWORK = {
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-    ),
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework_csv.renderers.CSVRenderer',
     )
 }
 
@@ -73,27 +67,20 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-gettext = lambda s: s
 
 settings.configure(
     SECRET_KEY="django_tests_secret_key",
-    DEFAULT_FILE_STORAGE="django.core.files.storage.FileSystemStorage",
-    MEDIA_ROOT="/tmp",
     DEBUG=False,
     TEMPLATE_DEBUG=False,
     ALLOWED_HOSTS=[],
     INSTALLED_APPS=ALWAYS_INSTALLED_APPS + CUSTOM_INSTALLED_APPS,
     MIDDLEWARE_CLASSES=ALWAYS_MIDDLEWARE_CLASSES,
-    ROOT_URLCONF='urls',
+    ROOT_URLCONF='ovp.apps.search.urls',
     DATABASES={
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
         }
     },
-    LANGUAGES = (
-      ('en-us', gettext('English')),
-      ('pt-br', gettext('Portuguese')),
-    ),
     LANGUAGE_CODE='en-us',
     TIME_ZONE='UTC',
     USE_I18N=True,
@@ -124,10 +111,6 @@ settings.configure(
     DEFAULT_SEND_EMAIL='sync',
     REST_FRAMEWORK=REST_FRAMEWORK,
     AUTH_PASSWORD_VALIDATORS=AUTH_PASSWORD_VALIDATORS,
-    AUTH_USER_MODEL='users.User',
-    OVP_CORE={
-      'VALID_CONTACT_RECIPIENTS': ['testemail@1.com', 'testemail@2.com']
-    },
     HAYSTACK_CONNECTIONS={
     'default': {
       'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
@@ -139,15 +122,8 @@ settings.configure(
 
 django.setup()
 args = [sys.argv[0], 'test']
-test_cases = [
-  'ovp.apps.core',
-  'ovp.apps.uploads',
-  'ovp.apps.users',
-  'ovp.apps.organizations',
-  'ovp.apps.projects',
-  'ovp.apps.search',
-  'ovp.apps.faq',
-]
+# Current module (``tests``) and its submodules.
+test_cases = '.'
 
 # Allow accessing test options from the command line.
 offset = 1
@@ -158,10 +134,12 @@ except IndexError:
 else: #pragma: no cover
     option = sys.argv[1].startswith('-')
     if not option:
-        test_cases = sys.argv[1:]
+        test_cases = sys.argv[1]
+        offset = 2
 
-args.extend(test_cases)
+args.append(test_cases)
 # ``verbosity`` can be overwritten from command line.
 args.append('--verbosity=2')
+args.extend(sys.argv[offset:])
 
 execute_from_command_line(args)
