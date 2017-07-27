@@ -133,7 +133,7 @@ test_cases = [
   'ovp.apps.core',
   'ovp.apps.uploads',
   'ovp.apps.users',
-  #'ovp.apps.organizations',
+  'ovp.apps.organizations',
   'ovp.apps.projects',
 ]
 
