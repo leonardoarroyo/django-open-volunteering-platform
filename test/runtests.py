@@ -22,6 +22,7 @@ CUSTOM_INSTALLED_APPS = (
     'ovp.apps.organizations',
     'ovp.apps.search',
     'ovp.apps.faq',
+    'ovp.apps.channels',
     'haystack',
     'vinaigrette',
     'django.contrib.admin',
@@ -148,6 +149,7 @@ test_cases = [
   'ovp.apps.projects',
   'ovp.apps.search',
   'ovp.apps.faq',
+  'ovp.apps.channels',
 ]
 
 # Allow accessing test options from the command line.
