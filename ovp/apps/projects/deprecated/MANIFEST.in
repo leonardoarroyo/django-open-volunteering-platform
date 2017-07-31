@@ -1,4 +1,0 @@
-include LICENSE.md
-include MANIFEST.in
-include README.rst
-recursive-include ovp.apps.projects *
