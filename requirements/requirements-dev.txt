@@ -1,5 +1,5 @@
 -r requirements-project.txt
-django == 1.10.5
+django >= 1.11.3
 pudb
 django-extensions
 coverage
