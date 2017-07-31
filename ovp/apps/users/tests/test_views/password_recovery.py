@@ -165,7 +165,7 @@ class RecoverPasswordViewSetTestCase(TestCase):
     self.assertTrue(response.status_code == 400)
 
     create_token('test_can_recover_password@test.com')
-    response = client.post(reverse('recover-password-list'), {'new_password': 'newest_password', 'token': PasswordRecoveryToken.objects.last().token}, format="json")
+    response = client.post(reverse('recover-password-list'), {'new_password': 'an_entirely_different_pw', 'token': PasswordRecoveryToken.objects.last().token}, format="json")
     self.assertTrue(response.status_code == 200)
 
     create_token('test_can_recover_password@test.com')
