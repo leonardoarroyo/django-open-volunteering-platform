@@ -29,6 +29,7 @@ class ProjectAdmin(admin.ModelAdmin, CountryFilterMixin):
 
     'address',
     'image',
+    'categories',
 
     ('created_date', 'modified_date'),
 

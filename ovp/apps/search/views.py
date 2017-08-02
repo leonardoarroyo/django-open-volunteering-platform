@@ -87,6 +87,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       query = params.get('query', None)
       cause = params.get('cause', None)
       skill = params.get('skill', None)
+      category = params.get('category', None)
       address = params.get('address', None)
       highlighted = (params.get('highlighted') == 'true')
       name = params.get('name', None)
@@ -102,16 +103,17 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_name(queryset, name)
       queryset = filters.by_skills(queryset, skill)
       queryset = filters.by_causes(queryset, cause)
+      queryset = filters.by_categories(queryset, category)
 
       result_keys = [q.pk for q in queryset]
       if not_organization:
         org = [o for o in not_organization.split(',')]
-        result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'job__dates').select_related('address', 'owner', 'work', 'job').exclude(organization__in=org)
+        result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'categories', 'job__dates').select_related('address', 'owner', 'work', 'job').exclude(organization__in=org)
       elif organization:
         org = [o for o in organization.split(',')]
-        result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'job__dates').select_related('address', 'owner', 'work', 'job').filter(organization__in=org)
+        result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'categories', 'job__dates').select_related('address', 'owner', 'work', 'job').filter(organization__in=org)
       else:
-        result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'job__dates').select_related('address', 'owner', 'work', 'job')
+        result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'categories', 'job__dates').select_related('address', 'owner', 'work', 'job')
 
       result = filters.filter_out(result, "PROJECTS")
       cache.set(key, result, cache_ttl)

@@ -87,6 +87,18 @@ def by_skills(queryset, skill_string=None):
   return queryset
 
 
+def by_categories(queryset, categories_string=None):
+  """ Filter queryset by a comma delimeted skill list """
+  if categories_string:
+    operator, items = get_operator_and_items(categories_string)
+    q_obj = SQ()
+    for c in items:
+      if len(c) > 0:
+        q_obj.add(SQ(categories=c), operator)
+    queryset = queryset.filter(q_obj)
+  return queryset
+
+
 def by_causes(queryset, cause_string=None):
   """ Filter queryset by a comma delimeted cause list """
   if cause_string:

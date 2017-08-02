@@ -1,4 +1,5 @@
 from django.conf.urls import url, include
+from django.contrib import admin
 
 import ovp.apps.core.urls
 import ovp.apps.uploads.urls
@@ -9,6 +10,9 @@ import ovp.apps.search.urls
 import ovp.apps.faq.urls
 
 urlpatterns = [
+  # Admin
+  url(r'^admin/', admin.site.urls),
+
   # Core
   url(r'^', include(ovp.apps.core.urls)),
 
