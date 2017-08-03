@@ -1,5 +1,5 @@
 from django.core.mail import EmailMultiAlternatives
-from django.template import Context, Template
+from django.template import Template
 from django.template.loader import get_template
 from django.conf import settings
 from django.utils import translation
@@ -34,7 +34,7 @@ class BaseMail:
     self.__setLocale()
     subject = get_email_subject(template_name, subject)
 
-    ctx = Context(inject_client_url(context))
+    ctx = inject_client_url(context)
     text_content = get_template('email/{}.txt'.format(template_name)).render(ctx)
     html_content = get_template('email/{}.html'.format(template_name)).render(ctx)
     self.__resetLocale()
