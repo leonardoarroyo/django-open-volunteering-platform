@@ -130,7 +130,7 @@ class ProjectSearchTestCase(TestCase):
     Test project search does only 4 queries
     """
     cache.clear()
-    with self.assertNumQueries(4):
+    with self.assertNumQueries(5):
       response = self.client.get(reverse("search-projects-list"), format="json")
 
   def test_query_gets_cached(self):
