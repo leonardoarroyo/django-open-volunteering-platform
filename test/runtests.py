@@ -43,7 +43,7 @@ ALWAYS_MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'ovp.apps.channels.middlewares.channel.ChannelMidleware',
+    'ovp.apps.channels.middlewares.channel.ChannelMiddleware',
 )
 
 REST_FRAMEWORK = {
@@ -86,7 +86,7 @@ settings.configure(
     TEMPLATE_DEBUG=False,
     ALLOWED_HOSTS=[],
     INSTALLED_APPS=ALWAYS_INSTALLED_APPS + CUSTOM_INSTALLED_APPS,
-    MIDDLEWARE_CLASSES=ALWAYS_MIDDLEWARE_CLASSES,
+    MIDDLEWARE=ALWAYS_MIDDLEWARE_CLASSES,
     ROOT_URLCONF='test.urls',
     DATABASES={
         'default': {

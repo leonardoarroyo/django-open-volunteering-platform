@@ -7,3 +7,4 @@ zlib and libjpeg
 set auth_user_model
 set authentication classes
 add csv renderer to settings
+add channel middleware
