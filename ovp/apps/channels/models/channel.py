@@ -5,7 +5,7 @@ class Channel(models.Model):
 	name = models.CharField(_('Name'), max_length=100)
 
 class ChannelRelationship(models.Model):
-  channels = models.ManyToManyField(Channel, related_name="channels")
+  channels = models.ManyToManyField(Channel, related_name="%(class)s_channels")
 
   class Meta:
     abstract = True
