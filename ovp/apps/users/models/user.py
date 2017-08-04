@@ -2,6 +2,8 @@ from ovp.apps.users import emails
 from ovp.apps.users.models.profile import get_profile_model
 from ovp.apps.users.models.password_history import PasswordHistory
 
+from ovp.apps.channels.models import ChannelRelationship
+
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
@@ -46,7 +48,7 @@ class UserManager(BaseUserManager):
   class Meta:
     app_label = 'ovp_user'
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
   uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
   email = models.EmailField(_('Email'), max_length=190, unique=True)
   name = models.CharField(_('Name'), max_length=200, null=False, blank=False)
