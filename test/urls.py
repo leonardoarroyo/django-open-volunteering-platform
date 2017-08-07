@@ -7,6 +7,7 @@ import ovp.apps.projects.urls
 import ovp.apps.organizations.urls
 import ovp.apps.search.urls
 import ovp.apps.faq.urls
+import ovp.apps.faq.urls
 
 urlpatterns = [
   # Core
@@ -29,5 +30,12 @@ urlpatterns = [
 
   # FAQ
   url(r'^', include(ovp.apps.faq.urls)),
+
 ]
 
+# Test urls
+# These should not be used in production
+import ovp.apps.channels.tests.helpers.urls
+urlpatterns += [
+  url(r'^', include(ovp.apps.channels.tests.helpers.urls))
+]

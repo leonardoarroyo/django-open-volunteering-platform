@@ -9,16 +9,19 @@ from ovp.apps.users.serializers.profile import get_profile_serializers
 from ovp.apps.users.serializers.profile import ProfileSearchSerializer
 from ovp.apps.users.validators import PasswordReuse
 from ovp.apps.users.decorators import expired_password
-from ovp.apps.uploads.serializers import UploadedImageSerializer
 
 from ovp.apps.projects.serializers.apply_user import ApplyUserRetrieveSerializer
 from ovp.apps.projects import models as model_project
+
+from ovp.apps.uploads.serializers import UploadedImageSerializer
+
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
 from rest_framework import serializers
 from rest_framework import permissions
 from rest_framework import fields
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(ChannelRelationshipSerializer):
   profile = get_profile_serializers()[0](required=False)
   slug = serializers.CharField(read_only=True)
   uuid = serializers.CharField(read_only=True)
@@ -47,7 +50,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     profile_data = validated_data.pop('profile', {})
 
     # Create user
-    user = models.User.objects.create(**validated_data)
+    user = super(UserCreateSerializer, self).create(validated_data)
 
     # Profile
     profile_data['user'] = user

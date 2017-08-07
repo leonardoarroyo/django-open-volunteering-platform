@@ -3,6 +3,7 @@ from ovp.apps.users.models.profile import get_profile_model
 from ovp.apps.users.models.password_history import PasswordHistory
 
 from ovp.apps.channels.models import ChannelRelationship
+from ovp.apps.channels.models.channel import ChannelRelationshipManager
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
@@ -23,7 +24,7 @@ from shortuuid.main import encode as encode_uuid
 from random import randint
 
 
-class UserManager(BaseUserManager):
+class UserManager(ChannelRelationshipManager, BaseUserManager):
   def create_user(self, email, password=None, **extra_fields):
     now = timezone.now()
     if not email:
