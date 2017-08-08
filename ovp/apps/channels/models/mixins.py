@@ -1,6 +1,6 @@
 from ovp.apps.channels.models import Channel
 
-class ChannelCreatorMixin():
+class MultiChannelCreatorMixin():
   """
   This mixin is used by ChannelRelationshipManager and ChannelRelationship.
 

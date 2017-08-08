@@ -2,8 +2,8 @@ from ovp.apps.users import emails
 from ovp.apps.users.models.profile import get_profile_model
 from ovp.apps.users.models.password_history import PasswordHistory
 
-from ovp.apps.channels.models import ChannelRelationship
-from ovp.apps.channels.models.manager import ChannelRelationshipManager
+from ovp.apps.channels.models import MultiChannelRelationship
+from ovp.apps.channels.models.manager import MultiChannelRelationshipManager
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
@@ -24,7 +24,7 @@ from shortuuid.main import encode as encode_uuid
 from random import randint
 
 
-class UserManager(ChannelRelationshipManager, BaseUserManager):
+class UserManager(MultiChannelRelationshipManager, BaseUserManager):
   def create_user(self, email, password=None, **extra_fields):
     now = timezone.now()
     if not email:
@@ -49,7 +49,7 @@ class UserManager(ChannelRelationshipManager, BaseUserManager):
   class Meta:
     app_label = 'ovp_user'
 
-class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
+class User(MultiChannelRelationship, AbstractBaseUser, PermissionsMixin):
   uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
   email = models.EmailField(_('Email'), max_length=190, unique=True)
   name = models.CharField(_('Name'), max_length=200, null=False, blank=False)

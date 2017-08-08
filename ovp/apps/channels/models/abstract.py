@@ -1,8 +1,8 @@
 from django.db import models
-from ovp.apps.channels.models.manager import ChannelRelationshipManager
-from ovp.apps.channels.models.mixins import ChannelCreatorMixin
+from ovp.apps.channels.models.manager import MultiChannelRelationshipManager
+from ovp.apps.channels.models.mixins import MultiChannelCreatorMixin
 
-class ChannelRelationship(ChannelCreatorMixin, models.Model):
+class MultiChannelRelationship(MultiChannelCreatorMixin, models.Model):
   """
   All models that are associated with channels should extend from this class
   or SingleChannelRelationship
@@ -16,7 +16,7 @@ class ChannelRelationship(ChannelCreatorMixin, models.Model):
   channels = models.ManyToManyField('channels.Channel', related_name="%(class)s_channels")
 
   # Manager
-  objects = ChannelRelationshipManager()
+  objects = MultiChannelRelationshipManager()
 
   class Meta:
     abstract = True
@@ -32,7 +32,7 @@ class ChannelRelationship(ChannelCreatorMixin, models.Model):
 
     channels, kwargs = self.pop_channels_from_kwargs(kwargs)
 
-    super(ChannelRelationship, self).save(*args, **kwargs)
+    super(MultiChannelRelationship, self).save(*args, **kwargs)
 
     if creating:
       self.associate_channels(self, channels)

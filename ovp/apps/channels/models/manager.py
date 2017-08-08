@@ -1,7 +1,7 @@
 from django.db import models
-from ovp.apps.channels.models.mixins import ChannelCreatorMixin
+from ovp.apps.channels.models.mixins import MultiChannelCreatorMixin
 
-class ChannelRelationshipManager(ChannelCreatorMixin, models.Manager):
+class MultiChannelRelationshipManager(MultiChannelCreatorMixin, models.Manager):
   """
   All models that extend from ChannelRelationship must have ChannelRelationshipManager
   or another manager that extends from it.
@@ -12,7 +12,7 @@ class ChannelRelationshipManager(ChannelCreatorMixin, models.Manager):
   def create(self, *args, **kwargs):
     channels, kwargs = self.pop_channels_from_kwargs(kwargs)
 
-    obj = super(ChannelRelationshipManager, self).create(*args, **kwargs)
+    obj = super(MultiChannelRelationshipManager, self).create(*args, **kwargs)
 
     # super().create will create the object with .save() and therefore
     # with default mixins, we clear it and associate the correct channels
