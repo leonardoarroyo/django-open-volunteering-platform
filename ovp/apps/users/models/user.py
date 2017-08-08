@@ -3,7 +3,7 @@ from ovp.apps.users.models.profile import get_profile_model
 from ovp.apps.users.models.password_history import PasswordHistory
 
 from ovp.apps.channels.models import ChannelRelationship
-from ovp.apps.channels.models.channel import ChannelRelationshipManager
+from ovp.apps.channels.models.manager import ChannelRelationshipManager
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
