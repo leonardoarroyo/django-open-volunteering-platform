@@ -9,6 +9,6 @@ from ovp.apps.users.models import User
 from ovp.apps.users.serializers import UserCreateSerializer
 
 @ChannelViewSet
-class ChannelDecoratorUserTestViewSet(CreateModelWithChannelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class ChannelUserTestViewSet(CreateModelWithChannelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
   queryset = User.objects.all().order_by("pk")
   serializer_class = UserCreateSerializer

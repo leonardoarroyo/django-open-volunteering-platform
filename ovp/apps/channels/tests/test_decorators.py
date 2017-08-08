@@ -5,7 +5,7 @@ from ovp.apps.users.models import User
 
 from ovp.apps.channels.models import Channel
 from ovp.apps.channels.middlewares.channel import ChannelMiddleware
-from ovp.apps.channels.tests.helpers.views import ChannelDecoratorUserTestViewSet
+from ovp.apps.channels.tests.helpers.views import ChannelUserTestViewSet
 
 
 class ChannelViewsetDecoratorTestCase(TestCase):
@@ -33,7 +33,7 @@ class ChannelViewsetDecoratorTestCase(TestCase):
 
     # Set up test view
     self.factory = RequestFactory()
-    self.cm = ChannelMiddleware(ChannelDecoratorUserTestViewSet.as_view({'get': 'list'})) # We also pass it through the middleware
+    self.cm = ChannelMiddleware(ChannelUserTestViewSet.as_view({'get': 'list'})) # We also pass it through the middleware
 
   def test_channels_restriction(self):
     self.request = self.factory.get("/test/")
