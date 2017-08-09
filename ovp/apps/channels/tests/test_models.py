@@ -3,7 +3,7 @@ from ovp.apps.channels.models import Channel
 from ovp.apps.projects.models import Project
 from ovp.apps.users.models import User
 
-class ChannelTestCase(TestCase):
+class MultiChannelTestCase(TestCase):
   def setUp(self):
     self.user = User(email="test@user.com", password="test_password")
     self.user.save()
@@ -59,3 +59,40 @@ class ChannelTestCase(TestCase):
     self.assertTrue(project.channels.first().slug == "default")
     self.assertTrue(project.channels.last().slug == "test-channel")
 
+
+class SingleChannelTestCase(TestCase):
+  def test_models_that_extend_single_channel_relationship_default_channel_on_save(self):
+    """ Assert models that extend SingleChannelRelationship model automatically get associated with default channel on save method """
+    user = User(email="test@user.com", password="test_password")
+    user.save()
+
+    self.assertTrue(user.channel.slug == "default")
+
+  def test_models_that_extend_single_channel_relationship_can_be_created_with_custom_channel_on_save(self):
+    """ Assert models that extend SingleChannelRelationship can be created with custom channel on save method """
+    Channel(name="Test", slug="test-channel").save()
+    user = User(email="test@user.com", password="test_password")
+    user.save(object_channels=["test-channel"])
+
+    self.assertTrue(user.channel.slug == "test-channel")
+
+  def test_models_that_extend_single_channel_relationship_default_channel_on_create(self):
+    """ Assert models that extend SingleChannelRelationship model automatically get associated with default channel on manager create method """
+    user = User.objects.create(email="test@user.com", password="test_password")
+    self.assertTrue(user.channel.slug == "default")
+
+  def test_models_that_extend_single_channel_relationship_can_be_created_with_custom_channel_on_create(self):
+    """ Assert models that extend SingleChannelRelationship can be created with custom channel on manager create method """
+    Channel(name="Test", slug="test-channel").save()
+    user = User.objects.create(email="test@user.com", password="test_password", object_channels=["test-channel"])
+    self.assertTrue(user.channel.slug == "test-channel")
+
+  def test_models_that_extend_single_channel_relationship_raise_exception_if_associated_with_multiple_channels(self):
+    """ Assert models that extend SingleChannelRelationship raise exception if associated_with_multiple_channels """
+    pass
+    # TODO: write testcase
+
+  def test_models_that_extend_single_channel_cant_associate_channel_directly(self):
+    """ Assert models that extend SingleChannelRelationship raise exception when trying to associate channel directly """
+    pass
+    # TODO: write testcase

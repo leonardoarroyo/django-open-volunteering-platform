@@ -47,3 +47,33 @@ class MultiChannelViewsetTestCase(TestCase):
     self.assertTrue(project.channels.count() == 2)
     self.assertTrue(project.channels.first().slug == "default")
     self.assertTrue(project.channels.last().slug == "test-channel")
+
+
+class SingleChannelViewsetTestCase(TestCase):
+  def setUp(self):
+    self.client = APIClient()
+    Channel(name="Test", slug="test-channel").save()
+
+  def test_requests_create_objects_on_default_channel(self):
+    """ Assert object defaults to default channel if no header is supplied """
+    data = {"name": "Valid Name", "email": "test@email.com", "password": "123456789abcdefg"}
+    response = self.client.post(reverse("test-users-list"), data, format="json")
+
+    user = User.objects.first()
+    self.assertTrue(user.channel.slug == "default")
+
+  def test_requests_create_objects_on_correct_channel(self):
+    """ Assert object are created on the correct channel if header is supplied """
+    data = {"name": "Valid Name", "email": "test@email.com", "password": "123456789abcdefg"}
+    response = self.client.post(reverse("test-users-list"), data, format="json", HTTP_X_OVP_CHANNELS="test-channel")
+
+    user = User.objects.first()
+    self.assertTrue(user.channel.slug == "test-channel")
+
+  def test_errors_on_multiple_channels(self):
+    """ Assert error is raised in case multiple channels are passed to single-channel resource  """
+    data = {"name": "Valid Name", "email": "test@email.com", "password": "123456789abcdefg"}
+    response = self.client.post(reverse("test-users-list"), data, format="json", HTTP_X_OVP_CHANNELS="test-channel")
+
+    user = User.objects.first()
+    self.assertTrue(user.channel.slug == "test-channel")
