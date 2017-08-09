@@ -1,0 +1,2 @@
+class UnexpectedMultipleChannelsError(Exception):
+  pass

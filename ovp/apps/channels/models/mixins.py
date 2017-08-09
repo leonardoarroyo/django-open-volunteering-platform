@@ -1,11 +1,13 @@
 from ovp.apps.channels.models import Channel
 
-class BaseChannelCreator():
+from ovp.apps.channels.exceptions import UnexpectedMultipleChannelsError
+
+class BaseChannelCreatorMixin():
   def pop_channels_from_kwargs(self, kwargs):
     return kwargs.pop("object_channels", ["default"]), kwargs
 
 
-class MultiChannelCreatorMixin(BaseChannelCreator):
+class MultiChannelCreatorMixin(BaseChannelCreatorMixin):
   """
   This mixin is used by MultiChannelRelationshipManager and MultiChannelRelationship.
 
@@ -16,7 +18,7 @@ class MultiChannelCreatorMixin(BaseChannelCreator):
       instance.channels.add(Channel.objects.get(slug=channel))
 
 
-class SingleChannelCreatorMixin(BaseChannelCreator):
+class SingleChannelCreatorMixin(BaseChannelCreatorMixin):
   """
   This mixin is used by SingleChannelRelationshipManager and SingleChannelRelationship.
 
@@ -26,8 +28,7 @@ class SingleChannelCreatorMixin(BaseChannelCreator):
     channels, kwargs = self.pop_channels_from_kwargs(kwargs)
 
     if len(channels) > 1:
-      pass
-      # TODO: Raise exception and test
+      raise UnexpectedMultipleChannelsError
 
     channel = Channel.objects.get(slug=channels[0])
 

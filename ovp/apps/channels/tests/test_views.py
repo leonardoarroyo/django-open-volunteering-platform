@@ -71,7 +71,7 @@ class SingleChannelViewsetTestCase(TestCase):
     self.assertTrue(user.channel.slug == "test-channel")
 
   def test_errors_on_multiple_channels(self):
-    """ Assert error is raised in case multiple channels are passed to single-channel resource  """
+    """ Assert error is raised in case multiple channels are passed to single-channel resource """
     data = {"name": "Valid Name", "email": "test@email.com", "password": "123456789abcdefg"}
     response = self.client.post(reverse("test-users-list"), data, format="json", HTTP_X_OVP_CHANNELS="test-channel")
 
