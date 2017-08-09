@@ -49,7 +49,7 @@ class UserManager(MultiChannelRelationshipManager, BaseUserManager):
   class Meta:
     app_label = 'ovp_user'
 
-class User(MultiChannelRelationship, AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
   uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
   email = models.EmailField(_('Email'), max_length=190, unique=True)
   name = models.CharField(_('Name'), max_length=200, null=False, blank=False)
