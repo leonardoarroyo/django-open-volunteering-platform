@@ -1,9 +1,14 @@
 from django.db import models
+
+from ovp.apps.channels.models.channel import Channel
+
 from ovp.apps.channels.models.manager import MultiChannelRelationshipManager
 from ovp.apps.channels.models.manager import SingleChannelRelationshipManager
 
 from ovp.apps.channels.models.mixins import MultiChannelCreatorMixin
 from ovp.apps.channels.models.mixins import SingleChannelCreatorMixin
+
+from ovp.apps.channels.exceptions import UnexpectedChannelAssociationError
 
 class MultiChannelRelationship(MultiChannelCreatorMixin, models.Model):
   """
@@ -16,7 +21,7 @@ class MultiChannelRelationship(MultiChannelCreatorMixin, models.Model):
     * Oerride the object manager so objects created with .objects.create() get
         associated with channels
   """
-  channels = models.ManyToManyField('channels.Channel', related_name="%(class)s_channels")
+  channels = models.ManyToManyField(Channel, related_name="%(class)s_channels")
 
   # Manager
   objects = MultiChannelRelationshipManager()
@@ -51,7 +56,7 @@ class SingleChannelRelationship(SingleChannelCreatorMixin, models.Model):
     * Oerride the object manager so objects created with .objects.create() get
         associated with a single channel
   """
-  channel = models.ForeignKey('channels.Channel', related_name="%(class)s_channel")
+  channel = models.ForeignKey(Channel, related_name="%(class)s_channel")
 
   # Manager
   objects = SingleChannelRelationshipManager()
@@ -65,7 +70,11 @@ class SingleChannelRelationship(SingleChannelCreatorMixin, models.Model):
     saved object.
     """
     if not self.pk:
-      channel, kwargs = self.pop_channel_as_object_from_kwargs(kwargs)
-      self.associate_channel(self, channel)
+      try:
+        self.channel
+        raise UnexpectedChannelAssociationError()
+      except Channel.DoesNotExist:
+        channel, kwargs = self.pop_channel_as_object_from_kwargs(kwargs)
+        self.associate_channel(self, channel)
 
     super(SingleChannelRelationship, self).save(*args, **kwargs)
