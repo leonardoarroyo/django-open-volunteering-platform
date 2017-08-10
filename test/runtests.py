@@ -138,6 +138,7 @@ settings.configure(
       },
     },
     HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor',
+    SILENCED_SYSTEM_CHECKS=["auth.E003"]
 )
 
 django.setup()

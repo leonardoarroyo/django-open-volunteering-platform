@@ -51,7 +51,7 @@ class UserManager(SingleChannelRelationshipManager, BaseUserManager):
 
 class User(SingleChannelRelationship, AbstractBaseUser, PermissionsMixin):
   uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-  email = models.EmailField(_('Email'), max_length=190, unique=True)
+  email = models.EmailField(_('Email'), max_length=190)
   name = models.CharField(_('Name'), max_length=200, null=False, blank=False)
   slug = models.SlugField(_('Slug'), max_length=100, null=True, blank=True, unique=True)
   phone = models.CharField(_('Phone'), max_length=30, null=True, blank=True)
@@ -78,6 +78,7 @@ class User(SingleChannelRelationship, AbstractBaseUser, PermissionsMixin):
     app_label = 'users'
     verbose_name = _('user')
     verbose_name_plural = _('users')
+    unique_together = (('email', 'channel'),)
 
   def __init__(self, *args, **kwargs):
     super(User, self).__init__(*args, **kwargs)

@@ -150,3 +150,7 @@ HAYSTACK_CONNECTIONS={
   },
 }
 HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor'
+
+# System checks
+
+SILENCED_SYSTEM_CHECKS = ["auth.E003"]
