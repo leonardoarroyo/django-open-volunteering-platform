@@ -24,15 +24,15 @@ class ChannelViewsetDecoratorTestCase(TestCase):
     user = User(email="test@default.com", password="abc")
     user.save()
 
-    project1 = Project.objects.create(name="test", owner=user, object_channels=["test-channel"])
+    project1 = Project.objects.create(name="test", owner=user)
     project1.save()
 
-    project2 = Project.objects.create(name="test", owner=user, object_channels=["test-channel"])
+    project2 = Project.objects.create(name="test", owner=user, object_channels=["channel1"])
     project2.save()
     project2.channels.clear()
     project2.channels.add(channel1)
 
-    project3 = Project.objects.create(name="test", owner=user, object_channels=["test-channel"])
+    project3 = Project.objects.create(name="test", owner=user, object_channels=["default", "channel1"])
     project3.save()
     project3.channels.add(channel1)
 

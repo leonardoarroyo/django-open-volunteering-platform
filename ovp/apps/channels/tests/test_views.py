@@ -76,3 +76,4 @@ class SingleChannelViewsetTestCase(TestCase):
     response = self.client.post(reverse("test-users-list"), data, format="json", HTTP_X_OVP_CHANNELS="test-channel;default")
 
     self.assertTrue(response.status_code == 400)
+    self.assertTrue(response.data == {"detail": "This is a single channel resource. You must specify only one channel in your request."})
