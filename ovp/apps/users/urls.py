@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from rest_framework import routers
-from rest_framework_jwt.views import obtain_jwt_token
 from ovp.apps.users import views
+from ovp.apps.users.auth.jwt import obtain_jwt_token
 
 router = routers.SimpleRouter()
 router.register(r'users', views.UserResourceViewSet, 'user')
@@ -11,5 +11,5 @@ router.register(r'public-users', views.PublicUserResourceViewSet, 'public-users'
 
 urlpatterns = [
   url(r'^', include(router.urls)),
-  url(r'^api-token-auth/', views.UserAuthView.as_view()),
+  url(r'^api-token-auth/', obtain_jwt_token, name='api-token-auth'),
 ]

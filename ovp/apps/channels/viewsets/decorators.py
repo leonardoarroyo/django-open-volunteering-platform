@@ -7,12 +7,13 @@ def MultiChannelViewSet(cls):
 
   Use for viewsets that handle a MultiChannel resource.
   """
-  get_queryset = cls.get_queryset
 
-  def func(self, *args, **kwargs):
-    return get_queryset(self, *args, **kwargs).filter(channels__slug__in = self.request.channels).distinct()
+  get_queryset = getattr(cls, "get_queryset", None)
+  if get_queryset:
+    def func(self, *args, **kwargs):
+      return get_queryset(self, *args, **kwargs).filter(channels__slug__in = self.request.channels).distinct()
 
-  cls.get_queryset = func
+    cls.get_queryset = func
 
   return cls
 
@@ -25,10 +26,11 @@ def SingleChannelViewSet(cls):
   Use for viewsets that handle a MultiChannel resource.
   """
   # Patch queryset
-  get_queryset = cls.get_queryset
-  def patched_get_queryset(self, *args, **kwargs):
-    return get_queryset(self, *args, **kwargs).filter(channel__slug = self.request.channels[0])
-  cls.get_queryset = patched_get_queryset
+  get_queryset = getattr(cls, "get_queryset", None)
+  if get_queryset:
+    def patched_get_queryset(self, *args, **kwargs):
+      return get_queryset(self, *args, **kwargs).filter(channel__slug = self.request.channels[0])
+    cls.get_queryset = patched_get_queryset
 
   # Channel amount verification
   initial = cls.initial

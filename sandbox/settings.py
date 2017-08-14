@@ -153,4 +153,8 @@ HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProces
 
 # System checks
 
-SILENCED_SYSTEM_CHECKS = ["auth.E003"]
+SILENCED_SYSTEM_CHECKS = ["auth.E003", "auth.W004"]
+
+# Authentication backends
+
+AUTHENTICATION_BACKENDS = ["ovp.apps.users.auth.backends.ChannelBasedAuthentication"]
