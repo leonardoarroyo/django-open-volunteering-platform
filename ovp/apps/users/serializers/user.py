@@ -41,6 +41,12 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
       except ValidationError as e:
         errors['password'] = list(e.messages)
 
+    if data.get('email'):
+      email = data.get('email', '')
+      users = models.User.objects.filter(email=email, channel__slug=self.context["request"].channels[0])
+      if users.count():
+        errors['email'] = "An user with this email is already registered."
+
     if errors:
       raise serializers.ValidationError(errors)
 
