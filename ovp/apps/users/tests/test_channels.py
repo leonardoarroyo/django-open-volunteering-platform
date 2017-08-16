@@ -6,6 +6,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from ovp.apps.users.models import User
+from ovp.apps.users.tests.helpers import create_user
 
 from ovp.apps.channels.models import Channel
 
@@ -36,7 +37,6 @@ class UserChannelsTestCase(TestCase):
     self.assertTrue(user1 != None)
     self.assertTrue(user2 != None)
 
-
   def test_user_channel_based_auth_view(self):
     """ Test user authentication on different channels """
     # Authenticate user one
@@ -58,3 +58,29 @@ class UserChannelsTestCase(TestCase):
     response = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNELS="wrong-channel")
     self.assertTrue(response.status_code == 400)
     self.assertTrue(response.data == {'non_field_errors': ['Unable to log in with provided credentials.']})
+
+  def test_channel_based_user_creation(self):
+    """ Test user channel based user creation """
+    create_user()
+    self.assertEqual(User.objects.last().channel.slug, "default")
+
+    create_user(headers={"HTTP_X_OVP_CHANNELS": "test-channel"})
+    self.assertEqual(User.objects.last().channel.slug, "test-channel")
+
+    response = create_user(headers={"HTTP_X_OVP_CHANNELS": "test-channel"})
+    self.assertEqual(response.data, {"email": ["An user with this email is already registered."]})
+
+  def test_channel_based_user_retrieval(self):
+    """ Test user channel based user retrieval """
+    self.test_channel_based_user_creation()
+    self.client.login(email="validemail@gmail.com", password="validpassword", channel="default")
+    response = self.client.get(reverse('user-current-user'), {}, format="json")
+    uuid1 = response.data["uuid"]
+
+    self.client.login(email="validemail@gmail.com", password="validpassword", channel="test-channel")
+    #response = self.client.get(reverse('user-current-user'), {}, format="json", HTTP_X_OVP_CHANNELS="test-channel")
+    # TODO: Require header
+    response = self.client.get(reverse('user-current-user'), {}, format="json")
+    uuid2 = response.data["uuid"]
+
+    self.assertTrue(uuid1 != uuid2)
