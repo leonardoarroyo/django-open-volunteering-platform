@@ -2,6 +2,8 @@ from ovp.apps.users import serializers
 from ovp.apps.users import models
 from ovp.apps.users import emails
 
+from ovp.apps.channels.viewsets.decorators import SingleChannelViewSet
+
 from rest_framework import decorators
 from rest_framework import mixins
 from rest_framework import response
@@ -9,6 +11,7 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import detail_route
 
+@SingleChannelViewSet
 class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
   """
   UserResourceViewSet resource endpoint
