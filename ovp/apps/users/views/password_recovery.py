@@ -7,6 +7,8 @@ from dateutil.relativedelta import relativedelta
 from ovp.apps.users import serializers
 from ovp.apps.users import models
 
+from ovp.apps.channels.viewsets.decorators import SingleChannelViewSet
+
 from rest_framework import response
 from rest_framework import status
 from rest_framework import viewsets
@@ -22,6 +24,7 @@ class RecoveryTokenFilter(filters.BaseFilterBackend):
     return ['email']
 
 
+@SingleChannelViewSet
 class RecoveryTokenViewSet(viewsets.GenericViewSet):
   """
   RecoveryToken resource endpoint
@@ -43,15 +46,14 @@ class RecoveryTokenViewSet(viewsets.GenericViewSet):
       limit = 5
       now = timezone.now()
       to_check = (now - relativedelta(hours=1)).replace(tzinfo=timezone.utc)
-      tokens = models.PasswordRecoveryToken.objects.filter(user=user, created_date__gte=to_check)
+      tokens = models.PasswordRecoveryToken.objects.filter(user=user, created_date__gte=to_check, channel__slug=request.channels[0])
 
       if tokens.count() >= limit:
         will_release = tokens.order_by('-created_date')[limit-1].created_date + relativedelta(hours=1)
         seconds = abs((will_release - now).seconds)
         return response.Response({'success': False, 'message': 'Five tokens generated last hour.', 'try_again_in': seconds}, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
-      token = models.PasswordRecoveryToken(user=user)
-      token.save()
+      token = models.PasswordRecoveryToken.objects.create(user=user, object_channels=request.channels)
 
     return response.Response({'success': True, 'message': 'Token requested successfully(if user exists).'})
 
@@ -64,6 +66,7 @@ class RecoverPasswordFilter(filters.BaseFilterBackend):
     return ['email']
 
 
+@SingleChannelViewSet
 class RecoverPasswordViewSet(viewsets.GenericViewSet):
   """
   RecoverPassword resource endpoint
