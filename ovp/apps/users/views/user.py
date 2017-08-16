@@ -1,25 +1,13 @@
 from ovp.apps.users import serializers
 from ovp.apps.users import models
 from ovp.apps.users import emails
-from ovp.apps.users.auth.jwt import obtain_jwt_token
-
-from ovp.apps.core.helpers import get_settings
 
 from rest_framework import decorators
 from rest_framework import mixins
 from rest_framework import response
 from rest_framework import viewsets
-from rest_framework.views import APIView
 from rest_framework import permissions
 from rest_framework.decorators import detail_route
-
-from rest_framework.test import APIRequestFactory
-
-
-import json
-
-from django.utils import timezone
-from dateutil.relativedelta import relativedelta
 
 class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
   """
