@@ -34,7 +34,7 @@ def authenticate(email='test_can_login@test.com', password='validpassword', **he
   return client.post('/api-token-auth/', data, format="json", **headers)
 
 
-def create_token(email='test@recovery.token', **headers):
+def create_token(email='test@recovery.token', headers={}):
   data = {
     'email': email,
   }
