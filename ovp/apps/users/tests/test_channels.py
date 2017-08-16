@@ -81,9 +81,7 @@ class UserChannelsTestCase(TestCase):
     uuid1 = response.data["uuid"]
 
     self.client.login(email="validemail@gmail.com", password="validpassword", channel="test-channel")
-    #response = self.client.get(reverse("user-current-user"), {}, format="json", HTTP_X_OVP_CHANNELS="test-channel")
-    # TODO: Require header
-    response = self.client.get(reverse("user-current-user"), {}, format="json")
+    response = self.client.get(reverse("user-current-user"), {}, format="json", HTTP_X_OVP_CHANNELS="test-channel")
     uuid2 = response.data["uuid"]
 
     self.assertTrue(uuid1 != uuid2)

@@ -13,7 +13,7 @@ def create_user(email="validemail@gmail.com", password="validpassword", extra_da
   return client.post(reverse('user-list'), data, format="json", **headers)
 
 
-def create_user_with_profile(email="validemail@gmail.com", password="validpassword", profile={}, **headers):
+def create_user_with_profile(email="validemail@gmail.com", password="validpassword", profile={}, headers={}):
   data = {
     'name': 'Valid Name',
     'email': email,
@@ -24,7 +24,7 @@ def create_user_with_profile(email="validemail@gmail.com", password="validpasswo
   client = APIClient()
   return client.post(reverse('user-list'), data, format="json", **headers)
 
-def authenticate(email='test_can_login@test.com', password='validpassword', **headers):
+def authenticate(email='test_can_login@test.com', password='validpassword', headers={}):
   data = {
     'email': email,
     'password': password
