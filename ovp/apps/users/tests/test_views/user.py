@@ -80,7 +80,7 @@ class UserResourceViewSetTestCase(TestCase):
     user = create_user('test_can_get_current_user@test.com', 'validpassword')
 
     client = APIClient()
-    client.login(username='test_can_get_current_user@test.com', password='validpassword')
+    client.login(username='test_can_get_current_user@test.com', password='validpassword', channel='default')
     response = client.get(reverse('user-current-user'), {}, format="json")
     self.assertTrue(response.data.get('email', None))
     self.assertTrue(response.data.get('name', None))
@@ -92,7 +92,7 @@ class UserResourceViewSetTestCase(TestCase):
     user = create_user('test_can_get_current_user@test.com', 'validpassword')
 
     client = APIClient()
-    client.login(username='test_can_get_current_user@test.com', password='validpassword')
+    client.login(username='test_can_get_current_user@test.com', password='validpassword', channel='default')
 
     response = client.get(reverse('user-current-user'), {}, format="json")
     self.assertTrue(response.data['expired_password'] == False)

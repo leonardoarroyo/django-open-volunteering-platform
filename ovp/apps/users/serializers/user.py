@@ -83,7 +83,7 @@ class UserUpdateSerializer(UserCreateSerializer):
       except ValidationError as e:
         errors['password'] = list(e.messages)
 
-      if not authenticate(email=self.context['request'].user.email, password=current_password):
+      if not authenticate(email=self.context['request'].user.email, password=current_password, channel=self.context["request"].channels[0]):
         errors['current_password'] = ["Invalid password."]
 
     if errors:
