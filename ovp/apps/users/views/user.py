@@ -98,7 +98,7 @@ class PublicUserResourceViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewS
 
   @detail_route(methods=['post'], url_path='send-message')
   def send_message(self, request, slug, pk=None):
-    self.email = self.queryset.get(slug=slug)
+    self.email = self.get_queryset().get(slug=slug)
     context = {
                 'message': request.data.get('message', None),
                 'from_name': request.user.name,
