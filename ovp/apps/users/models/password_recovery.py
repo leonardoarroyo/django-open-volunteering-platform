@@ -1,10 +1,12 @@
 import uuid
 
+from ovp.apps.channels.models import SingleChannelRelationship
+
 from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
 
-class PasswordRecoveryToken(models.Model):
+class PasswordRecoveryToken(SingleChannelRelationship, models.Model):
   user = models.ForeignKey('User', blank=True, null=True)
   token = models.CharField(_('Token'), max_length=128, null=False, blank=False)
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True, blank=True, null=True)
