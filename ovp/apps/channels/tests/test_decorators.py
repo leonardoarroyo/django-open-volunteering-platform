@@ -1,5 +1,8 @@
+from mock import Mock
+
 from django.test import TestCase
 from django.test.client import RequestFactory
+from django.contrib.auth.models import AnonymousUser
 
 from ovp.apps.users.models import User
 
@@ -42,15 +45,18 @@ class ChannelViewsetDecoratorTestCase(TestCase):
 
   def test_channels_restriction(self):
     self.request = self.factory.get("/test/")
+    self.request.user = AnonymousUser()
     response = self.cm(self.request)
     self.assertEqual(response.data["count"], 2)
 
     self.request = self.factory.get("/test/")
+    self.request.user = AnonymousUser()
     self.request.META["HTTP_X_OVP_CHANNELS"] = "channel1"
     response = self.cm(self.request)
     self.assertEqual(response.data["count"], 2)
 
     self.request = self.factory.get("/test/")
+    self.request.user = AnonymousUser()
     self.request.META["HTTP_X_OVP_CHANNELS"] = "default;channel1"
     response = self.cm(self.request)
     self.assertEqual(response.data["count"], 3)

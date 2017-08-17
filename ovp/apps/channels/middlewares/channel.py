@@ -49,10 +49,10 @@ class ChannelMiddleware():
 
     # Check user
     if not self._check_permissions(request):
-      return JsonResponse({"detail": "Invalid channel for user token."}, status=400)
-
-    # Process request
-    response = self.get_response(request)
+      response = JsonResponse({"detail": "Invalid channel for user token."}, status=400)
+    else:
+      # Process request
+      response = self.get_response(request)
 
     # Add channels header to response
     response["X-OVP-Channels"] = ";".join(self.channels)
