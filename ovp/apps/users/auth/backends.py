@@ -21,3 +21,7 @@ class ChannelBasedAuthentication(ModelBackend):
     else:
       if user.check_password(password) and self.user_can_authenticate(user):
         return user
+
+  def get_user(self, user_id):
+    return get_user_model().objects.first()
+

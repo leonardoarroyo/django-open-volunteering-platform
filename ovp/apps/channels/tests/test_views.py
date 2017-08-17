@@ -12,7 +12,7 @@ from ovp.apps.organizations.models import Organization
 
 from ovp.apps.users.models import User
 
-class MultiChannelViewsetTestCase(TestCase):
+class MultiChannelCreateViewsetTestCase(TestCase):
   """
   This test uses the Project model and a helper Project viewset
   to test ChannelRelationshipSerializer, but should be applicable
@@ -49,7 +49,7 @@ class MultiChannelViewsetTestCase(TestCase):
     self.assertTrue(project.channels.last().slug == "test-channel")
 
 
-class SingleChannelViewsetTestCase(TestCase):
+class SingleChannelCreateViewsetTestCase(TestCase):
   def setUp(self):
     self.client = APIClient()
     Channel(name="Test", slug="test-channel").save()
@@ -77,3 +77,26 @@ class SingleChannelViewsetTestCase(TestCase):
 
     self.assertTrue(response.status_code == 400)
     self.assertTrue(response.data == {"detail": "This is a single channel resource. You must specify only one channel in your request."})
+
+
+class ChannelPermissionsTestCase(TestCase):
+  """
+  This TestCase asserts an user can't access resources with an authentication from another channel
+  """
+  def setUp(self):
+    self.user = User.objects.create(email="sample_user@gmail.com", password="sample_user")
+    self.organization = Organization.objects.create(name="sample organization", owner=self.user)
+    self.data = {"name": "Valid Name", "details": "test details", "address": {"typed_address": "r. tecainda, 81, sao paulo"}, "disponibility": {"type": "work", "work": {"description": "abc"}}, "owner": self.user.pk, "organization": self.organization.pk}
+
+    self.client = APIClient()
+    self.client.login(email="sample_user@gmail.com", password="sample_user", channel="default")
+    Channel(name="Test", slug="test-channel").save()
+
+  def test_acessing_another_channel_resource(self):
+    """ Assert it's impossible to access another channel resource while authenticated """
+    response = self.client.post(reverse("test-projects-list"), self.data, format="json", HTTP_X_OVP_CHANNELS="test-channel")
+    self.assertEqual(response.status_code, 400)
+    self.assertEqual(response.content, b'{"detail": "Invalid channel for user token."}')
+
+    response = self.client.post(reverse("test-projects-list"), self.data, format="json", HTTP_X_OVP_CHANNELS="default")
+    self.assertEqual(response.status_code, 201)
