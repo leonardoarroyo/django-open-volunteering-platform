@@ -29,8 +29,11 @@ class ChannelMiddleware():
     self.get_response = get_response
 
   def _check_permissions(self, request):
-    if request.user.is_authenticated():
-      user_channel = request.user.channel.slug
+    # https://github.com/GetBlimp/django-rest-framework-jwt/issues/45
+    user = get_user_jwt(request)
+
+    if user.is_authenticated():
+      user_channel = user.channel.slug
       for slug in request.channels:
         # TODO: Parent channel implementation
         if slug != user_channel:

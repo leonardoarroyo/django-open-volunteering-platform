@@ -76,11 +76,11 @@ class UserChannelsTestCase(TestCase):
   def test_channel_based_user_retrieval(self):
     """ Test user channel based user retrieval """
     self.test_channel_based_user_creation()
-    self.client.login(email="validemail@gmail.com", password="validpassword", channel="default")
+    self.client.force_authenticate(User.objects.get(email="validemail@gmail.com", channel__slug="default"))
     response = self.client.get(reverse("user-current-user"), {}, format="json")
     uuid1 = response.data["uuid"]
 
-    self.client.login(email="validemail@gmail.com", password="validpassword", channel="test-channel")
+    self.client.force_authenticate(User.objects.get(email="validemail@gmail.com", channel__slug="test-channel"))
     response = self.client.get(reverse("user-current-user"), {}, format="json", HTTP_X_OVP_CHANNELS="test-channel")
     uuid2 = response.data["uuid"]
 

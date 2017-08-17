@@ -10,6 +10,7 @@ class ChannelMiddlewareTestCase(TestCase):
     self.factory = RequestFactory()
     self.request = self.factory.get("/startup/")
     self.request.user = Mock()
+    self.request.session = {}
 
   def test_default_channel_if_no_header_is_supplied(self):
     """ Assert requests defaults to default channel if no header is supplied """

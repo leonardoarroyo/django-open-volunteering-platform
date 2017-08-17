@@ -69,3 +69,6 @@ Createmodelmixin and channelrelationship should come before other objects on the
 avoid doing things manually:
 .get_queryset instead of Model.objects
 serializer.create() instead of model.create()
+
+
+don't use force authenticate if you're testing different channels

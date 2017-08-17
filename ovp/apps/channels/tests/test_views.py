@@ -89,14 +89,22 @@ class ChannelPermissionsTestCase(TestCase):
     self.data = {"name": "Valid Name", "details": "test details", "address": {"typed_address": "r. tecainda, 81, sao paulo"}, "disponibility": {"type": "work", "work": {"description": "abc"}}, "owner": self.user.pk, "organization": self.organization.pk}
 
     self.client = APIClient()
-    self.client.login(email="sample_user@gmail.com", password="sample_user", channel="default")
     Channel(name="Test", slug="test-channel").save()
 
-  def test_acessing_another_channel_resource(self):
+  def test_accessing_another_channel_resource(self):
     """ Assert it's impossible to access another channel resource while authenticated """
+    # Wrong request with jwt token
+    token = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNELS="default").data["token"]
+    response = self.client.post(reverse("test-projects-list"), self.data, format="json", HTTP_X_OVP_CHANNELS="test-channel", HTTP_AUTHORIZATION="JWT {}".format(token))
+    self.assertEqual(response.status_code, 400)
+    self.assertEqual(response.content, b'{"detail": "Invalid channel for user token."}')
+
+    # Wrong request with client login
+    self.client.login(email="sample_user@gmail.com", password="sample_user", channel="default")
     response = self.client.post(reverse("test-projects-list"), self.data, format="json", HTTP_X_OVP_CHANNELS="test-channel")
     self.assertEqual(response.status_code, 400)
     self.assertEqual(response.content, b'{"detail": "Invalid channel for user token."}')
 
+    # Correct request
     response = self.client.post(reverse("test-projects-list"), self.data, format="json", HTTP_X_OVP_CHANNELS="default")
     self.assertEqual(response.status_code, 201)
