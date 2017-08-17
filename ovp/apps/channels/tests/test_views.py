@@ -15,7 +15,7 @@ from ovp.apps.users.models import User
 class MultiChannelViewsetTestCase(TestCase):
   """
   This test uses the Project model and a helper Project viewset
-  to test CreateModelWithChannelMixin, but should be applicable
+  to test ChannelRelationshipSerializer, but should be applicable
   to any viewset that extends from it.
   """
   def setUp(self):

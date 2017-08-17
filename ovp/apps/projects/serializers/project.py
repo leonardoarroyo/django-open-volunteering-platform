@@ -13,10 +13,12 @@ from ovp.apps.core.helpers import get_address_serializers
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer, FullCauseSerializer
 from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
 
-from ovp.apps.uploads.serializers import UploadedImageSerializer
-
 from ovp.apps.organizations.serializers import OrganizationSearchSerializer
 from ovp.apps.organizations.models import Organization
+
+from ovp.apps.uploads.serializers import UploadedImageSerializer
+
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
 from ovp.apps.users.serializers import ShortUserPublicRetrieveSerializer, UserProjectRetrieveSerializer
 
@@ -41,7 +43,7 @@ def organization_validator(data):
 
 
 """ Serializers """
-class ProjectCreateUpdateSerializer(serializers.ModelSerializer):
+class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   address = address_serializers[0]()
   disponibility = DisponibilitySerializer()
   roles = VolunteerRoleSerializer(many=True, required=False)
@@ -68,7 +70,7 @@ class ProjectCreateUpdateSerializer(serializers.ModelSerializer):
     disp = validated_data.pop('disponibility', {})
 
     # Create project
-    project = models.Project.objects.create(**validated_data)
+    project = super(ProjectCreateUpdateSerializer, self).create(validated_data)
 
     # Roles
     for role_data in roles:
