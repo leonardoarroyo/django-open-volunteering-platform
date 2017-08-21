@@ -1,10 +1,18 @@
 from ovp.apps.channels.models import Channel
 
+from ovp.apps.channels.exceptions import UnexpectedChannelAssociationError
 from ovp.apps.channels.exceptions import UnexpectedMultipleChannelsError
+from ovp.apps.channels.exceptions import NoChannelSupplied
 
 class BaseChannelCreatorMixin():
   def pop_channels_from_kwargs(self, kwargs):
-    return kwargs.pop("object_channels", ["default"]), kwargs
+    """ Pop object_channels from kwargs, either from .save() or .manager.create() """
+    channels = kwargs.pop("object_channels", None)
+
+    if not channels:
+      raise NoChannelSupplied()
+
+    return channels, kwargs
 
 
 class MultiChannelCreatorMixin(BaseChannelCreatorMixin):
@@ -34,5 +42,29 @@ class SingleChannelCreatorMixin(BaseChannelCreatorMixin):
 
     return channel, kwargs
 
-  def associate_channel(self, instance, channel):
-    instance.channel = channel
+  def check_direct_channel_association_instance(self):
+    """
+    Check if it's not trying to directly associate a channel with the model
+    with obj.channel = channel, obj.save().
+
+    Use object_channels=[channel_slug] instead.
+    """
+    try:
+      self.channel
+      raise UnexpectedChannelAssociationError()
+    except Channel.DoesNotExist:
+      pass
+
+    return True
+
+  def check_direct_channel_association_kwargs(self, kwargs):
+    """
+    Check if it's not trying to directly associate a channel with the manager
+    create method: .manager.create(channel=channel).
+
+    Use object_channels=[channel_slug] instead.
+    """
+    if "channel" in kwargs:
+      raise UnexpectedChannelAssociationError()
+
+    return True

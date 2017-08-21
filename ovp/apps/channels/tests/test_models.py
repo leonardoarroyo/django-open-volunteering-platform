@@ -1,29 +1,32 @@
 from django.test import TestCase
 
 from ovp.apps.channels.models import Channel
-from ovp.apps.projects.models import Project
-
 from ovp.apps.channels.exceptions import UnexpectedMultipleChannelsError
 from ovp.apps.channels.exceptions import UnexpectedChannelAssociationError
+from ovp.apps.channels.exceptions import NoChannelSupplied
+
+from ovp.apps.projects.models import Project
 
 from ovp.apps.users.models import User
 
 class MultiChannelTestCase(TestCase):
   def setUp(self):
     self.user = User(email="test@user.com", password="test_password")
-    self.user.save()
+    self.user.save(object_channels=["default"])
 
   def test_migrations_create_default_channel(self):
-    self.assertTrue(Channel.objects.count() == 1)
-    self.assertTrue(Channel.objects.first().name == "default")
+    self.assertTrue(Channel.objects.count() == 2)
+    self.assertTrue(Channel.objects.first().name == "null")
+    self.assertTrue(Channel.objects.last().name == "default")
 
-  def test_models_that_extend_multi_channel_relationship_default_channel_on_save(self):
-    """ Assert models that extend MultiChannelRelationship model automatically get associated with default channel on save method """
+  def test_models_that_extend_multi_channel_relationship_raise_errors_if_no_channel_supplied_on_save(self):
+    """ Assert models that extend MultiChannelRelationship model raise errors if no object_channels is passed on save method """
     project = Project(name="test", owner=self.user)
-    project.save()
 
-    self.assertTrue(project.channels.all().count() == 1)
-    self.assertTrue(project.channels.first().slug == "default")
+    with self.assertRaises(NoChannelSupplied):
+      project.save()
+
+    self.assertEqual(Project.objects.count(), 0)
 
   def test_models_that_extend_multi_channel_relationship_can_be_created_with_custom_channels_on_save(self):
     """ Assert models that extend MultiChannelRelationship can be created with custom channels on save method """
@@ -42,12 +45,12 @@ class MultiChannelTestCase(TestCase):
     self.assertTrue(project.channels.first().slug == "default")
     self.assertTrue(project.channels.last().slug == "test-channel")
 
-  def test_models_that_extend_multi_channel_relationship_default_channel_on_create(self):
-    """ Assert models that extend MultiChannelRelationship model automatically get associated with default channel on manager create method """
-    project = Project.objects.create(name="test", owner=self.user)
+  def test_models_that_extend_multi_channel_relationship_raise_errors_if_no_channel_supplied_on_create(self):
+    """ Assert models that extend MultiChannelRelationship model raise errors if no object_channels is passed on manager create method """
+    with self.assertRaises(NoChannelSupplied):
+      project = Project.objects.create(name="test", owner=self.user)
 
-    self.assertTrue(project.channels.all().count() == 1)
-    self.assertTrue(project.channels.first().slug == "default")
+    self.assertEqual(Project.objects.count(), 0)
 
   def test_models_that_extend_multi_channel_relationship_can_be_created_with_custom_channels_on_create(self):
     """ Assert models that extend MultiChannelRelationship can be created with custom channels on manager create method """
@@ -66,12 +69,13 @@ class MultiChannelTestCase(TestCase):
 
 
 class SingleChannelTestCase(TestCase):
-  def test_models_that_extend_single_channel_relationship_default_channel_on_save(self):
-    """ Assert models that extend SingleChannelRelationship model automatically get associated with default channel on save method """
+  def test_models_that_extend_single_channel_relationship_raise_error_if_no_channel_supplied_on_save(self):
+    """ Assert models that extend SingleChannelRelationship model raises error if no channel supplied on save method """
     user = User(email="test@user.com", password="test_password")
-    user.save()
+    with self.assertRaises(NoChannelSupplied):
+      user.save()
 
-    self.assertTrue(user.channel.slug == "default")
+    self.assertEqual(User.objects.count(), 0)
 
   def test_models_that_extend_single_channel_relationship_can_be_created_with_custom_channel_on_save(self):
     """ Assert models that extend SingleChannelRelationship can be created with custom channel on save method """
@@ -81,10 +85,12 @@ class SingleChannelTestCase(TestCase):
 
     self.assertTrue(user.channel.slug == "test-channel")
 
-  def test_models_that_extend_single_channel_relationship_default_channel_on_create(self):
-    """ Assert models that extend SingleChannelRelationship model automatically get associated with default channel on manager create method """
-    user = User.objects.create(email="test@user.com", password="test_password")
-    self.assertTrue(user.channel.slug == "default")
+  def test_models_that_extend_single_channel_relationship_raise_error_if_no_channel_supplied_on_create(self):
+    """ Assert models that extend SingleChannelRelationship model raises error if no channel supplied on manager create method """
+    with self.assertRaises(NoChannelSupplied):
+      user = User.objects.create(email="test@user.com", password="test_password")
+
+    self.assertEqual(User.objects.count(), 0)
 
   def test_models_that_extend_single_channel_relationship_can_be_created_with_custom_channel_on_create(self):
     """ Assert models that extend SingleChannelRelationship can be created with custom channel on manager create method """

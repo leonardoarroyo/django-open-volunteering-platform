@@ -9,7 +9,7 @@ class UnexpectedChannelAssociationError(Exception):
   def __init__(self):
     super(Exception, self).__init__("You can't associate a channel directly to single channel models. Pass object_channels to .save() or objects.create() method instead.")
 
-class NoChannelSuplied(Exception):
+class NoChannelSupplied(Exception):
   def __init__(self):
     super(Exception, self).__init__("A channel was expected but no channel was supplied.")
 

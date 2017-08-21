@@ -38,12 +38,12 @@ class MultiChannelRelationship(MultiChannelCreatorMixin, models.Model):
     if not self.pk:
       creating = True
 
-    channels, kwargs = self.pop_channels_from_kwargs(kwargs)
-
-    super(MultiChannelRelationship, self).save(*args, **kwargs)
-
     if creating:
+      channels, kwargs = self.pop_channels_from_kwargs(kwargs)
+      super(MultiChannelRelationship, self).save(*args, **kwargs)
       self.associate_channels(self, channels)
+    else:
+      super(MultiChannelRelationship, self).save(*args, **kwargs)
 
 
 class SingleChannelRelationship(SingleChannelCreatorMixin, models.Model):
@@ -70,11 +70,8 @@ class SingleChannelRelationship(SingleChannelCreatorMixin, models.Model):
     saved object.
     """
     if not self.pk:
-      try:
-        self.channel
-        raise UnexpectedChannelAssociationError()
-      except Channel.DoesNotExist:
-        channel, kwargs = self.pop_channel_as_object_from_kwargs(kwargs)
-        self.associate_channel(self, channel)
+      self.check_direct_channel_association_instance()
+      channel, kwargs = self.pop_channel_as_object_from_kwargs(kwargs)
+      self.channel = channel
 
     super(SingleChannelRelationship, self).save(*args, **kwargs)

@@ -6,8 +6,8 @@ from django.db import migrations
 
 def foward_func(apps, schema_editor):
     Channel = apps.get_model("channels", "Channel")
-    channel = Channel(name="default")
-    channel.save()
+    channel = Channel.objects.create(name="null", slug="null")
+    channel = Channel.objects.create(name="default", slug="default")
     return True
 
 def rewind_func(apps, schema_editor):
@@ -19,7 +19,7 @@ def rewind_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('channels', '0002_channel'),
+        ('channels', '0003_channel_slug'),
     ]
 
     operations = [

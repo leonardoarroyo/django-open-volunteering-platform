@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
-from ovp.apps.channels.exceptions import NoChannelSuplied
+from ovp.apps.channels.exceptions import NoChannelSupplied
 
 UserModel = get_user_model()
 
@@ -10,7 +10,7 @@ class ChannelBasedAuthentication(ModelBackend):
       username = kwargs.get(UserModel.USERNAME_FIELD)
 
     if channel is None:
-      raise NoChannelSuplied()
+      raise NoChannelSupplied()
 
     try:
       user = UserModel.objects.get(email=username, channel__slug=channel)
