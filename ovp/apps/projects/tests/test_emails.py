@@ -62,7 +62,7 @@ class TestEmailTriggers(TestCase):
 
     mail.outbox = [] # Mails sent before applying don't matter
     apply = Apply(project=project, user=volunteer, email=volunteer.email)
-    apply.save()
+    apply.save(object_channel="default")
 
     recipients = [x.to[0] for x in mail.outbox]
     subjects = [x.subject for x in mail.outbox]
@@ -84,7 +84,7 @@ class TestEmailTriggers(TestCase):
 
     mail.outbox = [] # Mails sent before applying don't matter
     apply = Apply(project=project, user=volunteer, email=volunteer.email)
-    apply.save()
+    apply.save(object_channel="default")
     apply.canceled = True
     apply.save()
 

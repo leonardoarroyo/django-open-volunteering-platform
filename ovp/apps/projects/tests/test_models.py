@@ -106,7 +106,7 @@ class VolunteerRoleModelTestCase(TestCase):
   def test_str_method_returns_role_info(self):
     """ Assert that VolunteerRole.__str__() method returns role info """
     role = VolunteerRole(name="test role", details="a", prerequisites="b", vacancies=5)
-    role.save()
+    role.save(object_channel="default")
 
     self.assertTrue(role.__str__() == "test role - a - b (5 vacancies)")
 
@@ -117,7 +117,7 @@ class VolunteerRoleModelTestCase(TestCase):
     role = VolunteerRole(name="test role", details="a", prerequisites="b", vacancies=5, project=project)
 
     self.assertTrue(Project.objects.last().max_applies_from_roles == 0)
-    role.save()
+    role.save(object_channel="default")
     self.assertTrue(Project.objects.last().max_applies_from_roles == 5)
     role.delete()
     self.assertTrue(Project.objects.last().max_applies_from_roles == 0)
@@ -127,8 +127,7 @@ class VolunteerRoleModelTestCase(TestCase):
 class WorkModelTestCase(TestCase):
   def test_str_method_returns_work_info(self):
     """ Assert that Work.__str__() method returns hours per week """
-    work = Work(weekly_hours=4, description="abc")
-    work.save()
+    work = Work.objects.create(weekly_hours=4, description="abc", object_channel="default")
 
     self.assertTrue(work.__str__() == "4 hours per week")
 
@@ -141,8 +140,7 @@ class JobModelTestCase(TestCase):
 
     start = timezone.now()
     end = timezone.now()
-    job = Job(start_date=start, end_date=end, project=project)
-    job.save()
+    job = Job.objects.create(start_date=start, end_date=end, project=project, object_channel="default")
 
     human_time = lambda x: x.strftime("%d/%m/%Y")
 
@@ -156,9 +154,9 @@ class JobDateModelTestCase(TestCase):
     end = timezone.now()
 
     job = Job()
-    job.save()
+    job.save(object_channel="default")
     date = JobDate(name="test", start_date=start, end_date=end, job=job)
-    date.save()
+    date.save(object_channel="default")
 
     human_time = lambda x: x.strftime("%d/%m/%Y %T")
 

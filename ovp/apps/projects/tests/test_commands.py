@@ -19,7 +19,7 @@ class TestCloseProjectsCommand(TestCase):
     p.save(object_channel="default")
 
     job = Job(start_date=timezone.now(), end_date=timezone.now(), project=p)
-    job.save()
+    job.save(object_channel="default")
 
     saved_stdout = sys.stdout
     try:

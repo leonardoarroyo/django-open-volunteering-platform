@@ -143,7 +143,7 @@ class Project(ChannelRelationship):
     verbose_name_plural = _('projects')
 
 
-class VolunteerRole(models.Model):
+class VolunteerRole(ChannelRelationship):
   """
   Volunteer role model
   """

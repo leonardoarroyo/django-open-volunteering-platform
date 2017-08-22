@@ -74,7 +74,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     # Roles
     for role_data in roles:
-      role_sr = VolunteerRoleSerializer(data=role_data)
+      role_sr = VolunteerRoleSerializer(data=role_data, context=self.context)
       role = role_sr.create(role_data)
       project.roles.add(role)
 
@@ -83,13 +83,13 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     if disp['type'] == 'work':
       work_data = disp['work']
       work_data['project'] = project
-      work_sr = WorkSerializer(data=work_data)
+      work_sr = WorkSerializer(data=work_data, context=self.context)
       work = work_sr.create(work_data)
 
     if disp['type'] == 'job':
       job_data = disp['job']
       job_data['project'] = project
-      job_sr = JobSerializer(data=job_data)
+      job_sr = JobSerializer(data=job_data, context=self.context)
       job = job_sr.create(job_data)
 
     # Associate causes
@@ -131,7 +131,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     if roles:
       instance.roles.clear()
       for role_data in roles:
-        role_sr = VolunteerRoleSerializer(data=role_data)
+        role_sr = VolunteerRoleSerializer(data=role_data, context=self.context)
         role = role_sr.create(role_data)
         instance.roles.add(role)
 
@@ -142,13 +142,13 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
       if disp['type'] == 'work':
         work_data = disp['work']
         work_data['project'] = instance
-        work_sr = WorkSerializer(data=work_data)
+        work_sr = WorkSerializer(data=work_data, context=self.context)
         work = work_sr.create(work_data)
 
       if disp['type'] == 'job':
         job_data = disp['job']
         job_data['project'] = instance
-        job_sr = JobSerializer(data=job_data)
+        job_sr = JobSerializer(data=job_data, context=self.context)
         job = job_sr.create(job_data)
 
     # Associate causes

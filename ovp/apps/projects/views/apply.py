@@ -2,6 +2,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
+from ovp.apps.channels.viewsets.decorators import ChannelViewSet
+
 from ovp.apps.projects.serializers import apply as serializers
 from ovp.apps.projects import models
 from ovp.apps.projects import helpers
@@ -13,6 +15,7 @@ from rest_framework import permissions
 from rest_framework import response
 from rest_framework import status
 
+@ChannelViewSet
 class ApplyResourceViewSet(viewsets.GenericViewSet):
   """
   ApplyResourceViewSet resource endpoint

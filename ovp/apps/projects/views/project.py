@@ -6,6 +6,8 @@ from ovp.apps.projects import helpers
 from ovp.apps.projects.permissions import ProjectCreateOwnsOrIsOrganizationMember
 from ovp.apps.projects.permissions import ProjectRetrieveOwnsOrIsOrganizationMember
 
+from ovp.apps.channels.viewsets.decorators import ChannelViewSet
+
 from ovp.apps.core.helpers.xls import Response as XLSResponse
 
 from rest_framework import decorators
@@ -20,8 +22,9 @@ from django.utils.translation import ugettext as _
 
 EXPORT_APPLIED_USERS_HEADERS = [
   _('User Name'), _('User Email'), _('User Phone'), _('Applied At'), _('Status')
-  ]
+]
 
+@ChannelViewSet
 class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
   """
   ProjectResourceViewSet resource endpoint

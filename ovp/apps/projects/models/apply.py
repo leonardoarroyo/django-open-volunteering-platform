@@ -4,6 +4,8 @@ from django.utils import timezone
 
 from ovp.apps.projects import emails
 
+from ovp.apps.channels.models.abstract import ChannelRelationship
+
 apply_status_choices = (
     ('applied', 'Applied'),
     ('unapplied', 'Canceled'),
@@ -11,7 +13,7 @@ apply_status_choices = (
     ('not-volunteer', 'Not a Volunteer'),
 )
 
-class Apply(models.Model):
+class Apply(ChannelRelationship):
   user = models.ForeignKey('users.User', blank=True, null=True, verbose_name=_('user'))
   project = models.ForeignKey('projects.Project', verbose_name=_('project'))
   status = models.CharField(_('status'), max_length=30, choices=apply_status_choices, default="applied")

@@ -17,7 +17,7 @@ class ChannelRelationship(ChannelCreatorMixin, models.Model):
     * Oerride the object manager so objects created with .objects.create() get
         associated with a single channel
   """
-  channel = models.ForeignKey(Channel, related_name="%(class)s_channel")
+  channel = models.ForeignKey(Channel, related_name="%(class)s_channel", blank=False, null=False)
 
   # Manager
   objects = ChannelRelationshipManager()
