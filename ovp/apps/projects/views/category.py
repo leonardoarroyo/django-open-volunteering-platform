@@ -17,5 +17,5 @@ class CategoryResourceViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet
 	queryset = models.Category.objects.all()
 
 	def list(self, request):
-		serializer = category.CategoryRetrieveSerializer(self.queryset, many=True)
+		serializer = category.CategoryRetrieveSerializer(self.get_queryset(), many=True)
 		return response.Response(serializer.data)

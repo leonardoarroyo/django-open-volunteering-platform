@@ -6,7 +6,6 @@ from django.db import migrations
 
 def foward_func(apps, schema_editor):
     Channel = apps.get_model("channels", "Channel")
-    channel = Channel.objects.create(name="null", slug="null")
     channel = Channel.objects.create(name="default", slug="default")
     return True
 

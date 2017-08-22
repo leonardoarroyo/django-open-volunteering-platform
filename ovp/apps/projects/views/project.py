@@ -84,7 +84,7 @@ class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
 
   @decorators.list_route(['GET'])
   def manageable(self, request, *args, **kwargs):
-    projects = models.Project.objects.filter(Q(owner=request.user) | Q(organization__owner=request.user) | Q(organization__members=request.user))
+    projects = self.get_queryset().filter(Q(owner=request.user) | Q(organization__owner=request.user) | Q(organization__members=request.user))
 
     serializer = self.get_serializer_class()(projects, many=True, context=self.get_serializer_context())
     return response.Response(serializer.data)

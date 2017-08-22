@@ -121,4 +121,4 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
   def get_project_object(self, *args, **kwargs):
     slug=kwargs.get('project_slug')
 
-    return get_object_or_404(models.Project, slug=slug)
+    return get_object_or_404(models.Project, slug=slug, channel__slug=self.request.channel)
