@@ -21,7 +21,7 @@ class ChannelMiddleware():
   """
   This middleware is responsible for two things:
 
-  - Adding the channels slug to request object
+  - Adding the channel slug to request object
   - If the user is authenticated, only allow requests to resources from the same channel
 
   """
@@ -34,21 +34,18 @@ class ChannelMiddleware():
 
     if user.is_authenticated():
       user_channel = user.channel.slug
-      for slug in request.channels:
-        # TODO: Parent channel implementation
-        if slug != user_channel:
-          return False
+      if request.channel != user_channel:
+        return False
 
     return True
 
-  def _add_channels(self, request):
-    self.channels = [x.strip() for x in request.META.get("HTTP_X_OVP_CHANNELS", "default").split(";")]
-    request.channels = self.channels
+  def _add_channel(self, request):
+    request.channel = request.META.get("HTTP_X_OVP_CHANNEL", "default").strip()
     return request
 
   def __call__(self, request):
-    # Parse and add channels
-    request = self._add_channels(request)
+    # Parse and add channel
+    request = self._add_channel(request)
 
     # Check user
     if not self._check_permissions(request):
@@ -57,6 +54,6 @@ class ChannelMiddleware():
       # Process request
       response = self.get_response(request)
 
-    # Add channels header to response
-    response["X-OVP-Channels"] = ";".join(self.channels)
+    # Add channel header to response
+    response["X-OVP-Channel"] = request.channel
     return response

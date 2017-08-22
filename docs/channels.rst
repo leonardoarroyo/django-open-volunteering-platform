@@ -52,10 +52,10 @@ You can specify multiple channels when retrieving objects but you can't specify 
 pitfalls
 If you're going to modify the object manager, extend it fron ChannelRelationshipManager instead of models.Manager
 If you're overriding a serializer create method, you need to pass the channels object like so
-obj = Model.objects.create(\*args, \*\*kwargs, object_channels=["list"])
+obj = Model.objects.create(\*args, \*\*kwargs, object_channel="list")
 or
 obj = Model(\*args, \*\*kwargs)
-obj.save(object_channels=["list"])
+obj.save(object_channel="list")
 
 but ideally you wont do that
 normally you will extend ChannelRelationshipSerializer and use

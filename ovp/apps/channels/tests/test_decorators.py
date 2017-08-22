@@ -24,11 +24,11 @@ class ChannelViewsetDecoratorTestCase(TestCase):
     channel1.save()
 
     # Set up test projects
-    user = User.objects.create(email="test@default.com", password="abc", object_channels=["default"])
+    user = User.objects.create(email="test@default.com", password="abc", object_channel="default")
 
-    project1 = Project.objects.create(name="test", owner=user, object_channels=["default"])
-    project2 = Project.objects.create(name="test", owner=user, object_channels=["channel1"])
-    project2 = Project.objects.create(name="test", owner=user, object_channels=["channel1"])
+    project1 = Project.objects.create(name="test1", owner=user, object_channel="default")
+    project2 = Project.objects.create(name="test2", owner=user, object_channel="channel1")
+    project3 = Project.objects.create(name="test3", owner=user, object_channel="channel1")
 
     # Set up test view
     self.factory = RequestFactory()
@@ -46,6 +46,6 @@ class ChannelViewsetDecoratorTestCase(TestCase):
     self.assertEqual(response.data["count"], 1)
 
     request = self._generate_request()
-    request.META["HTTP_X_OVP_CHANNELS"] = "channel1"
+    request.META["HTTP_X_OVP_CHANNEL"] = "channel1"
     response = self.cm(request)
     self.assertEqual(response.data["count"], 2)

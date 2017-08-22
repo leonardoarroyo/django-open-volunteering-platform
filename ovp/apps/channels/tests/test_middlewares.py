@@ -14,22 +14,22 @@ class ChannelMiddlewareTestCase(TestCase):
 
   def test_default_channel_if_no_header_is_supplied(self):
     """ Assert requests defaults to default channel if no header is supplied """
-    request = self.cm._add_channels(self.request)
-    self.assertTrue(request.channels == ["default"])
+    request = self.cm._add_channel(self.request)
+    self.assertTrue(request.channel == "default")
 
-  def test_default_channels_included_in_response_header_no_channel_supplied(self):
+  def test_default_channel_included_in_response_header_no_channel_supplied(self):
     """ Assert response returns channel even without request header """
     response = self.cm(self.request)
-    self.assertTrue(response["X-OVP-Channels"] == "default")
+    self.assertTrue(response["X-OVP-Channel"] == "default")
 
-  def test_request_has_correct_channels_if_header_is_supplied(self):
-    """ Assert requests recognizes correct channels if header is supplied """
-    self.request.META["HTTP_X_OVP_CHANNELS"] = "test-channel-1 ; test-channel-2;  last-channel "
-    request = self.cm._add_channels(self.request)
-    self.assertTrue(request.channels == ["test-channel-1", "test-channel-2", "last-channel"])
+  def test_request_has_correct_channel_if_header_is_supplied(self):
+    """ Assert requests recognizes correct channel if header is supplied """
+    self.request.META["HTTP_X_OVP_CHANNEL"] = "test-channel-1"
+    request = self.cm._add_channel(self.request)
+    self.assertTrue(request.channel == "test-channel-1")
 
-  def test_correct_channels_included_in_response_header_if_channel_supplied(self):
-    """ Assert response returns channels if channel is supplied on request """
-    self.request.META["HTTP_X_OVP_CHANNELS"] = "test-channel-1 ; test-channel-2;  last-channel "
+  def test_correct_channel_included_in_response_header_if_channel_supplied(self):
+    """ Assert response returns channel if channel is supplied on request """
+    self.request.META["HTTP_X_OVP_CHANNEL"] = "test-channel-1"
     response = self.cm(self.request)
-    self.assertTrue(response["X-OVP-Channels"] == "test-channel-1;test-channel-2;last-channel")
+    self.assertTrue(response["X-OVP-Channel"] == "test-channel-1")

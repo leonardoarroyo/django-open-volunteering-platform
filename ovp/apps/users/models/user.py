@@ -130,4 +130,4 @@ def update_history(sender, instance, raw=False, **kwargs):
   last_password = PasswordHistory.objects.filter(user=instance, channel=instance.channel).last()
 
   if not last_password or last_password.hashed_password != instance.password:
-    PasswordHistory(hashed_password=instance.password, user=instance).save(object_channels=[instance.channel.slug])
+    PasswordHistory(hashed_password=instance.password, user=instance).save(object_channel=instance.channel.slug)

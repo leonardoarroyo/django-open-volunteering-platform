@@ -13,10 +13,10 @@ from ovp.apps.projects.management.commands.close_finished_projects import Comman
 class TestCloseProjectsCommand(TestCase):
   def test_close_finished_projects(self):
     """Test close_finished_projects command"""
-    user = User.objects.create_user(email="test_owner@test.com", password="test_owner", object_channels=["default"])
+    user = User.objects.create_user(email="test_owner@test.com", password="test_owner", object_channel="default")
 
     p = Project(name="test", owner=user)
-    p.save(object_channels=["default"])
+    p.save(object_channel="default")
 
     job = Job(start_date=timezone.now(), end_date=timezone.now(), project=p)
     job.save()

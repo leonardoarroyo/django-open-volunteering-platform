@@ -46,14 +46,14 @@ class RecoveryTokenViewSet(viewsets.GenericViewSet):
       limit = 5
       now = timezone.now()
       to_check = (now - relativedelta(hours=1)).replace(tzinfo=timezone.utc)
-      tokens = models.PasswordRecoveryToken.objects.filter(user=user, created_date__gte=to_check, channel__slug=request.channels[0])
+      tokens = models.PasswordRecoveryToken.objects.filter(user=user, created_date__gte=to_check, channel__slug=request.channel)
 
       if tokens.count() >= limit:
         will_release = tokens.order_by('-created_date')[limit-1].created_date + relativedelta(hours=1)
         seconds = abs((will_release - now).seconds)
         return response.Response({'success': False, 'message': 'Five tokens generated last hour.', 'try_again_in': seconds}, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
-      token = models.PasswordRecoveryToken.objects.create(user=user, object_channels=request.channels)
+      token = models.PasswordRecoveryToken.objects.create(user=user, object_channel=request.channel)
 
     return response.Response({'success': True, 'message': 'Token requested successfully(if user exists).'})
 

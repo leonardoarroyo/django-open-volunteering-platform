@@ -27,7 +27,7 @@ class ChannelRelationship(ChannelCreatorMixin, models.Model):
 
   def save(self, *args, **kwargs):
     """
-    We override save method to associate the requested channels with the
+    We override save method to associate the requested channel with the
     saved object.
     """
     if not self.pk:

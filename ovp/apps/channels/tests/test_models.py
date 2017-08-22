@@ -1,7 +1,6 @@
 from django.test import TestCase
 
 from ovp.apps.channels.models import Channel
-from ovp.apps.channels.exceptions import UnexpectedMultipleChannelsError
 from ovp.apps.channels.exceptions import UnexpectedChannelAssociationError
 from ovp.apps.channels.exceptions import NoChannelSupplied
 
@@ -22,7 +21,7 @@ class ChannelTestCase(TestCase):
     """ Assert models that extend ChannelRelationship can be created with custom channel on save method """
     Channel(name="Test", slug="test-channel").save()
     user = User(email="test@user.com", password="test_password")
-    user.save(object_channels=["test-channel"])
+    user.save(object_channel="test-channel")
 
     self.assertTrue(user.channel.slug == "test-channel")
 
@@ -36,18 +35,8 @@ class ChannelTestCase(TestCase):
   def test_models_that_extend_single_channel_relationship_can_be_created_with_custom_channel_on_create(self):
     """ Assert models that extend ChannelRelationship can be created with custom channel on manager create method """
     Channel(name="Test", slug="test-channel").save()
-    user = User.objects.create(email="test@user.com", password="test_password", object_channels=["test-channel"])
+    user = User.objects.create(email="test@user.com", password="test_password", object_channel="test-channel")
     self.assertTrue(user.channel.slug == "test-channel")
-
-  def test_models_that_extend_single_channel_relationship_raise_exception_if_associated_with_multiple_channels(self):
-    """ Assert models that extend ChannelRelationship raise exception if associated_with_multiple_channels """
-    Channel(name="Test", slug="test-channel").save()
-    with self.assertRaises(UnexpectedMultipleChannelsError):
-      user = User.objects.create(email="test@user.com", password="test_password", object_channels=["default", "test-channel"])
-
-    user = User(email="test@user.com", password="test_password")
-    with self.assertRaises(UnexpectedMultipleChannelsError):
-      user.save(object_channels=["default", "test-channel"])
 
   def test_models_that_extend_single_channel_cant_associate_channel_directly(self):
     """ Assert models that extend ChannelRelationship raise exception when trying to associate channel directly """

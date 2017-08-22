@@ -13,10 +13,10 @@ from collections import OrderedDict
 class ApplyAndUnapplyTestCase(TestCase):
   def test_can_apply_to_project(self):
     """Assert that authenticated user can apply to project"""
-    owner = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channels=["default"])
-    project = Project.objects.create(name="test project", details="abc", description="abc", owner=owner, object_channels=["default"])
+    owner = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channel="default")
+    project = Project.objects.create(name="test project", details="abc", description="abc", owner=owner, object_channel="default")
 
-    user = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channels=["default"])
+    user = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channel="default")
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -38,10 +38,10 @@ class ApplyAndUnapplyTestCase(TestCase):
 
   def test_can_reapply_to_project(self):
     """Assert that user can reapply to a project"""
-    user = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channels=["default"])
-    project = Project.objects.create(name="test project", details="abc", description="abc", owner=user, object_channels=["default"])
+    user = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channel="default")
+    project = Project.objects.create(name="test project", details="abc", description="abc", owner=user, object_channel="default")
 
-    user = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channels=["default"])
+    user = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channel="default")
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -79,10 +79,10 @@ class ApplyAndUnapplyTestCase(TestCase):
 
   def test_cant_unapply_if_not_apply_or_unauthenticated(self):
     """Assert that user can't unapply if not already applied or unauthenticated"""
-    user = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channels=["default"])
-    project = Project.objects.create(name="test project", details="abc", description="abc", owner=user, object_channels=["default"])
+    user = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channel="default")
+    project = Project.objects.create(name="test project", details="abc", description="abc", owner=user, object_channel="default")
 
-    user = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channels=["default"])
+    user = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channel="default")
 
     client = APIClient()
 
@@ -97,7 +97,7 @@ class ApplyAndUnapplyTestCase(TestCase):
 
   def test_cant_apply_to_inexistent_project(self):
     """Assert that user can't apply to inexistent project"""
-    user = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channels=["default"])
+    user = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channel="default")
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -110,8 +110,8 @@ class ApplyAndUnapplyTestCase(TestCase):
   @override_settings(OVP_PROJECTS={"UNAUTHENTICATED_APPLY": False})
   def test_unauthenticated_user_cant_apply_to_project(self):
     """Assert that unauthenticated user cant apply to project"""
-    user = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channels=["default"])
-    project = Project.objects.create(name="test project", details="abc", description="abc", owner=user, object_channels=["default"])
+    user = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channel="default")
+    project = Project.objects.create(name="test project", details="abc", description="abc", owner=user, object_channel="default")
 
     client = APIClient()
 
@@ -123,8 +123,8 @@ class ApplyAndUnapplyTestCase(TestCase):
   @override_settings(OVP_PROJECTS={"UNAUTHENTICATED_APPLY": True})
   def test_unauthenticated_user_can_apply_to_project(self):
     """Assert that unauthenticated user can apply to project if properly configured"""
-    user = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channels=["default"])
-    project = Project.objects.create(name="test project", details="abc", description="abc", owner=user, object_channels=["default"])
+    user = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channel="default")
+    project = Project.objects.create(name="test project", details="abc", description="abc", owner=user, object_channel="default")
 
     client = APIClient()
 
@@ -136,11 +136,11 @@ class ApplyAndUnapplyTestCase(TestCase):
 class ProjectAppliesRetrievingTestCase(TestCase):
   def setUp(self):
     # Create project
-    self.owner = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channels=["default"])
-    self.project = Project.objects.create(name="test project", details="abc", description="abc", owner=self.owner, object_channels=["default"])
+    self.owner = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channel="default")
+    self.project = Project.objects.create(name="test project", details="abc", description="abc", owner=self.owner, object_channel="default")
 
     # Apply
-    self.applier = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channels=["default"])
+    self.applier = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channel="default")
     self.client = APIClient()
     self.client.force_authenticate(user=self.applier)
     response = self.client.post(reverse("project-applies-apply", ["test-project"]), format="json")
@@ -192,18 +192,18 @@ class ProjectAppliesRetrievingTestCase(TestCase):
 class ProjectApplyStatusUpdateTestCase(TestCase):
   def setUp(self):
     # Create organization
-    self.organization_owner = User.objects.create_user(email="organization_owner@gmail.com", password="test_owner", object_channels=["default"])
-    self.organization_member = User.objects.create_user(email="organization_member@gmail.com", password="test_member", object_channels=["default"])
+    self.organization_owner = User.objects.create_user(email="organization_owner@gmail.com", password="test_owner", object_channel="default")
+    self.organization_member = User.objects.create_user(email="organization_member@gmail.com", password="test_member", object_channel="default")
     self.organization = Organization(name="test", type=0, owner=self.organization_owner)
     self.organization.save()
     self.organization.members.add(self.organization_member)
 
     # Create project
-    self.project_owner = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channels=["default"])
-    self.project = Project.objects.create(name="test project", details="abc", description="abc", owner=self.project_owner, organization=self.organization, object_channels=["default"])
+    self.project_owner = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channel="default")
+    self.project = Project.objects.create(name="test project", details="abc", description="abc", owner=self.project_owner, organization=self.organization, object_channel="default")
 
     # Apply
-    self.applier = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channels=["default"])
+    self.applier = User.objects.create_user(email="apply_user@gmail.com", password="apply_user", object_channel="default")
     self.client = APIClient()
     self.client.force_authenticate(user=self.applier)
     response = self.client.post(reverse("project-applies-apply", ["test-project"]), format="json")

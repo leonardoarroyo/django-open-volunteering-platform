@@ -22,7 +22,7 @@ Helpers
 def create_sample_projects():
   # Create sample projects
   user = User(name="a", email="testmail-projects@test.com", password="test_returned")
-  user.save(object_channels=["default"])
+  user.save(object_channel="default")
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
   address2 = GoogleAddress(typed_address="Campinas, SP - Brazil")
@@ -34,30 +34,30 @@ def create_sample_projects():
   address4.save()
 
   project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=user, address=address1, published=True)
-  project.save(object_channels=["default"])
+  project.save(object_channel="default")
   project.causes.add(Cause.objects.get(pk=1))
   project.skills.add(Skill.objects.get(pk=1))
   project.skills.add(Skill.objects.get(pk=4))
 
   project = Project(name="test project2", slug="test-slug2", details="abc", description="abc", owner=user, address=address2, highlighted=True, published=True)
-  project.save(object_channels=["default"])
+  project.save(object_channel="default")
   project.causes.add(Cause.objects.get(pk=2))
   job = Job(can_be_done_remotely=True, project=project)
   job.save()
 
   project = Project(name="test project3", slug="test-slug3", details="abc", description="abc", owner=user, address=address3, published=True)
-  project.save(object_channels=["default"])
+  project.save(object_channel="default")
   project.skills.add(Skill.objects.get(pk=2))
   project.causes.add(Cause.objects.get(pk=3))
   job = Job(can_be_done_remotely=True, project=project)
   job.save()
 
   project = Project(name="test project4", slug="test-slug4", details="abc", description="abc", owner=user, address=address4, published=False)
-  project.save(object_channels=["default"])
+  project.save(object_channel="default")
 
 def create_sample_organizations():
   user = User(name="z", email="testmail-organizations@test.com", password="test_returned")
-  user.save(object_channels=["default"])
+  user.save(object_channel="default")
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
   address2 = GoogleAddress(typed_address="Santo André, SP - Brazil")
@@ -85,34 +85,34 @@ def create_sample_organizations():
 
 def create_sample_users():
   user1 = User(name="user one", email="testmail1@test.com", password="test_returned")
-  user1.save(object_channels=["default"])
+  user1.save(object_channel="default")
 
   user2 = User(name="user two", email="testmail2@test.com", password="test_returned")
-  user2.save(object_channels=["default"])
+  user2.save(object_channel="default")
 
   user3 = User(name="user three", email="testmail3@test.com", password="test_returned")
-  user3.save(object_channels=["default"])
+  user3.save(object_channel="default")
 
   user4 = User(name="user four", email="testmail4@test.com", password="test_returned", public=False)
-  user4.save(object_channels=["default"])
+  user4.save(object_channel="default")
 
   UserProfile = get_profile_model()
   profile1 = UserProfile(user=user1, full_name="user one", about="about one")
-  profile1.save(object_channels=["default"])
+  profile1.save(object_channel="default")
   profile1.causes.add(Cause.objects.get(pk=1))
   profile1.causes.add(Cause.objects.get(pk=2))
   profile1.skills.add(Skill.objects.get(pk=1))
   profile1.skills.add(Skill.objects.get(pk=2))
 
   profile2 = UserProfile(user=user2, full_name="user two", about="about two")
-  profile2.save(object_channels=["default"])
+  profile2.save(object_channel="default")
   profile2.causes.add(Cause.objects.get(pk=1))
   profile2.causes.add(Cause.objects.get(pk=3))
   profile2.skills.add(Skill.objects.get(pk=1))
   profile2.skills.add(Skill.objects.get(pk=3))
 
   profile3 = UserProfile(user=user3, full_name="user three", about="about three")
-  profile3.save(object_channels=["default"])
+  profile3.save(object_channel="default")
 
 
 """
@@ -500,14 +500,14 @@ class OrderingTestCase(TestCase):
     """ Assert it's possible to order projects by relevance """
     UserProfile = get_profile_model()
     user = User(name="b", email="testproject@relevance.com", password="testpassword")
-    user.save(object_channels=["default"])
+    user.save(object_channel="default")
 
     self.client.force_authenticate(user=user)
     response = self.client.get(reverse("search-projects-list") + "?ordering=-relevance,-created_date", format="json")
     self.assertEqual(response.status_code, 200)
 
     profile = UserProfile(user=user)
-    profile.save(object_channels=["default"])
+    profile.save(object_channel="default")
     profile.causes.add(Cause.objects.get(pk=1))
     profile.skills.add(Skill.objects.get(pk=1))
     profile.skills.add(Skill.objects.get(pk=2))

@@ -30,7 +30,7 @@ class ChannelJSONWebTokenSerializer(JSONWebTokenSerializer):
       credentials = {
         self.username_field: attrs.get(self.username_field),
         'password': attrs.get('password'),
-        'channel': self.context["request"].channels[0]
+        'channel': self.context["request"].channel
       }
 
       if all(credentials.values()):

@@ -1,33 +1,26 @@
 from ovp.apps.channels.models import Channel
 
 from ovp.apps.channels.exceptions import UnexpectedChannelAssociationError
-from ovp.apps.channels.exceptions import UnexpectedMultipleChannelsError
 from ovp.apps.channels.exceptions import NoChannelSupplied
 
-class BaseChannelCreatorMixin():
-  def pop_channels_from_kwargs(self, kwargs):
-    """ Pop object_channels from kwargs, either from .save() or .manager.create() """
-    channels = kwargs.pop("object_channels", None)
-
-    if not channels:
-      raise NoChannelSupplied()
-
-    return channels, kwargs
-
-
-class ChannelCreatorMixin(BaseChannelCreatorMixin):
+class ChannelCreatorMixin():
   """
   This mixin is used by ChannelRelationshipManager and ChannelRelationship.
 
   It contains basic functionality to associate a object with a single channel.
   """
+  def pop_channel_from_kwargs(self, kwargs):
+    """ Pop object_channel from kwargs, either from .save() or .manager.create() """
+    channel = kwargs.pop("object_channel", None)
+
+    if not channel:
+      raise NoChannelSupplied()
+
+    return channel, kwargs
+
   def pop_channel_as_object_from_kwargs(self, kwargs):
-    channels, kwargs = self.pop_channels_from_kwargs(kwargs)
-
-    if len(channels) > 1:
-      raise UnexpectedMultipleChannelsError
-
-    channel = Channel.objects.get(slug=channels[0])
+    channel, kwargs = self.pop_channel_from_kwargs(kwargs)
+    channel = Channel.objects.get(slug=channel)
 
     return channel, kwargs
 
@@ -36,7 +29,7 @@ class ChannelCreatorMixin(BaseChannelCreatorMixin):
     Check if it's not trying to directly associate a channel with the model
     with obj.channel = channel, obj.save().
 
-    Use object_channels=[channel_slug] instead.
+    Use object_channel=channel_slug instead.
     """
     try:
       self.channel
@@ -51,7 +44,7 @@ class ChannelCreatorMixin(BaseChannelCreatorMixin):
     Check if it's not trying to directly associate a channel with the manager
     create method: .manager.create(channel=channel).
 
-    Use object_channels=[channel_slug] instead.
+    Use object_channel=channel_slug instead.
     """
     if "channel" in kwargs:
       raise UnexpectedChannelAssociationError()

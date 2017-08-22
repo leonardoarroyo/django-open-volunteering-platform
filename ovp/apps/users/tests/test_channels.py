@@ -13,25 +13,25 @@ from ovp.apps.users.tests.helpers import create_token
 
 from ovp.apps.channels.models import Channel
 
-class UserChannelsTestCase(TestCase):
+class UserChannelTestCase(TestCase):
   def setUp(self):
     Channel.objects.create(name="Test channel", slug="test-channel")
     self.client = APIClient()
 
-    self.user1 = User.objects.create(email="sample_user@gmail.com", password="sample_user", object_channels=["default"])
-    self.user2 = User.objects.create(email="sample_user@gmail.com", password="sample_user", object_channels=["test-channel"])
+    self.user1 = User.objects.create(email="sample_user@gmail.com", password="sample_user", object_channel="default")
+    self.user2 = User.objects.create(email="sample_user@gmail.com", password="sample_user", object_channel="test-channel")
 
-  def test_users_with_same_email_on_different_channels(self):
-    """ Test users can be created with the same email but on different channels """
+  def test_users_with_same_email_on_different_channel(self):
+    """ Test users can be created with the same email but on different channel """
     self.assertEqual(User.objects.count(), 2)
 
     with self.assertRaises(IntegrityError) as raised:
-      user3 = User.objects.create(email="sample_user@gmail.com", password="sample_user", object_channels=["default"])
+      user3 = User.objects.create(email="sample_user@gmail.com", password="sample_user", object_channel="default")
     self.assertEqual(IntegrityError, type(raised.exception))
 
 
   def test_user_channel_based_auth_backend(self):
-    """ Test user authentication on different channels """
+    """ Test user authentication on different channel """
     user1 = authenticate(email="sample_user@gmail.com", password="sample_user", channel="default")
     user2 = authenticate(email="sample_user@gmail.com", password="sample_user", channel="test-channel")
 
@@ -41,24 +41,19 @@ class UserChannelsTestCase(TestCase):
     self.assertTrue(user2 != None)
 
   def test_user_channel_based_auth_view(self):
-    """ Test user authentication on different channels """
+    """ Test user authentication on different channel """
     # Authenticate user one
-    response = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNELS="default")
+    response = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNEL="default")
     self.assertTrue(response.status_code == 200)
     self.assertTrue("token" in response.data)
 
     # Authenticate user two
-    response = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNELS="test-channel")
+    response = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNEL="test-channel")
     self.assertTrue(response.status_code == 200)
     self.assertTrue("token" in response.data)
 
-    # Multiple channel authentication
-    response = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNELS="default;test-channel")
-    self.assertTrue(response.status_code == 400)
-    self.assertTrue(response.data == {"detail": "This is a single channel resource. You must specify only one channel in your request."})
-
     # Wrong channel authentication
-    response = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNELS="wrong-channel")
+    response = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNEL="wrong-channel")
     self.assertTrue(response.status_code == 400)
     self.assertTrue(response.data == {"non_field_errors": ["Unable to log in with provided credentials."]})
 
@@ -67,10 +62,10 @@ class UserChannelsTestCase(TestCase):
     create_user()
     self.assertEqual(User.objects.last().channel.slug, "default")
 
-    create_user(headers={"HTTP_X_OVP_CHANNELS": "test-channel"})
+    create_user(headers={"HTTP_X_OVP_CHANNEL": "test-channel"})
     self.assertEqual(User.objects.last().channel.slug, "test-channel")
 
-    response = create_user(headers={"HTTP_X_OVP_CHANNELS": "test-channel"})
+    response = create_user(headers={"HTTP_X_OVP_CHANNEL": "test-channel"})
     self.assertEqual(response.data, {"email": ["An user with this email is already registered."]})
 
   def test_channel_based_user_retrieval(self):
@@ -81,7 +76,7 @@ class UserChannelsTestCase(TestCase):
     uuid1 = response.data["uuid"]
 
     self.client.force_authenticate(User.objects.get(email="validemail@gmail.com", channel__slug="test-channel"))
-    response = self.client.get(reverse("user-current-user"), {}, format="json", HTTP_X_OVP_CHANNELS="test-channel")
+    response = self.client.get(reverse("user-current-user"), {}, format="json", HTTP_X_OVP_CHANNEL="test-channel")
     uuid2 = response.data["uuid"]
 
     self.assertTrue(uuid1 != uuid2)
@@ -91,7 +86,7 @@ class UserChannelsTestCase(TestCase):
     self.test_channel_based_user_creation()
 
     # Create token
-    response = create_token(email="validemail@gmail.com", headers={"HTTP_X_OVP_CHANNELS": "test-channel"})
+    response = create_token(email="validemail@gmail.com", headers={"HTTP_X_OVP_CHANNEL": "test-channel"})
     self.assertEqual(PasswordRecoveryToken.objects.last().channel.slug, "test-channel")
 
     # Recover password
@@ -102,6 +97,6 @@ class UserChannelsTestCase(TestCase):
     self.assertTrue(response.data["message"] == "Invalid token.")
 
     # Use token
-    response = self.client.post(reverse("recover-password-list"), data, format="json", HTTP_X_OVP_CHANNELS="test-channel")
+    response = self.client.post(reverse("recover-password-list"), data, format="json", HTTP_X_OVP_CHANNEL="test-channel")
     self.assertTrue(response.data["message"] == "Password updated.")
     self.assertTrue(PasswordHistory.objects.last().channel.slug == "test-channel")

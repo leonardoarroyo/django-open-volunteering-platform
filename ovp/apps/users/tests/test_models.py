@@ -16,18 +16,18 @@ class TestUserManager(TestCase):
 
   def test_create_user(self):
     """ Assert that UserManager can create user"""
-    user = User.objects.create_user('test_create_user@test.com', 'validpassword', object_channels=["default"])
+    user = User.objects.create_user('test_create_user@test.com', 'validpassword', object_channel="default")
     self.assertTrue(user.id > 0)
 
   def test_create_superuser(self):
     """ Assert that UserManager can create super user"""
-    user = User.objects.create_superuser('test_create_superuser@test.com', 'validpassword', object_channels=["default"])
+    user = User.objects.create_superuser('test_create_superuser@test.com', 'validpassword', object_channel="default")
     self.assertTrue(user.id > 0)
 
 class TestUserModel(TestCase):
   def test_short_name(self):
     """ Assert that get_short_name returns name"""
-    user = User.objects.create_user('test_short_name@test.com', 'validpassword', object_channels=["default"])
+    user = User.objects.create_user('test_short_name@test.com', 'validpassword', object_channel="default")
     user.name="Abc def"
     user.save()
 
@@ -35,7 +35,7 @@ class TestUserModel(TestCase):
 
   def test_password_hashing(self):
     """ Assert password is not rehashed during saves """
-    user = User.objects.create_user('user@email.com', 'validpassword', object_channels=["default"])
+    user = User.objects.create_user('user@email.com', 'validpassword', object_channel="default")
     user.save()
     self.assertTrue(user.check_password('validpassword'))
     user.set_password('anotherpassword')
@@ -45,7 +45,7 @@ class TestUserModel(TestCase):
 
   def test_slug(self):
     """ Assert that during user creation slug matches the uuid """
-    user = User.objects.create_user('user@email.com', 'validpassword', object_channels=["default"])
+    user = User.objects.create_user('user@email.com', 'validpassword', object_channel="default")
     user.save()
     self.assertTrue(encode_uuid(user.uuid) == user.slug)
 
@@ -54,7 +54,7 @@ class TestPasswordHistoryModel(TestCase):
     """ Assert creating and updating password records password history """
     self.assertTrue(PasswordHistory.objects.all().count() == 0)
 
-    user = User.objects.create_user('testuser@test.com', 'validpassword', object_channels=["default"])
+    user = User.objects.create_user('testuser@test.com', 'validpassword', object_channel="default")
     self.assertTrue(PasswordHistory.objects.all().count() == 1)
 
     user.password = "newpassword"

@@ -26,7 +26,7 @@ class OrganizationResourceViewSetTestCase(TestCase):
 
   def test_can_create_organization(self):
     """Assert that it's possible to create a organization while authenticated"""
-    user = User.objects.create_user(email="test_can_create_organization@gmail.com", password="testcancreate", object_channels=["default"])
+    user = User.objects.create_user(email="test_can_create_organization@gmail.com", password="testcancreate", object_channel="default")
     data = copy.copy(base_organization)
 
     client = APIClient()
@@ -51,9 +51,9 @@ class OrganizationResourceViewSetTestCase(TestCase):
 
   def test_can_hide_organization_address(self):
     """Assert that it's hide organization address"""
-    owner = User.objects.create_user(email="owner@gmail.com", password="testcancreate", object_channels=["default"])
-    member = User.objects.create_user(email="member@gmail.com", password="testcancreate", object_channels=["default"])
-    volunteer = User.objects.create_user(email="volunteer@gmail.com", password="testcancreate", object_channels=["default"])
+    owner = User.objects.create_user(email="owner@gmail.com", password="testcancreate", object_channel="default")
+    member = User.objects.create_user(email="member@gmail.com", password="testcancreate", object_channel="default")
+    volunteer = User.objects.create_user(email="volunteer@gmail.com", password="testcancreate", object_channel="default")
 
     data = copy.copy(base_organization)
     data['hidden_address'] = True
@@ -84,7 +84,7 @@ class OrganizationResourceViewSetTestCase(TestCase):
 
   def test_cant_create_organization_empty_name(self):
     """Assert that it's not possible to create a organization with empty name"""
-    user = User.objects.create_user(email="test_can_create_organization@gmail.com", password="testcancreate", object_channels=["default"])
+    user = User.objects.create_user(email="test_can_create_organization@gmail.com", password="testcancreate", object_channel="default")
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -98,7 +98,7 @@ class OrganizationResourceViewSetTestCase(TestCase):
 
   def test_organization_retrieval(self):
     """Assert organizations can be retrieved"""
-    user = User.objects.create_user(email="test_retrieval@gmail.com", password="testretrieval", object_channels=["default"])
+    user = User.objects.create_user(email="test_retrieval@gmail.com", password="testretrieval", object_channel="default")
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -152,7 +152,7 @@ class OrganizationResourceViewSetTestCase(TestCase):
     organization.save()
 
     for i in range(5):
-      project = Project.objects.create(name="project{}".format(i, object_channels=["default"]), published=True, organization=organization, owner=User.objects.last(), object_channels=["default"])
+      project = Project.objects.create(name="project{}".format(i, object_channel="default"), published=True, organization=organization, owner=User.objects.last(), object_channel="default")
 
     client = APIClient()
     response = client.get(reverse("organization-projects", ["test-organization"]), format="json")
@@ -162,10 +162,10 @@ class OrganizationResourceViewSetTestCase(TestCase):
 
 class OrganizationInviteTestCase(TestCase):
   def setUp(self):
-    user = User.objects.create_user(email="testemail@email.com", password="test_returned", object_channels=["default"])
+    user = User.objects.create_user(email="testemail@email.com", password="test_returned", object_channel="default")
     self.user = user
 
-    user2 = User.objects.create_user(email="valid@user.com", password="test_returned", object_channels=["default"])
+    user2 = User.objects.create_user(email="valid@user.com", password="test_returned", object_channel="default")
     self.user2 = user2
 
     organization = Organization(name="test organization", slug="test-organization", owner=user, type=0, published=True)
@@ -217,10 +217,10 @@ class OrganizationInviteTestCase(TestCase):
 
 
     third_user = User(email="third@user.com")
-    third_user.save(object_channels=["default"])
+    third_user.save(object_channel="default")
 
     fourth_user = User(email="fourth@user.com")
-    fourth_user.save(object_channels=["default"])
+    fourth_user.save(object_channel="default")
 
     self.organization.members.add(third_user)
     self.client.force_authenticate(third_user)
@@ -352,10 +352,10 @@ class OrganizationInviteTestCase(TestCase):
 
 class OrganizationLeaveTestCase(TestCase):
   def setUp(self):
-    user = User.objects.create_user(email="testemail@email.com", password="test_returned", object_channels=["default"])
+    user = User.objects.create_user(email="testemail@email.com", password="test_returned", object_channel="default")
     self.user = user
 
-    user2 = User.objects.create_user(email="valid@user.com", password="test_returned", object_channels=["default"])
+    user2 = User.objects.create_user(email="valid@user.com", password="test_returned", object_channel="default")
     self.user2 = user2
 
     organization = Organization(name="test organization", slug="test-organization", owner=user, type=0, published=True)
@@ -373,7 +373,7 @@ class OrganizationLeaveTestCase(TestCase):
 
   def test_cant_leave_organization_if_not_member(self):
     """ Test it's not possible to leave the organization if user is not member """
-    user = User.objects.create_user(email="not@member.com", password="test_returned", object_channels=["default"])
+    user = User.objects.create_user(email="not@member.com", password="test_returned", object_channel="default")
     self.client.force_authenticate(user)
     response = self.client.post(reverse("organization-leave", ["test-organization"]), {}, format="json")
 

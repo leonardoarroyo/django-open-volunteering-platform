@@ -43,7 +43,7 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
 
     if data.get('email'):
       email = data.get('email', '')
-      users = models.User.objects.filter(email=email, channel__slug=self.context["request"].channels[0])
+      users = models.User.objects.filter(email=email, channel__slug=self.context["request"].channel)
       if users.count():
         errors['email'] = "An user with this email is already registered."
 
@@ -89,7 +89,7 @@ class UserUpdateSerializer(UserCreateSerializer):
       except ValidationError as e:
         errors['password'] = list(e.messages)
 
-      if not authenticate(email=self.context['request'].user.email, password=current_password, channel=self.context["request"].channels[0]):
+      if not authenticate(email=self.context['request'].user.email, password=current_password, channel=self.context["request"].channel):
         errors['current_password'] = ["Invalid password."]
 
     if errors:
@@ -115,7 +115,7 @@ class UserUpdateSerializer(UserCreateSerializer):
         profile = instance.profile
       else:
         profile = ProfileModel(user=instance)
-        profile.save(object_channels=self.context["request"].channels)
+        profile.save(object_channel=self.context["request"].channel)
 
       profile_sr = get_profile_serializers()[0](profile, data=profile_data, partial=True)
       profile_sr.is_valid(raise_exception=True)

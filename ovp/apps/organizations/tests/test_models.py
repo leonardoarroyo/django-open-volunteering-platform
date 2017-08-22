@@ -5,7 +5,7 @@ from ovp.apps.users.models import User
 
 class OrganizationModelTestCase(TestCase):
   def setUp(self):
-    user = User.objects.create_user(email="testemail@email.com", password="test_returned", object_channels=["default"])
+    user = User.objects.create_user(email="testemail@email.com", password="test_returned", object_channel="default")
     self.user = user
 
     organization = Organization(name="test organization", slug="overriden", owner=user, type=0, published=True)
