@@ -1,5 +1,5 @@
 from django.db import models
-from ovp.apps.channels.models.mixins import SingleChannelCreatorMixin
+from ovp.apps.channels.models.mixins import ChannelCreatorMixin
 
 class ChannelRelationshipManager(models.Manager):
   def create(self, *args, **kwargs):
@@ -13,9 +13,9 @@ class ChannelRelationshipManager(models.Manager):
 
     return obj
 
-class SingleChannelRelationshipManager(SingleChannelCreatorMixin, ChannelRelationshipManager):
+class ChannelRelationshipManager(ChannelCreatorMixin, ChannelRelationshipManager):
   """
-  All models that extend from SingleChannelRelationship must use this manager
+  All models that extend from ChannelRelationship must use this manager
   or another manager that extends from it.
 
   This manager overrides the .create() method so all objects created with .objects.create()
@@ -23,4 +23,4 @@ class SingleChannelRelationshipManager(SingleChannelCreatorMixin, ChannelRelatio
   """
   def create(self, *args, **kwargs):
     self.check_direct_channel_association_kwargs(kwargs)
-    return super(SingleChannelRelationshipManager, self).create(*args, **kwargs)
+    return super(ChannelRelationshipManager, self).create(*args, **kwargs)

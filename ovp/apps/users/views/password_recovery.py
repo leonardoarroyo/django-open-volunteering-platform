@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 from ovp.apps.users import serializers
 from ovp.apps.users import models
 
-from ovp.apps.channels.viewsets.decorators import SingleChannelViewSet
+from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 
 from rest_framework import response
 from rest_framework import status
@@ -24,7 +24,7 @@ class RecoveryTokenFilter(filters.BaseFilterBackend):
     return ['email']
 
 
-@SingleChannelViewSet
+@ChannelViewSet
 class RecoveryTokenViewSet(viewsets.GenericViewSet):
   """
   RecoveryToken resource endpoint
@@ -66,7 +66,7 @@ class RecoverPasswordFilter(filters.BaseFilterBackend):
     return ['email']
 
 
-@SingleChannelViewSet
+@ChannelViewSet
 class RecoverPasswordViewSet(viewsets.GenericViewSet):
   """
   RecoverPassword resource endpoint

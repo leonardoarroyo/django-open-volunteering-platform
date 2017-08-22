@@ -14,9 +14,10 @@ class BaseChannelCreatorMixin():
 
     return channels, kwargs
 
-class SingleChannelCreatorMixin(BaseChannelCreatorMixin):
+
+class ChannelCreatorMixin(BaseChannelCreatorMixin):
   """
-  This mixin is used by SingleChannelRelationshipManager and SingleChannelRelationship.
+  This mixin is used by ChannelRelationshipManager and ChannelRelationship.
 
   It contains basic functionality to associate a object with a single channel.
   """

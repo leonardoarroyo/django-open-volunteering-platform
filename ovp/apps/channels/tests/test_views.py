@@ -13,7 +13,7 @@ from ovp.apps.organizations.models import Organization
 from ovp.apps.users.models import User
 
 
-class SingleChannelCreateViewsetTestCase(TestCase):
+class ChannelCreateViewsetTestCase(TestCase):
   def setUp(self):
     self.client = APIClient()
     Channel(name="Test", slug="test-channel").save()

@@ -1,13 +1,13 @@
 from django.db import models
 
 from ovp.apps.channels.models.channel import Channel
-from ovp.apps.channels.models.manager import SingleChannelRelationshipManager
-from ovp.apps.channels.models.mixins import SingleChannelCreatorMixin
+from ovp.apps.channels.models.manager import ChannelRelationshipManager
+from ovp.apps.channels.models.mixins import ChannelCreatorMixin
 
 from ovp.apps.channels.exceptions import UnexpectedChannelAssociationError
 
 
-class SingleChannelRelationship(SingleChannelCreatorMixin, models.Model):
+class ChannelRelationship(ChannelCreatorMixin, models.Model):
   """
   All models that are associated with a single channel should extend from this class.
 
@@ -20,7 +20,7 @@ class SingleChannelRelationship(SingleChannelCreatorMixin, models.Model):
   channel = models.ForeignKey(Channel, related_name="%(class)s_channel")
 
   # Manager
-  objects = SingleChannelRelationshipManager()
+  objects = ChannelRelationshipManager()
 
   class Meta:
     abstract = True
@@ -35,4 +35,4 @@ class SingleChannelRelationship(SingleChannelCreatorMixin, models.Model):
       channel, kwargs = self.pop_channel_as_object_from_kwargs(kwargs)
       self.channel = channel
 
-    super(SingleChannelRelationship, self).save(*args, **kwargs)
+    super(ChannelRelationship, self).save(*args, **kwargs)

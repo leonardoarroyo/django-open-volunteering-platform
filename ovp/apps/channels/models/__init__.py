@@ -1,2 +1,2 @@
 from .channel import Channel
-from .abstract import SingleChannelRelationship
+from .abstract import ChannelRelationship

@@ -1,4 +1,4 @@
-from ovp.apps.channels.viewsets.decorators import SingleChannelViewSet
+from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 
 from django.contrib.auth import authenticate
 from django.utils.translation import ugettext as _
@@ -56,7 +56,7 @@ class ChannelJSONWebTokenSerializer(JSONWebTokenSerializer):
         raise serializers.ValidationError(msg)
 
 
-@SingleChannelViewSet
+@ChannelViewSet
 class ObtainJSONWebToken(JSONWebTokenAPIView):
     """
     API View that receives a POST with a user's username and password.

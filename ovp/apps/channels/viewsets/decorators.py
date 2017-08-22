@@ -1,11 +1,11 @@
 from ovp.apps.channels.exceptions import UnexpectedMultipleChannelsAPIError
 
-def SingleChannelViewSet(cls):
+def ChannelViewSet(cls):
   """
   Wrapping any viewset with this decorator will make get_queryset result
   get filtered by channels set on the request header.
 
-  Use for viewsets that handle a SingleChannel resource.
+  Use for viewsets that handle a Channel resource.
   """
   # Patch queryset
   get_queryset = getattr(cls, "get_queryset", None)
