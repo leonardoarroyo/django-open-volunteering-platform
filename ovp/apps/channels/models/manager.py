@@ -1,5 +1,4 @@
 from django.db import models
-from ovp.apps.channels.models.mixins import MultiChannelCreatorMixin
 from ovp.apps.channels.models.mixins import SingleChannelCreatorMixin
 
 class ChannelRelationshipManager(models.Manager):
@@ -13,16 +12,6 @@ class ChannelRelationshipManager(models.Manager):
     obj.save(force_insert=True, using=self.db, object_channels=object_channels)
 
     return obj
-
-class MultiChannelRelationshipManager(MultiChannelCreatorMixin, ChannelRelationshipManager):
-  """
-  All models that extend from MultiChannelRelationship must use this manager
-  or another manager that extends from it.
-
-  This manager overrides the .create() method so all objects created with .objects.create()
-  get associated with channels.
-  """
-  pass
 
 class SingleChannelRelationshipManager(SingleChannelCreatorMixin, ChannelRelationshipManager):
   """

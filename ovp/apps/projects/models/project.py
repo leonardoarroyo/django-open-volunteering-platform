@@ -10,14 +10,14 @@ from ovp.apps.core.helpers import get_address_model
 from ovp.apps.projects import emails
 from ovp.apps.projects.models.apply import Apply
 
-from ovp.apps.channels.models import MultiChannelRelationship
+from ovp.apps.channels.models import SingleChannelRelationship
 
 import urllib.request as request
 import urllib.parse as parse
 
 import json
 
-class Project(MultiChannelRelationship):
+class Project(SingleChannelRelationship):
   """
   Project model
   """

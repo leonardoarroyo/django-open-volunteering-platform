@@ -1,29 +1,11 @@
 from ovp.apps.channels.exceptions import UnexpectedMultipleChannelsAPIError
 
-def MultiChannelViewSet(cls):
-  """
-  Wrapping any viewset with this decorator will make get_queryset result
-  get filtered by channels set on the request header.
-
-  Use for viewsets that handle a MultiChannel resource.
-  """
-
-  get_queryset = getattr(cls, "get_queryset", None)
-  if get_queryset:
-    def func(self, *args, **kwargs):
-      return get_queryset(self, *args, **kwargs).filter(channels__slug__in = self.request.channels).distinct()
-
-    cls.get_queryset = func
-
-  return cls
-
-
 def SingleChannelViewSet(cls):
   """
   Wrapping any viewset with this decorator will make get_queryset result
   get filtered by channels set on the request header.
 
-  Use for viewsets that handle a MultiChannel resource.
+  Use for viewsets that handle a SingleChannel resource.
   """
   # Patch queryset
   get_queryset = getattr(cls, "get_queryset", None)

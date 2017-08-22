@@ -27,14 +27,8 @@ class ChannelViewsetDecoratorTestCase(TestCase):
     user = User.objects.create(email="test@default.com", password="abc", object_channels=["default"])
 
     project1 = Project.objects.create(name="test", owner=user, object_channels=["default"])
-    project1.save()
-
     project2 = Project.objects.create(name="test", owner=user, object_channels=["channel1"])
-    project2.channels.clear()
-    project2.channels.add(channel1)
-
-    project3 = Project.objects.create(name="test", owner=user, object_channels=["default", "channel1"])
-    project3.channels.add(channel1)
+    project2 = Project.objects.create(name="test", owner=user, object_channels=["channel1"])
 
     # Set up test view
     self.factory = RequestFactory()
@@ -49,14 +43,9 @@ class ChannelViewsetDecoratorTestCase(TestCase):
   def test_channels_restriction(self):
     request = self._generate_request()
     response = self.cm(request)
-    self.assertEqual(response.data["count"], 2)
+    self.assertEqual(response.data["count"], 1)
 
     request = self._generate_request()
     request.META["HTTP_X_OVP_CHANNELS"] = "channel1"
     response = self.cm(request)
     self.assertEqual(response.data["count"], 2)
-
-    request = self._generate_request()
-    request.META["HTTP_X_OVP_CHANNELS"] = "default;channel1"
-    response = self.cm(request)
-    self.assertEqual(response.data["count"], 3)

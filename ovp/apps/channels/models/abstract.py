@@ -1,49 +1,10 @@
 from django.db import models
 
 from ovp.apps.channels.models.channel import Channel
-
-from ovp.apps.channels.models.manager import MultiChannelRelationshipManager
 from ovp.apps.channels.models.manager import SingleChannelRelationshipManager
-
-from ovp.apps.channels.models.mixins import MultiChannelCreatorMixin
 from ovp.apps.channels.models.mixins import SingleChannelCreatorMixin
 
 from ovp.apps.channels.exceptions import UnexpectedChannelAssociationError
-
-class MultiChannelRelationship(MultiChannelCreatorMixin, models.Model):
-  """
-  All models that are associated with channels should extend from this class
-  or SingleChannelRelationship
-
-  It has three functions:
-    * Create a relationship between the object and the channels
-    * Override .save() method so all new objects get associated with channels
-    * Oerride the object manager so objects created with .objects.create() get
-        associated with channels
-  """
-  channels = models.ManyToManyField(Channel, related_name="%(class)s_channels")
-
-  # Manager
-  objects = MultiChannelRelationshipManager()
-
-  class Meta:
-    abstract = True
-
-  def save(self, *args, **kwargs):
-    """
-    We override save method to associate the requested channels with the
-    saved object.
-    """
-    creating = False
-    if not self.pk:
-      creating = True
-
-    if creating:
-      channels, kwargs = self.pop_channels_from_kwargs(kwargs)
-      super(MultiChannelRelationship, self).save(*args, **kwargs)
-      self.associate_channels(self, channels)
-    else:
-      super(MultiChannelRelationship, self).save(*args, **kwargs)
 
 
 class SingleChannelRelationship(SingleChannelCreatorMixin, models.Model):

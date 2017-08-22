@@ -14,18 +14,6 @@ class BaseChannelCreatorMixin():
 
     return channels, kwargs
 
-
-class MultiChannelCreatorMixin(BaseChannelCreatorMixin):
-  """
-  This mixin is used by MultiChannelRelationshipManager and MultiChannelRelationship.
-
-  It contains basic functionality to associate a object with multiple channels.
-  """
-  def associate_channels(self, instance, channel_list):
-    for channel in channel_list:
-      instance.channels.add(Channel.objects.get(slug=channel))
-
-
 class SingleChannelCreatorMixin(BaseChannelCreatorMixin):
   """
   This mixin is used by SingleChannelRelationshipManager and SingleChannelRelationship.

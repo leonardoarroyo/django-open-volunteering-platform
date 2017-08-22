@@ -2,7 +2,6 @@
 from rest_framework import mixins
 from rest_framework import viewsets
 
-from ovp.apps.channels.viewsets.decorators import MultiChannelViewSet
 from ovp.apps.channels.viewsets.decorators import SingleChannelViewSet
 
 from ovp.apps.users.models import User
@@ -16,7 +15,7 @@ class ChannelUserTestViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, vie
   queryset = User.objects.all().order_by("pk")
   serializer_class = UserCreateSerializer
 
-@MultiChannelViewSet
+@SingleChannelViewSet
 class ChannelProjectTestViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
   queryset = Project.objects.all().order_by("pk")
   serializer_class = ProjectCreateUpdateSerializer
