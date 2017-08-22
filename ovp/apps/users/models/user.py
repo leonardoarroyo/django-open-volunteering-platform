@@ -30,12 +30,9 @@ class UserManager(SingleChannelRelationshipManager, BaseUserManager):
     if not email:
       raise ValueError('The given email address must be set.')
     email = UserManager.normalize_email(email)
-    user = self.model(email=email, is_staff=False,
+    user = self.create(email=email, password=password, is_staff=False,
                       is_active=True, last_login=now,
                       joined_date=now, **extra_fields)
-
-    user.password = password
-    user.save()
     return user
 
   def create_superuser(self, email, password, **extra_fields):

@@ -50,7 +50,7 @@ class ProfileTestCase(TestCase):
 
   def test_can_update_inexistent_profile(self):
     """ Assert it's possible to update profile data even if profile is inexistent """
-    user = User.objects.create(email='test_user@email.com', password='test_password')
+    user = User.objects.create(email='test_user@email.com', password='test_password', object_channels=["default"])
     self.client.force_authenticate(user)
     self._test_can_update()
 

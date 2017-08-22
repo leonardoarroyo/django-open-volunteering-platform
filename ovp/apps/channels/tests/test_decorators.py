@@ -24,19 +24,16 @@ class ChannelViewsetDecoratorTestCase(TestCase):
     channel1.save()
 
     # Set up test projects
-    user = User(email="test@default.com", password="abc")
-    user.save()
+    user = User.objects.create(email="test@default.com", password="abc", object_channels=["default"])
 
-    project1 = Project.objects.create(name="test", owner=user)
+    project1 = Project.objects.create(name="test", owner=user, object_channels=["default"])
     project1.save()
 
     project2 = Project.objects.create(name="test", owner=user, object_channels=["channel1"])
-    project2.save()
     project2.channels.clear()
     project2.channels.add(channel1)
 
     project3 = Project.objects.create(name="test", owner=user, object_channels=["default", "channel1"])
-    project3.save()
     project3.channels.add(channel1)
 
     # Set up test view

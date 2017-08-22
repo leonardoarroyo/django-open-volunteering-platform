@@ -7,8 +7,7 @@ from ovp.apps.organizations.models import Organization
 
 class TestEmailTriggers(TestCase):
   def setUp(self):
-    user = User.objects.create_user(email="test_project@project.com", password="test_project")
-    user.save()
+    user = User.objects.create_user(email="test_project@project.com", password="test_project", object_channels=["default"])
 
     mail.outbox = [] # Mails sent before creating don't matter
     organization = Organization(name="test organization", type=0, owner=user)

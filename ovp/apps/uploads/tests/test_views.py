@@ -22,7 +22,7 @@ class UploadedImageViewSetTestCase(TestCase):
 
   def test_cant_upload_no_image(self):
     """Assert that error is raised on no image"""
-    user = get_user_model().objects.create_user('test_cant_upload_no_image@test.com', 'validpassword')
+    user = get_user_model().objects.create_user('test_cant_upload_no_image@test.com', 'validpassword', object_channels=["default"])
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -33,7 +33,7 @@ class UploadedImageViewSetTestCase(TestCase):
 
   def test_can_upload_authenticated(self):
     """Assert that it's possible to upload while authenticated"""
-    user = get_user_model().objects.create_user('test_can_upload@test.com', 'validpassword')
+    user = get_user_model().objects.create_user('test_can_upload@test.com', 'validpassword', object_channels=["default"])
 
     client = APIClient()
     client.force_authenticate(user=user)

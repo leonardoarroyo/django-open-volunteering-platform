@@ -27,7 +27,7 @@ class ProjectResourceViewSetTestCase(TestCase):
 
   def test_can_create_project(self):
     """Assert that it's possible to create a project while authenticated"""
-    user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate")
+    user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channels=["default"])
 
     data = copy.copy(base_project)
 
@@ -53,7 +53,7 @@ class ProjectResourceViewSetTestCase(TestCase):
 
   def test_cant_create_project_empty_name(self):
     """Assert that it's not possible to create a project with empty name"""
-    user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate")
+    user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channels=["default"])
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -67,7 +67,7 @@ class ProjectResourceViewSetTestCase(TestCase):
 
   def test_project_retrieval(self):
     """Assert projects can be retrieved"""
-    user = User.objects.create_user(email="test_retrieval@gmail.com", password="testretrieval")
+    user = User.objects.create_user(email="test_retrieval@gmail.com", password="testretrieval", object_channels=["default"])
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -94,7 +94,7 @@ class ProjectResourceViewSetTestCase(TestCase):
 @override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": True})
 class ProjectCloseTestCase(TestCase):
   def setUp(self):
-    user = User.objects.create_user(email="test_close@gmail.com", password="testclose")
+    user = User.objects.create_user(email="test_close@gmail.com", password="testclose", object_channels=["default"])
     self.client = APIClient()
     self.client.force_authenticate(user=user)
 
@@ -103,7 +103,7 @@ class ProjectCloseTestCase(TestCase):
 
   def test_cant_close_project_if_not_owner_or_organization_member(self):
     """ Assert that it's not possible to close a project if not the owner or organization member """
-    user = User.objects.create_user(email="otheruser@gmail.com", password="otheruser")
+    user = User.objects.create_user(email="otheruser@gmail.com", password="otheruser", object_channels=["default"])
     self.client.force_authenticate(user=user)
     response = self.client.post(reverse("project-close", ["test-project"]), format="json")
     self.assertTrue(response.status_code == 403)
@@ -175,9 +175,9 @@ class ProjectCloseTestCase(TestCase):
 @override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": False})
 class ProjectWithOrganizationTestCase(TestCase):
   def setUp(self):
-    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate")
-    self.second_user = User.objects.create_user(email="test_second_user@test.com", password="testcancreate")
-    self.third_user = User.objects.create_user(email="test_third_user@test.com", password="testcancreate")
+    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channels=["default"])
+    self.second_user = User.objects.create_user(email="test_second_user@test.com", password="testcancreate", object_channels=["default"])
+    self.third_user = User.objects.create_user(email="test_third_user@test.com", password="testcancreate", object_channels=["default"])
     self.data = copy.copy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
@@ -266,24 +266,17 @@ class ProjectWithOrganizationTestCase(TestCase):
 
 class ManageableProjectsRouteTestCase(TestCase):
   def setUp(self):
-    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate")
-    self.user.save()
-    self.user2 = User.objects.create_user(email="test_can_create_project2@gmail.com", password="testcancreate")
-    self.user2.save()
+    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channels=["default"])
+    self.user2 = User.objects.create_user(email="test_can_create_project2@gmail.com", password="testcancreate", object_channels=["default"])
     self.organization = Organization(name="test", type=0, owner=self.user)
     self.organization.save()
     self.organization2 = Organization(name="test2", type=0, owner=self.user2)
     self.organization2.save()
     self.organization2.members.add(self.user)
 
-    p = Project(name="test project 1", owner=self.user)
-    p.save()
-
-    p = Project(name="test project 2", owner=self.user, organization=self.organization)
-    p.save()
-
-    p = Project(name="test project 3", owner=self.user2, organization=self.organization2)
-    p.save()
+    p = Project.objects.create(name="test project 1", owner=self.user, object_channels=["default"])
+    p = Project.objects.create(name="test project 2", owner=self.user, organization=self.organization, object_channels=["default"])
+    p = Project.objects.create(name="test project 3", owner=self.user2, organization=self.organization2, object_channels=["default"])
 
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
@@ -305,7 +298,7 @@ class ManageableProjectsRouteTestCase(TestCase):
 @override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": True})
 class ProjectResourceUpdateTestCase(TestCase):
   def setUp(self):
-    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate")
+    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channels=["default"])
     self.data = copy.copy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
@@ -315,7 +308,7 @@ class ProjectResourceUpdateTestCase(TestCase):
 
   def test_wrong_user_cant_update(self):
     """Test only owner can update project"""
-    wrong_user = User.objects.create_user(email="wrong_user@gmail.com", password="testcancreate")
+    wrong_user = User.objects.create_user(email="wrong_user@gmail.com", password="testcancreate", object_channels=["default"])
     wrong_user.save()
     self.client.force_authenticate(user=wrong_user)
 
@@ -333,7 +326,7 @@ class ProjectResourceUpdateTestCase(TestCase):
     self.assertTrue(len(response.data["causes"]) == 1)
     self.assertTrue(len(response.data["skills"]) == 3)
 
-    user = User.objects.create_user(email="another@user.com", password="testcancreate")
+    user = User.objects.create_user(email="another@user.com", password="testcancreate", object_channels=["default"])
     organization = Organization(name="test", type=0, owner=self.user)
     organization.save()
     organization.members.add(user)
@@ -381,7 +374,7 @@ class ProjectResourceUpdateTestCase(TestCase):
 @override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": True})
 class DisponibilityTestCase(TestCase):
   def setUp(self):
-    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate")
+    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channels=["default"])
     self.data = copy.copy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
@@ -482,7 +475,7 @@ class DisponibilityTestCase(TestCase):
 @override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": True})
 class VolunteerRoleTestCase(TestCase):
   def setUp(self):
-    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate")
+    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channels=["default"])
     self.data = copy.copy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)

@@ -7,15 +7,15 @@ class TestEmailTriggers(TestCase):
   def test_user_creation_trigger_email(self):
     """Assert that email is triggered when creating an user"""
     user = User(email="a@b.c", password="validpassword", name="valid name")
-    user.save()
+    user.save(object_channels=["default"])
     self.assertTrue(len(mail.outbox) > 0)
 
   def test_token_creation_trigger_email(self):
     """Assert that email is triggered when password recovery token is created"""
     user = User(email="d@e.f", password="validpassword", name="valid name")
-    user.save()
+    user.save(object_channels=["default"])
     token = PasswordRecoveryToken(user=user)
-    token.save()
+    token.save(object_channels=["default"])
     self.assertTrue(len(mail.outbox) >= 2)
 
   def test_async_email_works(self):

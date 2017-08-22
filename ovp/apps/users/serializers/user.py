@@ -60,7 +60,7 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
 
     # Profile
     profile_data['user'] = user
-    profile_sr = get_profile_serializers()[0](data=profile_data)
+    profile_sr = get_profile_serializers()[0](data=profile_data, context=self.context)
     profile = profile_sr.create(profile_data)
 
     return user
@@ -115,7 +115,7 @@ class UserUpdateSerializer(UserCreateSerializer):
         profile = instance.profile
       else:
         profile = ProfileModel(user=instance)
-        profile.save()
+        profile.save(object_channels=self.context["request"].channels)
 
       profile_sr = get_profile_serializers()[0](profile, data=profile_data, partial=True)
       profile_sr.is_valid(raise_exception=True)

@@ -19,7 +19,7 @@ class MultiChannelCreateViewsetTestCase(TestCase):
   to any viewset that extends from it.
   """
   def setUp(self):
-    self.user = User.objects.create(email="sample_user@gmail.com", password="sample_user")
+    self.user = User.objects.create(email="sample_user@gmail.com", password="sample_user", object_channels=["default"])
     self.organization = Organization.objects.create(name="sample organization", owner=self.user)
     self.data = {"name": "Valid Name", "details": "test details", "address": {"typed_address": "r. tecainda, 81, sao paulo"}, "disponibility": {"type": "work", "work": {"description": "abc"}}, "owner": self.user.pk, "organization": self.organization.pk}
 
@@ -84,7 +84,7 @@ class ChannelPermissionsTestCase(TestCase):
   This TestCase asserts an user can't access resources with an authentication from another channel
   """
   def setUp(self):
-    self.user = User.objects.create(email="sample_user@gmail.com", password="sample_user")
+    self.user = User.objects.create(email="sample_user@gmail.com", password="sample_user", object_channels=["default"])
     self.organization = Organization.objects.create(name="sample organization", owner=self.user)
     self.data = {"name": "Valid Name", "details": "test details", "address": {"typed_address": "r. tecainda, 81, sao paulo"}, "disponibility": {"type": "work", "work": {"description": "abc"}}, "owner": self.user.pk, "organization": self.organization.pk}
 

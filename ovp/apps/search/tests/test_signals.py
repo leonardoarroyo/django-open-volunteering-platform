@@ -16,8 +16,7 @@ class DisponibilityTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
 
-    self.user = User.objects.create_user(email="testmail@test.com", password="test_returned")
-    self.user.save()
+    self.user = User.objects.create_user(email="testmail@test.com", password="test_returned", object_channels=["default"])
 
     self.address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
     self.address1.save()
@@ -32,11 +31,9 @@ class DisponibilityTestCase(TestCase):
     """
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
 
-    project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address1, published=True)
-    project.save()
+    project = Project.objects.create(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address1, published=True, object_channels=["default"])
 
-    project2 = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address2, published=True)
-    project2.save()
+    project2 = Project.objects.create(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address2, published=True, object_channels=["default"])
 
     job = Job(can_be_done_remotely=True, project=project)
     job.save()
@@ -68,8 +65,7 @@ class AddressTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
 
-    self.user = User.objects.create_user(email="testmail@test.com", password="test_returned")
-    self.user.save()
+    self.user = User.objects.create_user(email="testmail@test.com", password="test_returned", object_channels=["default"])
 
     self.address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
     self.address1.save()
@@ -78,8 +74,7 @@ class AddressTestCase(TestCase):
     """ Test project index gets reindexed if address changes """
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
 
-    project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address1, published=True)
-    project.save()
+    project = Project.objects.create(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address1, published=True, object_channels=["default"])
 
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
     self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
@@ -122,8 +117,7 @@ class ProjectIndexTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
 
-    self.user = User.objects.create_user(email="testmail@test.com", password="test_returned")
-    self.user.save()
+    self.user = User.objects.create_user(email="testmail@test.com", password="test_returned", object_channels=["default"])
 
     self.address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
     self.address1.save()
@@ -134,8 +128,7 @@ class ProjectIndexTestCase(TestCase):
     """ Test project index gets updated when a project is created or updated """
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
 
-    project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address1, published=True)
-    project.save()
+    project = Project.objects.create(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address1, published=True, object_channels=["default"])
 
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
     self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
@@ -150,8 +143,7 @@ class ProjectIndexTestCase(TestCase):
   def test_index_on_causes_update(self):
     """ Test project index gets updated when a cause is modified """
     cause = Cause.objects.all().order_by('pk')[0]
-    project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address1, published=True)
-    project.save()
+    project = Project.objects.create(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address1, published=True, object_channels=["default"])
 
     self.assertTrue(SearchQuerySet().models(Project).filter(causes=cause.pk).count() == 0)
 
@@ -163,8 +155,7 @@ class ProjectIndexTestCase(TestCase):
   def test_index_on_skill_update(self):
     """ Test project index gets updated when a skill is modified """
     skill = Skill.objects.all().order_by('pk')[0]
-    project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address1, published=True)
-    project.save()
+    project = Project.objects.create(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address1, published=True, object_channels=["default"])
 
     self.assertTrue(SearchQuerySet().models(Project).filter(skills=skill.pk).count() == 0)
 
@@ -178,8 +169,7 @@ class OrganizationIndexTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
 
-    self.user = User.objects.create_user(email="testmail@test.com", password="test_returned")
-    self.user.save()
+    self.user = User.objects.create_user(email="testmail@test.com", password="test_returned", object_channels=["default"])
 
     self.address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
     self.address1.save()
@@ -228,10 +218,9 @@ class UserIndexTestCase(TestCase):
 
     self.assertTrue(SearchQuerySet().models(User).all().count() == 0)
 
-    user = User.objects.create_user(email="testmail@test.com", password="test_returned")
-    user.save()
+    user = User.objects.create_user(email="testmail@test.com", password="test_returned", object_channels=["default"])
     profile = get_profile_model()(user=user)
-    profile.save()
+    profile.save(object_channels=["default"])
 
     self.assertTrue(SearchQuerySet().models(User).filter(skills=skill.pk).count() == 0)
     profile.skills.add(skill)
@@ -251,10 +240,9 @@ class UserIndexTestCase(TestCase):
     """ Test user index gets updated when a project is created or updated """
     self.assertTrue(SearchQuerySet().models(User).all().count() == 0)
 
-    user = User.objects.create_user(email="testmail@test.com", password="test_returned")
-    user.save()
+    user = User.objects.create_user(email="testmail@test.com", password="test_returned", object_channels=["default"])
     profile = get_profile_model()(user=user)
-    profile.save()
+    profile.save(object_channels=["default"])
 
     self.assertTrue(SearchQuerySet().models(User).all().count() == 1)
     profile.delete()

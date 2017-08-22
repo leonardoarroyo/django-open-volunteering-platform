@@ -9,11 +9,10 @@ from ovp.apps.projects.models import Project, Apply
 class TestEmailTriggers(TestCase):
   def test_project_creation_trigger_email(self):
     """Assert that email is triggered when creating a project"""
-    user = User.objects.create_user(email="test_project@project.com", password="test_project")
-    project = Project(name="test project", slug="test project", details="abc", description="abc", owner=user)
-
+    user = User.objects.create_user(email="test_project@project.com", password="test_project", object_channels=["default"])
     mail.outbox = [] # Mails sent before creating don't matter
-    project.save()
+    project = Project.objects.create(name="test project", slug="test project", details="abc", description="abc", owner=user, object_channels=["default"])
+
 
     if is_email_enabled("projectCreated"):
       self.assertTrue(len(mail.outbox) == 1)
@@ -23,9 +22,8 @@ class TestEmailTriggers(TestCase):
 
   def test_project_publishing_trigger_email(self):
     """Assert that email is triggered when publishing a project"""
-    user = User.objects.create_user(email="test_project@project.com", password="test_project")
-    project = Project(name="test project", slug="test project", details="abc", description="abc", owner=user)
-    project.save()
+    user = User.objects.create_user(email="test_project@project.com", password="test_project", object_channels=["default"])
+    project = Project.objects.create(name="test project", slug="test project", details="abc", description="abc", owner=user, object_channels=["default"])
 
     mail.outbox = [] # Mails sent before publishing don't matter
     project.published = True
@@ -41,9 +39,8 @@ class TestEmailTriggers(TestCase):
 
   def test_project_closing_trigger_email(self):
     """Assert that email is triggered when closing a project"""
-    user = User.objects.create_user(email="test_project@project.com", password="test_project")
-    project = Project(name="test project", slug="test project", details="abc", description="abc", owner=user)
-    project.save()
+    user = User.objects.create_user(email="test_project@project.com", password="test_project", object_channels=["default"])
+    project = Project.objects.create(name="test project", slug="test project", details="abc", description="abc", owner=user, object_channels=["default"])
 
     mail.outbox = [] # Mails sent before closing don't matter
     project.closed = True
@@ -59,10 +56,9 @@ class TestEmailTriggers(TestCase):
 
   def test_apply_trigger_email(self):
     """Assert that applying to project trigger one email to volunteer and one to project owner"""
-    user = User.objects.create_user(email="test_project@project.com", password="test_project")
-    volunteer = User.objects.create_user(email="test_volunteer@project.com", password="test_volunteer")
-    project = Project(name="test project", slug="test project", details="abc", description="abc", owner=user)
-    project.save()
+    user = User.objects.create_user(email="test_project@project.com", password="test_project", object_channels=["default"])
+    volunteer = User.objects.create_user(email="test_volunteer@project.com", password="test_volunteer", object_channels=["default"])
+    project = Project.objects.create(name="test project", slug="test project", details="abc", description="abc", owner=user, object_channels=["default"])
 
     mail.outbox = [] # Mails sent before applying don't matter
     apply = Apply(project=project, user=volunteer, email=volunteer.email)
@@ -82,10 +78,9 @@ class TestEmailTriggers(TestCase):
 
   def test_unapply_trigger_email(self):
     """Assert that applying to project trigger one email to volunteer and one to project owner"""
-    user = User.objects.create_user(email="test_project@project.com", password="test_project")
-    volunteer = User.objects.create_user(email="test_volunteer@project.com", password="test_volunteer")
-    project = Project(name="test project", slug="test project", details="abc", description="abc", owner=user)
-    project.save()
+    user = User.objects.create_user(email="test_project@project.com", password="test_project", object_channels=["default"])
+    volunteer = User.objects.create_user(email="test_volunteer@project.com", password="test_volunteer", object_channels=["default"])
+    project = Project.objects.create(name="test project", slug="test project", details="abc", description="abc", owner=user, object_channels=["default"])
 
     mail.outbox = [] # Mails sent before applying don't matter
     apply = Apply(project=project, user=volunteer, email=volunteer.email)
