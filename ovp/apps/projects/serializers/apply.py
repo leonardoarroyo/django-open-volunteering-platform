@@ -2,6 +2,7 @@ from ovp.apps.projects import models
 from ovp.apps.projects.models.apply import apply_status_choices
 
 from ovp.apps.users.serializers import ShortUserPublicRetrieveSerializer, UserApplyRetrieveSerializer
+from ovp.apps.projects.serializers import role
 
 from rest_framework import serializers
 
@@ -10,7 +11,7 @@ class ApplyCreateSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.Apply
-    fields = ['username', 'email', 'phone', 'project', 'user']
+    fields = ['username', 'email', 'phone', 'project', 'user', 'role']
 
 class ApplyUpdateSerializer(serializers.ModelSerializer):
   status = serializers.ChoiceField(choices=apply_status_choices)
@@ -33,7 +34,8 @@ class ApplyRetrieveSerializer(serializers.ModelSerializer):
 
 class ProjectAppliesSerializer(serializers.ModelSerializer):
   user = ShortUserPublicRetrieveSerializer()
+  role = role.VolunteerRoleApplySerializer()
 
   class Meta:
     model = models.Apply
-    fields = ['date', 'user']
+    fields = ['date', 'user', 'role']
