@@ -36,10 +36,10 @@ class DisponibilityTestCase(TestCase):
     project2 = Project.objects.create(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address2, published=True, object_channel="default")
 
     job = Job(can_be_done_remotely=True, project=project)
-    job.save()
+    job.save(object_channel="default")
 
     work = Work(can_be_done_remotely=True, project=project2)
-    work.save()
+    work.save(object_channel="default")
 
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 2)
     self.assertTrue(SearchQuerySet().models(Project).filter(can_be_done_remotely=True).count() == 2)

@@ -43,14 +43,14 @@ def create_sample_projects():
   project.save(object_channel="default")
   project.causes.add(Cause.objects.get(pk=2))
   job = Job(can_be_done_remotely=True, project=project)
-  job.save()
+  job.save(object_channel="default")
 
   project = Project(name="test project3", slug="test-slug3", details="abc", description="abc", owner=user, address=address3, published=True)
   project.save(object_channel="default")
   project.skills.add(Skill.objects.get(pk=2))
   project.causes.add(Cause.objects.get(pk=3))
   job = Job(can_be_done_remotely=True, project=project)
-  job.save()
+  job.save(object_channel="default")
 
   project = Project(name="test project4", slug="test-slug4", details="abc", description="abc", owner=user, address=address4, published=False)
   project.save(object_channel="default")
