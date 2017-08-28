@@ -9,6 +9,9 @@ from ovp.apps.users.models.profile import get_profile_model
 """
 Mixins(used by multiple indexes)
 """
+class ChannelMixin:
+  def prepare_channel(self, obj):
+    return obj.channel.slug
 
 class CausesMixin:
   def prepare_causes(self, obj):
@@ -41,7 +44,7 @@ class AddressComponentsMixin:
 """
 Indexes
 """
-class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, AddressComponentsMixin):
+class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, AddressComponentsMixin, ChannelMixin):
   name = indexes.EdgeNgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
@@ -52,6 +55,7 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
   deleted = indexes.BooleanField(model_attr='deleted')
   closed = indexes.BooleanField(model_attr='closed')
   address_components = indexes.MultiValueField(faceted=True)
+  channel = indexes.CharField()
 
   def prepare_can_be_done_remotely(self, obj):
     can_be_done_remotely = False
@@ -81,7 +85,7 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
 
 
 
-class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin):
+class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin, ChannelMixin):
   name = indexes.EdgeNgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
@@ -89,7 +93,7 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
   address_components = indexes.MultiValueField(faceted=True)
   published = indexes.BooleanField(model_attr='published')
   deleted = indexes.BooleanField(model_attr='deleted')
-
+  channel = indexes.CharField()
 
   def get_model(self):
     return Organization
@@ -98,11 +102,12 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
     return self.get_model().objects.filter(deleted=False)
 
 
-class UserIndex(indexes.SearchIndex, indexes.Indexable, AddressComponentsMixin):
+class UserIndex(indexes.SearchIndex, indexes.Indexable, AddressComponentsMixin, ChannelMixin):
   name = indexes.EdgeNgramField(model_attr='name')
   text = indexes.CharField(document=True)
   causes = indexes.MultiValueField(faceted=True)
   skills = indexes.MultiValueField(faceted=True)
+  channel = indexes.CharField()
 
   def get_model(self):
     return User
