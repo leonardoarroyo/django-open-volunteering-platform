@@ -9,7 +9,7 @@ class OrganizationModelTestCase(TestCase):
     self.user = user
 
     organization = Organization(name="test organization", slug="overriden", owner=user, type=0, published=True)
-    organization.save()
+    organization.save(object_channel="default")
     self.organization = organization
 
 
@@ -37,7 +37,7 @@ class OrganizationModelTestCase(TestCase):
     """ Assert that setting Organization.published=True updates published_date """
 
     organization = Organization(name="test organization", owner=self.user, type=0)
-    organization.save()
+    organization.save(object_channel="default")
 
     self.assertTrue(organization.published == False)
     self.assertTrue(organization.published_date == None)
@@ -56,13 +56,13 @@ class OrganizationModelTestCase(TestCase):
     expected_description = "a" * 100
 
     organization = Organization(name="test organization", owner=self.user, type=0, published=True, details=details)
-    organization.save()
+    organization.save(object_channel="default")
 
     organization = Organization.objects.get(pk=organization.id)
     self.assertTrue(organization.description == expected_description)
 
     organization = Organization(name="test organization", owner=self.user, type=0, published=True, details=small_details)
-    organization.save()
+    organization.save(object_channel="default")
 
     organization = Organization.objects.get(pk=organization.id)
     self.assertTrue(organization.description == small_details)
@@ -76,7 +76,7 @@ class OrganizationModelTestCase(TestCase):
   def test_slug_doesnt_repeat(self):
     """ Assert that slug does not repeat """
     organization = Organization(name="test organization", details="abc", owner=self.user, type=0)
-    organization.save()
+    organization.save(object_channel="default")
     self.assertTrue(organization.slug == "test-organization-1")
 
 

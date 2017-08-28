@@ -169,7 +169,7 @@ class OrganizationInviteTestCase(TestCase):
     self.user2 = user2
 
     organization = Organization(name="test organization", slug="test-organization", owner=user, type=0, published=True)
-    organization.save()
+    organization.save(object_channel="default")
     self.organization = organization
     self.client = APIClient()
     self.client.force_authenticate(user)
@@ -359,7 +359,7 @@ class OrganizationLeaveTestCase(TestCase):
     self.user2 = user2
 
     organization = Organization(name="test organization", slug="test-organization", owner=user, type=0, published=True)
-    organization.save()
+    organization.save(object_channel="default")
     organization.members.add(user2)
     self.organization = organization
     self.client = APIClient()

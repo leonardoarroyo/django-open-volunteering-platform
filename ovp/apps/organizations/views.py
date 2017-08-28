@@ -11,6 +11,8 @@ from ovp.apps.projects.models import Project
 
 from ovp.apps.uploads import models as upload_models
 
+from ovp.apps.channels.viewsets.decorators import ChannelViewSet
+
 from rest_framework import decorators
 from rest_framework import viewsets
 from rest_framework import response
@@ -23,6 +25,7 @@ from django.shortcuts import get_object_or_404
 
 import json
 
+@ChannelViewSet
 class OrganizationResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
   """
   OrganizationResourceViewSet resource endpoint
@@ -61,7 +64,7 @@ class OrganizationResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelM
       pass
 
     invite = models.OrganizationInvite(invitator=request.user, invited=invited, organization=organization)
-    invite.save()
+    invite.save(object_channel=request.channel)
 
     organization.mailing().sendUserInvited(context={"invite": invite})
 

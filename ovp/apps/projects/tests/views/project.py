@@ -199,7 +199,7 @@ class ProjectWithOrganizationTestCase(TestCase):
   def test_user_is_owner_or_member(self):
     """Test user is owner or member of organization"""
     wrong_org = Organization(name="test", type=0, owner=self.second_user)
-    wrong_org.save()
+    wrong_org.save(object_channel="default")
 
     self.data['organization'] = wrong_org.pk
     response = self.client.post(reverse("project-list"), self.data, format="json")
@@ -209,7 +209,7 @@ class ProjectWithOrganizationTestCase(TestCase):
   def test_can_create_in_any_organization_if_settings_allow(self):
     """Test user can create project inside any organization if properly configured"""
     wrong_org = Organization(name="test", type=0, owner=self.second_user)
-    wrong_org.save()
+    wrong_org.save(object_channel="default")
 
     self.data['organization'] = wrong_org.pk
     response = self.client.post(reverse("project-list"), self.data, format="json")
@@ -217,11 +217,11 @@ class ProjectWithOrganizationTestCase(TestCase):
 
   def test_can_create(self):
     """Test user can create project with valid organization"""
-    org = Organization(name="test", type=0, owner=self.user)
-    org.save()
-    org.members.add(self.second_user)
+    organization = Organization(name="test", type=0, owner=self.user)
+    organization.save(object_channel="default")
+    organization.members.add(self.second_user)
 
-    self.data['organization'] = org.pk
+    self.data['organization'] = organization.pk
     response = self.client.post(reverse("project-list"), self.data, format="json")
     self.assertTrue(response.status_code == 201)
 
@@ -232,7 +232,7 @@ class ProjectWithOrganizationTestCase(TestCase):
   def test_can_hide_address(self):
     """Test user can create project with valid organization"""
     org = Organization(name="test", type=0, owner=self.user)
-    org.save()
+    org.save(object_channel="default")
     org.members.add(self.second_user)
 
     self.data['organization'] = org.pk
@@ -269,9 +269,9 @@ class ManageableProjectsRouteTestCase(TestCase):
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
     self.user2 = User.objects.create_user(email="test_can_create_project2@gmail.com", password="testcancreate", object_channel="default")
     self.organization = Organization(name="test", type=0, owner=self.user)
-    self.organization.save()
+    self.organization.save(object_channel="default")
     self.organization2 = Organization(name="test2", type=0, owner=self.user2)
-    self.organization2.save()
+    self.organization2.save(object_channel="default")
     self.organization2.members.add(self.user)
 
     p = Project.objects.create(name="test project 1", owner=self.user, object_channel="default")
@@ -328,7 +328,7 @@ class ProjectResourceUpdateTestCase(TestCase):
 
     user = User.objects.create_user(email="another@user.com", password="testcancreate", object_channel="default")
     organization = Organization(name="test", type=0, owner=self.user)
-    organization.save()
+    organization.save(object_channel="default")
     organization.members.add(user)
     project = Project.objects.get(pk=response.data['id'])
     project.organization = organization

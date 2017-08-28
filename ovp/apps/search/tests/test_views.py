@@ -69,18 +69,18 @@ def create_sample_organizations():
   address4.save(object_channel="default")
 
   organization = Organization(name="test organization", details="abc", owner=user, address=address1, published=True, type=0)
-  organization.save()
+  organization.save(object_channel="default")
   organization.causes.add(Cause.objects.all().order_by('pk')[0])
 
   organization = Organization(name="test organization2", details="abc", owner=user, address=address2, published=True, highlighted=True, type=0)
-  organization.save()
+  organization.save(object_channel="default")
   organization.causes.add(Cause.objects.all().order_by('pk')[1])
 
   organization = Organization(name="test organization3", details="abc", owner=user, address=address3, published=True, type=0)
-  organization.save()
+  organization.save(object_channel="default")
 
   organization = Organization(name="test organization4", details="abc", owner=user, address=address4, published=False, type=0)
-  organization.save()
+  organization.save(object_channel="default")
 
 
 def create_sample_users():

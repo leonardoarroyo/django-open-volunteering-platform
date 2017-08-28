@@ -12,6 +12,8 @@ from ovp.apps.organizations import models
 from ovp.apps.organizations import validators
 from ovp.apps.organizations.decorators import hide_address
 
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
+
 from rest_framework import serializers
 from rest_framework import permissions
 from rest_framework import fields
@@ -25,7 +27,7 @@ address_serializers = get_address_serializers()
 
 """ Serializers """
 
-class OrganizationCreateSerializer(serializers.ModelSerializer):
+class OrganizationCreateSerializer(ChannelRelationshipSerializer):
   address = address_serializers[0](required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
 
@@ -44,7 +46,7 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
       validated_data['address'] = address
 
     # Organization
-    organization = models.Organization.objects.create(**validated_data)
+    organization = super(OrganizationCreateSerializer, self).create(validated_data)
 
     # Associate causes
     for cause in causes:
@@ -82,12 +84,12 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
 
     return instance
 
-class UserOrganizationRetrieveSerializer(serializers.ModelSerializer):
+class UserOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   class Meta:
     model = User
     fields = ['name', 'email', 'phone']
 
-class OrganizationSearchSerializer(serializers.ModelSerializer):
+class OrganizationSearchSerializer(ChannelRelationshipSerializer):
   address = address_serializers[2]()
   image = UploadedImageSerializer()
 
@@ -95,7 +97,7 @@ class OrganizationSearchSerializer(serializers.ModelSerializer):
     model = models.Organization
     fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image']
 
-class OrganizationRetrieveSerializer(serializers.ModelSerializer):
+class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   address = address_serializers[0]()
   image = UploadedImageSerializer()
   cover = UploadedImageSerializer()

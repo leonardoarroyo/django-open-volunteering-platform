@@ -16,7 +16,7 @@ class HiddenAddressTestCase(TestCase):
     self.third_user = User.objects.create_user(email="test_third_user@test.com", password="test", object_channel="default")
 
     organization = Organization(name="test", type=0, owner=self.user)
-    organization.save()
+    organization.save(object_channel="default")
     organization.members.add(self.second_user)
 
     address = GoogleAddress(typed_address="Rua. Teçaindá, 81")

@@ -11,7 +11,7 @@ class TestEmailTriggers(TestCase):
 
     mail.outbox = [] # Mails sent before creating don't matter
     organization = Organization(name="test organization", type=0, owner=user)
-    organization.save()
+    organization.save(object_channel="default")
     self.organization = organization
 
   def test_organization_creation_trigger_email(self):

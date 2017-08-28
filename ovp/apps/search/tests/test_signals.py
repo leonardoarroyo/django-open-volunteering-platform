@@ -96,7 +96,7 @@ class AddressTestCase(TestCase):
 
 
     organization = Organization(name="test organization", details="abc", owner=self.user, address=self.address1, published=True, type=0)
-    organization.save()
+    organization.save(object_channel="default")
 
     self.assertTrue(SearchQuerySet().models(Organization).all().count() == 1)
     self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
@@ -181,7 +181,7 @@ class OrganizationIndexTestCase(TestCase):
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
 
     organization = Organization(name="test organization", details="abc", owner=self.user, address=self.address1, published=True, type=0)
-    organization.save()
+    organization.save(object_channel="default")
 
     self.assertTrue(SearchQuerySet().models(Organization).all().count() == 1)
     self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
@@ -197,7 +197,7 @@ class OrganizationIndexTestCase(TestCase):
     """ Test organization index gets updated when a cause is modified """
     cause = Cause.objects.all().order_by('pk').first()
     organization = Organization(name="test organization", details="abc", owner=self.user, address=self.address1, published=True, type=0)
-    organization.save()
+    organization.save(object_channel="default")
 
     self.assertTrue(SearchQuerySet().models(Organization).filter(causes=cause.pk).count() == 0)
 

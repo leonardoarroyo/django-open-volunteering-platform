@@ -195,7 +195,7 @@ class ProjectApplyStatusUpdateTestCase(TestCase):
     self.organization_owner = User.objects.create_user(email="organization_owner@gmail.com", password="test_owner", object_channel="default")
     self.organization_member = User.objects.create_user(email="organization_member@gmail.com", password="test_member", object_channel="default")
     self.organization = Organization(name="test", type=0, owner=self.organization_owner)
-    self.organization.save()
+    self.organization.save(object_channel="default")
     self.organization.members.add(self.organization_member)
 
     # Create project

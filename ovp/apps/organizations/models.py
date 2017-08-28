@@ -3,6 +3,8 @@ from django.utils import timezone
 from django.template.defaultfilters import slugify
 from ovp.apps.core.helpers import get_address_model
 
+from ovp.apps.channels.models.abstract import ChannelRelationship
+
 from ovp.apps.organizations.emails import OrganizationMail
 from ovp.apps.organizations.emails import OrganizationAdminMail
 
@@ -15,7 +17,7 @@ ORGANIZATION_TYPES = (
   (3, _('Group of volunteers')),
 )
 
-class Organization(models.Model):
+class Organization(ChannelRelationship):
   # Relationships
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
   address = models.OneToOneField(get_address_model(), blank=True, null=True, verbose_name=_('address'), db_constraint=False)
@@ -114,7 +116,7 @@ class Organization(models.Model):
     verbose_name_plural = _('organizations')
 
 
-class OrganizationInvite(models.Model):
+class OrganizationInvite(ChannelRelationship):
   organization = models.ForeignKey("organizations.Organization")
   invitator = models.ForeignKey("users.User", related_name="has_invited")
   invited = models.ForeignKey("users.User", related_name="been_invited")
