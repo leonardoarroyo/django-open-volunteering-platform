@@ -72,7 +72,7 @@ class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
       elif request.method in ["PUT", "PATCH"]:
         return serializers.UserUpdateSerializer
 
-
+@ChannelViewSet
 class PublicUserResourceViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
   """
   PublicUserResourceViewSet resource endpoint

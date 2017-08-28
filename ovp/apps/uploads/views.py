@@ -3,6 +3,8 @@ import json
 from ovp.apps.uploads.models import UploadedImage
 from ovp.apps.uploads.serializers import UploadedImageSerializer, ImageGallerySerializer
 
+from ovp.apps.channels.viewsets.decorators import ChannelViewSet
+
 from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework import response
@@ -10,7 +12,7 @@ from rest_framework import status
 
 from .helpers import perform_image_crop
 
-
+@ChannelViewSet
 class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
   queryset = UploadedImage.objects.all()
   serializer_class = UploadedImageSerializer

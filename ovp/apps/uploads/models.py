@@ -8,6 +8,8 @@ from django.utils.deconstruct import deconstructible
 
 from django_resized import ResizedImageField
 
+from ovp.apps.channels.models.abstract import ChannelRelationship
+
 @deconstructible
 class ImageName(object):
   def __init__(self, sub_path=""):
@@ -28,7 +30,7 @@ IMAGE_GALERY_CATEGORIES = (
   ('project', _("Project")),
 )
 
-class UploadedImage(models.Model):
+class UploadedImage(ChannelRelationship):
   def save(self, *args, **kwargs):
     if not self.pk:
       self.uuid = str(uuid.uuid4())

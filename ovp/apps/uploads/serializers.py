@@ -1,10 +1,12 @@
 from ovp.apps.uploads import helpers
 from ovp.apps.uploads.models import UploadedImage
 
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
+
 from rest_framework import serializers
 
 
-class UploadedImageSerializer(serializers.ModelSerializer):
+class UploadedImageSerializer(ChannelRelationshipSerializer):
   image_url = serializers.SerializerMethodField()
   image_small_url = serializers.SerializerMethodField()
   image_medium_url = serializers.SerializerMethodField()

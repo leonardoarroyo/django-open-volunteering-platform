@@ -17,7 +17,7 @@ class UploadedImageModelTestCase(TestCase):
   def test_str_return_uuid(self):
     """Assert that image model __str__ method returns uuid"""
     img = UploadedImage()
-    img.save()
+    img.save(object_channel="default")
 
     uuid = img.__str__()
 
