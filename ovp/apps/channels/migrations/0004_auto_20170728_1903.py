@@ -7,6 +7,21 @@ from django.db import migrations
 def foward_func(apps, schema_editor):
     Channel = apps.get_model("channels", "Channel")
     channel = Channel.objects.create(name="default", slug="default")
+
+    # We freeze default channels skills and causes because
+    # post_save signals are not sent from migrations
+    from ovp.apps.core.models.skill import skills
+    from ovp.apps.core.models.cause import causes
+
+    Skill = apps.get_model("core", "Skill")
+    Cause = apps.get_model("core", "Cause")
+
+    for skill in skills:
+      Skill.objects.create(name=skill, channel=channel)
+
+    for cause in causes:
+      Cause.objects.create(name=cause, channel=channel)
+
     return True
 
 def rewind_func(apps, schema_editor):
@@ -19,6 +34,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('channels', '0003_channel_slug'),
+        ('core', '0014_auto_20170825_1914'),
     ]
 
     operations = [

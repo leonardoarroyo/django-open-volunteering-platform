@@ -4,33 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
-skills = ['Arts/Handcrafting', 'Communication', 'Dance/Music', 'Law', 'Education', 'Sports', 'Cooking', 'Management', 'Idioms', 'Computers/Technology', 'Health', 'Others']
-causes = ['Professional Training', 'Fight Poverty', 'Conscious consumption', 'Culture, Sport and Art', 'Human Rights', 'Education', 'Youth', 'Elders', 'Environment', 'Citizen Participation', 'Animal Protection', 'Health', 'People with disabilities']
-
-
-def load_data(apps, schema_editor):
-  Skill = apps.get_model("core", "Skill")
-  Cause = apps.get_model("core", "Cause")
-
-  for skill in skills:
-    s = Skill(name=skill)
-    s.save()
-
-  for cause in causes:
-    c = Cause(name=cause)
-    c.save()
-
-def unload_data(apps, schema_editor): #pragma: no cover
-  Skill = apps.get_model("core", "Skill")
-  Cause = apps.get_model("core", "Cause")
-
-  for skill in skills:
-    s = Skill.objects.filter(name=skill)
-    s.delete()
-
-  for cause in causes:
-    c = Cause.objects.filter(name=cause)
-    c.delete()
+# This migration is deprecated and has been moved to 0015
 
 class Migration(migrations.Migration):
 
@@ -39,5 +13,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(load_data, reverse_code=unload_data)
     ]
