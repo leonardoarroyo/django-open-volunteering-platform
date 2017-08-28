@@ -114,6 +114,7 @@ class Organization(ChannelRelationship):
     app_label = 'organizations'
     verbose_name = _('organization')
     verbose_name_plural = _('organizations')
+    unique_together = (('slug', 'channel'), )
 
 
 class OrganizationInvite(ChannelRelationship):
