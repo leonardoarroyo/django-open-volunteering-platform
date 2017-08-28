@@ -21,7 +21,7 @@ class GoogleAddressModelTestCase(TestCase):
   def test_api_call(self):
     """Assert GoogleAddress calls google API and get address"""
     a = GoogleAddress(typed_address="Rua Teçaindá, 81, SP", typed_address2="Casa")
-    a.save()
+    a.save(object_channel="default")
 
     a = GoogleAddress.objects.get(pk=a.pk)
     self.assertTrue(a.typed_address == "Rua Teçaindá, 81, SP")
@@ -48,7 +48,7 @@ class GoogleAddressModelTestCase(TestCase):
   def test_locality(self):
     """Assert GoogleAddressModel.get_city_state preference order is locality, administrative_area_2"""
     a = GoogleAddress(typed_address="Chicago")
-    a.save()
+    a.save(object_channel="default")
     self.assertTrue("Chicago" in a.get_city_state())
 
     a = remove_component(a, ['locality'])
@@ -59,7 +59,7 @@ class AddressComponentTypeModelTestCase(TestCase):
   def test_str_call(self):
     """Assert AddressComponentType __str__ returns name"""
     a = AddressComponentType(name="xyz")
-    a.save()
+    a.save(object_channel="default")
 
     self.assertTrue(a.__str__() == "xyz")
 
@@ -67,7 +67,7 @@ class AddressComponentModelTestCase(TestCase):
   def test_str_call(self):
     """Assert AddressComponent __str__ returns long name"""
     a = AddressComponent(short_name="short", long_name="long")
-    a.save()
+    a.save(object_channel="default")
 
     self.assertTrue(a.__str__() == "long")
 

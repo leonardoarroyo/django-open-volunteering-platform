@@ -8,6 +8,7 @@ from ovp.apps.channels.models import Channel
 from ovp.apps.core.models import Skill
 from ovp.apps.core.models import Lead
 from ovp.apps.core.models import ChannelContact
+from ovp.apps.core.models import GoogleAddress
 
 class ChannelsTestCase(TestCase):
   def setUp(self):
@@ -50,3 +51,8 @@ class ChannelsTestCase(TestCase):
     response = client.post(reverse("lead"), data=data, format="json", HTTP_X_OVP_CHANNEL="test-channel")
     self.assertEqual(Lead.objects.filter(channel__slug="default").count(), 1)
     self.assertEqual(Lead.objects.filter(channel__slug="test-channel").count(), 1)
+
+  def test_google_address(self):
+    """ Assert google addresses are saved on the correct channel """
+    a = GoogleAddress(typed_address="Rua Teçaindá, 81, SP", typed_address2="Casa")
+    a.save(object_channel="test-channel")

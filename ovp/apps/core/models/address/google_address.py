@@ -5,18 +5,19 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from ovp.apps.core import helpers
+from ovp.apps.channels.models.abstract import ChannelRelationship
 
 import os
 import requests
 import vcr
 
-class AddressComponentType(models.Model):
+class AddressComponentType(ChannelRelationship):
   name = models.CharField(max_length=100)
 
   def __str__(self):
     return self.name
 
-class AddressComponent(models.Model):
+class AddressComponent(ChannelRelationship):
   long_name = models.CharField(max_length=400)
   short_name = models.CharField(max_length=400)
   types = models.ManyToManyField(AddressComponentType)
@@ -24,11 +25,11 @@ class AddressComponent(models.Model):
   def __str__(self):
     return self.long_name
 
-class GoogleRegion(models.Model):
+class GoogleRegion(ChannelRelationship):
   region_name = models.CharField(max_length=400)
   filter_by = models.CharField(max_length=400)
 
-class GoogleAddress(models.Model):
+class GoogleAddress(ChannelRelationship):
   typed_address = models.CharField(max_length=400, blank=True, null=True)
   typed_address2 = models.CharField(max_length=400, blank=True, null=True)
   address_line = models.CharField(max_length=400, blank=True, null=True)
@@ -132,7 +133,7 @@ def update_address(sender, instance, **kwargs):
       if not ac.count():
       # Component not found, creating
         ac = AddressComponent(long_name=component['long_name'], short_name=component['short_name'])
-        ac.save()
+        ac.save(object_channel=instance.channel.slug)
       else:
         ac = ac.first()
         ac.types.clear()
@@ -145,7 +146,7 @@ def update_address(sender, instance, **kwargs):
           at = AddressComponentType.objects.get(name=ctype)
         except ObjectDoesNotExist:
           at = AddressComponentType(name=ctype)
-          at.save()
+          at.save(object_channel=instance.channel.slug)
         ac.types.add(at)
 
       instance.address_components.add(ac)

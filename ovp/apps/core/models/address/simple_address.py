@@ -1,6 +1,7 @@
 from django.db import models
+from ovp.apps.channels.models.abstract import ChannelRelationship
 
-class SimpleAddress(models.Model):
+class SimpleAddress(ChannelRelationship):
   street = models.CharField(max_length=300, null=True, blank=True, verbose_name='Logradouro')
   number = models.CharField(max_length=10, null=True, blank=True, verbose_name='Número') # May contain letters as well
   neighbourhood = models.CharField(max_length=100, null=True, blank=True, verbose_name='Bairro')

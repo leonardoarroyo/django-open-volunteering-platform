@@ -61,7 +61,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     # Address
     address_data = validated_data.pop('address', {})
-    address_sr = address_serializers[0](data=address_data)
+    address_sr = address_serializers[0](data=address_data, context=self.context)
     address = address_sr.create(address_data)
     validated_data['address'] = address
 
@@ -124,7 +124,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     # Save related resources
     if address_data:
-      address_sr = address_serializers[0](data=address_data)
+      address_sr = address_serializers[0](data=address_data, context=self.context)
       address = address_sr.create(address_data)
       instance.address = address
 

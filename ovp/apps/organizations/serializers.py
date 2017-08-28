@@ -39,7 +39,7 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
 
     # Address
     if address_data:
-      address_sr = address_serializers[0](data=address_data)
+      address_sr = address_serializers[0](data=address_data, context=self.context)
       address = address_sr.create(address_data)
       validated_data['address'] = address
 
@@ -67,7 +67,7 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
 
     # Save related resources
     if address_data:
-      address_sr = address_serializers[0](data=address_data)
+      address_sr = address_serializers[0](data=address_data, context=self.context)
       address = address_sr.create(address_data)
       instance.address = address
 

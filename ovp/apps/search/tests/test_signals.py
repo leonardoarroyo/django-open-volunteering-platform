@@ -19,10 +19,10 @@ class DisponibilityTestCase(TestCase):
     self.user = User.objects.create_user(email="testmail@test.com", password="test_returned", object_channel="default")
 
     self.address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
-    self.address1.save()
+    self.address1.save(object_channel="default")
 
     self.address2 = GoogleAddress(typed_address="São paulo, SP - Brazil")
-    self.address2.save()
+    self.address2.save(object_channel="default")
 
 
   def test_disponibility_save_and_deletion_updates_index(self):
@@ -68,7 +68,7 @@ class AddressTestCase(TestCase):
     self.user = User.objects.create_user(email="testmail@test.com", password="test_returned", object_channel="default")
 
     self.address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
-    self.address1.save()
+    self.address1.save(object_channel="default")
 
   def test_project_index_on_address_update(self):
     """ Test project index gets reindexed if address changes """
@@ -120,9 +120,9 @@ class ProjectIndexTestCase(TestCase):
     self.user = User.objects.create_user(email="testmail@test.com", password="test_returned", object_channel="default")
 
     self.address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
-    self.address1.save()
+    self.address1.save(object_channel="default")
     self.address2 = GoogleAddress(typed_address="Campinas, SP - Brazil")
-    self.address2.save()
+    self.address2.save(object_channel="default")
 
   def test_index_on_create_and_update(self):
     """ Test project index gets updated when a project is created or updated """
@@ -172,9 +172,9 @@ class OrganizationIndexTestCase(TestCase):
     self.user = User.objects.create_user(email="testmail@test.com", password="test_returned", object_channel="default")
 
     self.address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
-    self.address1.save()
+    self.address1.save(object_channel="default")
     self.address2 = GoogleAddress(typed_address="Campinas, SP - Brazil")
-    self.address2.save()
+    self.address2.save(object_channel="default")
 
   def test_index_on_create_and_update(self):
     """ Test organization index gets updated when a organization is created or updated """

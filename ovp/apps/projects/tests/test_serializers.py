@@ -20,7 +20,7 @@ class HiddenAddressTestCase(TestCase):
     organization.members.add(self.second_user)
 
     address = GoogleAddress(typed_address="Rua. Teçaindá, 81")
-    address.save()
+    address.save(object_channel="default")
     self.project = Project.objects.create(name="test project", slug="test slug", details="abc", description="abc", owner=self.user, hidden_address=True, address=address, organization=organization, object_channel="default")
 
     self.request = RequestFactory().get('/')
