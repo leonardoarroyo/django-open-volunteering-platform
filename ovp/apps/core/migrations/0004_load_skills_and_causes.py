@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
-# This migration is deprecated and has been moved to 0015
+# This migration is deprecated and is now executed as a signal
 
 class Migration(migrations.Migration):
 
