@@ -1,6 +1,7 @@
 from django.db.models import Q
 
 from ovp.apps.projects.serializers import project as serializers
+from ovp.apps.projects.serializers import comments as comments_serializer
 from ovp.apps.projects import models
 from ovp.apps.projects import helpers
 from ovp.apps.projects.permissions import ProjectCreateOwnsOrIsOrganizationMember
@@ -64,6 +65,21 @@ class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
     serializer = self.get_serializer_class()(project, context=self.get_serializer_context())
     return response.Response(serializer.data)
 
+  @decorators.detail_route(['POST'], url_path='comments')
+  def comments(self, request, slug, pk=None):
+    data = request.data
+    user = request.user
+    project = self.get_object()
+
+    data['project'] = project.pk
+    data['user'] = user.pk
+
+    serializer = self.get_serializer_class()(data=data, context=self.get_serializer_context())
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+
+    return response.Response(serializer.data)
+
   @decorators.detail_route(['GET'])
   def export_applied_users(self, request, *args, **kwargs):
     project = self.get_object()
@@ -121,5 +137,7 @@ class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
       return serializers.ProjectRetrieveSerializer
     if self.action == 'retrieve':
       return serializers.ProjectRetrieveSerializer
+    if self.action == 'comments':
+      return comments_serializer.CommentsCreateSerializer
 
     return serializers.ProjectRetrieveSerializer

@@ -139,7 +139,6 @@ REST_FRAMEWORK = {
     )
 }
 
-
 # Haystack
 
 HAYSTACK_CONNECTIONS={

@@ -116,7 +116,6 @@ class ProjectCloseTestCase(TestCase):
     self.assertTrue(response.data["closed"] == True)
     self.assertTrue(response.data["closed"])
 
-
 # This tests should run if declaring the following setings on runtests.py
 # They can't work without rerunning migrations as django expects the default GoogleAddress related model
 #
