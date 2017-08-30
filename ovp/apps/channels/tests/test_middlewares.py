@@ -33,3 +33,10 @@ class ChannelMiddlewareTestCase(TestCase):
     self.request.META["HTTP_X_OVP_CHANNEL"] = "test-channel-1"
     response = self.cm(self.request)
     self.assertTrue(response["X-OVP-Channel"] == "test-channel-1")
+
+  def test_correct_response_when_incorrect_channel(self):
+    """ Assert response is correct if incorrect channel is supplied """
+    self.request.META["HTTP_X_OVP_CHANNEL"] = "invalid"
+    response = self.cm(self.request)
+    self.assertEqual(response.status_code, 400)
+    self.assertEqual(response.content, b'{"detail": "Invalid channel."}')

@@ -1,6 +1,9 @@
-from django.http import JsonResponse
+from ovp.apps.channels.cache import get_channel
+
 from rest_framework.request import Request
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+
+from django.http import JsonResponse
 from django.utils.functional import SimpleLazyObject
 from django.contrib.auth.middleware import get_user
 
@@ -19,10 +22,11 @@ def get_user_jwt(request):
 
 class ChannelMiddleware():
   """
-  This middleware is responsible for two things:
+  This middleware is responsible for three things:
 
   - Adding the channel slug to request object
   - If the user is authenticated, only allow requests to resources from the same channel
+  - Check if the requested channel is valid
 
   """
   def __init__(self, get_response):
@@ -46,6 +50,10 @@ class ChannelMiddleware():
   def __call__(self, request):
     # Parse and add channel
     request = self._add_channel(request)
+
+    # Check channel is valid
+    if get_channel(request.channel) is None:
+      return JsonResponse({"detail": "Invalid channel."}, status=400)
 
     # Check user
     if not self._check_permissions(request):
