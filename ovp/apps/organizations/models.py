@@ -71,6 +71,8 @@ class Organization(ChannelRelationship):
     return OrganizationAdminMail(self)
 
   def save(self, *args, **kwargs):
+    creating = False
+
     if self.pk is not None:
       if not self.__orig_published and self.published:
         self.published_date = timezone.now()
@@ -81,11 +83,7 @@ class Organization(ChannelRelationship):
     else:
       # Organization being created
       self.slug = self.generate_slug()
-      self.mailing().sendOrganizationCreated()
-      try:
-        self.admin_mailing().sendOrganizationCreated()
-      except:
-        pass
+      creating = True
 
     # If there is no description, take 100 chars from the details
     if not self.description and self.details:
@@ -94,7 +92,16 @@ class Organization(ChannelRelationship):
       else:
         self.description = self.details
 
-    return super(Organization, self).save(*args, **kwargs)
+    obj = super(Organization, self).save(*args, **kwargs)
+
+    if creating:
+      self.mailing().sendOrganizationCreated()
+      try:
+        self.admin_mailing().sendOrganizationCreated()
+      except:
+        pass
+
+    return obj
 
   def generate_slug(self):
     if self.name:

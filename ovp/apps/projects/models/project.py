@@ -84,6 +84,8 @@ class Project(ChannelRelationship):
     self.save()
 
   def save(self, *args, **kwargs):
+    creating = False
+
     if self.pk is not None:
       orig = Project.objects.get(pk=self.pk)
       if not orig.published and self.published:
@@ -99,11 +101,7 @@ class Project(ChannelRelationship):
     else:
       # Project being created
       self.slug = self.generate_slug()
-      self.mailing().sendProjectCreated({'project': self})
-      try:
-        self.admin_mailing().sendProjectCreated({'project': self})
-      except:
-        pass
+      creating = True
 
     # If there is no description, take 100 chars from the details
     if not self.description:
@@ -114,7 +112,16 @@ class Project(ChannelRelationship):
 
     self.modified_date = timezone.now()
 
-    return super(Project, self).save(*args, **kwargs)
+    obj = super(Project, self).save(*args, **kwargs)
+
+    if creating:
+      self.mailing().sendProjectCreated({'project': self})
+      try:
+        self.admin_mailing().sendProjectCreated({'project': self})
+      except:
+        pass
+
+    return obj
 
 
   def generate_slug(self):

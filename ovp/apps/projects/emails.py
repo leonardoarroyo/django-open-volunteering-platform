@@ -9,7 +9,7 @@ class ProjectMail(BaseMail):
   Context should always include a project instance.
   """
   def __init__(self, project, async_mail=None):
-    super(ProjectMail, self).__init__(project.owner.email, async_mail, project.owner.locale)
+    super(ProjectMail, self).__init__(project.owner.email, channel=project.channel.slug, async_mail=async_mail, locale=project.owner.locale)
 
   def sendProjectCreated(self, context={}):
     """
@@ -41,7 +41,7 @@ class ApplyMail(BaseMail):
     self.apply = apply
     self.async = async_mail
     locale = locale or (apply.user and apply.user.locale)
-    super(ApplyMail, self).__init__(apply.email, async_mail, locale)
+    super(ApplyMail, self).__init__(apply.email, channel=apply.channel.slug, async_mail=async_mail, locale=locale)
 
   def sendAppliedToVolunteer(self, context={}):
     """
@@ -54,7 +54,7 @@ class ApplyMail(BaseMail):
     """
     Sent to project owner when user applies to a project
     """
-    super(ApplyMail, self).__init__(self.apply.project.owner.email, self.async, self.apply.project.owner.locale)
+    super(ApplyMail, self).__init__(self.apply.project.owner.email, channel=self.apply.channel.slug, async_mail=self.async, locale=self.apply.project.owner.locale)
     return self.sendEmail('volunteerApplied-ToOwner', 'New volunteer', context)
 
 
@@ -69,7 +69,7 @@ class ApplyMail(BaseMail):
     """
     Sent to project owner when user unapplies from a project
     """
-    super(ApplyMail, self).__init__(self.apply.project.owner.email, self.async, self.apply.project.owner.locale)
+    super(ApplyMail, self).__init__(self.apply.project.owner.email, channel=self.apply.channel.slug, async_mail=self.async, locale=self.apply.project.owner.locale)
     return self.sendEmail('volunteerUnapplied-ToOwner', 'Volunteer unapplied from project', context)
 
 
@@ -81,7 +81,7 @@ class ProjectAdminMail(BaseMail):
   def __init__(self, project, async_mail=None):
     s = get_settings()
     email = s.get('ADMIN_MAIL', None)
-    super(ProjectAdminMail, self).__init__(email, async_mail)
+    super(ProjectAdminMail, self).__init__(email, channel=project.channel.slug, async_mail=async_mail)
 
 
   def sendProjectCreated(self, context={}):

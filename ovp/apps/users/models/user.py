@@ -86,11 +86,12 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
 
   def save(self, *args, **kwargs):
     hash_password = False
+    creating = False
 
     if not self.pk:
       self.slug = encode_uuid(self.uuid)
       hash_password = True
-      self.mailing().sendWelcome()
+      creating = True
     else:
       # checks if password has changed and if it was set by set_password
       if self.__original_password != self.password and not self.check_password(self._password):
@@ -100,7 +101,12 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
       self.set_password(self.password) # hash it
       self.__original_password = self.password
 
-    super(User, self).save(*args, **kwargs)
+    obj = super(User, self).save(*args, **kwargs)
+
+    if creating:
+      self.mailing().sendWelcome()
+
+    return obj
 
   def get_full_name(self):
     return self.name

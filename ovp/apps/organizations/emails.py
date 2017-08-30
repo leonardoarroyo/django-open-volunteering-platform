@@ -13,7 +13,7 @@ class OrganizationMail(BaseMail):
       receiver = override_receiver
 
     locale = locale or organization.owner.locale
-    super(OrganizationMail, self).__init__(receiver, self.async_mail, locale)
+    super(OrganizationMail, self).__init__(receiver, channel=organization.channel.slug, async_mail=self.async_mail, locale=locale)
 
   def sendOrganizationCreated(self, context={}):
     """
@@ -103,10 +103,10 @@ class OrganizationAdminMail(BaseMail):
   """
   This class is responsible for firing emails for Organization related actions
   """
-  def __init__(self, project, async_mail=None):
+  def __init__(self, project, async_mail=None, locale=None):
     s = get_settings()
     email = s.get('ADMIN_MAIL', None)
-    super(OrganizationAdminMail, self).__init__(email, async_mail)
+    super(OrganizationAdminMail, self).__init__(email, channel=project.channel.slug, async_mail=async_mail, locale=locale)
 
 
   def sendOrganizationCreated(self, context={}):

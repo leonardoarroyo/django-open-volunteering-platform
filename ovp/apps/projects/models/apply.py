@@ -34,11 +34,11 @@ class Apply(ChannelRelationship):
     return emails.ApplyMail(self, async_mail)
 
   def save(self, *args, **kwargs):
+    creating = False
 
     if self.pk == None:
       # Object being created
-      self.mailing().sendAppliedToVolunteer({'apply': self})
-      self.mailing().sendAppliedToOwner({'apply': self})
+      creating = True
     else:
       # Object being updated
       if self.__original_canceled != self.canceled:
@@ -54,16 +54,24 @@ class Apply(ChannelRelationship):
         if self.status == "unapplied":
           self.canceled = True
           self.canceled_date = timezone.now()
-          self.mailing().sendUnappliedToVolunteer({'apply': self})
-          self.mailing().sendUnappliedToOwner({'apply': self})
         else:
           self.canceled = False
           self.canceled_date = None
 
+    return_data = super(Apply, self).save(*args, **kwargs)
+
+    # Emails
+    if creating:
+      self.mailing().sendAppliedToVolunteer({'apply': self})
+      self.mailing().sendAppliedToOwner({'apply': self})
+    else:
+      if self.__original_status != self.status and self.status == "unapplied":
+        self.mailing().sendUnappliedToVolunteer({'apply': self})
+        self.mailing().sendUnappliedToOwner({'apply': self})
+
     # Update original values
     self.__original_status = self.status
     self.__original_canceled = self.canceled
-    return_data = super(Apply, self).save(*args, **kwargs)
 
     # Updating project applied_count
     self.project.applied_count = self.project.get_volunteers_numbers()

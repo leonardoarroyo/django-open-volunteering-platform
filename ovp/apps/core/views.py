@@ -38,7 +38,7 @@ def contact(request):
   if contacts.count() != len(recipients):
     return response.Response({"detail": "Invalid recipients."}, status.HTTP_400_BAD_REQUEST)
 
-  contact = emails.ContactFormMail(recipients)
+  contact = emails.ContactFormMail(recipients, channel=request.channel)
   contact.sendContact(context=context)
 
   return response.Response({"success": True})

@@ -139,7 +139,8 @@ settings.configure(
     },
     HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor',
     SILENCED_SYSTEM_CHECKS=["auth.E003", "auth.W004"],
-    AUTHENTICATION_BACKENDS=["ovp.apps.users.auth.backends.ChannelBasedAuthentication"]
+    AUTHENTICATION_BACKENDS=["ovp.apps.users.auth.backends.ChannelBasedAuthentication"],
+    TEST_CHANNELS=["test-channel", "channel1"]
 )
 
 django.setup()
