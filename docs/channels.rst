@@ -74,3 +74,6 @@ serializer.create() instead of model.create()
 don't use force authenticate if you're testing different channels
 
 avoid using unique on channel model, instead use unique_together (field, channel)
+
+
+channel settings model

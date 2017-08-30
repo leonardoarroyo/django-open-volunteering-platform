@@ -10,3 +10,4 @@ add csv renderer to settings
 add channel middleware
 silence system checks
 setup auth backends
+setup cache!
