@@ -34,9 +34,15 @@ class BaseMail:
     self.__setLocale()
     subject = get_email_subject(template_name, subject)
 
+    # Inject extra context
     ctx = inject_client_url(context)
-    text_content = get_template('email/{}.txt'.format(template_name)).render(ctx)
-    html_content = get_template('email/{}.html'.format(template_name)).render(ctx)
+    ctx["extend"] = {
+      "html": "default/email/base.html",
+      "txt": "default/email/base.txt"
+    }
+
+    text_content = get_template('default/email/{}.txt'.format(template_name)).render(ctx)
+    html_content = get_template('default/email/{}.html'.format(template_name)).render(ctx)
     self.__resetLocale()
 
     msg = EmailMultiAlternatives(subject, text_content, self.from_email, [self.email_address])

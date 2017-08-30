@@ -1,4 +1,4 @@
-{% extends "email/base.txt" %}
+{% extends extend.txt %}
 
 {% block content %}
 Hello, you're receiving this email because you requested password recovery.
