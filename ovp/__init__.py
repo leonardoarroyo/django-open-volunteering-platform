@@ -9,6 +9,7 @@ def get_core_apps():
     # External essentials
     "haystack",
     "vinaigrette",
+    "corsheaders",
 
     # OVP
     "ovp.apps.core",

@@ -34,6 +34,7 @@ autojoin vs noautojoin
 
 channel cors
 A channel can specify its own cors settings. This a
+add cors headers middleware
 
 
 
@@ -77,3 +78,4 @@ avoid using unique on channel model, instead use unique_together (field, channel
 
 
 channel settings model
+

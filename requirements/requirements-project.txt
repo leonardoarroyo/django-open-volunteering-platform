@@ -13,3 +13,4 @@ shortuuid
 djangorestframework-jwt
 dateutils
 pyexcel_xls
+django-cors-headers

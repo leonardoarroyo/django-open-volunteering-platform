@@ -20,7 +20,7 @@ def get_channel(slug):
 
       for setting in channel.channelsetting_channel.all():
         if setting.key in result["settings"]:
-          result["settings"][setting.key].append = setting.value
+          result["settings"][setting.key].append(setting.value)
         else:
           result["settings"][setting.key] = [setting.value]
 

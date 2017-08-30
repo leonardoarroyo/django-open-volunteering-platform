@@ -38,12 +38,13 @@ ALWAYS_INSTALLED_APPS = (
 
 ALWAYS_MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'ovp.apps.channels.middlewares.channel.ChannelMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'ovp.apps.channels.middlewares.channel.ChannelMiddleware',
 )
 
 REST_FRAMEWORK = {
