@@ -1,1 +1,5 @@
-You joined organization {{organization.name}}.
+{% extends extend.txt %}
+
+{% block content %}
+  You joined organization {{organization.name}}.
+{% endblock content %}

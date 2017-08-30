@@ -1,1 +1,5 @@
-You removed user {{user.name}} ({{user.email}}) from your organization {{organization.name}}.
+{% extends extend.txt %}
+
+{% block content %}
+  You removed user {{user.name}} ({{user.email}}) from your organization {{organization.name}}.
+{% endblock content %}

@@ -1,1 +1,5 @@
-You have applied to {{apply.project.name}}.
+{% extends extend.txt %}
+
+{% block content %}
+  You have applied to {{apply.project.name}}.
+{% endblock content %}

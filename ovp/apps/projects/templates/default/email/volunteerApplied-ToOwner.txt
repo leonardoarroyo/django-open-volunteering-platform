@@ -1,1 +1,5 @@
-New volunteer applied to {{apply.project.name}}.
+{% extends extend.txt %}
+
+{% block content %}
+  New volunteer applied to {{apply.project.name}}.
+{% endblock content %}

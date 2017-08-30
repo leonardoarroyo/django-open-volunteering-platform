@@ -1,7 +1,11 @@
-Hello! Someone sent you a message through the contact form.
+{% extends extend.txt %}
 
-Name: {{name}}<br>
-Email: {{email}}<br>
-Phone: {{phone}}<br>
+{% block content %}
+  Hello! Someone sent you a message through the contact form.
 
-{{message}}
+  Name: {{name}}<br>
+  Email: {{email}}<br>
+  Phone: {{phone}}<br>
+
+  {{message}}
+{% endblock content %}

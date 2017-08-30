@@ -1,1 +1,5 @@
-User {{user.name}} ({{user.email}}) has joined your organization {{organization.name}}.
+{% extends extend.html %}
+
+{% block content %}
+  User {{user.name}} ({{user.email}}) has joined your organization {{organization.name}}.
+{% endblock %}

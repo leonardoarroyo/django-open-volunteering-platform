@@ -1,5 +1,5 @@
 {% extends extend.txt %}
 
 {% block content %}
-Hello, welcome to the system.
+  Hello, welcome to the system.
 {% endblock %}

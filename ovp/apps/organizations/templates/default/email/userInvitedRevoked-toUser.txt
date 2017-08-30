@@ -1,1 +1,5 @@
-You invitation to {{invite.organization.name}} has been revoked.
+{% extends extend.txt %}
+
+{% block content %}
+  You invitation to {{invite.organization.name}} has been revoked.
+{% endblock content %}

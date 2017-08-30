@@ -1,1 +1,5 @@
-You have unapplied from {{apply.project.name}}.
+{% extends extend.txt %}
+
+{% block content %}
+  You have unapplied from {{apply.project.name}}.
+{% endblock content %}

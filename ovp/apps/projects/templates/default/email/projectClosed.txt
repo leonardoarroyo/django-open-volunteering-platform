@@ -1,1 +1,5 @@
-You project {{project.name}} was closed.
+{% extends extend.txt %}
+
+{% block content %}
+  You project {{project.name}} was closed.
+{% endblock content %}
