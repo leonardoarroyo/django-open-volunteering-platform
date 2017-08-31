@@ -4,7 +4,7 @@ from django.test.utils import override_settings
 
 from ovp.apps.core.helpers import get_email_subject, is_email_enabled
 from ovp.apps.users.models import User
-from ovp.apps.projects.models import Project, Apply
+from ovp.apps.projects.models import Project, Apply, Comments
 
 class TestEmailTriggers(TestCase):
   def test_project_creation_trigger_email(self):
@@ -30,7 +30,6 @@ class TestEmailTriggers(TestCase):
     mail.outbox = [] # Mails sent before publishing don't matter
     project.published = True
     project.save()
-
 
     if is_email_enabled("projectPublished"): # pragma: no cover
       self.assertTrue(len(mail.outbox) == 1)
@@ -103,3 +102,37 @@ class TestEmailTriggers(TestCase):
     if is_email_enabled("volunteerUnapplied-ToOwner"): # pragma: no cover
       self.assertTrue(get_email_subject("volunteerUnapplied-ToOwner", "Volunteer unapplied from project") in subjects)
       self.assertTrue("test_volunteer@project.com" in recipients)
+
+
+  def test_comment_project_trigger_email(self):
+    """Assert that email is triggered when user comment in project"""
+    user = User.objects.create_user(email="test_project@project.com", password="test_project")
+    project = Project(name="test project", slug="test project", details="abc", description="abc", owner=user)
+    project.save()
+
+    mail.outbox = [] # Mails sent before publishing don't matter
+    comment = Comments(content="test message", reply_to=0, user=user, project=project)
+    comment.save()
+
+    if is_email_enabled("sendComment"): # pragma: no cover
+      self.assertTrue(len(mail.outbox) == 1)
+      self.assertTrue(mail.outbox[0].subject == get_email_subject("sendComment", "You received a comment"))
+    else: # pragma: no cover
+      self.assertTrue(len(mail.outbox) == 0)
+
+
+  def test_comment_reply__project_trigger_email(self):
+    """Assert that email is triggered when user reply another comment in project"""
+    user = User.objects.create_user(email="test_project@project.com", password="test_project")
+    project = Project(name="test project", slug="test project", details="abc", description="abc", owner=user)
+    project.save()
+
+    mail.outbox = [] # Mails sent before publishing don't matter
+    comment = Comments(content="test message", reply_to=1, user=user, project=project)
+    comment.save()
+
+    if is_email_enabled("commentReply"): # pragma: no cover
+      self.assertTrue(len(mail.outbox) == 1)
+      self.assertTrue(mail.outbox[0].subject == get_email_subject("commentReply", "Your comment was replied"))
+    else: # pragma: no cover
+      self.assertTrue(len(mail.outbox) == 0)
