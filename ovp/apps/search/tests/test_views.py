@@ -132,7 +132,6 @@ def create_sample_users():
 """
 Tests
 """
-@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class ProjectSearchTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
@@ -175,7 +174,7 @@ class ProjectSearchTestCase(TestCase):
     response = self.client.get(reverse("search-projects-list"), format="json", HTTP_X_OVP_CHANNEL="test-channel")
     self.assertEqual(len(response.data["results"]), 1)
 
-  @override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'}, OVP_SEARCH={'PROJECTS': {'FILTER_OUT': {'name': 'test project'}}})
+  @override_settings(OVP_SEARCH={'PROJECTS': {'FILTER_OUT': {'name': 'test project'}}})
   def test_result_hiding(self):
     """
     Test it's possible to hide results through settings
@@ -280,7 +279,6 @@ class ProjectSearchTestCase(TestCase):
     self.assertEqual(len(response.data["results"]), 0)
 
 
-@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class OrganizationSearchTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
@@ -507,7 +505,7 @@ class UserSearchTestCase(TestCase):
     self.assertEqual(response.status_code, 403)
 
 
-@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'}, OVP_SEARCH={'ENABLE_USER_SEARCH': True})
+@override_settings(OVP_SEARCH={'ENABLE_USER_SEARCH': True})
 class OrderingTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
@@ -569,8 +567,6 @@ class OrderingTestCase(TestCase):
     self.assertEqual(response.status_code, 401)
 
 
-
-@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class CityCountryTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)

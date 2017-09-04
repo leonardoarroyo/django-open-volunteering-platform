@@ -17,7 +17,6 @@ def remove_component(address, types):
 
 
 class GoogleAddressModelTestCase(TestCase):
-  @override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
   def test_api_call(self):
     """Assert GoogleAddress calls google API and get address"""
     a = GoogleAddress(typed_address="Rua Teçaindá, 81, SP", typed_address2="Casa")

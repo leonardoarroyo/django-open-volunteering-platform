@@ -1,3 +1,4 @@
 DEFAULT_SETTINGS = {
-  "CLIENT_URL": [""]
+  "CLIENT_URL": [""],
+  "MAPS_API_LANGUAGE": ["en_US"]
 }

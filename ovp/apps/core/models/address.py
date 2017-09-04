@@ -4,8 +4,8 @@ from django.db.models import Q, Count
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from ovp.apps.core import helpers
 from ovp.apps.channels.models.abstract import ChannelRelationship
+from ovp.apps.channels.cache import get_channel_setting
 
 import os
 import requests
@@ -104,8 +104,7 @@ def update_address(sender, instance, **kwargs):
   if kwargs.get('raw', False): # pragma: no cover
     return None
 
-  settings = helpers.get_settings()
-  maps_language = settings.get('MAPS_API_LANGUAGE', 'en_US')
+  maps_language = get_channel_setting(instance.channel.slug, "MAPS_API_LANGUAGE")
 
   addressline = instance.typed_address
 
