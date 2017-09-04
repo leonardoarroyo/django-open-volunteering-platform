@@ -145,7 +145,9 @@ class ProjectSearchTestCase(TestCase):
     Test project search does only 4 queries
     """
     cache.clear()
-    with self.assertNumQueries(5):
+    # 5 queries are search related
+    # 2 are middleware/channel related
+    with self.assertNumQueries(7):
       response = self.client.get(reverse("search-projects-list"), format="json")
 
   def test_query_gets_cached(self):
@@ -291,7 +293,9 @@ class OrganizationSearchTestCase(TestCase):
     Test organization search does only 2 queries
     """
     cache.clear()
-    with self.assertNumQueries(2):
+    # 2 queries are search related
+    # 2 are middleware/channel related
+    with self.assertNumQueries(4):
       response = self.client.get(reverse("search-organizations-list"), format="json")
 
   def test_query_gets_cached(self):
@@ -416,7 +420,9 @@ class UserSearchTestCase(TestCase):
     Test user search does only 3 queries
     """
     cache.clear()
-    with self.assertNumQueries(3):
+    # 3 queries are search related
+    # 2 are middleware/channel related
+    with self.assertNumQueries(5):
       response = self.client.get(reverse("search-users-list"), format="json")
 
   def test_query_gets_cached(self):

@@ -16,6 +16,7 @@ from ovp.apps.channels.models import Channel
 class UserChannelTestCase(TestCase):
   def setUp(self):
     Channel.objects.create(name="Test channel", slug="test-channel")
+    Channel.objects.create(name="Wrong channel", slug="wrong-channel")
     self.client = APIClient()
 
     self.user1 = User.objects.create(email="sample_user@gmail.com", password="sample_user", object_channel="default")
