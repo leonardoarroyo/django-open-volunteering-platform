@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.core.cache import cache
 from ovp.apps.channels.models.channel_setting import ChannelSetting
 from ovp.apps.channels.cache import get_channel
+from ovp.apps.channels.cache import get_channel_setting
 
 class ChannelCacheTestCase(TestCase):
   def setUp(self):
@@ -23,3 +24,11 @@ class ChannelCacheTestCase(TestCase):
       channel = get_channel("default")
 
     self.assertTrue(len(channel["settings"]) == 2)
+
+  def test_channel_settings_function(self):
+    self.assertEqual(get_channel_setting("default", "CLIENT_URL"), [""])
+
+    ChannelSetting.objects.create(key="CLIENT_URL", value="www.test.com", object_channel="default")
+
+    cache.clear()
+    self.assertEqual(get_channel_setting("default", "CLIENT_URL"), ["www.test.com"])

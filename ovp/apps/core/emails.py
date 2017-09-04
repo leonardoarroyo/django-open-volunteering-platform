@@ -5,6 +5,7 @@ from django.template.exceptions import TemplateDoesNotExist
 from django.conf import settings
 from django.utils import translation
 from ovp.apps.core.helpers import get_settings, is_email_enabled, get_email_subject
+from ovp.apps.channels.cache import get_channel_setting
 
 import threading, sys
 
@@ -37,7 +38,7 @@ class BaseMail:
     subject = get_email_subject(template_name, subject)
 
     # Inject extra context
-    ctx = inject_client_url(context)
+    ctx = inject_client_url(self.channel, context)
     ctx["extend"] = {
       "html": "{}/email/base.html".format(self.channel),
       "txt": "{}/email/base.txt".format(self.channel)
@@ -110,7 +111,6 @@ class ContactFormMail(BaseMail):
 # Helpers
 #
 
-def inject_client_url(ctx):
-  s = get_settings()
-  ctx['CLIENT_URL'] = s.get("CLIENT_URL", "")
+def inject_client_url(channel, ctx):
+  ctx['CLIENT_URL'] = get_channel_setting(channel, "CLIENT_URL")[0]
   return ctx
