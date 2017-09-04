@@ -1,4 +1,5 @@
 DEFAULT_SETTINGS = {
   "CLIENT_URL": [""],
-  "MAPS_API_LANGUAGE": ["en_US"]
+  "MAPS_API_LANGUAGE": ["en_US"],
+  "EXPIRE_PASSWORD_IN": ["0"]
 }

@@ -2,6 +2,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.core.cache import cache
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -10,6 +11,7 @@ from ovp.apps.users import models
 from ovp.apps.users.tests.helpers import authenticate
 from ovp.apps.users.tests.helpers import create_user
 
+from ovp.apps.channels.models.channel_setting import ChannelSetting
 
 
 class UserResourceViewSetTestCase(TestCase):
@@ -86,9 +88,11 @@ class UserResourceViewSetTestCase(TestCase):
     self.assertTrue(response.data.get('name', None))
     self.assertTrue("expired_password" not in response.data)
 
-  @override_settings(OVP_USERS={"EXPIRE_PASSWORD_IN": 60*60})
   def test_expired_password_fields(self):
     """Assert that password expired field works"""
+    ChannelSetting.objects.create(key="EXPIRE_PASSWORD_IN", value="{}".format(60*60), object_channel="default")
+    cache.clear()
+
     user = create_user('test_can_get_current_user@test.com', 'validpassword')
 
     client = APIClient()

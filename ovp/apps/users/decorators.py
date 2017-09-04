@@ -4,19 +4,21 @@ from dateutil.relativedelta import relativedelta
 
 from django.utils import timezone
 
-from ovp.apps.users.helpers import get_settings
 from ovp.apps.users.models import PasswordHistory
+
+from ovp.apps.channels.cache import get_channel_setting
 
 def expired_password(function):
 
   @wraps(function)
   def wrapper(self, *args, **kwargs):
     representation = function(self, *args, **kwargs)
-    expiry_time = get_settings().get("EXPIRE_PASSWORD_IN", False)
+    request = self.context["request"]
+
+    expiry_time = int(get_channel_setting(request.channel, "EXPIRE_PASSWORD_IN")[0])
 
     if expiry_time:
       representation["expired_password"] = False
-      request = self.context["request"]
       entry = PasswordHistory.objects.filter(user=request.user).order_by('-pk').first()
 
       if not entry:
