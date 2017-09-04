@@ -1,5 +1,5 @@
 from ovp.apps.core.emails import BaseMail
-from ovp.apps.core.helpers import get_settings
+from ovp.apps.channels.cache import get_channel_setting
 
 class OrganizationMail(BaseMail):
   """
@@ -103,10 +103,9 @@ class OrganizationAdminMail(BaseMail):
   """
   This class is responsible for firing emails for Organization related actions
   """
-  def __init__(self, project, async_mail=None, locale=None):
-    s = get_settings()
-    email = s.get('ADMIN_MAIL', None)
-    super(OrganizationAdminMail, self).__init__(email, channel=project.channel.slug, async_mail=async_mail, locale=locale)
+  def __init__(self, organization, async_mail=None, locale=None):
+    email = get_channel_setting(organization.channel.slug, "ADMIN_MAIL")[0]
+    super(OrganizationAdminMail, self).__init__(email, channel=organization.channel.slug, async_mail=async_mail, locale=locale)
 
 
   def sendOrganizationCreated(self, context={}):

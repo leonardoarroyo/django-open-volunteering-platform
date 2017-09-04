@@ -1,6 +1,6 @@
 from ovp.apps.core.emails import BaseMail
 from django.utils.translation import ugettext_lazy as _
-from ovp.apps.core.helpers import get_settings
+from ovp.apps.channels.cache import get_channel_setting
 
 class ProjectMail(BaseMail):
   """
