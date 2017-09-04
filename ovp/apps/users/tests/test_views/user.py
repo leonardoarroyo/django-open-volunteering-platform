@@ -1,7 +1,6 @@
 from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
-from django.test.utils import override_settings
 from django.core.cache import cache
 
 from rest_framework.reverse import reverse

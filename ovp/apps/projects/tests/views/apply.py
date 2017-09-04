@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.test.utils import override_settings
+from django.core.cache import cache
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -7,6 +7,8 @@ from rest_framework.test import APIClient
 from ovp.apps.projects.models import Project, Apply
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
+
+from ovp.apps.channels.models.channel_setting import ChannelSetting
 
 from collections import OrderedDict
 
@@ -106,8 +108,6 @@ class ApplyAndUnapplyTestCase(TestCase):
     self.assertTrue(response.data["detail"] == "Not found.")
     self.assertTrue(response.status_code == 404)
 
-
-  @override_settings(OVP_PROJECTS={"UNAUTHENTICATED_APPLY": False})
   def test_unauthenticated_user_cant_apply_to_project(self):
     """Assert that unauthenticated user cant apply to project"""
     user = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channel="default")
@@ -119,10 +119,11 @@ class ApplyAndUnapplyTestCase(TestCase):
     self.assertTrue(response.data["detail"] == "Authentication credentials were not provided.")
     self.assertTrue(response.status_code == 401)
 
-
-  @override_settings(OVP_PROJECTS={"UNAUTHENTICATED_APPLY": True})
   def test_unauthenticated_user_can_apply_to_project(self):
     """Assert that unauthenticated user can apply to project if properly configured"""
+    ChannelSetting.objects.create(key="UNAUTHENTICATED_APPLY", value="1", object_channel="default")
+    cache.clear()
+
     user = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channel="default")
     project = Project.objects.create(name="test project", details="abc", description="abc", owner=user, object_channel="default")
 

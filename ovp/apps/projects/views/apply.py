@@ -3,10 +3,10 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
+from ovp.apps.channels.cache import get_channel_setting
 
 from ovp.apps.projects.serializers import apply as serializers
 from ovp.apps.projects import models
-from ovp.apps.projects import helpers
 from ovp.apps.projects.permissions import ProjectApplyPermission
 
 from rest_framework import decorators
@@ -107,7 +107,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
       self.permission_classes = (permissions.IsAuthenticated, ProjectApplyPermission)
 
     if self.action == 'apply':
-      if helpers.get_settings().get('UNAUTHENTICATED_APPLY', False):
+      if int(get_channel_setting(request.channel, "UNAUTHENTICATED_APPLY")):
         self.permission_classes = ()
       else:
         self.permission_classes = (permissions.IsAuthenticated, )
