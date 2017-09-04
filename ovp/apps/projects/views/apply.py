@@ -107,7 +107,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
       self.permission_classes = (permissions.IsAuthenticated, ProjectApplyPermission)
 
     if self.action == 'apply':
-      if int(get_channel_setting(request.channel, "UNAUTHENTICATED_APPLY")):
+      if int(get_channel_setting(request.channel, "UNAUTHENTICATED_APPLY")[0]):
         self.permission_classes = ()
       else:
         self.permission_classes = (permissions.IsAuthenticated, )

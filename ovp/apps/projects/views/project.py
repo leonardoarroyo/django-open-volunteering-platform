@@ -2,11 +2,11 @@ from django.db.models import Q
 
 from ovp.apps.projects.serializers import project as serializers
 from ovp.apps.projects import models
-from ovp.apps.projects import helpers
 from ovp.apps.projects.permissions import ProjectCreateOwnsOrIsOrganizationMember
 from ovp.apps.projects.permissions import ProjectRetrieveOwnsOrIsOrganizationMember
 
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
+from ovp.apps.channels.cache import get_channel_setting
 
 from ovp.apps.core.helpers.xls import Response as XLSResponse
 
@@ -96,7 +96,7 @@ class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
   def get_permissions(self):
     request = self.get_serializer_context()['request']
     if self.action == 'create':
-      if helpers.get_settings().get('CAN_CREATE_PROJECTS_IN_ANY_ORGANIZATION', False):
+      if int(get_channel_setting(request.channel, "CAN_CREATE_PROJECTS_IN_ANY_ORGANIZATION")[0]):
         self.permission_classes = (permissions.IsAuthenticated, )
       else:
         self.permission_classes = (permissions.IsAuthenticated, ProjectCreateOwnsOrIsOrganizationMember)

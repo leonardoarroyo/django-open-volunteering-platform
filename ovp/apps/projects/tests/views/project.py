@@ -1,12 +1,16 @@
 from django.test import TestCase
 from django.test.utils import override_settings
 
+from django.core.cache import cache
+
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from ovp.apps.projects.models import Project
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
+
+from ovp.apps.channels.models.channel_setting import ChannelSetting
 
 from collections import OrderedDict
 
@@ -116,9 +120,10 @@ class ProjectCloseTestCase(TestCase):
     self.assertTrue(response.data["closed"] == True)
     self.assertTrue(response.data["closed"])
 
-@override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": False})
 class ProjectWithOrganizationTestCase(TestCase):
   def setUp(self):
+    cache.clear()
+
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
     self.second_user = User.objects.create_user(email="test_second_user@test.com", password="testcancreate", object_channel="default")
     self.third_user = User.objects.create_user(email="test_third_user@test.com", password="testcancreate", object_channel="default")
@@ -149,9 +154,11 @@ class ProjectWithOrganizationTestCase(TestCase):
     response = self.client.post(reverse("project-list"), self.data, format="json")
     self.assertTrue(response.status_code == 403)
 
-  @override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_IN_ANY_ORGANIZATION": True})
   def test_can_create_in_any_organization_if_settings_allow(self):
     """Test user can create project inside any organization if properly configured"""
+    ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_IN_ANY_ORGANIZATION", value="1", object_channel="default")
+    cache.clear()
+
     wrong_org = Organization(name="test", type=0, owner=self.second_user)
     wrong_org.save(object_channel="default")
 

@@ -13,6 +13,9 @@ from ovp.apps.channels.models.channel_setting import ChannelSetting
 from collections import OrderedDict
 
 class ApplyAndUnapplyTestCase(TestCase):
+  def setUp(self):
+    cache.clear()
+
   def test_can_apply_to_project(self):
     """Assert that authenticated user can apply to project"""
     owner = User.objects.create_user(email="owner_user@gmail.com", password="test_owner", object_channel="default")
