@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test.utils import override_settings
 
 from django.core.cache import cache
 
@@ -19,8 +18,11 @@ import copy
 
 base_project = {"name": "test project", "slug": "test-cant-override-slug-on-creation", "details": "this is just a test project", "description": "the project is being tested", "minimum_age": 18, "address": {"typed_address": "r. tecainda, 81, sao paulo"}, "disponibility": {"type": "work", "work": {"description": "abc"}}, "causes": [{"id": 1}, {"id": 2}], "skills": [{"id": 3}, {"id": 4}]}
 
-@override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": True})
 class ProjectResourceViewSetTestCase(TestCase):
+  def setUp(self):
+    ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
+    cache.clear()
+
   def test_cant_create_project_unauthenticated(self):
     """Assert that it's not possible to create a project while unauthenticated"""
     client = APIClient()
@@ -95,9 +97,11 @@ class ProjectResourceViewSetTestCase(TestCase):
 
 
 
-@override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": True})
 class ProjectCloseTestCase(TestCase):
   def setUp(self):
+    ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
+    cache.clear()
+
     user = User.objects.create_user(email="test_close@gmail.com", password="testclose", object_channel="default")
     self.client = APIClient()
     self.client.force_authenticate(user=user)
@@ -246,9 +250,11 @@ class ManageableProjectsRouteTestCase(TestCase):
     self.assertTrue(len(response.data) == 3)
 
 
-@override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": True})
 class ProjectResourceUpdateTestCase(TestCase):
   def setUp(self):
+    ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
+    cache.clear()
+
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
     self.data = copy.copy(base_project)
     self.client = APIClient()
@@ -322,9 +328,11 @@ class ProjectResourceUpdateTestCase(TestCase):
     self.assertTrue(response.data["roles"] == updated_project["roles"])
 
 
-@override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": True})
 class DisponibilityTestCase(TestCase):
   def setUp(self):
+    ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
+    cache.clear()
+
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
     self.data = copy.copy(base_project)
     self.client = APIClient()
@@ -423,9 +431,11 @@ class DisponibilityTestCase(TestCase):
 
 
 
-@override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": True})
 class VolunteerRoleTestCase(TestCase):
   def setUp(self):
+    ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
+    cache.clear()
+
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
     self.data = copy.copy(base_project)
     self.client = APIClient()

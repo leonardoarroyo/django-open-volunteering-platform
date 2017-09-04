@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.core.cache import cache
 
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
@@ -12,16 +13,22 @@ from ovp.apps.projects.models import Apply
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
 from ovp.apps.channels.models import Channel
+from ovp.apps.channels.models.channel_setting import ChannelSetting
+
 
 import copy
 
 base_project = {"name": "test project", "slug": "test-cant-override-slug-on-creation", "details": "this is just a test project", "description": "the project is being tested", "minimum_age": 18, "address": {"typed_address": "r. tecainda, 81, sao paulo"}, "disponibility": {"type": "work", "work": {"description": "abc"}}, "causes": [{"id": 1}, {"id": 2}], "skills": [{"id": 3}, {"id": 4}]}
 
-@override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": True})
 class ProjectChannelTestCase(TestCase):
   def setUp(self):
     # Channel
     channel = Channel.objects.create(name="Test channel", slug="test-channel")
+
+    # Settings
+    ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
+    ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="test-channel")
+    cache.clear()
 
     # Users
     self.email = "test_can_create_project@gmail.com"

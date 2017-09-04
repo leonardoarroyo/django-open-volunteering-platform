@@ -1,5 +1,4 @@
 from ovp.apps.projects import models
-from ovp.apps.projects import helpers
 from ovp.apps.projects.decorators import hide_address, add_current_user_is_applied_representation
 from ovp.apps.projects.serializers.disponibility import DisponibilitySerializer, add_disponibility_representation
 from ovp.apps.projects.serializers.job import JobSerializer
@@ -19,25 +18,23 @@ from ovp.apps.organizations.models import Organization
 from ovp.apps.uploads.serializers import UploadedImageSerializer
 
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
+from ovp.apps.channels.cache import get_channel_setting
 
 from ovp.apps.users.serializers import ShortUserPublicRetrieveSerializer, UserProjectRetrieveSerializer
 
 from rest_framework import serializers
+from rest_framework import fields
 from rest_framework import exceptions
 from rest_framework.compat import set_many
 from rest_framework.utils import model_meta
 
 
 """ Validators """
-def organization_validator(data):
-  settings = helpers.get_settings()
-  allow_no_org = settings.get('CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION', False)
+def required_organization(request, pk):
+  allow_no_org = int(get_channel_setting(request.channel, "CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION")[0])
 
-  if not allow_no_org:
-    pk = data.get('organization', None)
-
-    if not pk:
-      raise exceptions.ValidationError({'organization': ['This field is required.']})
+  if not allow_no_org and not pk:
+    raise exceptions.ValidationError({'organization': 'This field is required.'})
 
 
 """ Serializers """
@@ -47,11 +44,16 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   roles = VolunteerRoleSerializer(many=True, required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
   skills = SkillAssociationSerializer(many=True, required=False)
+  #organization = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all(), required=False, validators=[OrganizationValidator()])
 
   class Meta:
     model = models.Project
     fields = ['id', 'image', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills']
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date']
+
+  def validate(self, data):
+    required_organization(self.context["request"], data.get("organization", None))
+    return super(ProjectCreateUpdateSerializer, self).validate(data)
 
   def create(self, validated_data):
     causes = validated_data.pop('causes', [])
@@ -167,8 +169,8 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     return instance
 
-  def get_validators(self):
-    return super(ProjectCreateUpdateSerializer, self).get_validators() + [organization_validator]
+ # def get_validators(self):
+ #   return super(ProjectCreateUpdateSerializer, self).get_validators() + [OrganizationValidator]
 
   @add_disponibility_representation
   def to_representation(self, instance):
