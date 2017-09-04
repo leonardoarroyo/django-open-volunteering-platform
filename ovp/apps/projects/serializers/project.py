@@ -44,7 +44,6 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   roles = VolunteerRoleSerializer(many=True, required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
   skills = SkillAssociationSerializer(many=True, required=False)
-  #organization = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all(), required=False, validators=[OrganizationValidator()])
 
   class Meta:
     model = models.Project
@@ -168,9 +167,6 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     instance.save()
 
     return instance
-
- # def get_validators(self):
- #   return super(ProjectCreateUpdateSerializer, self).get_validators() + [OrganizationValidator]
 
   @add_disponibility_representation
   def to_representation(self, instance):
