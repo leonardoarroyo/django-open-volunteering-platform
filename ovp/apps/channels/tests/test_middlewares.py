@@ -2,10 +2,12 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from mock import Mock
 from ovp.apps.channels.middlewares.channel import ChannelMiddleware
+from ovp.apps.channels.models.channel import Channel
 from ovp.apps.core.views import startup
 
 class ChannelMiddlewareTestCase(TestCase):
   def setUp(self):
+    Channel.objects.create(name="Test channel", slug="test-channel-1")
     self.cm = ChannelMiddleware(startup)
     self.factory = RequestFactory()
     self.request = self.factory.get("/startup/")
