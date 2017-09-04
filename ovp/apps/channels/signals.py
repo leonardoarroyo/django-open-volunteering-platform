@@ -6,7 +6,7 @@ from django.utils.six.moves.urllib.parse import urlparse
 
 def channel_cors(sender, request, **kwargs):
   """
-  This signal checks for channel `cors_origin_whitelist` settings.
+  This signal checks for channel `CORS_ORIGIN_WHITELIST` settings.
   If the channel as a setting where the value match the Origin header
   the request will have the correct Access-Control-Allow-Origin on the response.
   """
@@ -14,7 +14,7 @@ def channel_cors(sender, request, **kwargs):
   if channel:
     origin = request.META.get("HTTP_ORIGIN", "")
     domain = urlparse(origin).netloc
-    if domain in channel["settings"].get("cors_origin_whitelist", []):
+    if domain in channel["settings"].get("CORS_ORIGIN_WHITELIST", []):
       return True
 
   return False

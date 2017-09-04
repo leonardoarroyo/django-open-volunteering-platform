@@ -15,9 +15,9 @@ class ChannelSettingsTestCase(TestCase):
     cache.clear()
 
   def test_cors(self):
-    ChannelSetting.objects.create(key="cors_origin_whitelist", value="default.com", object_channel="default")
-    ChannelSetting.objects.create(key="cors_origin_whitelist", value="www.default.com", object_channel="default")
-    ChannelSetting.objects.create(key="cors_origin_whitelist", value="test.com", object_channel="test-one")
+    ChannelSetting.objects.create(key="CORS_ORIGIN_WHITELIST", value="default.com", object_channel="default")
+    ChannelSetting.objects.create(key="CORS_ORIGIN_WHITELIST", value="www.default.com", object_channel="default")
+    ChannelSetting.objects.create(key="CORS_ORIGIN_WHITELIST", value="test.com", object_channel="test-one")
 
     response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="default", HTTP_ORIGIN="http://default.com")
     self.assertEqual("http://default.com", response.get("Access-Control-Allow-Origin"))
