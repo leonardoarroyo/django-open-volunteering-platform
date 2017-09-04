@@ -5,7 +5,7 @@ from ovp.apps.uploads.serializers import UploadedImageSerializer
 from ovp.apps.users.models.user import User
 
 from ovp.apps.core.models import Cause
-from ovp.apps.core.helpers import get_address_serializers
+from ovp.apps.core.serializers import GoogleAddressSerializer, GoogleAddressCityStateSerializer
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
 
 from ovp.apps.organizations import models
@@ -21,14 +21,8 @@ from rest_framework.compat import set_many
 from rest_framework.utils import model_meta
 
 
-""" Address serializers """
-address_serializers = get_address_serializers()
-
-
-""" Serializers """
-
 class OrganizationCreateSerializer(ChannelRelationshipSerializer):
-  address = address_serializers[0](required=False)
+  address = GoogleAddressSerializer(required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
 
   class Meta:
@@ -41,7 +35,7 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
 
     # Address
     if address_data:
-      address_sr = address_serializers[0](data=address_data, context=self.context)
+      address_sr = GoogleAddressSerializer(data=address_data, context=self.context)
       address = address_sr.create(address_data)
       validated_data['address'] = address
 
@@ -69,7 +63,7 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
 
     # Save related resources
     if address_data:
-      address_sr = address_serializers[0](data=address_data, context=self.context)
+      address_sr = GoogleAddressSerializer(data=address_data, context=self.context)
       address = address_sr.create(address_data)
       instance.address = address
 
@@ -90,7 +84,7 @@ class UserOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
     fields = ['name', 'email', 'phone']
 
 class OrganizationSearchSerializer(ChannelRelationshipSerializer):
-  address = address_serializers[2]()
+  address = GoogleAddressCityStateSerializer()
   image = UploadedImageSerializer()
 
   class Meta:
@@ -98,7 +92,7 @@ class OrganizationSearchSerializer(ChannelRelationshipSerializer):
     fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image']
 
 class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
-  address = address_serializers[0]()
+  address = GoogleAddressSerializer()
   image = UploadedImageSerializer()
   cover = UploadedImageSerializer()
   causes = CauseSerializer(many=True)
