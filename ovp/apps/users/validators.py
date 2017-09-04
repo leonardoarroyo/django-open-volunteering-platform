@@ -1,7 +1,8 @@
 from django.contrib.auth.hashers import get_hasher
 
 from ovp.apps.users.models import PasswordHistory, PasswordRecoveryToken
-from ovp.apps.users.helpers import get_settings
+
+from ovp.apps.channels.cache import get_channel_setting
 
 from rest_framework import serializers
 
@@ -10,7 +11,8 @@ class BasePasswordReuse(object):
     self.request = serializer.context["request"]
 
   def check(self, user, password):
-    amount = get_settings().get("CANT_REUSE_LAST_PASSWORDS", False)
+    amount = int(get_channel_setting(user.channel.slug, "CANT_REUSE_LAST_PASSWORDS")[0])
+
     if amount:
       history = PasswordHistory.objects.filter(user=user).order_by('-id')[:amount]
 

@@ -149,6 +149,9 @@ class UserResourceViewSetTestCase(TestCase):
 
 
 class UserPasswordHistoryTestCase(TestCase):
+  def setUp(self):
+    cache.clear()
+
   def test_can_update_to_same_or_old_password(self):
     """ Assert that it's possible to update to the same or old password """
     response = create_user('test_can_patch_password@test.com', 'old_password')
@@ -166,9 +169,11 @@ class UserPasswordHistoryTestCase(TestCase):
     response = client.patch(reverse('user-current-user'), {'password': 'old_password', 'current_password': 'new_password'}, format="json")
     self.assertTrue(response.status_code == 200)
 
-  @override_settings(OVP_USERS={"CANT_REUSE_LAST_PASSWORDS": 2})
   def test_cant_update_to_same_or_old_password_if_in_settings(self):
     """ Assert that it's not possible to update to the same or old password if configured """
+    ChannelSetting.objects.create(key="CANT_REUSE_LAST_PASSWORDS", value="2", object_channel="default")
+    cache.clear()
+
     response = create_user('test_can_patch_password@test.com', 'old_password')
     user = models.User.objects.get(uuid=response.data['uuid'])
 
