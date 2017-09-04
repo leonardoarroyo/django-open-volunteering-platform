@@ -4,7 +4,8 @@ from django.test.utils import override_settings
 
 from ovp.apps.core.helpers import get_email_subject, is_email_enabled
 from ovp.apps.users.models import User
-from ovp.apps.projects.models import Project, Apply, Comments
+from ovp.apps.projects.models import Project, Apply
+from ovp.apps.core.models import Commentary
 
 class TestEmailTriggers(TestCase):
   def test_project_creation_trigger_email(self):
@@ -111,7 +112,7 @@ class TestEmailTriggers(TestCase):
     project.save()
 
     mail.outbox = [] # Mails sent before publishing don't matter
-    comment = Comments(content="test message", reply_to=0, user=user, project=project)
+    comment = Commentary(content="test message", user=user)
     comment.save()
 
     if is_email_enabled("sendComment"): # pragma: no cover
@@ -127,8 +128,11 @@ class TestEmailTriggers(TestCase):
     project = Project(name="test project", slug="test project", details="abc", description="abc", owner=user)
     project.save()
 
+    parent_comment = Commentary(content="test message 1", user=user)
+    parent_comment.save()
+
     mail.outbox = [] # Mails sent before publishing don't matter
-    comment = Comments(content="test message", reply_to=1, user=user, project=project)
+    comment = Commentary(content="test message 2", reply_to=parent_comment, user=user)
     comment.save()
 
     if is_email_enabled("commentReply"): # pragma: no cover

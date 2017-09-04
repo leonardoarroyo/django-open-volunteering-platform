@@ -1,13 +1,14 @@
 from django.db.models import Q
 
 from ovp.apps.projects.serializers import project as serializers
-from ovp.apps.projects.serializers import comments as comments_serializer
 from ovp.apps.projects import models
 from ovp.apps.projects import helpers
 from ovp.apps.projects.permissions import ProjectCreateOwnsOrIsOrganizationMember
 from ovp.apps.projects.permissions import ProjectRetrieveOwnsOrIsOrganizationMember
 
 from ovp.apps.core.helpers.xls import Response as XLSResponse
+from ovp.apps.core.mixins import CommentaryCreateMixin
+from ovp.apps.core.serializers import commentary as comments_serializer
 
 from rest_framework import decorators
 from rest_framework import mixins
@@ -23,7 +24,7 @@ EXPORT_APPLIED_USERS_HEADERS = [
   _('User Name'), _('User Email'), _('User Phone'), _('Applied At'), _('Status')
   ]
 
-class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet, CommentaryCreateMixin):
   """
   ProjectResourceViewSet resource endpoint
   """
@@ -63,21 +64,6 @@ class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
     project.closed = True
     project.save()
     serializer = self.get_serializer_class()(project, context=self.get_serializer_context())
-    return response.Response(serializer.data)
-
-  @decorators.detail_route(['POST'], url_path='comments')
-  def comments(self, request, slug, pk=None):
-    data = request.data
-    user = request.user
-    project = self.get_object()
-
-    data['project'] = project.pk
-    data['user'] = user.pk
-
-    serializer = self.get_serializer_class()(data=data, context=self.get_serializer_context())
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-
     return response.Response(serializer.data)
 
   @decorators.detail_route(['GET'])
@@ -137,7 +123,7 @@ class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
       return serializers.ProjectRetrieveSerializer
     if self.action == 'retrieve':
       return serializers.ProjectRetrieveSerializer
-    if self.action == 'comments':
-      return comments_serializer.CommentsCreateSerializer
+    if self.action == 'commentary':
+      return comments_serializer.CommentaryCreateSerializer
 
     return serializers.ProjectRetrieveSerializer

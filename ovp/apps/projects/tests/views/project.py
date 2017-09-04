@@ -131,9 +131,8 @@ class ProjectCommentTestCase(TestCase):
     """ Assert that user can comment in project """
     comment = {
       "content": "test comment",
-      "reply_to": 0,
     }
-    response = self.client.post(reverse("project-comments", ["test-project"]), comment, format="json")
+    response = self.client.post(reverse("project-commentary", ["test-project"]), comment, format="json")
     self.assertTrue(response.status_code == 200)
   
 

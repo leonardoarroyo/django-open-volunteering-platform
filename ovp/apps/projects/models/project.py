@@ -24,6 +24,7 @@ class Project(models.Model):
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'))
   skills = models.ManyToManyField('core.Skill', verbose_name=_('skills'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'))
+  commentaries = models.ManyToManyField('core.Commentary', verbose_name=_('commentaries'))
 
   # Relationships
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))

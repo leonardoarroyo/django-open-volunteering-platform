@@ -7,7 +7,7 @@ from ovp.apps.projects.serializers.work import WorkSerializer
 from ovp.apps.projects.serializers.role import VolunteerRoleSerializer
 from ovp.apps.projects.serializers.apply import ProjectAppliesSerializer
 from ovp.apps.projects.serializers.category import CategoryRetrieveSerializer
-from ovp.apps.projects.serializers.comments import CommentsRetrieveSerializer
+from ovp.apps.core.serializers.commentary import CommentaryRetrieveSerializer
 
 from ovp.apps.core import models as core_models
 from ovp.apps.core.helpers import get_address_serializers
@@ -186,11 +186,11 @@ class ProjectRetrieveSerializer(serializers.ModelSerializer):
   causes = FullCauseSerializer(many=True)
   skills = SkillSerializer(many=True)
   categories = CategoryRetrieveSerializer(many=True)
-  comments = CommentsRetrieveSerializer(many=True)
+  commentaries = CommentaryRetrieveSerializer(many=True)
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'comments']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries']
 
   @add_current_user_is_applied_representation
   @hide_address
