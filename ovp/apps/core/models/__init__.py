@@ -3,3 +3,4 @@ from .cause import Cause
 from .skill import Skill
 from .lead import Lead
 from .availability import Availability
+from .commentary import Commentary

@@ -117,6 +117,26 @@ class ProjectCloseTestCase(TestCase):
     self.assertTrue(response.data["closed"])
 
 
+@override_settings(OVP_PROJECTS={"CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION": True})
+class ProjectCommentTestCase(TestCase):
+  def setUp(self):
+    user = User.objects.create_user(email="test_comment@gmail.com", password="testcomment")
+    self.client = APIClient()
+    self.client.force_authenticate(user=user)
+
+    data = copy.copy(base_project)
+    self.project = self.client.post(reverse("project-list"), data, format="json")
+
+  def test_user_can_comment_in_project(self):
+    """ Assert that user can comment in project """
+    comment = {
+      "content": "test comment",
+    }
+    response = self.client.post(reverse("project-commentary", ["test-project"]), comment, format="json")
+    self.assertTrue(response.status_code == 200)
+  
+
+
 # This tests should run if declaring the following setings on runtests.py
 # They can't work without rerunning migrations as django expects the default GoogleAddress related model
 #

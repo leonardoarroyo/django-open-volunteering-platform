@@ -7,6 +7,8 @@ from ovp.apps.projects.permissions import ProjectCreateOwnsOrIsOrganizationMembe
 from ovp.apps.projects.permissions import ProjectRetrieveOwnsOrIsOrganizationMember
 
 from ovp.apps.core.helpers.xls import Response as XLSResponse
+from ovp.apps.core.mixins import CommentaryCreateMixin
+from ovp.apps.core.serializers import commentary as comments_serializer
 
 from rest_framework import decorators
 from rest_framework import mixins
@@ -22,7 +24,7 @@ EXPORT_APPLIED_USERS_HEADERS = [
   _('User Name'), _('User Email'), _('User Phone'), _('Applied At'), _('Status')
   ]
 
-class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet, CommentaryCreateMixin):
   """
   ProjectResourceViewSet resource endpoint
   """
@@ -121,5 +123,7 @@ class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
       return serializers.ProjectRetrieveSerializer
     if self.action == 'retrieve':
       return serializers.ProjectRetrieveSerializer
+    if self.action == 'commentary':
+      return comments_serializer.CommentaryCreateSerializer
 
     return serializers.ProjectRetrieveSerializer
