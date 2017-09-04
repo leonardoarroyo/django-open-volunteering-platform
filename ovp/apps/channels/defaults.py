@@ -1,0 +1,3 @@
+DEFAULT_SETTINGS = {
+  "CLIENT_URL": [""]
+}

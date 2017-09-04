@@ -1,5 +1,6 @@
 from django.core.cache import cache
 from ovp.apps.channels.models import Channel
+from ovp.apps.channels.defaults import DEFAULT_SETTINGS
 
 def get_channel(slug):
   key = "channel-{}".format(slug)
@@ -27,3 +28,11 @@ def get_channel(slug):
     cache.set(key, result, cache_ttl)
 
   return result
+
+def get_channel_setting(slug, key):
+  channel = get_channel(slug)
+
+  if key in channel["settings"]:
+    return channel["settings"][key]
+  else:
+    return DEFAULT_SETTINGS[key]
