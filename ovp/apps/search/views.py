@@ -55,7 +55,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
       result_keys = [q.pk for q in queryset]
       result = Organization.objects.filter(pk__in=result_keys, deleted=False).prefetch_related('causes').select_related('address').order_by('-highlighted')
-      result = filters.filter_out(result, "ORGANIZATIONS")
+      result = filters.filter_out(result, "FILTER_OUT_ORGANIZATIONS", self.request.channel)
       cache.set(key, result, cache_ttl)
 
     return result
@@ -67,7 +67,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance')
 
   def get_base_queryset(self, pks = None):
-    base_queryset = Project.objects.filter(deleted=False)
+    base_queryset = Project.objects.filter(deleted=False, closed=False)
 
     if len(pks) > 0:
       return base_queryset.filter(pk__in=pks)
@@ -114,7 +114,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       else:
         result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'categories', 'job__dates').select_related('address', 'owner', 'work', 'job')
 
-      result = filters.filter_out(result, "PROJECTS")
+      result = filters.filter_out(result, "FILTER_OUT_PROJECTS", self.request.channel)
       cache.set(key, result, cache_ttl)
 
     return result

@@ -12,6 +12,7 @@ from ovp.apps.projects.models import Project, Job
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress, Cause, Skill
 from ovp.apps.channels.models import Channel
+from ovp.apps.channels.models import ChannelSetting
 
 import json
 
@@ -139,11 +140,12 @@ class ProjectSearchTestCase(TestCase):
     create_sample_projects()
     self.client = APIClient()
 
+    cache.clear()
+
   def test_query_optimization(self):
     """
     Test project search does only 4 queries
     """
-    cache.clear()
     # 5 queries are search related
     # 2 are middleware/channel related
     with self.assertNumQueries(7):
@@ -153,7 +155,6 @@ class ProjectSearchTestCase(TestCase):
     """
     Test project search gets cached
     """
-    cache.clear()
     response = self.client.get(reverse("search-projects-list"), format="json")
 
     # Second request should not hit db
@@ -174,12 +175,12 @@ class ProjectSearchTestCase(TestCase):
     response = self.client.get(reverse("search-projects-list"), format="json", HTTP_X_OVP_CHANNEL="test-channel")
     self.assertEqual(len(response.data["results"]), 1)
 
-  @override_settings(OVP_SEARCH={'PROJECTS': {'FILTER_OUT': {'name': 'test project'}}})
   def test_result_hiding(self):
     """
     Test it's possible to hide results through settings
     """
-    cache.clear()
+    ChannelSetting.objects.create(key="FILTER_OUT_PROJECTS", value="'name': 'test project'", object_channel="default")
+
     response = self.client.get(reverse("search-projects-list"), format="json")
     self.assertEqual(len(response.data["results"]), 2)
 
@@ -286,11 +287,12 @@ class OrganizationSearchTestCase(TestCase):
     create_sample_organizations()
     self.client = APIClient()
 
+    cache.clear()
+
   def test_query_optimization(self):
     """
     Test organization search does only 2 queries
     """
-    cache.clear()
     # 2 queries are search related
     # 2 are middleware/channel related
     with self.assertNumQueries(4):
@@ -300,7 +302,6 @@ class OrganizationSearchTestCase(TestCase):
     """
     Test organization search gets cached
     """
-    cache.clear()
     response = self.client.get(reverse("search-organizations-list"), format="json")
 
     # Second request should not hit db
@@ -321,12 +322,12 @@ class OrganizationSearchTestCase(TestCase):
     response = self.client.get(reverse("search-organizations-list"), format="json", HTTP_X_OVP_CHANNEL="test-channel")
     self.assertEqual(len(response.data["results"]), 1)
 
-  @override_settings(OVP_SEARCH={'ORGANIZATIONS': {'FILTER_OUT': {'name': 'test organization'}}})
   def test_result_hiding(self):
     """
     Test it's possible to hide results through settings
     """
-    cache.clear()
+    ChannelSetting.objects.create(key="FILTER_OUT_ORGANIZATIONS", value="'name': 'test organization'", object_channel="default")
+
     response = self.client.get(reverse("search-organizations-list"), format="json")
     self.assertEqual(len(response.data["results"]), 2)
 
@@ -413,11 +414,12 @@ class UserSearchTestCase(TestCase):
     create_sample_users()
     self.client = APIClient()
 
+    cache.clear()
+
   def test_query_optimization(self):
     """
     Test user search does only 3 queries
     """
-    cache.clear()
     # 3 queries are search related
     # 2 are middleware/channel related
     with self.assertNumQueries(5):
@@ -427,7 +429,6 @@ class UserSearchTestCase(TestCase):
     """
     Test user search gets cached
     """
-    cache.clear()
     response = self.client.get(reverse("search-users-list"), format="json")
 
     # Second request should not hit db
