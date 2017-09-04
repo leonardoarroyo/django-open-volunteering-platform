@@ -8,19 +8,13 @@ class CommentaryCreateMixin:
     user = request.user
     obj = self.get_object()
 
-    commentaries = []
-    c = obj.commentaries.all()
-    for x in c:
-      commentaries.append(x)
-
     data['user'] = user.pk
 
     serializer = self.get_serializer_class()(data=data, context=self.get_serializer_context())
     serializer.is_valid(raise_exception=True)
     serializer.save()
 
-    commentaries.append(serializer.instance)
-    obj.commentaries = commentaries
+    obj.commentaries.add(serializer.instance)
     obj.save()
 
     return response.Response(serializer.data)
