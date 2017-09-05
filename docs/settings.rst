@@ -8,36 +8,13 @@ It's a simple key/value model. Keys are not unique, therefore there may be multi
 
 Common settings
 -----------------
-cors_origin_whitelist
-=====================
-Enable cors for a domain and channel pair.
-
-Type: multi
-Example: [(cors_origin_whitelist, 'domain.com'), (cors_origin_whitelist, 'www.domain.com')]
-Default: []
-
 
 LANGUAGE_CODE:
 Used on: emails.
 Todo: use language defined on default django setting
 
-CLIENT_URL:
-Used on: emails
-Todo: move to channelsetting
-
 OVP_EMAILS:
 Used to: determine if email is enabled or disabled, determine email subject
-
-ADDRESS_MODEL:
-ADDRESS_SERIALIZER_TUPLE:
-Used to switch between address model and serializer
-
-MAPS_API_LANGUAGE
-Used to: set maps api language
-
-EXPIRE_PASSWORD_IN
-Amount of seconds before a password expires and user has to update it.
-0 should disable
 
 USER_SEARCH_SERIALIZER
 Path to user search serializer!
@@ -48,24 +25,85 @@ Path to user profile matching (ProfileCreateUpdateSerializer, ProfileRetrieveSer
 PROFILE_MODEL
 Path to profile model
 
+
+Converted
+___________
+
+CORS_ORIGIN_WHITELIST
+=====================
+Enable cors for a domain and channel pair.
+
+Type: multi
+Example: [("CORS_ORIGIN_WHITELIST", 'domain.com'), ("CORS_ORIGIN_WHITELIST", 'www.domain.com')]
+Default: []
+
+CLIENT_URL
+=====================
+Used on: emails
+Type: Single value
+Default: ""
+
+MAPS_API_LANGUAGE
+=====================
+Used to: set maps api language
+Type: Single value
+Default: "en_US"
+
+EXPIRE_PASSWORD_IN
+=====================
+Amount of seconds before a password expires and user has to update it.
+Password expiration is not enforced on the backend, instead, you'll get a "expired_password" boolean on current user view.
+0 should disable.
+
+Type: Single value
+Default: "0"
+
 CANT_REUSE_LAST_PASSWORDS
+==========================
 Disable reuse of last N passwords.
 0 should disable
 
+Type: Single value
+Default: "0"
+
 ADMIN_MAIL
+===========
 Admin email.
 
+Type: Single Value
+Default: None
+
 UNAUTHENTICATED_APPLY
-Allows unauthenticated apply
+=====================
+Allows unauthenticated applies.
+
+Type: Single value
+Default: "0"
 
 CAN_CREATE_PROJECTS_IN_ANY_ORGANIZATION
+=======================================
 Allows creating projects in any organization
 
+Type: Single Value
+Default: "0"
+
 CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION
+=========================================
 Allows creating projects without organization
 
-FILTER_OUT
-Remove organization or project form search module
+Type: Single Value
+Default: "0"
 
-DEFAULT_INCLUDE_CLOSED
-Include closed projects
+FILTER_OUT_PROJECTS
+=======================================
+Filter out of project search
+
+Type: Multiple Value
+Default: []
+
+FILTER_OUT_ORGANIZATIONS
+=======================================
+Filter out of organization search
+
+Type: Multiple Value
+Default: []
