@@ -8,7 +8,7 @@ from rest_framework.test import APIClient
 
 from ovp.apps.users.models import User
 from ovp.apps.users.models.profile import get_profile_model
-from ovp.apps.projects.models import Project, Job
+from ovp.apps.projects.models import Project, Job, Category
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress, Cause, Skill
 
@@ -24,6 +24,9 @@ def create_sample_projects():
   user = User(name="a", email="testmail-projects@test.com", password="test_returned")
   user.save()
 
+  category1 = Category.objects.create(name="cat1", slug="cat1")
+  category2 = Category.objects.create(name="cat2", slug="cat2")
+
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
   address2 = GoogleAddress(typed_address="Campinas, SP - Brazil")
   address3 = GoogleAddress(typed_address="New york, New york - United States")
@@ -38,10 +41,12 @@ def create_sample_projects():
   project.causes.add(Cause.objects.get(pk=1))
   project.skills.add(Skill.objects.get(pk=1))
   project.skills.add(Skill.objects.get(pk=4))
+  project.categories.add(category1)
 
   project = Project(name="test project2", slug="test-slug2", details="abc", description="abc", owner=user, address=address2, highlighted=True, published=True)
   project.save()
   project.causes.add(Cause.objects.get(pk=2))
+  project.categories.add(category2)
   job = Job(can_be_done_remotely=True, project=project)
   job.save()
 
@@ -224,6 +229,24 @@ class ProjectSearchTestCase(TestCase):
     self.assertEqual(str(response.data["results"][0]["name"]), "test project2")
 
     response = self.client.get(reverse("search-projects-list") + "?cause={},{}".format(cause_id1, cause_id2), format="json")
+    self.assertEqual(len(response.data["results"]), 2)
+
+  def test_categories_filter(self):
+    """
+    Test searching with categories filter returns only results filtered by cause
+    """
+    category_id1 = Category.objects.all().order_by('pk')[0].pk
+    category_id2 = Category.objects.all().order_by('pk')[1].pk
+
+    response = self.client.get(reverse("search-projects-list") + "?category=" + str(category_id1), format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+    self.assertEqual(str(response.data["results"][0]["name"]), "test project")
+
+    response = self.client.get(reverse("search-projects-list") + "?category=" + str(category_id2), format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+    self.assertEqual(str(response.data["results"][0]["name"]), "test project2")
+
+    response = self.client.get(reverse("search-projects-list") + "?category={},{}".format(category_id1, category_id2), format="json")
     self.assertEqual(len(response.data["results"]), 2)
 
   def test_skills_filter(self):
