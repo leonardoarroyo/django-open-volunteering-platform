@@ -114,7 +114,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
         result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'categories', 'job__dates').select_related('address', 'owner', 'work', 'job').filter(organization__in=org)
       else:
         result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'categories', 'job__dates').select_related('address', 'owner', 'work', 'job')
-
+      
       result = filters.filter_out(result, "PROJECTS")
       cache.set(key, result, cache_ttl)
 

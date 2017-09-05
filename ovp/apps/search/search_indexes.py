@@ -14,6 +14,10 @@ class CausesMixin:
   def prepare_causes(self, obj):
     return [cause.id for cause in obj.causes.all()]
 
+class CategoriesMixin:
+  def prepare_categories(self, obj):
+    return [category.id for category in obj.categories.all()]
+
 class SkillsMixin:
   def prepare_skills(self, obj):
     return [skill.id for skill in obj.skills.all()]
@@ -41,9 +45,10 @@ class AddressComponentsMixin:
 """
 Indexes
 """
-class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, AddressComponentsMixin):
+class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, CategoriesMixin, AddressComponentsMixin):
   name = indexes.EdgeNgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
+  categories = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
   skills = indexes.MultiValueField(faceted=True)
   highlighted = indexes.BooleanField(model_attr='highlighted')

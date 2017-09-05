@@ -87,10 +87,10 @@ def by_skills(queryset, skill_string=None):
   return queryset
 
 
-def by_categories(queryset, categories_string=None):
+def by_categories(queryset, category_string=None):
   """ Filter queryset by a comma delimeted skill list """
-  if categories_string:
-    operator, items = get_operator_and_items(categories_string)
+  if category_string:
+    operator, items = get_operator_and_items(category_string)
     q_obj = SQ()
     for c in items:
       if len(c) > 0:
@@ -125,6 +125,16 @@ def by_name(queryset, name=None):
   """ Filter queryset by name, with word wide auto-completion """
   if name:
     queryset = queryset.filter(name=name)
+  return queryset
+
+
+def by_date(queryset, date=None):
+  queryset = queryset.filter(job__start_date=date)
+  # if date and len(date) == 1:
+  #   queryset.filter(job__start_date=date)
+  # elif date and len(date) == 2:
+  #   queryset.filter(job__start_date=date[0], job__end_date=date[1])
+
   return queryset
 
 
