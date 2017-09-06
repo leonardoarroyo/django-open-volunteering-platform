@@ -8,7 +8,7 @@ from rest_framework.test import APIClient
 
 from ovp.apps.users.models import User
 from ovp.apps.users.models.profile import get_profile_model
-from ovp.apps.projects.models import Project, Job, Category
+from ovp.apps.projects.models import Project, Job, Category, Work
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress, Cause, Skill
 
@@ -42,6 +42,8 @@ def create_sample_projects():
   project.skills.add(Skill.objects.get(pk=1))
   project.skills.add(Skill.objects.get(pk=4))
   project.categories.add(category1)
+  work = Work(can_be_done_remotely=False, project=project, weekly_hours=0)
+  work.save()
 
   project = Project(name="test project2", slug="test-slug2", details="abc", description="abc", owner=user, address=address2, highlighted=True, published=True)
   project.save()
@@ -233,7 +235,7 @@ class ProjectSearchTestCase(TestCase):
 
   def test_categories_filter(self):
     """
-    Test searching with categories filter returns only results filtered by cause
+    Test searching with categories filter returns only results filtered by category
     """
     category_id1 = Category.objects.all().order_by('pk')[0].pk
     category_id2 = Category.objects.all().order_by('pk')[1].pk
@@ -248,6 +250,20 @@ class ProjectSearchTestCase(TestCase):
 
     response = self.client.get(reverse("search-projects-list") + "?category={},{}".format(category_id1, category_id2), format="json")
     self.assertEqual(len(response.data["results"]), 2)
+
+  def test_project_type_filter(self):
+    """
+    Test searching with type filter returns only results filtered by type
+    """
+    response = self.client.get(reverse("search-projects-list") + "?type=job", format="json")
+    self.assertEqual(len(response.data["results"]), 2)
+    
+    response = self.client.get(reverse("search-projects-list") + "?type=work", format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+
+    response = self.client.get(reverse("search-projects-list") + "?type=remotely", format="json")
+    self.assertEqual(len(response.data["results"]), 2)
+
 
   def test_skills_filter(self):
     """

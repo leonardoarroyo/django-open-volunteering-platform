@@ -107,7 +107,6 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_categories(queryset, category)
       queryset = filters.by_type(queryset, project_type)
 
-      print(queryset.query)
       result_keys = [q.pk for q in queryset]
       if not_organization:
         org = [o for o in not_organization.split(',')]
