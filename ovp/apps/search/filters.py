@@ -86,9 +86,24 @@ def by_skills(queryset, skill_string=None):
     queryset = queryset.filter(q_obj)
   return queryset
 
+def by_type(queryset, type_string=None):
+  """ Filter queryset by a comma delimeted type list """
+  if type_string:
+    operator, items = get_operator_and_items(type_string)
+    q_obj = SQ()
+    for t in items:
+      if len(t) > 0 and t == 'job':
+        q_obj.add(SQ(job=True), operator)
+      elif len(t) > 0 and t == 'work':
+        q_obj.add(SQ(work=True), operator)
+      elif len(t) > 0 and t == 'remotely':
+        q_obj.add(SQ(can_be_done_remotely=True), operator)
+    
+    queryset = queryset.filter(q_obj)
+  return queryset
 
 def by_categories(queryset, category_string=None):
-  """ Filter queryset by a comma delimeted skill list """
+  """ Filter queryset by a comma delimeted category list """
   if category_string:
     operator, items = get_operator_and_items(category_string)
     q_obj = SQ()

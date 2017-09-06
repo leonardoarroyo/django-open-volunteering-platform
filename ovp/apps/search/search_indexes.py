@@ -53,10 +53,38 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
   skills = indexes.MultiValueField(faceted=True)
   highlighted = indexes.BooleanField(model_attr='highlighted')
   can_be_done_remotely = indexes.BooleanField(faceted=True)
+  job = indexes.BooleanField(faceted=True)
+  # work = indexes.BooleanField(faceted=True)
   published = indexes.BooleanField(model_attr='published')
   deleted = indexes.BooleanField(model_attr='deleted')
   closed = indexes.BooleanField(model_attr='closed')
   address_components = indexes.MultiValueField(faceted=True)
+
+  def prepare_job(self, obj):
+    job = False
+
+    # Try to get info from work object
+    # Need to catch exceptions here because Work has a Project
+    try:
+      if obj.job:
+        job = True
+    except Job.DoesNotExist:
+      pass
+
+    return job
+
+  def prepare_work(self, obj):
+    work = False
+
+    # Try to get info from work object
+    # Need to catch exceptions here because Work has a Project
+    try:
+      if obj.work:
+        work = True
+    except Work.DoesNotExist:
+      pass
+
+    return work
 
   def prepare_can_be_done_remotely(self, obj):
     can_be_done_remotely = False
