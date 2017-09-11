@@ -28,6 +28,7 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
   ]
   m2m = [
     Project.causes.through,
+    Project.categories.through,
     Project.skills.through,
     Organization.causes.through
   ]

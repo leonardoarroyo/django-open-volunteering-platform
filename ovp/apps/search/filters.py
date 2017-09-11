@@ -8,6 +8,8 @@ from django.db.models import When, F, IntegerField, Count, Case
 
 import json
 
+from datetime import datetime
+
 #####################
 ## ViewSet filters ##
 #####################
@@ -86,11 +88,39 @@ def by_skills(queryset, skill_string=None):
     queryset = queryset.filter(q_obj)
   return queryset
 
+def by_disponibility(queryset, disponibility_string=None):
+  """ Filter queryset by a comma delimeted disponibility list """
+  if disponibility_string:
+    operator, items = get_operator_and_items(disponibility_string)
+    q_obj = SQ()
+    for d in items:
+      if len(d) > 0 and d == 'job':
+        q_obj.add(SQ(job=True), operator)
+      elif len(d) > 0 and d == 'work':
+        q_obj.add(SQ(work=True), operator)
+      elif len(d) > 0 and d == 'remotely':
+        q_obj.add(SQ(can_be_done_remotely=True), operator)
+    
+    queryset = queryset.filter(q_obj)
+  return queryset
 
-def by_categories(queryset, categories_string=None):
-  """ Filter queryset by a comma delimeted skill list """
-  if categories_string:
-    operator, items = get_operator_and_items(categories_string)
+def by_date(queryset, date_string=None):
+  """ Filter queryset by a comma delimeted date """
+  if date_string:
+    operator, items = get_operator_and_items(date_string)
+    q_obj = SQ()
+    date = datetime.strptime(items[0]+' 00:00:00', '%Y-%m-%d %H:%M:%S')
+    q_obj.add(SQ(start_date=date) | SQ(end_date=date), operator)
+    
+    queryset = queryset.filter(q_obj)
+
+  return queryset
+
+
+def by_categories(queryset, category_string=None):
+  """ Filter queryset by a comma delimeted category list """
+  if category_string:
+    operator, items = get_operator_and_items(category_string)
     q_obj = SQ()
     for c in items:
       if len(c) > 0:

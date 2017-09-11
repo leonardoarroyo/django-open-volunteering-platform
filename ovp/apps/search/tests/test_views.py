@@ -8,12 +8,14 @@ from rest_framework.test import APIClient
 
 from ovp.apps.users.models import User
 from ovp.apps.users.models.profile import get_profile_model
-from ovp.apps.projects.models import Project, Job
+from ovp.apps.projects.models import Project, Job, Category, Work
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress, Cause, Skill
 
-import json
+from datetime import datetime
 
+import json
+import pytz
 
 
 """
@@ -23,6 +25,9 @@ def create_sample_projects():
   # Create sample projects
   user = User(name="a", email="testmail-projects@test.com", password="test_returned")
   user.save()
+
+  category1 = Category.objects.create(name="cat1", slug="cat1")
+  category2 = Category.objects.create(name="cat2", slug="cat2")
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
   address2 = GoogleAddress(typed_address="Campinas, SP - Brazil")
@@ -38,11 +43,17 @@ def create_sample_projects():
   project.causes.add(Cause.objects.get(pk=1))
   project.skills.add(Skill.objects.get(pk=1))
   project.skills.add(Skill.objects.get(pk=4))
+  project.categories.add(category1)
+  work = Work(can_be_done_remotely=False, project=project, weekly_hours=0)
+  work.save()
 
   project = Project(name="test project2", slug="test-slug2", details="abc", description="abc", owner=user, address=address2, highlighted=True, published=True)
   project.save()
   project.causes.add(Cause.objects.get(pk=2))
-  job = Job(can_be_done_remotely=True, project=project)
+  project.categories.add(category2)
+  date = datetime.strptime('2017-09-11 00:00:00', '%Y-%m-%d %H:%M:%S')
+  date = date.replace(tzinfo=pytz.UTC)
+  job = Job(can_be_done_remotely=True, project=project, start_date=date)
   job.save()
 
   project = Project(name="test project3", slug="test-slug3", details="abc", description="abc", owner=user, address=address3, published=True)
@@ -225,6 +236,46 @@ class ProjectSearchTestCase(TestCase):
 
     response = self.client.get(reverse("search-projects-list") + "?cause={},{}".format(cause_id1, cause_id2), format="json")
     self.assertEqual(len(response.data["results"]), 2)
+
+  def test_categories_filter(self):
+    """
+    Test searching with categories filter returns only results filtered by category
+    """
+    category_id1 = Category.objects.all().order_by('pk')[0].pk
+    category_id2 = Category.objects.all().order_by('pk')[1].pk
+
+    response = self.client.get(reverse("search-projects-list") + "?category=" + str(category_id1), format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+    self.assertEqual(str(response.data["results"][0]["name"]), "test project")
+
+    response = self.client.get(reverse("search-projects-list") + "?category=" + str(category_id2), format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+    self.assertEqual(str(response.data["results"][0]["name"]), "test project2")
+
+    response = self.client.get(reverse("search-projects-list") + "?category={},{}".format(category_id1, category_id2), format="json")
+    self.assertEqual(len(response.data["results"]), 2)
+
+  def test_project_disponibility_filter(self):
+    """
+    Test searching with disponibility filter returns only results filtered by disponibility
+    """
+    response = self.client.get(reverse("search-projects-list") + "?disponibility=job", format="json")
+    self.assertEqual(len(response.data["results"]), 2)
+    
+    response = self.client.get(reverse("search-projects-list") + "?disponibility=work", format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+
+    response = self.client.get(reverse("search-projects-list") + "?disponibility=remotely", format="json")
+    self.assertEqual(len(response.data["results"]), 2)
+
+  def test_project_date_filter(self):
+    """
+    Test searching with type filter returns only results filtered by date
+    """
+    response = self.client.get(reverse("search-projects-list") + "?date=2017-09-11", format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+    self.assertEqual(str(response.data["results"][0]["name"]), "test project2")
+
 
   def test_skills_filter(self):
     """
