@@ -94,7 +94,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       published = params.get('published', 'true')
       organization = params.get('organization', None)
       not_organization = params.get('not_organization', None)
-      project_type = params.get('type', None)
+      disponibility = params.get('disponibility', None)
       date = params.get('date', None)
 
       queryset = SearchQuerySet().models(Project)
@@ -106,7 +106,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_skills(queryset, skill)
       queryset = filters.by_causes(queryset, cause)
       queryset = filters.by_categories(queryset, category)
-      queryset = filters.by_type(queryset, project_type)
+      queryset = filters.by_disponibility(queryset, disponibility)
       queryset = filters.by_date(queryset, date)
 
       result_keys = [q.pk for q in queryset]

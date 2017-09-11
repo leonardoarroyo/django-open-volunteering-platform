@@ -255,17 +255,17 @@ class ProjectSearchTestCase(TestCase):
     response = self.client.get(reverse("search-projects-list") + "?category={},{}".format(category_id1, category_id2), format="json")
     self.assertEqual(len(response.data["results"]), 2)
 
-  def test_project_type_filter(self):
+  def test_project_disponibility_filter(self):
     """
-    Test searching with type filter returns only results filtered by type
+    Test searching with disponibility filter returns only results filtered by disponibility
     """
-    response = self.client.get(reverse("search-projects-list") + "?type=job", format="json")
+    response = self.client.get(reverse("search-projects-list") + "?disponibility=job", format="json")
     self.assertEqual(len(response.data["results"]), 2)
     
-    response = self.client.get(reverse("search-projects-list") + "?type=work", format="json")
+    response = self.client.get(reverse("search-projects-list") + "?disponibility=work", format="json")
     self.assertEqual(len(response.data["results"]), 1)
 
-    response = self.client.get(reverse("search-projects-list") + "?type=remotely", format="json")
+    response = self.client.get(reverse("search-projects-list") + "?disponibility=remotely", format="json")
     self.assertEqual(len(response.data["results"]), 2)
 
   def test_project_date_filter(self):
