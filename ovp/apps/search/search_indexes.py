@@ -5,6 +5,7 @@ from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress, SimpleAddress
 from ovp.apps.users.models import User
 from ovp.apps.users.models.profile import get_profile_model
+from datetime import datetime
 
 """
 Mixins(used by multiple indexes)
@@ -21,6 +22,27 @@ class CategoriesMixin:
 class SkillsMixin:
   def prepare_skills(self, obj):
     return [skill.id for skill in obj.skills.all()]
+
+class DateMixin:
+  def prepare_end_date(self, obj):
+    try:
+      if obj.job and obj.job.end_date:
+        end_date = obj.job.end_date.strftime('%Y-%m-%d')
+        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+
+        return end_date
+    except Job.DoesNotExist:
+      pass
+
+  def prepare_start_date(self, obj):
+    try:
+      if obj.job and obj.job.start_date:
+        start_date = obj.job.start_date.strftime('%Y-%m-%d')
+        start_date = datetime.strptime(start_date, '%Y-%m-%d')
+
+        return start_date
+    except Job.DoesNotExist:
+      pass
 
 
 class AddressComponentsMixin:
@@ -45,7 +67,7 @@ class AddressComponentsMixin:
 """
 Indexes
 """
-class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, CategoriesMixin, AddressComponentsMixin):
+class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, CategoriesMixin, AddressComponentsMixin, DateMixin):
   name = indexes.EdgeNgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   categories = indexes.MultiValueField(faceted=True)
@@ -54,12 +76,14 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
   highlighted = indexes.BooleanField(model_attr='highlighted')
   can_be_done_remotely = indexes.BooleanField(faceted=True)
   job = indexes.BooleanField(faceted=True)
+  start_date = indexes.DateField(faceted=True, null=True)
+  end_date = indexes.DateField(faceted=True, null=True)
   work = indexes.BooleanField(faceted=True)
   published = indexes.BooleanField(model_attr='published')
   deleted = indexes.BooleanField(model_attr='deleted')
   closed = indexes.BooleanField(model_attr='closed')
   address_components = indexes.MultiValueField(faceted=True)
-
+    
   def prepare_job(self, obj):
     job = False
 

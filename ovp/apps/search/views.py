@@ -95,6 +95,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       organization = params.get('organization', None)
       not_organization = params.get('not_organization', None)
       project_type = params.get('type', None)
+      date = params.get('date', None)
 
       queryset = SearchQuerySet().models(Project)
       queryset = queryset.filter(highlighted=1) if highlighted else queryset
@@ -106,6 +107,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_causes(queryset, cause)
       queryset = filters.by_categories(queryset, category)
       queryset = filters.by_type(queryset, project_type)
+      queryset = filters.by_date(queryset, date)
 
       result_keys = [q.pk for q in queryset]
       if not_organization:

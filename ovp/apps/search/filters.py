@@ -8,6 +8,9 @@ from django.db.models import When, F, IntegerField, Count, Case
 
 import json
 
+import pytz
+from datetime import datetime
+
 #####################
 ## ViewSet filters ##
 #####################
@@ -102,6 +105,19 @@ def by_type(queryset, type_string=None):
     queryset = queryset.filter(q_obj)
   return queryset
 
+def by_date(queryset, date_string=None):
+  """ Filter queryset by a comma delimeted date list """
+  if date_string:
+    operator, items = get_operator_and_items(date_string)
+    q_obj = SQ()
+    date = datetime.strptime(items[0]+' 00:00:00', '%Y-%m-%d %H:%M:%S')
+    q_obj.add(SQ(start_date=date) | SQ(end_date=date), operator)
+    
+    queryset = queryset.filter(q_obj)
+
+  return queryset
+
+
 def by_categories(queryset, category_string=None):
   """ Filter queryset by a comma delimeted category list """
   if category_string:
@@ -140,16 +156,6 @@ def by_name(queryset, name=None):
   """ Filter queryset by name, with word wide auto-completion """
   if name:
     queryset = queryset.filter(name=name)
-  return queryset
-
-
-def by_date(queryset, date=None):
-  queryset = queryset.filter(job__start_date=date)
-  # if date and len(date) == 1:
-  #   queryset.filter(job__start_date=date)
-  # elif date and len(date) == 2:
-  #   queryset.filter(job__start_date=date[0], job__end_date=date[1])
-
   return queryset
 
 

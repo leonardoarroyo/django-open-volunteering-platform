@@ -12,8 +12,10 @@ from ovp.apps.projects.models import Project, Job, Category, Work
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress, Cause, Skill
 
-import json
+from datetime import datetime
 
+import json
+import pytz
 
 
 """
@@ -49,7 +51,9 @@ def create_sample_projects():
   project.save()
   project.causes.add(Cause.objects.get(pk=2))
   project.categories.add(category2)
-  job = Job(can_be_done_remotely=True, project=project)
+  date = datetime.strptime('2017-09-11 00:00:00', '%Y-%m-%d %H:%M:%S')
+  date = date.replace(tzinfo=pytz.UTC)
+  job = Job(can_be_done_remotely=True, project=project, start_date=date)
   job.save()
 
   project = Project(name="test project3", slug="test-slug3", details="abc", description="abc", owner=user, address=address3, published=True)
@@ -263,6 +267,14 @@ class ProjectSearchTestCase(TestCase):
 
     response = self.client.get(reverse("search-projects-list") + "?type=remotely", format="json")
     self.assertEqual(len(response.data["results"]), 2)
+
+  def test_project_date_filter(self):
+    """
+    Test searching with type filter returns only results filtered by date
+    """
+    response = self.client.get(reverse("search-projects-list") + "?date=2017-09-11", format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+    self.assertEqual(str(response.data["results"][0]["name"]), "test project2")
 
 
   def test_skills_filter(self):
