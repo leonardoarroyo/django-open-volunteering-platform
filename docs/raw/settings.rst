@@ -9,13 +9,12 @@ It's a simple key/value model. Keys are not unique, therefore there may be multi
 Common settings
 -----------------
 
-LANGUAGE_CODE:
-Used on: emails.
-Todo: use language defined on default django setting
 
 OVP_EMAILS:
 Used to: determine if email is enabled or disabled, determine email subject
 
+Django Settings
+---------------
 USER_SEARCH_SERIALIZER
 Path to user search serializer!
 

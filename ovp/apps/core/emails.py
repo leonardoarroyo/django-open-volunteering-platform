@@ -28,7 +28,7 @@ class BaseMail:
     self.channel = channel
     self.email_address = email_address
     self.async_mail = async_mail
-    self.locale = locale or get_settings().get('LANGUAGE_CODE', 'en-us')
+    self.locale = locale or getattr(settings, "LANGUAGE_CODE", "en-us")
 
   def sendEmail(self, template_name, subject, context={}):
     if not is_email_enabled(template_name):
