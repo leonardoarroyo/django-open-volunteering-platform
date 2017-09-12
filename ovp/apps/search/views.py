@@ -13,6 +13,8 @@ from ovp.apps.users.models.profile import get_profile_model, UserProfile
 from ovp.apps.search import helpers
 from ovp.apps.search import filters
 
+from ovp.apps.channels.cache import get_channel_setting
+
 from django.core.cache import cache
 
 from rest_framework import viewsets
@@ -125,13 +127,13 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   filter_backends = (filters.OrderingFilter,)
   ordering_fields = ('slug', 'name')
 
-  def __init__(self, *args, **kwargs):
-    self.check_user_search_enabled()
-    return super(UserSearchResource, self).__init__(*args, **kwargs)
+  def initialize_request(self, *args, **kwargs):
+    request = super(UserSearchResource, self).initialize_request(*args, **kwargs)
+    self.check_user_search_enabled(request.channel)
+    return request
 
-  def check_user_search_enabled(self):
-    s = helpers.get_settings()
-    if not s.get('ENABLE_USER_SEARCH', False):
+  def check_user_search_enabled(self, channel):
+    if int(get_channel_setting(channel, "ENABLE_USER_SEARCH")[0]) == 0:
       raise PermissionDenied
 
   def get_queryset(self):

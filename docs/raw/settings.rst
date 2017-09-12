@@ -111,3 +111,10 @@ Disable email
 
 Type: Multiple Value
 Default: []
+
+ENABLE_USER_SEARCH
+=======================================
+Allow searching users
+
+Type: Single value
+Default: "0"

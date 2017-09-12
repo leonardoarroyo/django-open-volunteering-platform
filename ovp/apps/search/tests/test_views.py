@@ -406,7 +406,6 @@ class OrganizationSearchTestCase(TestCase):
 
 
 
-@override_settings(OVP_SEARCH={'ENABLE_USER_SEARCH': True})
 class UserSearchTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
@@ -414,6 +413,8 @@ class UserSearchTestCase(TestCase):
     create_sample_users()
     self.client = APIClient()
 
+    ChannelSetting.objects.create(key="ENABLE_USER_SEARCH", value="1", object_channel="default")
+    ChannelSetting.objects.create(key="ENABLE_USER_SEARCH", value="1", object_channel="test-channel")
     cache.clear()
 
   def test_query_optimization(self):
@@ -497,16 +498,17 @@ class UserSearchTestCase(TestCase):
     self.assertEqual(len(response.data["results"]), 1)
     self.assertEqual(response.data["results"][0]["name"], "user three")
 
-  @override_settings(OVP_SEARCH={'ENABLE_USER_SEARCH': False})
   def test_user_search_must_be_enabled(self):
     """
     Test searching for users must be enabled in settings
     """
+    ChannelSetting.objects.all().delete()
+    cache.clear()
+
     response = self.client.get(reverse("search-users-list"), format="json")
     self.assertEqual(response.status_code, 403)
 
 
-@override_settings(OVP_SEARCH={'ENABLE_USER_SEARCH': True})
 class OrderingTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
@@ -514,6 +516,9 @@ class OrderingTestCase(TestCase):
     create_sample_projects()
     create_sample_organizations()
     self.client = APIClient()
+
+    ChannelSetting.objects.create(key="ENABLE_USER_SEARCH", value="1", object_channel="default")
+    cache.clear()
 
 
   def test_ordering_descending(self):
