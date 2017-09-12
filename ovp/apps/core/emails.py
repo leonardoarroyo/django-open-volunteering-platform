@@ -40,8 +40,8 @@ class BaseMail:
     # Inject extra context
     ctx = inject_client_url(self.channel, context)
     ctx["extend"] = {
-      "html": "{}/email/base.html".format(self.channel),
-      "txt": "{}/email/base.txt".format(self.channel)
+      "html": "{}/email/base-body.html".format(self.channel),
+      "txt": "{}/email/base-body.txt".format(self.channel)
     }
 
     text_content, html_content = self.__render(template_name, ctx)
@@ -68,8 +68,8 @@ class BaseMail:
     test_channels = getattr(settings, "TEST_CHANNELS", [])
 
     try:
-      text_content = get_template('{}/email/{}.txt'.format(self.channel, template_name)).render(ctx)
-      html_content = get_template('{}/email/{}.html'.format(self.channel, template_name)).render(ctx)
+      text_content = get_template('{}/email/{}-body.txt'.format(self.channel, template_name)).render(ctx)
+      html_content = get_template('{}/email/{}-body.html'.format(self.channel, template_name)).render(ctx)
     except TemplateDoesNotExist as e:
       # This avoids template errors when testing with non-default channel
       if self.channel in test_channels:

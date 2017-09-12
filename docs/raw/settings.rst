@@ -8,8 +8,6 @@ It's a simple key/value model. Keys are not unique, therefore there may be multi
 
 Common settings
 -----------------
-
-
 OVP_EMAILS:
 Used to: determine if email is enabled or disabled, determine email subject
 
