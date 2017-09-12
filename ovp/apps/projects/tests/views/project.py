@@ -124,6 +124,28 @@ class ProjectCloseTestCase(TestCase):
     self.assertTrue(response.data["closed"] == True)
     self.assertTrue(response.data["closed"])
 
+
+class ProjectCommentTestCase(TestCase):
+  def setUp(self):
+    user = User.objects.create_user(email="test_comment@gmail.com", password="testcomment", object_channel="default")
+    self.client = APIClient()
+    self.client.force_authenticate(user=user)
+
+    data = copy.copy(base_project)
+    self.project = self.client.post(reverse("project-list"), data, format="json")
+
+    ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
+    cache.clear()
+
+  def test_user_can_comment_in_project(self):
+    """ Assert that user can comment in project """
+    comment = {
+      "content": "test comment",
+    }
+    response = self.client.post(reverse("project-commentary", ["test-project"]), comment, format="json")
+    self.assertTrue(response.status_code == 200)
+
+
 class ProjectWithOrganizationTestCase(TestCase):
   def setUp(self):
     cache.clear()
@@ -321,11 +343,12 @@ class ProjectResourceUpdateTestCase(TestCase):
 
   def test_update_roles(self):
     """Test patch request update roles resource"""
+    expected_response = [{"name": "test", "prerequisites": "test2", "details": "test3", "vacancies": 5, "applied_count": 0}]
     updated_project = {"roles": [{"name": "test", "prerequisites": "test2", "details": "test3", "vacancies": 5}]}
     response = self.client.patch(reverse("project-detail", ["test-project"]), updated_project, format="json")
 
     self.assertTrue(response.status_code == 200)
-    self.assertTrue(response.data["roles"] == updated_project["roles"])
+    self.assertTrue(response.data["roles"] == expected_response)
 
 
 class DisponibilityTestCase(TestCase):
@@ -452,11 +475,12 @@ class VolunteerRoleTestCase(TestCase):
 
   def test_roles_get_saved(self):
     """Test roles get saved"""
+    expected_response = [{"name": "test", "prerequisites": "test2", "details": "test3", "vacancies": 5, "applied_count": 0}]
     self.data["roles"] = [{"name": "test", "prerequisites": "test2", "details": "test3", "vacancies": 5}]
     response = self.client.post(reverse("project-list"), self.data, format="json")
     self.assertTrue(response.status_code == 201)
-    self.assertTrue(response.data["roles"] == self.data["roles"])
+    self.assertTrue(response.data["roles"] == expected_response)
 
     response = self.client.get(reverse("project-detail", ['test-project']), format="json")
     self.assertTrue(response.status_code == 200)
-    self.assertTrue(response.data["roles"] == self.data["roles"])
+    self.assertTrue(response.data["roles"] == expected_response)

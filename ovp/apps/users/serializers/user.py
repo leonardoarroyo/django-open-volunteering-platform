@@ -124,7 +124,7 @@ class UserUpdateSerializer(UserCreateSerializer):
     return super(UserUpdateSerializer, self).update(instance, data)
 
 
-class CurrentUserSerializer(serializers.ModelSerializer):
+class CurrentUserSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
 
@@ -136,14 +136,14 @@ class CurrentUserSerializer(serializers.ModelSerializer):
   def to_representation(self, *args, **kwargs):
     return super(CurrentUserSerializer, self).to_representation(*args, **kwargs)
 
-class ShortUserPublicRetrieveSerializer(serializers.ModelSerializer):
+class ShortUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
 
   class Meta:
     model = models.User
     fields = ['uuid', 'name', 'avatar', 'slug']
 
-class LongUserPublicRetrieveSerializer(serializers.ModelSerializer):
+class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
   applies = ApplyUserRetrieveSerializer(many=True, source="apply_set")
@@ -152,21 +152,21 @@ class LongUserPublicRetrieveSerializer(serializers.ModelSerializer):
     model = models.User
     fields = ['name', 'avatar', 'profile', 'slug', 'applies']
 
-class UserProjectRetrieveSerializer(serializers.ModelSerializer):
+class UserProjectRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
 
   class Meta:
     model = models.User
     fields = ['uuid', 'name', 'avatar', 'email', 'phone', 'slug']
 
-class UserApplyRetrieveSerializer(serializers.ModelSerializer):
+class UserApplyRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
 
   class Meta:
     model = models.User
     fields = ['uuid', 'name', 'avatar', 'phone', 'email']
 
-class UserSearchSerializer(serializers.ModelSerializer):
+class UserSearchSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[2]()
 

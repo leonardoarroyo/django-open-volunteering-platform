@@ -5,6 +5,7 @@ from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.users.models import User
 from ovp.apps.users.models.profile import get_profile_model
+from datetime import datetime
 
 """
 Mixins(used by multiple indexes)
@@ -17,9 +18,34 @@ class CausesMixin:
   def prepare_causes(self, obj):
     return [cause.id for cause in obj.causes.all()]
 
+class CategoriesMixin:
+  def prepare_categories(self, obj):
+    return [category.id for category in obj.categories.all()]
+
 class SkillsMixin:
   def prepare_skills(self, obj):
     return [skill.id for skill in obj.skills.all()]
+
+class DateMixin:
+  def prepare_end_date(self, obj):
+    try:
+      if obj.job and obj.job.end_date:
+        end_date = obj.job.end_date.strftime('%Y-%m-%d')
+        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+
+        return end_date
+    except Job.DoesNotExist:
+      pass
+
+  def prepare_start_date(self, obj):
+    try:
+      if obj.job and obj.job.start_date:
+        start_date = obj.job.start_date.strftime('%Y-%m-%d')
+        start_date = datetime.strptime(start_date, '%Y-%m-%d')
+
+        return start_date
+    except Job.DoesNotExist:
+      pass
 
 
 class AddressComponentsMixin:
@@ -37,18 +63,49 @@ class AddressComponentsMixin:
 """
 Indexes
 """
-class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, AddressComponentsMixin, ChannelMixin):
+class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, CategoriesMixin, AddressComponentsMixin, DateMixin, ChannelMixin):
   name = indexes.EdgeNgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
+  categories = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
   skills = indexes.MultiValueField(faceted=True)
   highlighted = indexes.BooleanField(model_attr='highlighted')
   can_be_done_remotely = indexes.BooleanField(faceted=True)
+  job = indexes.BooleanField(faceted=True)
+  start_date = indexes.DateField(faceted=True, null=True)
+  end_date = indexes.DateField(faceted=True, null=True)
+  work = indexes.BooleanField(faceted=True)
   published = indexes.BooleanField(model_attr='published')
   deleted = indexes.BooleanField(model_attr='deleted')
   closed = indexes.BooleanField(model_attr='closed')
   address_components = indexes.MultiValueField(faceted=True)
   channel = indexes.CharField()
+
+  def prepare_job(self, obj):
+    job = False
+
+    # Try to get info from job object
+    # Need to catch exceptions here because Job has a Project
+    try:
+      if obj.job:
+        job = True
+    except Job.DoesNotExist:
+      pass
+
+    return job
+
+  def prepare_work(self, obj):
+    work = False
+
+    # Try to get info from work object
+    # Need to catch exceptions here because Work has a Project
+    try:
+      if obj.work:
+        work = True
+    except Work.DoesNotExist:
+      pass
+
+    return work
 
   def prepare_can_be_done_remotely(self, obj):
     can_be_done_remotely = False

@@ -4,3 +4,4 @@ from .skill import Skill
 from .lead import Lead
 from .availability import Availability
 from .contact import ChannelContact
+from .commentary import Commentary

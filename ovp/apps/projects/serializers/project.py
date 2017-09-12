@@ -6,6 +6,7 @@ from ovp.apps.projects.serializers.work import WorkSerializer
 from ovp.apps.projects.serializers.role import VolunteerRoleSerializer
 from ovp.apps.projects.serializers.apply import ProjectAppliesSerializer
 from ovp.apps.projects.serializers.category import CategoryRetrieveSerializer
+from ovp.apps.core.serializers.commentary import CommentaryRetrieveSerializer
 
 from ovp.apps.core import models as core_models
 from ovp.apps.core.serializers import GoogleAddressSerializer, GoogleAddressLatLngSerializer, GoogleAddressCityStateSerializer
@@ -172,7 +173,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   def to_representation(self, instance):
     return super(ProjectCreateUpdateSerializer, self).to_representation(instance)
 
-class ProjectRetrieveSerializer(serializers.ModelSerializer):
+class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
   address = GoogleAddressLatLngSerializer()
   organization = OrganizationSearchSerializer()
@@ -183,10 +184,11 @@ class ProjectRetrieveSerializer(serializers.ModelSerializer):
   causes = FullCauseSerializer(many=True)
   skills = SkillSerializer(many=True)
   categories = CategoryRetrieveSerializer(many=True)
+  commentaries = CommentaryRetrieveSerializer(many=True)
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries']
 
   @add_current_user_is_applied_representation
   @hide_address
@@ -194,14 +196,14 @@ class ProjectRetrieveSerializer(serializers.ModelSerializer):
   def to_representation(self, instance):
     return super(ProjectRetrieveSerializer, self).to_representation(instance)
 
-class CompactOrganizationSerializer(serializers.ModelSerializer):
+class CompactOrganizationSerializer(ChannelRelationshipSerializer):
   address = GoogleAddressCityStateSerializer()
 
   class Meta:
     model = Organization
     fields = ['name', 'address']
 
-class ProjectOnOrganizationRetrieveSerializer(serializers.ModelSerializer):
+class ProjectOnOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
   address = GoogleAddressLatLngSerializer()
   disponibility = DisponibilitySerializer()
@@ -220,7 +222,7 @@ class ProjectOnOrganizationRetrieveSerializer(serializers.ModelSerializer):
     return super(ProjectOnOrganizationRetrieveSerializer, self).to_representation(instance)
 
 
-class ProjectSearchSerializer(serializers.ModelSerializer):
+class ProjectSearchSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
   address = GoogleAddressLatLngSerializer()
   organization = CompactOrganizationSerializer()

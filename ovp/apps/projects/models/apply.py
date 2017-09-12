@@ -17,6 +17,7 @@ class Apply(ChannelRelationship):
   user = models.ForeignKey('users.User', blank=True, null=True, verbose_name=_('user'))
   project = models.ForeignKey('projects.Project', verbose_name=_('project'))
   status = models.CharField(_('status'), max_length=30, choices=apply_status_choices, default="applied")
+  role = models.ForeignKey('projects.VolunteerRole', verbose_name=_('role'), blank=False, null=True)
   date = models.DateTimeField(_('created date'), auto_now_add=True, blank=True)
   canceled = models.BooleanField(_("canceled"), default=False)
   canceled_date = models.DateTimeField(_("canceled date"), blank=True, null=True)
@@ -72,6 +73,14 @@ class Apply(ChannelRelationship):
     # Update original values
     self.__original_status = self.status
     self.__original_canceled = self.canceled
+
+    if self.role:
+      if self.status == 'applied' or self.status == 'confirmed-volunteer':
+        self.role.applied_count = self.role.applied_count + 1
+        self.role.save()
+      else:
+        self.role.applied_count = self.role.applied_count - 1
+        self.role.save()
 
     # Updating project applied_count
     self.project.applied_count = self.project.get_volunteers_numbers()

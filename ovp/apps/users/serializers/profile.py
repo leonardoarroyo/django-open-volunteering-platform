@@ -63,7 +63,7 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     return super(ProfileCreateUpdateSerializer, self).update(instance, validated_data)
 
-class ProfileRetrieveSerializer(serializers.ModelSerializer):
+class ProfileRetrieveSerializer(ChannelRelationshipSerializer):
   skills = SkillSerializer(many=True)
   causes = CauseSerializer(many=True)
   gender = serializers.ChoiceField(choices=gender_choices)
@@ -72,7 +72,7 @@ class ProfileRetrieveSerializer(serializers.ModelSerializer):
     model = get_profile_model()
     fields = ['full_name', 'about', 'skills', 'causes', 'gender']
 
-class ProfileSearchSerializer(serializers.ModelSerializer):
+class ProfileSearchSerializer(ChannelRelationshipSerializer):
   skills = SkillSerializer(many=True)
   causes = CauseSerializer(many=True)
   gender = serializers.ChoiceField(choices=gender_choices)

@@ -9,6 +9,8 @@ from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 from ovp.apps.channels.cache import get_channel_setting
 
 from ovp.apps.core.helpers.xls import Response as XLSResponse
+from ovp.apps.core.mixins import CommentaryCreateMixin
+from ovp.apps.core.serializers import commentary as comments_serializer
 
 from rest_framework import decorators
 from rest_framework import mixins
@@ -25,7 +27,7 @@ EXPORT_APPLIED_USERS_HEADERS = [
 ]
 
 @ChannelViewSet
-class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet, CommentaryCreateMixin):
   """
   ProjectResourceViewSet resource endpoint
   """
@@ -124,5 +126,7 @@ class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
       return serializers.ProjectRetrieveSerializer
     if self.action == 'retrieve':
       return serializers.ProjectRetrieveSerializer
+    if self.action == 'commentary':
+      return comments_serializer.CommentaryCreateSerializer
 
     return serializers.ProjectRetrieveSerializer

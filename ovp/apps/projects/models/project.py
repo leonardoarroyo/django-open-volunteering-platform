@@ -25,6 +25,7 @@ class Project(ChannelRelationship):
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'))
   skills = models.ManyToManyField('core.Skill', verbose_name=_('skills'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'))
+  commentaries = models.ManyToManyField('core.Commentary', verbose_name=_('commentaries'))
 
   # Relationships
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
@@ -159,6 +160,7 @@ class VolunteerRole(ChannelRelationship):
   details = models.TextField(_('Details'), max_length=1024, blank=True, null=True, default=None)
   vacancies = models.PositiveSmallIntegerField(_('Vacancies'), blank=True, null=True, default=None)
   project = models.ForeignKey(Project, blank=True, null=True, related_name='roles', verbose_name=_('Project'))
+  applied_count = models.IntegerField(_('Applied count'), blank=False, null=False, default=0)
 
 
   class Meta:

@@ -88,3 +88,24 @@ class ProjectAdminMail(BaseMail):
     Sent when user creates a project
     """
     return self.sendEmail('projectCreatedToAdmin', 'Project created', context)
+
+
+#class CommentsEmail(BaseMail):
+#  """
+#  This class is responsible for firing emails for Comments related actions
+#  """
+#  def __init__(self, comment, async_mail=None):
+#    # recipient email
+#    super(ProjectAdminMail, self).__init__(email, channel=comment.channel.slug, async_mail=async_mail)
+#
+#  def sendReplyComment(self, context = {}):
+#    """
+#    Sent to user when receive a response from a comment
+#    """
+#    return self.sendEmail('commentReply', 'Your comment was replied', context)
+#
+#  def sendComment(self, context = {}):
+#    """
+#    Sent to user when he unapplies from a project
+#    """
+#    return self.sendEmail('sendComment', 'You received a comment', context)
