@@ -79,8 +79,7 @@ class ProjectAdminMail(BaseMail):
   This class is responsible for firing emails for Project related actions
   """
   def __init__(self, project, async_mail=None):
-    s = get_settings()
-    email = s.get('ADMIN_MAIL', None)
+    email = get_channel_setting(organization.channel.slug, "ADMIN_MAIL")[0]
     super(ProjectAdminMail, self).__init__(email, channel=project.channel.slug, async_mail=async_mail)
 
 

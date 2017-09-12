@@ -16,9 +16,6 @@ def whoosh_raw(t):
   # therefore we don't cover the following line, as it's never called on a test environment
   return t # pragma: no cover
 
-def get_settings(string="OVP_SEARCH"):
-  return getattr(settings, string, {})
-
 def get_cities(queryset):
   cities = set()
   for item in queryset:
