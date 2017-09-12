@@ -34,8 +34,6 @@ class BaseMail:
     if not is_email_enabled(template_name):
       return False
 
-    subject = get_email_subject(self.channel, template_name, subject)
-
     # Inject extra context
     ctx = inject_client_url(self.channel, context)
     ctx["extend"] = {
@@ -44,6 +42,7 @@ class BaseMail:
     }
 
     self.__setLocale()
+    subject = get_email_subject(self.channel, template_name, subject)
     text_content, html_content = self.__render(template_name, ctx)
     self.__resetLocale()
 

@@ -33,6 +33,7 @@ def is_email_enabled(email):
 
   return enabled
 
+
 def get_email_subject(channel, email, default):
   """ Allows for email subject overriding """
   try:
