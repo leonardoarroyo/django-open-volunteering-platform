@@ -4,7 +4,7 @@ from django.template.loader import get_template
 from django.template.exceptions import TemplateDoesNotExist
 from django.conf import settings
 from django.utils import translation
-from ovp.apps.core.helpers import get_settings, is_email_enabled, get_email_subject
+from ovp.apps.core.helpers import is_email_enabled, get_email_subject
 from ovp.apps.channels.cache import get_channel_setting
 
 import threading, sys
@@ -34,8 +34,7 @@ class BaseMail:
     if not is_email_enabled(template_name):
       return False
 
-    self.__setLocale()
-    subject = get_email_subject(template_name, subject)
+    subject = get_email_subject(self.channel, template_name, subject)
 
     # Inject extra context
     ctx = inject_client_url(self.channel, context)
@@ -44,6 +43,7 @@ class BaseMail:
       "txt": "{}/email/base-body.txt".format(self.channel)
     }
 
+    self.__setLocale()
     text_content, html_content = self.__render(template_name, ctx)
     self.__resetLocale()
 

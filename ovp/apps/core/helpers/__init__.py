@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from django.template.loader import get_template
+from django.template.exceptions import TemplateDoesNotExist
 import importlib
 
 def get_settings(string="OVP_CORE"):
@@ -31,12 +33,11 @@ def is_email_enabled(email):
 
   return enabled
 
-
-def get_email_subject(email, default):
-  """ Allows for email subject overriding from settings.py  """
-  s = get_settings(string="OVP_EMAILS")
-  email_settings = s.get(email, {})
-
-  title = email_settings.get("subject", default)
+def get_email_subject(channel, email, default):
+  """ Allows for email subject overriding """
+  try:
+    title = get_template('{}/email/{}-subject.txt'.format(channel, email)).render().replace("\n", "")
+  except TemplateDoesNotExist as e:
+    title = default
 
   return _(title)

@@ -16,7 +16,7 @@ class TestEmailTriggers(TestCase):
 
     if is_email_enabled("projectCreated"):
       self.assertTrue(len(mail.outbox) == 1)
-      self.assertTrue(mail.outbox[0].subject == get_email_subject("projectCreated", "Project created"))
+      self.assertTrue(mail.outbox[0].subject == get_email_subject("default", "projectCreated", "Project created"))
     else: # pragma: no cover
       self.assertTrue(len(mail.outbox) == 0)
 
@@ -32,7 +32,7 @@ class TestEmailTriggers(TestCase):
 
     if is_email_enabled("projectPublished"): # pragma: no cover
       self.assertTrue(len(mail.outbox) == 1)
-      self.assertTrue(mail.outbox[0].subject == get_email_subject("projectPublished", "Project published"))
+      self.assertTrue(mail.outbox[0].subject == get_email_subject("default", "projectPublished", "Project published"))
     else: # pragma: no cover
       self.assertTrue(len(mail.outbox) == 0)
 
@@ -49,7 +49,7 @@ class TestEmailTriggers(TestCase):
 
     if is_email_enabled("projectClosed"): # pragma: no cover
       self.assertTrue(len(mail.outbox) == 1)
-      self.assertTrue(mail.outbox[0].subject == get_email_subject("projectClosed", "Project closed"))
+      self.assertTrue(mail.outbox[0].subject == get_email_subject("default", "projectClosed", "Project closed"))
     else: # pragma: no cover
       self.assertTrue(len(mail.outbox) == 0)
 
@@ -68,11 +68,11 @@ class TestEmailTriggers(TestCase):
     subjects = [x.subject for x in mail.outbox]
 
     if is_email_enabled("volunteerApplied-ToVolunteer"): # pragma: no cover
-      self.assertTrue(get_email_subject("volunteerApplied-ToVolunteer", "Applied to project") in subjects)
+      self.assertTrue(get_email_subject("default", "volunteerApplied-ToVolunteer", "Applied to project") in subjects)
       self.assertTrue("test_project@project.com" in recipients)
 
     if is_email_enabled("volunteerApplied-ToOwner"): # pragma: no cover
-      self.assertTrue(get_email_subject("volunteerApplied-ToOwner", "New volunteer") in subjects)
+      self.assertTrue(get_email_subject("default", "volunteerApplied-ToOwner", "New volunteer") in subjects)
       self.assertTrue("test_volunteer@project.com" in recipients)
 
 
@@ -92,9 +92,9 @@ class TestEmailTriggers(TestCase):
     subjects = [x.subject for x in mail.outbox]
 
     if is_email_enabled("volunteerUnapplied-ToVolunteer"): # pragma: no cover
-      self.assertTrue(get_email_subject("volunteerUnapplied-ToVolunteer", "Unapplied from project") in subjects)
+      self.assertTrue(get_email_subject("default", "volunteerUnapplied-ToVolunteer", "Unapplied from project") in subjects)
       self.assertTrue("test_project@project.com" in recipients)
 
     if is_email_enabled("volunteerUnapplied-ToOwner"): # pragma: no cover
-      self.assertTrue(get_email_subject("volunteerUnapplied-ToOwner", "Volunteer unapplied from project") in subjects)
+      self.assertTrue(get_email_subject("default", "volunteerUnapplied-ToOwner", "Volunteer unapplied from project") in subjects)
       self.assertTrue("test_volunteer@project.com" in recipients)

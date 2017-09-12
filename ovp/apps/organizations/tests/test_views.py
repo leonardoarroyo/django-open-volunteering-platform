@@ -211,9 +211,9 @@ class OrganizationInviteTestCase(TestCase):
 
     subjects = [x.subject for x in mail.outbox]
     if is_email_enabled("userInvited-toUser"): # pragma: no cover
-      self.assertTrue(get_email_subject("userInvited-toUser", "You are invited to an organization"))
+      self.assertTrue(get_email_subject("default", "userInvited-toUser", "You are invited to an organization"))
     if is_email_enabled("userInvited-toOwnerInviter"): # pragma: no cover
-      self.assertTrue(get_email_subject("userInvited-toOwnerInviter", "You invited a member to an organization you own"))
+      self.assertTrue(get_email_subject("default", "userInvited-toOwnerInviter", "You invited a member to an organization you own"))
 
 
     third_user = User(email="third@user.com")
@@ -232,11 +232,11 @@ class OrganizationInviteTestCase(TestCase):
 
     subjects = [x.subject for x in mail.outbox]
     if is_email_enabled("userInvited-toUser"): # pragma: no cover
-      self.assertTrue(get_email_subject("userInvited-toUser", "You are invited to an organization"))
+      self.assertTrue(get_email_subject("default", "userInvited-toUser", "You are invited to an organization"))
     if is_email_enabled("userInvited-toOwner"): # pragma: no cover
-      self.assertTrue(get_email_subject("userInvited-toOwner", "A member has been invited to your organization"))
+      self.assertTrue(get_email_subject("default", "userInvited-toOwner", "A member has been invited to your organization"))
     if is_email_enabled("userInvited-toMemberInviter"): # pragma: no cover
-      self.assertTrue(get_email_subject("userInvited-toInviter", "You invited a member to an organization you are part of"))
+      self.assertTrue(get_email_subject("default", "userInvited-toInviter", "You invited a member to an organization you are part of"))
 
   def test_cant_invite_unauthenticated(self):
     """ Test it's not possible to invite user if not authenticated """
@@ -287,9 +287,9 @@ class OrganizationInviteTestCase(TestCase):
 
     subjects = [x.subject for x in mail.outbox]
     if is_email_enabled("userJoined-toUser"): # pragma: no cover
-      self.assertTrue(get_email_subject("userJoined-toUser", "You have joined an organization"))
+      self.assertTrue(get_email_subject("default", "userJoined-toUser", "You have joined an organization"))
     if is_email_enabled("userJoined-toOwner"): # pragma: no cover
-      self.assertTrue(get_email_subject("userJoined-toOwner", "An user has joined an organization you own"))
+      self.assertTrue(get_email_subject("default", "userJoined-toOwner", "An user has joined an organization you own"))
 
   def test_cant_revoke_if_unauthenticated(self):
     """ Test it's not possible to revoke invitation if not authenticated"""
@@ -332,9 +332,9 @@ class OrganizationInviteTestCase(TestCase):
 
     subjects = [x.subject for x in mail.outbox]
     if is_email_enabled("userInvitedRevoked-toUser"): # pragma: no cover
-      self.assertTrue(get_email_subject("userInvitedRevoked-toUser", "Your invitation to an organization has been revoked"))
+      self.assertTrue(get_email_subject("default", "userInvitedRevoked-toUser", "Your invitation to an organization has been revoked"))
     if is_email_enabled("userInvitedRevoked-toOwnerInviter"): # pragma: no cover
-      self.assertTrue(get_email_subject("userInvitedRevoked-toOwnerInviter", "You have revoked an user invitation"))
+      self.assertTrue(get_email_subject("default", "userInvitedRevoked-toOwnerInviter", "You have revoked an user invitation"))
 
 
     mail.outbox = []
@@ -343,11 +343,11 @@ class OrganizationInviteTestCase(TestCase):
 
     subjects = [x.subject for x in mail.outbox]
     if is_email_enabled("userInvitedRevoked-toUser"): # pragma: no cover
-      self.assertTrue(get_email_subject("userInvitedRevoked-toUser", "Your invitation to an organization has been revoked"))
+      self.assertTrue(get_email_subject("default", "userInvitedRevoked-toUser", "Your invitation to an organization has been revoked"))
     if is_email_enabled("userInvitedRevoked-toOwner"): # pragma: no cover
-      self.assertTrue(get_email_subject("userInvitedRevoked-toOwner", "An invitation to join your organization has been revoked"))
+      self.assertTrue(get_email_subject("default", "userInvitedRevoked-toOwner", "An invitation to join your organization has been revoked"))
     if is_email_enabled("userInvitedRevoked-toMemberInviter"): # pragma: no cover
-      self.assertTrue(get_email_subject("userInvitedRevoked-toMemberInviter", "You have revoked an user invitation"))
+      self.assertTrue(get_email_subject("default", "userInvitedRevoked-toMemberInviter", "You have revoked an user invitation"))
 
 
 class OrganizationLeaveTestCase(TestCase):
@@ -403,9 +403,9 @@ class OrganizationLeaveTestCase(TestCase):
 
     subjects = [x.subject for x in mail.outbox]
     if is_email_enabled("userLeft-toUser"): # pragma: no cover
-      self.assertTrue(get_email_subject("userLeft-toUser", "You have left an organization"))
+      self.assertTrue(get_email_subject("default", "userLeft-toUser", "You have left an organization"))
     if is_email_enabled("userLeft-toOwner"): # pragma: no cover
-      self.assertTrue(get_email_subject("userLeft-toOwner", "An user has left an organization you own"))
+      self.assertTrue(get_email_subject("default", "userLeft-toOwner", "An user has left an organization you own"))
 
   def test_cant_remove_member_if_unauthenticated(self):
     """ Test it's not possible to remove a member while unauthenticated """
@@ -441,6 +441,6 @@ class OrganizationLeaveTestCase(TestCase):
 
     subjects = [x.subject for x in mail.outbox]
     if is_email_enabled("userRemoved-toUser"): # pragma: no cover
-      self.assertTrue(get_email_subject("userRemoved-toUser", "You have have been removed from an organization"))
+      self.assertTrue(get_email_subject("default", "userRemoved-toUser", "You have have been removed from an organization"))
     if is_email_enabled("userRemoved-toOwner"): # pragma: no cover
-      self.assertTrue(get_email_subject("userRemoved-toOwner", "You have removed an user from an organization you own"))
+      self.assertTrue(get_email_subject("default", "userRemoved-toOwner", "You have removed an user from an organization you own"))
