@@ -104,3 +104,10 @@ Filter out of organization search
 
 Type: Multiple Value
 Default: []
+
+DISABLE_EMAIL
+=======================================
+Disable email
+
+Type: Multiple Value
+Default: []

@@ -31,7 +31,7 @@ class BaseMail:
     self.locale = locale or getattr(settings, "LANGUAGE_CODE", "en-us")
 
   def sendEmail(self, template_name, subject, context={}):
-    if not is_email_enabled(template_name):
+    if not is_email_enabled(self.channel, template_name):
       return False
 
     # Inject extra context
