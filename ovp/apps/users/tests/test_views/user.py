@@ -1,7 +1,7 @@
 from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
-from django.test.utils import override_settings
+from django.core.cache import cache
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -10,6 +10,7 @@ from ovp.apps.users import models
 from ovp.apps.users.tests.helpers import authenticate
 from ovp.apps.users.tests.helpers import create_user
 
+from ovp.apps.channels.models.channel_setting import ChannelSetting
 
 
 class UserResourceViewSetTestCase(TestCase):
@@ -80,19 +81,21 @@ class UserResourceViewSetTestCase(TestCase):
     user = create_user('test_can_get_current_user@test.com', 'validpassword')
 
     client = APIClient()
-    client.login(username='test_can_get_current_user@test.com', password='validpassword')
+    client.login(username='test_can_get_current_user@test.com', password='validpassword', channel='default')
     response = client.get(reverse('user-current-user'), {}, format="json")
     self.assertTrue(response.data.get('email', None))
     self.assertTrue(response.data.get('name', None))
     self.assertTrue("expired_password" not in response.data)
 
-  @override_settings(OVP_USERS={"EXPIRE_PASSWORD_IN": 60*60})
   def test_expired_password_fields(self):
     """Assert that password expired field works"""
+    ChannelSetting.objects.create(key="EXPIRE_PASSWORD_IN", value="{}".format(60*60), object_channel="default")
+    cache.clear()
+
     user = create_user('test_can_get_current_user@test.com', 'validpassword')
 
     client = APIClient()
-    client.login(username='test_can_get_current_user@test.com', password='validpassword')
+    client.login(username='test_can_get_current_user@test.com', password='validpassword', channel='default')
 
     response = client.get(reverse('user-current-user'), {}, format="json")
     self.assertTrue(response.data['expired_password'] == False)
@@ -145,6 +148,9 @@ class UserResourceViewSetTestCase(TestCase):
 
 
 class UserPasswordHistoryTestCase(TestCase):
+  def setUp(self):
+    cache.clear()
+
   def test_can_update_to_same_or_old_password(self):
     """ Assert that it's possible to update to the same or old password """
     response = create_user('test_can_patch_password@test.com', 'old_password')
@@ -162,9 +168,11 @@ class UserPasswordHistoryTestCase(TestCase):
     response = client.patch(reverse('user-current-user'), {'password': 'old_password', 'current_password': 'new_password'}, format="json")
     self.assertTrue(response.status_code == 200)
 
-  @override_settings(OVP_USERS={"CANT_REUSE_LAST_PASSWORDS": 2})
   def test_cant_update_to_same_or_old_password_if_in_settings(self):
     """ Assert that it's not possible to update to the same or old password if configured """
+    ChannelSetting.objects.create(key="CANT_REUSE_LAST_PASSWORDS", value="2", object_channel="default")
+    cache.clear()
+
     response = create_user('test_can_patch_password@test.com', 'old_password')
     user = models.User.objects.get(uuid=response.data['uuid'])
 

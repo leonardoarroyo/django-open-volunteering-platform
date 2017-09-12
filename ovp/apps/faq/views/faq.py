@@ -1,31 +1,29 @@
 from ovp.apps.faq.models.faq import Faq
-from ovp.apps.faq.serializers.faq import Faq as faq_serializer
+from ovp.apps.faq.serializers.faq import FaqRetrieveSerializer
 
-from rest_framework import decorators
+from ovp.apps.channels.viewsets.decorators import ChannelViewSet
+
 from rest_framework import mixins
 from rest_framework import viewsets
-from rest_framework import permissions
-from rest_framework import response
-from rest_framework import status
 from rest_framework import response
 
+@ChannelViewSet
 class FaqResourceViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-	"""
+  """
   FaqResourceViewSet resource endpoint
   """
-	queryset = Faq.objects.all()
+  queryset = Faq.objects.all()
 
-	def list(self, request):
-		params = self.request.GET
-		category = params.get('category', None)
+  def list(self, request):
+    category = request.data.get('category', None)
+    queryset = self.get_queryset()
+    if category:
+      queryset = queryset.filter(category=category)
 
-		if category is not None:
-			self.queryset = self.queryset.filter(category=category)
+    serializer = FaqRetrieveSerializer(queryset, many=True)
 
-		serializer = faq_serializer(self.queryset, many=True)
+    return response.Response(serializer.data)
 
-		return response.Response(serializer.data)
-
-	def get_serializer_class(self):
-		if self.action == 'list':
-			return faq_serializer
+  def get_serializer_class(self):
+    if self.action == 'list':
+      return FaqRetrieveSerializer

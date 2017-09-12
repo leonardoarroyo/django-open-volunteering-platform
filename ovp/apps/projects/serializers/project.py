@@ -1,5 +1,4 @@
 from ovp.apps.projects import models
-from ovp.apps.projects import helpers
 from ovp.apps.projects.decorators import hide_address, add_current_user_is_applied_representation
 from ovp.apps.projects.serializers.disponibility import DisponibilitySerializer, add_disponibility_representation
 from ovp.apps.projects.serializers.job import JobSerializer
@@ -10,40 +9,38 @@ from ovp.apps.projects.serializers.category import CategoryRetrieveSerializer
 from ovp.apps.core.serializers.commentary import CommentaryRetrieveSerializer
 
 from ovp.apps.core import models as core_models
-from ovp.apps.core.helpers import get_address_serializers
+from ovp.apps.core.serializers import GoogleAddressSerializer, GoogleAddressLatLngSerializer, GoogleAddressCityStateSerializer
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer, FullCauseSerializer
 from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
-
-from ovp.apps.uploads.serializers import UploadedImageSerializer
 
 from ovp.apps.organizations.serializers import OrganizationSearchSerializer
 from ovp.apps.organizations.models import Organization
 
+from ovp.apps.uploads.serializers import UploadedImageSerializer
+
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
+from ovp.apps.channels.cache import get_channel_setting
+
 from ovp.apps.users.serializers import ShortUserPublicRetrieveSerializer, UserProjectRetrieveSerializer
 
 from rest_framework import serializers
+from rest_framework import fields
 from rest_framework import exceptions
 from rest_framework.compat import set_many
 from rest_framework.utils import model_meta
 
-""" Address serializers """
-address_serializers = get_address_serializers()
 
 """ Validators """
-def organization_validator(data):
-  settings = helpers.get_settings()
-  allow_no_org = settings.get('CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION', False)
+def required_organization(request, pk):
+  allow_no_org = int(get_channel_setting(request.channel, "CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION")[0])
 
-  if not allow_no_org:
-    pk = data.get('organization', None)
-
-    if not pk:
-      raise exceptions.ValidationError({'organization': ['This field is required.']})
+  if not allow_no_org and not pk:
+    raise exceptions.ValidationError({'organization': 'This field is required.'})
 
 
 """ Serializers """
-class ProjectCreateUpdateSerializer(serializers.ModelSerializer):
-  address = address_serializers[0]()
+class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
+  address = GoogleAddressSerializer()
   disponibility = DisponibilitySerializer()
   roles = VolunteerRoleSerializer(many=True, required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
@@ -54,13 +51,17 @@ class ProjectCreateUpdateSerializer(serializers.ModelSerializer):
     fields = ['id', 'image', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills']
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date']
 
+  def validate(self, data):
+    required_organization(self.context["request"], data.get("organization", None))
+    return super(ProjectCreateUpdateSerializer, self).validate(data)
+
   def create(self, validated_data):
     causes = validated_data.pop('causes', [])
     skills = validated_data.pop('skills', [])
 
     # Address
     address_data = validated_data.pop('address', {})
-    address_sr = address_serializers[0](data=address_data)
+    address_sr = GoogleAddressSerializer(data=address_data, context=self.context)
     address = address_sr.create(address_data)
     validated_data['address'] = address
 
@@ -69,11 +70,11 @@ class ProjectCreateUpdateSerializer(serializers.ModelSerializer):
     disp = validated_data.pop('disponibility', {})
 
     # Create project
-    project = models.Project.objects.create(**validated_data)
+    project = super(ProjectCreateUpdateSerializer, self).create(validated_data)
 
     # Roles
     for role_data in roles:
-      role_sr = VolunteerRoleSerializer(data=role_data)
+      role_sr = VolunteerRoleSerializer(data=role_data, context=self.context)
       role = role_sr.create(role_data)
       project.roles.add(role)
 
@@ -82,13 +83,13 @@ class ProjectCreateUpdateSerializer(serializers.ModelSerializer):
     if disp['type'] == 'work':
       work_data = disp['work']
       work_data['project'] = project
-      work_sr = WorkSerializer(data=work_data)
+      work_sr = WorkSerializer(data=work_data, context=self.context)
       work = work_sr.create(work_data)
 
     if disp['type'] == 'job':
       job_data = disp['job']
       job_data['project'] = project
-      job_sr = JobSerializer(data=job_data)
+      job_sr = JobSerializer(data=job_data, context=self.context)
       job = job_sr.create(job_data)
 
     # Associate causes
@@ -123,14 +124,14 @@ class ProjectCreateUpdateSerializer(serializers.ModelSerializer):
 
     # Save related resources
     if address_data:
-      address_sr = address_serializers[0](data=address_data)
+      address_sr = GoogleAddressSerializer(data=address_data, context=self.context)
       address = address_sr.create(address_data)
       instance.address = address
 
     if roles:
       instance.roles.clear()
       for role_data in roles:
-        role_sr = VolunteerRoleSerializer(data=role_data)
+        role_sr = VolunteerRoleSerializer(data=role_data, context=self.context)
         role = role_sr.create(role_data)
         instance.roles.add(role)
 
@@ -141,13 +142,13 @@ class ProjectCreateUpdateSerializer(serializers.ModelSerializer):
       if disp['type'] == 'work':
         work_data = disp['work']
         work_data['project'] = instance
-        work_sr = WorkSerializer(data=work_data)
+        work_sr = WorkSerializer(data=work_data, context=self.context)
         work = work_sr.create(work_data)
 
       if disp['type'] == 'job':
         job_data = disp['job']
         job_data['project'] = instance
-        job_sr = JobSerializer(data=job_data)
+        job_sr = JobSerializer(data=job_data, context=self.context)
         job = job_sr.create(job_data)
 
     # Associate causes
@@ -168,16 +169,13 @@ class ProjectCreateUpdateSerializer(serializers.ModelSerializer):
 
     return instance
 
-  def get_validators(self):
-    return super(ProjectCreateUpdateSerializer, self).get_validators() + [organization_validator]
-
   @add_disponibility_representation
   def to_representation(self, instance):
     return super(ProjectCreateUpdateSerializer, self).to_representation(instance)
 
-class ProjectRetrieveSerializer(serializers.ModelSerializer):
+class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
-  address = address_serializers[1]()
+  address = GoogleAddressLatLngSerializer()
   organization = OrganizationSearchSerializer()
   disponibility = DisponibilitySerializer()
   roles = VolunteerRoleSerializer(many=True)
@@ -198,16 +196,16 @@ class ProjectRetrieveSerializer(serializers.ModelSerializer):
   def to_representation(self, instance):
     return super(ProjectRetrieveSerializer, self).to_representation(instance)
 
-class CompactOrganizationSerializer(serializers.ModelSerializer):
-  address = address_serializers[2]()
+class CompactOrganizationSerializer(ChannelRelationshipSerializer):
+  address = GoogleAddressCityStateSerializer()
 
   class Meta:
     model = Organization
     fields = ['name', 'address']
 
-class ProjectOnOrganizationRetrieveSerializer(serializers.ModelSerializer):
+class ProjectOnOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
-  address = address_serializers[1]()
+  address = GoogleAddressLatLngSerializer()
   disponibility = DisponibilitySerializer()
   causes = CauseSerializer(many=True)
   skills = SkillSerializer(many=True)
@@ -224,9 +222,9 @@ class ProjectOnOrganizationRetrieveSerializer(serializers.ModelSerializer):
     return super(ProjectOnOrganizationRetrieveSerializer, self).to_representation(instance)
 
 
-class ProjectSearchSerializer(serializers.ModelSerializer):
+class ProjectSearchSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
-  address = address_serializers[1]()
+  address = GoogleAddressLatLngSerializer()
   organization = CompactOrganizationSerializer()
   owner = ShortUserPublicRetrieveSerializer()
   disponibility = DisponibilitySerializer()

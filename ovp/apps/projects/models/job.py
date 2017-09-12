@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-class JobDate(models.Model):
+from ovp.apps.channels.models.abstract import ChannelRelationship
+
+class JobDate(ChannelRelationship):
   name = models.CharField(_('Label'), blank=True, null=True, max_length=20)
   start_date = models.DateTimeField(_('Start date'))
   end_date = models.DateTimeField(_('End date'))
@@ -18,7 +20,7 @@ class JobDate(models.Model):
     verbose_name_plural = _('job dates')
 
 
-class Job(models.Model):
+class Job(ChannelRelationship):
   project = models.OneToOneField('Project', blank=True, null=True)
   start_date = models.DateTimeField(_('Start date'), blank=True, null=True)
   end_date = models.DateTimeField(_('End date'), blank=True, null=True)

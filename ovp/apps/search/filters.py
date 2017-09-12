@@ -6,6 +6,8 @@ from rest_framework.exceptions import NotAuthenticated
 
 from django.db.models import When, F, IntegerField, Count, Case
 
+from ovp.apps.channels.cache import get_channel_setting
+
 import json
 
 from datetime import datetime
@@ -188,10 +190,17 @@ def by_address(queryset, address='', project=False):
           queryset = queryset.filter(can_be_done_remotely=1)
   return queryset
 
-def filter_out(queryset, setting_name):
+def filter_out(queryset, setting_name, channel):
   """
   Remove unwanted results from queryset
   """
-  kwargs = helpers.get_settings().get(setting_name, {}).get('FILTER_OUT', {})
+  kwargs = {}
+  excluded_list = get_channel_setting(channel, setting_name)
+  for excluded in excluded_list:
+    key, value = excluded.split(":")
+    key = key.strip().strip("\"").strip("''")
+    value = value.strip().strip("\"").strip("''")
+    kwargs[key] = value
+
   queryset = queryset.exclude(**kwargs)
   return queryset

@@ -1,1 +1,0 @@
-You project {{project.name}} was closed.

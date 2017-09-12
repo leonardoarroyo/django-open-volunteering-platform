@@ -11,6 +11,8 @@ from ovp.apps.users.models.profile import get_profile_model
 from ovp.apps.projects.models import Project, Job, Category, Work
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress, Cause, Skill
+from ovp.apps.channels.models import Channel
+from ovp.apps.channels.models import ChannelSetting
 
 from datetime import datetime
 
@@ -23,132 +25,147 @@ Helpers
 """
 def create_sample_projects():
   # Create sample projects
-  user = User(name="a", email="testmail-projects@test.com", password="test_returned")
-  user.save()
+  user1 = User.objects.create_user(name="a", email="testmail-projects@test.com", password="test_returned", object_channel="default")
+  user2 = User.objects.create_user(name="a", email="testmail-projects@test.com", password="test_returned", object_channel="test-channel")
 
-  category1 = Category.objects.create(name="cat1", slug="cat1")
-  category2 = Category.objects.create(name="cat2", slug="cat2")
+  category1 = Category.objects.create(name="cat1", slug="cat1", object_channel="default")
+  category2 = Category.objects.create(name="cat2", slug="cat2", object_channel="default")
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
   address2 = GoogleAddress(typed_address="Campinas, SP - Brazil")
   address3 = GoogleAddress(typed_address="New york, New york - United States")
   address4 = GoogleAddress(typed_address="New york, New york - United States")
-  address1.save()
-  address2.save()
-  address3.save()
-  address4.save()
+  address5 = GoogleAddress(typed_address="New york, New york - United States")
+  address1.save(object_channel="default")
+  address2.save(object_channel="default")
+  address3.save(object_channel="default")
+  address4.save(object_channel="default")
+  address5.save(object_channel="test-channel")
 
-  project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=user, address=address1, published=True)
-  project.save()
+  project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=user1, address=address1, published=True)
+  project.save(object_channel="default")
   project.causes.add(Cause.objects.get(pk=1))
   project.skills.add(Skill.objects.get(pk=1))
   project.skills.add(Skill.objects.get(pk=4))
   project.categories.add(category1)
   work = Work(can_be_done_remotely=False, project=project, weekly_hours=0)
-  work.save()
+  work.save(object_channel="default")
 
-  project = Project(name="test project2", slug="test-slug2", details="abc", description="abc", owner=user, address=address2, highlighted=True, published=True)
-  project.save()
+  project = Project(name="test project2", slug="test-slug2", details="abc", description="abc", owner=user1, address=address2, highlighted=True, published=True)
+  project.save(object_channel="default")
   project.causes.add(Cause.objects.get(pk=2))
   project.categories.add(category2)
   date = datetime.strptime('2017-09-11 00:00:00', '%Y-%m-%d %H:%M:%S')
   date = date.replace(tzinfo=pytz.UTC)
   job = Job(can_be_done_remotely=True, project=project, start_date=date)
-  job.save()
+  job.save(object_channel="default")
 
-  project = Project(name="test project3", slug="test-slug3", details="abc", description="abc", owner=user, address=address3, published=True)
-  project.save()
+  project = Project(name="test project3", slug="test-slug3", details="abc", description="abc", owner=user1, address=address3, published=True)
+  project.save(object_channel="default")
   project.skills.add(Skill.objects.get(pk=2))
   project.causes.add(Cause.objects.get(pk=3))
   job = Job(can_be_done_remotely=True, project=project)
-  job.save()
+  job.save(object_channel="default")
 
-  project = Project(name="test project4", slug="test-slug4", details="abc", description="abc", owner=user, address=address4, published=False)
-  project.save()
+  project = Project(name="test project4", slug="test-slug4", details="abc", description="abc", owner=user1, address=address4, published=False)
+  project.save(object_channel="default")
+
+  project = Project(name="test project5", slug="test-slug5", details="abc", description="abc", owner=user2, address=address5, published=True)
+  project.save(object_channel="test-channel")
 
 def create_sample_organizations():
-  user = User(name="z", email="testmail-organizations@test.com", password="test_returned")
-  user.save()
+  user1 = User.objects.create_user(name="z", email="testmail-organizations@test.com", password="test_returned", object_channel="default")
+  user2 = User.objects.create_user(name="a", email="testmail-organizations@test.com", password="test_returned", object_channel="test-channel")
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
   address2 = GoogleAddress(typed_address="Santo André, SP - Brazil")
   address3 = GoogleAddress(typed_address="New york, New york - United States")
   address4 = GoogleAddress(typed_address="New york, New york - United States")
-  address1.save()
-  address2.save()
-  address3.save()
-  address4.save()
+  address5 = GoogleAddress(typed_address="New york, New york - United States")
+  address1.save(object_channel="default")
+  address2.save(object_channel="default")
+  address3.save(object_channel="default")
+  address4.save(object_channel="default")
+  address5.save(object_channel="test-channel")
 
-  organization = Organization(name="test organization", details="abc", owner=user, address=address1, published=True, type=0)
-  organization.save()
+  organization = Organization(name="test organization", details="abc", owner=user1, address=address1, published=True, type=0)
+  organization.save(object_channel="default")
   organization.causes.add(Cause.objects.all().order_by('pk')[0])
 
-  organization = Organization(name="test organization2", details="abc", owner=user, address=address2, published=True, highlighted=True, type=0)
-  organization.save()
+  organization = Organization(name="test organization2", details="abc", owner=user1, address=address2, published=True, highlighted=True, type=0)
+  organization.save(object_channel="default")
   organization.causes.add(Cause.objects.all().order_by('pk')[1])
 
-  organization = Organization(name="test organization3", details="abc", owner=user, address=address3, published=True, type=0)
-  organization.save()
+  organization = Organization(name="test organization3", details="abc", owner=user1, address=address3, published=True, type=0)
+  organization.save(object_channel="default")
 
-  organization = Organization(name="test organization4", details="abc", owner=user, address=address4, published=False, type=0)
-  organization.save()
+  organization = Organization(name="test organization4", details="abc", owner=user1, address=address4, published=False, type=0)
+  organization.save(object_channel="default")
+
+  organization = Organization(name="test organization5", details="abc", owner=user2, address=address5, published=True, type=0)
+  organization.save(object_channel="test-channel")
 
 
 def create_sample_users():
   user1 = User(name="user one", email="testmail1@test.com", password="test_returned")
-  user1.save()
+  user1.save(object_channel="default")
 
   user2 = User(name="user two", email="testmail2@test.com", password="test_returned")
-  user2.save()
+  user2.save(object_channel="default")
 
   user3 = User(name="user three", email="testmail3@test.com", password="test_returned")
-  user3.save()
+  user3.save(object_channel="default")
 
   user4 = User(name="user four", email="testmail4@test.com", password="test_returned", public=False)
-  user4.save()
+  user4.save(object_channel="default")
+
+  user5 = User(name="user five", email="testmail5@test.com", password="test_returned")
+  user5.save(object_channel="test-channel")
 
   UserProfile = get_profile_model()
   profile1 = UserProfile(user=user1, full_name="user one", about="about one")
-  profile1.save()
+  profile1.save(object_channel="default")
   profile1.causes.add(Cause.objects.get(pk=1))
   profile1.causes.add(Cause.objects.get(pk=2))
   profile1.skills.add(Skill.objects.get(pk=1))
   profile1.skills.add(Skill.objects.get(pk=2))
 
   profile2 = UserProfile(user=user2, full_name="user two", about="about two")
-  profile2.save()
+  profile2.save(object_channel="default")
   profile2.causes.add(Cause.objects.get(pk=1))
   profile2.causes.add(Cause.objects.get(pk=3))
   profile2.skills.add(Skill.objects.get(pk=1))
   profile2.skills.add(Skill.objects.get(pk=3))
 
   profile3 = UserProfile(user=user3, full_name="user three", about="about three")
-  profile3.save()
+  profile3.save(object_channel="default")
 
 
 """
 Tests
 """
-@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class ProjectSearchTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
+    Channel.objects.create(name="Test channel", slug="test-channel")
     create_sample_projects()
     self.client = APIClient()
+
+    cache.clear()
 
   def test_query_optimization(self):
     """
     Test project search does only 4 queries
     """
-    cache.clear()
-    with self.assertNumQueries(5):
+    # 5 queries are search related
+    # 2 are middleware/channel related
+    with self.assertNumQueries(7):
       response = self.client.get(reverse("search-projects-list"), format="json")
 
   def test_query_gets_cached(self):
     """
     Test project search gets cached
     """
-    cache.clear()
     response = self.client.get(reverse("search-projects-list"), format="json")
 
     # Second request should not hit db
@@ -162,12 +179,19 @@ class ProjectSearchTestCase(TestCase):
     response = self.client.get(reverse("search-projects-list"), format="json")
     self.assertEqual(len(response.data["results"]), 3)
 
-  @override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'}, OVP_SEARCH={'PROJECTS': {'FILTER_OUT': {'name': 'test project'}}})
+  def test_channel_filter(self):
+    """
+    Test searching with with channel header return all channel projects
+    """
+    response = self.client.get(reverse("search-projects-list"), format="json", HTTP_X_OVP_CHANNEL="test-channel")
+    self.assertEqual(len(response.data["results"]), 1)
+
   def test_result_hiding(self):
     """
     Test it's possible to hide results through settings
     """
-    cache.clear()
+    ChannelSetting.objects.create(key="FILTER_OUT_PROJECTS", value="'name': 'test project'", object_channel="default")
+
     response = self.client.get(reverse("search-projects-list"), format="json")
     self.assertEqual(len(response.data["results"]), 2)
 
@@ -261,7 +285,7 @@ class ProjectSearchTestCase(TestCase):
     """
     response = self.client.get(reverse("search-projects-list") + "?disponibility=job", format="json")
     self.assertEqual(len(response.data["results"]), 2)
-    
+
     response = self.client.get(reverse("search-projects-list") + "?disponibility=work", format="json")
     self.assertEqual(len(response.data["results"]), 1)
 
@@ -307,26 +331,28 @@ class ProjectSearchTestCase(TestCase):
     self.assertEqual(len(response.data["results"]), 0)
 
 
-@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class OrganizationSearchTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
+    Channel.objects.create(name="Test channel", slug="test-channel")
     create_sample_organizations()
     self.client = APIClient()
+
+    cache.clear()
 
   def test_query_optimization(self):
     """
     Test organization search does only 2 queries
     """
-    cache.clear()
-    with self.assertNumQueries(2):
+    # 2 queries are search related
+    # 2 are middleware/channel related
+    with self.assertNumQueries(4):
       response = self.client.get(reverse("search-organizations-list"), format="json")
 
   def test_query_gets_cached(self):
     """
     Test organization search gets cached
     """
-    cache.clear()
     response = self.client.get(reverse("search-organizations-list"), format="json")
 
     # Second request should not hit db
@@ -340,12 +366,19 @@ class OrganizationSearchTestCase(TestCase):
     response = self.client.get(reverse("search-organizations-list"), format="json")
     self.assertEqual(len(response.data["results"]), 3)
 
-  @override_settings(OVP_SEARCH={'ORGANIZATIONS': {'FILTER_OUT': {'name': 'test organization'}}})
+  def test_channel_filter(self):
+    """
+    Test searching with with channel header return all channel organizations
+    """
+    response = self.client.get(reverse("search-organizations-list"), format="json", HTTP_X_OVP_CHANNEL="test-channel")
+    self.assertEqual(len(response.data["results"]), 1)
+
   def test_result_hiding(self):
     """
     Test it's possible to hide results through settings
     """
-    cache.clear()
+    ChannelSetting.objects.create(key="FILTER_OUT_ORGANIZATIONS", value="'name': 'test organization'", object_channel="default")
+
     response = self.client.get(reverse("search-organizations-list"), format="json")
     self.assertEqual(len(response.data["results"]), 2)
 
@@ -424,26 +457,30 @@ class OrganizationSearchTestCase(TestCase):
 
 
 
-@override_settings(OVP_SEARCH={'ENABLE_USER_SEARCH': True})
 class UserSearchTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
+    Channel.objects.create(name="Test channel", slug="test-channel")
     create_sample_users()
     self.client = APIClient()
+
+    ChannelSetting.objects.create(key="ENABLE_USER_SEARCH", value="1", object_channel="default")
+    ChannelSetting.objects.create(key="ENABLE_USER_SEARCH", value="1", object_channel="test-channel")
+    cache.clear()
 
   def test_query_optimization(self):
     """
     Test user search does only 3 queries
     """
-    cache.clear()
-    with self.assertNumQueries(3):
+    # 3 queries are search related
+    # 2 are middleware/channel related
+    with self.assertNumQueries(5):
       response = self.client.get(reverse("search-users-list"), format="json")
 
   def test_query_gets_cached(self):
     """
     Test user search gets cached
     """
-    cache.clear()
     response = self.client.get(reverse("search-users-list"), format="json")
 
     # Second request should not hit db
@@ -456,6 +493,13 @@ class UserSearchTestCase(TestCase):
     """
     response = self.client.get(reverse("search-users-list"), format="json")
     self.assertEqual(len(response.data["results"]), 3)
+
+  def test_channel_filter(self):
+    """
+    Test searching with with channel header return all channel users
+    """
+    response = self.client.get(reverse("search-users-list"), format="json", HTTP_X_OVP_CHANNEL="test-channel")
+    self.assertEqual(len(response.data["results"]), 1)
 
   def test_causes_filter(self):
     """
@@ -505,22 +549,27 @@ class UserSearchTestCase(TestCase):
     self.assertEqual(len(response.data["results"]), 1)
     self.assertEqual(response.data["results"][0]["name"], "user three")
 
-  @override_settings(OVP_SEARCH={'ENABLE_USER_SEARCH': False})
   def test_user_search_must_be_enabled(self):
     """
     Test searching for users must be enabled in settings
     """
+    ChannelSetting.objects.all().delete()
+    cache.clear()
+
     response = self.client.get(reverse("search-users-list"), format="json")
     self.assertEqual(response.status_code, 403)
 
 
-@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'}, OVP_SEARCH={'ENABLE_USER_SEARCH': True})
 class OrderingTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
+    Channel.objects.create(name="Test channel", slug="test-channel")
     create_sample_projects()
     create_sample_organizations()
     self.client = APIClient()
+
+    ChannelSetting.objects.create(key="ENABLE_USER_SEARCH", value="1", object_channel="default")
+    cache.clear()
 
 
   def test_ordering_descending(self):
@@ -551,14 +600,14 @@ class OrderingTestCase(TestCase):
     """ Assert it's possible to order projects by relevance """
     UserProfile = get_profile_model()
     user = User(name="b", email="testproject@relevance.com", password="testpassword")
-    user.save()
+    user.save(object_channel="default")
 
     self.client.force_authenticate(user=user)
     response = self.client.get(reverse("search-projects-list") + "?ordering=-relevance,-created_date", format="json")
     self.assertEqual(response.status_code, 200)
 
     profile = UserProfile(user=user)
-    profile.save()
+    profile.save(object_channel="default")
     profile.causes.add(Cause.objects.get(pk=1))
     profile.skills.add(Skill.objects.get(pk=1))
     profile.skills.add(Skill.objects.get(pk=2))
@@ -575,11 +624,10 @@ class OrderingTestCase(TestCase):
     self.assertEqual(response.status_code, 401)
 
 
-
-@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class CityCountryTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
+    Channel.objects.create(name="Test channel", slug="test-channel")
     create_sample_projects()
     create_sample_organizations()
 
@@ -618,5 +666,19 @@ class CityCountryTestCase(TestCase):
 
   def test_available_country_cities_cache(self):
     self.test_available_country_cities()
-    self.assertTrue(cache.get("available-cities-{}".format(hash("Brazil"))))
-    self.assertTrue(cache.get("available-cities-{}".format(hash("United States"))))
+    self.assertTrue(cache.get("available-cities-default-{}".format(hash("Brazil"))))
+    self.assertTrue(cache.get("available-cities-default-{}".format(hash("United States"))))
+
+  def test_available_country_cities_per_channel(self):
+    client = APIClient()
+
+    response = client.get(reverse("available-country-cities", ["Brazil"]), format="json", HTTP_X_OVP_CHANNEL="test-channel")
+    self.assertEqual(len(response.data["projects"]), 0)
+    self.assertEqual(len(response.data["organizations"]), 0)
+    self.assertEqual(len(response.data["common"]), 0)
+
+    response = client.get(reverse("available-country-cities", ["United States"]), format="json", HTTP_X_OVP_CHANNEL="test-channel")
+    self.assertEqual(len(response.data["projects"]), 0)
+    self.assertEqual(len(response.data["organizations"]), 0)
+    self.assertEqual(len(response.data["common"]), 1)
+    self.assertIn("New York", response.data["common"])

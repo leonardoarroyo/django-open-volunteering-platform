@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from django.template.loader import get_template
+from django.template.exceptions import TemplateDoesNotExist
 import importlib
 
-def get_settings(string="OVP_CORE"):
-  return getattr(settings, string, {})
-
+from ovp.apps.channels.cache import get_channel_setting
 
 def import_from_string(val):
   try:
@@ -18,58 +18,23 @@ def import_from_string(val):
     raise ImportError(msg)
 
 
-def is_email_enabled(email):
-  """ Emails are activated by default. Returns false
-      if an email has been disabled in settings.py
+def is_email_enabled(channel, email):
+  """ Emails are activated by default.
+      Create a template named {email}-disable.txt to disable it.
   """
-  s = get_settings(string="OVP_EMAILS")
-  email_settings = s.get(email, {})
+  disabled_emails = get_channel_setting(channel, "DISABLE_EMAIL")
 
-  enabled = True
-  if email_settings.get("disabled", False):
-    enabled = False
+  if email in disabled_emails:
+    return False
 
-  return enabled
+  return True
 
 
-def get_email_subject(email, default):
-  """ Allows for email subject overriding from settings.py  """
-  s = get_settings(string="OVP_EMAILS")
-  email_settings = s.get(email, {})
-
-  title = email_settings.get("subject", default)
+def get_email_subject(channel, email, default):
+  """ Allows for email subject overriding """
+  try:
+    title = get_template('{}/email/{}-subject.txt'.format(channel, email)).render().replace("\n", "")
+  except TemplateDoesNotExist as e:
+    title = default
 
   return _(title)
-
-
-def get_address_model():
-  """ Returns application address model
-
-  The address model can be modified by setting OVP_CORE.ADDRESS_MODEL.
-
-  Returns:
-    class: Address model class
-
-    The default model returned is ovp_core.models.GoogleAddress
-
-  """
-  model_name = get_settings().get("ADDRESS_MODEL", "ovp.apps.core.models.GoogleAddress")
-  return import_from_string(model_name)
-
-
-def get_address_serializers():
-  """ Return application address serializer tuple
-
-  The tuple can be modified by setting OVP_CORE.ADDRESS_SERIALIZER_TUPLE.
-
-  Returns:
-    tuple: A tuple with 3 serializers
-
-    The default tuple returned is (GoogleAddressSerializer, GoogleAddressLatLngSerializer, GoogleAddressCityStateSerializer).
-    The first one is the default serializer, usually used to create and update addresses.
-    The second extends the first one but also includes 'lat' and 'lng' field, used to create pins on maps.
-    The third is a simplified serializer containing only field 'city_state'. This is used on search.
-
-  """
-  serializers = get_settings().get('ADDRESS_SERIALIZER_TUPLE', ('ovp.apps.core.serializers.GoogleAddressSerializer', 'ovp.apps.core.serializers.GoogleAddressLatLngSerializer', 'ovp.apps.core.serializers.GoogleAddressCityStateSerializer'))
-  return [import_from_string(s) for s in serializers]

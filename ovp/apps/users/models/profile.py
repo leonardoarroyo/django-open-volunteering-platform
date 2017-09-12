@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from ovp.apps.channels.models import ChannelRelationship
 from ovp.apps.users.helpers import get_settings, import_from_string
 
 gender_choices = (
@@ -9,7 +10,7 @@ gender_choices = (
   ("unspecified", "Unspecified"),
 )
 
-class UserProfile(models.Model):
+class UserProfile(ChannelRelationship, models.Model):
   user = models.OneToOneField("User", blank=True, null=True, related_name="%(app_label)s_%(class)s_profile")
   full_name = models.CharField(_("Full name"), max_length=300, null=True, blank=True)
   skills = models.ManyToManyField("core.Skill")

@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-class Lead(models.Model):
+from ovp.apps.channels.models.abstract import ChannelRelationship
+
+class Lead(ChannelRelationship):
   name = models.CharField(_('Name'), max_length=100, null=True, blank=True)
   email = models.CharField(_('Email'), max_length=100)
   phone = models.CharField(_('Phone'), max_length=30, null=True, blank=True)

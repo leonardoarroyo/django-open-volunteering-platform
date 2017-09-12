@@ -17,7 +17,7 @@ from tempfile import NamedTemporaryFile
 class UploadedImageSerializerTestCase(TestCase):
   def test_image_urls(self):
     """Assert that image object returns url"""
-    user = get_user_model().objects.create_user('test_image_urls@test.com', 'validpassword')
+    user = get_user_model().objects.create_user('test_image_urls@test.com', 'validpassword', object_channel="default")
 
     client = APIClient()
     client.force_authenticate(user=user)

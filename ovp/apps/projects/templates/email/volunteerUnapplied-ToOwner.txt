@@ -1,1 +1,0 @@
-Volunteer unapplied from {{apply.project.name}}.

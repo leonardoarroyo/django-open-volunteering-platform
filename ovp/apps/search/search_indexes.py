@@ -2,7 +2,7 @@ from haystack import indexes
 from django.db.models import Q
 from ovp.apps.projects.models import Project, Work, Job
 from ovp.apps.organizations.models import Organization
-from ovp.apps.core.models import GoogleAddress, SimpleAddress
+from ovp.apps.core.models import GoogleAddress
 from ovp.apps.users.models import User
 from ovp.apps.users.models.profile import get_profile_model
 from datetime import datetime
@@ -10,6 +10,9 @@ from datetime import datetime
 """
 Mixins(used by multiple indexes)
 """
+class ChannelMixin:
+  def prepare_channel(self, obj):
+    return obj.channel.slug
 
 class CausesMixin:
   def prepare_causes(self, obj):
@@ -50,16 +53,9 @@ class AddressComponentsMixin:
     types = []
 
     if obj.address:
-      if type(obj.address) == GoogleAddress:
-        for component in obj.address.address_components.all():
-          for component_type in component.types.all():
-            types.append(u'{}-{}'.format(component.long_name, component_type.name))
-
-      if type(obj.address) == SimpleAddress:
-        if obj.address.city:
-          types.append(u'{}-{}'.format(obj.address.city, 'locality'))
-        if obj.address.country:
-          types.append(u'{}-{}'.format(obj.address.country, 'country'))
+      for component in obj.address.address_components.all():
+        for component_type in component.types.all():
+          types.append(u'{}-{}'.format(component.long_name, component_type.name))
 
     return types
 
@@ -67,7 +63,7 @@ class AddressComponentsMixin:
 """
 Indexes
 """
-class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, CategoriesMixin, AddressComponentsMixin, DateMixin):
+class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, CategoriesMixin, AddressComponentsMixin, DateMixin, ChannelMixin):
   name = indexes.EdgeNgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   categories = indexes.MultiValueField(faceted=True)
@@ -83,7 +79,8 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
   deleted = indexes.BooleanField(model_attr='deleted')
   closed = indexes.BooleanField(model_attr='closed')
   address_components = indexes.MultiValueField(faceted=True)
-    
+  channel = indexes.CharField()
+
   def prepare_job(self, obj):
     job = False
 
@@ -138,7 +135,7 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
 
 
 
-class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin):
+class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin, ChannelMixin):
   name = indexes.EdgeNgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
@@ -146,7 +143,7 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
   address_components = indexes.MultiValueField(faceted=True)
   published = indexes.BooleanField(model_attr='published')
   deleted = indexes.BooleanField(model_attr='deleted')
-
+  channel = indexes.CharField()
 
   def get_model(self):
     return Organization
@@ -155,11 +152,12 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
     return self.get_model().objects.filter(deleted=False)
 
 
-class UserIndex(indexes.SearchIndex, indexes.Indexable, AddressComponentsMixin):
+class UserIndex(indexes.SearchIndex, indexes.Indexable, AddressComponentsMixin, ChannelMixin):
   name = indexes.EdgeNgramField(model_attr='name')
   text = indexes.CharField(document=True)
   causes = indexes.MultiValueField(faceted=True)
   skills = indexes.MultiValueField(faceted=True)
+  channel = indexes.CharField()
 
   def get_model(self):
     return User

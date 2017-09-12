@@ -1,9 +1,9 @@
 from ovp.apps.core import validators
 from ovp.apps.core.models import Availability
-from rest_framework import serializers
 
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
-class AvailabilitySerializer(serializers.ModelSerializer):
+class AvailabilitySerializer(ChannelRelationshipSerializer):
   def to_representation(self, instance):
     return { 'weekday': instance.weekday, 'period': instance.period }
 

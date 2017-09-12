@@ -1,11 +1,7 @@
-from ovp.apps.faq.models.category import Category
+from ovp.apps.faq.models.category import FaqCategory
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
-from rest_framework import serializers
-from rest_framework import exceptions
-from rest_framework.compat import set_many
-from rest_framework.utils import model_meta
-
-class CategoryFaqRetrieveSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Category
-		fields = ['id', 'name']
+class CategoryFaqRetrieveSerializer(ChannelRelationshipSerializer):
+  class Meta:
+    model = FaqCategory
+    fields = ['id', 'name']

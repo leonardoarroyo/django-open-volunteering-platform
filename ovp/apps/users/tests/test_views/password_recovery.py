@@ -3,6 +3,7 @@ import re
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.core import mail
+from django.core.cache import cache
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -11,6 +12,8 @@ from ovp.apps.users.tests.helpers import authenticate
 from ovp.apps.users.tests.helpers import create_user
 from ovp.apps.users.tests.helpers import create_token
 from ovp.apps.users.models import PasswordRecoveryToken
+
+from ovp.apps.channels.models.channel_setting import ChannelSetting
 
 
 class RecoveryTokenViewSetTestCase(TestCase):
@@ -146,9 +149,11 @@ class RecoverPasswordViewSetTestCase(TestCase):
     response = client.post(reverse('recover-password-list'), {'new_password': 'old_password', 'token': PasswordRecoveryToken.objects.last().token}, format="json")
     self.assertTrue(response.status_code == 200)
 
-  @override_settings(OVP_USERS={"CANT_REUSE_LAST_PASSWORDS": 2})
   def test_cant_recover_to_same_or_old_password_if_in_settings(self):
     """ Assert that it's not possible to recover to the same or old password if configured """
+    ChannelSetting.objects.create(key="CANT_REUSE_LAST_PASSWORDS", value="2", object_channel="default")
+    cache.clear()
+
     response = create_user('test_can_recover_password@test.com', 'old_password')
     client = APIClient()
 

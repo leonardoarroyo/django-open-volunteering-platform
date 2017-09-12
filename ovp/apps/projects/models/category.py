@@ -2,7 +2,9 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 
-class Category(models.Model):
+from ovp.apps.channels.models.abstract import ChannelRelationship
+
+class Category(ChannelRelationship):
   name = models.CharField(_('name'), max_length=150, blank=False, null=False)
   slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
   description = models.CharField(_('description'), max_length=3000, blank=True, null=True)

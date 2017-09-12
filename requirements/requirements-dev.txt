@@ -5,3 +5,6 @@ django-extensions
 coverage
 codecov
 tblib
+mock
+sphinx
+sphinx_rtd_theme

@@ -11,18 +11,17 @@ from ovp.apps.organizations.models import Organization
 
 class HiddenAddressTestCase(TestCase):
   def setUp(self):
-    self.user = User.objects.create_user(email="test_user@gmail.com", password="test")
-    self.second_user = User.objects.create_user(email="test_second_user@test.com", password="test")
-    self.third_user = User.objects.create_user(email="test_third_user@test.com", password="test")
+    self.user = User.objects.create_user(email="test_user@gmail.com", password="test", object_channel="default")
+    self.second_user = User.objects.create_user(email="test_second_user@test.com", password="test", object_channel="default")
+    self.third_user = User.objects.create_user(email="test_third_user@test.com", password="test", object_channel="default")
 
     organization = Organization(name="test", type=0, owner=self.user)
-    organization.save()
+    organization.save(object_channel="default")
     organization.members.add(self.second_user)
 
     address = GoogleAddress(typed_address="Rua. Teçaindá, 81")
-    address.save()
-    self.project = Project(name="test project", slug="test slug", details="abc", description="abc", owner=self.user, hidden_address=True, address=address, organization=organization)
-    self.project.save()
+    address.save(object_channel="default")
+    self.project = Project.objects.create(name="test project", slug="test slug", details="abc", description="abc", owner=self.user, hidden_address=True, address=address, organization=organization, object_channel="default")
 
     self.request = RequestFactory().get('/')
 

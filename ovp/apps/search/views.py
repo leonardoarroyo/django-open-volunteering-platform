@@ -13,6 +13,8 @@ from ovp.apps.users.models.profile import get_profile_model, UserProfile
 from ovp.apps.search import helpers
 from ovp.apps.search import filters
 
+from ovp.apps.channels.cache import get_channel_setting
+
 from django.core.cache import cache
 
 from rest_framework import viewsets
@@ -31,7 +33,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
   def get_queryset(self):
     params = self.request.GET
 
-    key = 'organizations-{}'.format(hash(frozenset(params.items())))
+    key = 'organizations-{}-{}'.format(self.request.channel, hash(frozenset(params.items())))
     cache_ttl = 120
     result = cache.get(key)
 
@@ -51,10 +53,11 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
       queryset = filters.by_published(queryset, published)
       queryset = filters.by_address(queryset, address) if address else queryset
       queryset = filters.by_causes(queryset, cause) if cause else queryset
+      queryset = queryset.filter(channel=self.request.channel)
 
       result_keys = [q.pk for q in queryset]
       result = Organization.objects.filter(pk__in=result_keys, deleted=False).prefetch_related('causes').select_related('address').order_by('-highlighted')
-      result = filters.filter_out(result, "ORGANIZATIONS")
+      result = filters.filter_out(result, "FILTER_OUT_ORGANIZATIONS", self.request.channel)
       cache.set(key, result, cache_ttl)
 
     return result
@@ -65,12 +68,9 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   filter_backends = (filters.ProjectRelevanceOrderingFilter,)
   ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance')
 
-  def get_base_queryset(self, pks = None, closed_clause=None):
-    base_queryset = Project.objects.filter(deleted=False)
-    if closed_clause is None:
-      closed_clause = helpers.get_settings().get('PROJECTS', {}).get('DEFAULT_INCLUDE_CLOSED', None)
+  def get_base_queryset(self, pks = None):
+    base_queryset = Project.objects.filter(deleted=False, closed=False)
 
-    base_queryset = base_queryset if closed_clause else base_queryset.filter(closed=False)
     if len(pks) > 0:
       return base_queryset.filter(pk__in=pks)
 
@@ -79,7 +79,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   def get_queryset(self):
     params = self.request.GET
 
-    key = 'projects-{}'.format(hash(frozenset(params.items())))
+    key = 'projects-{}-{}'.format(self.request.channel, hash(frozenset(params.items())))
     cache_ttl = 120
     result = cache.get(key)
 
@@ -108,6 +108,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_categories(queryset, category)
       queryset = filters.by_disponibility(queryset, disponibility)
       queryset = filters.by_date(queryset, date)
+      queryset = queryset.filter(channel=self.request.channel)
 
       result_keys = [q.pk for q in queryset]
       if not_organization:
@@ -118,8 +119,8 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
         result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'categories', 'job__dates').select_related('address', 'owner', 'work', 'job').filter(organization__in=org)
       else:
         result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'categories', 'job__dates').select_related('address', 'owner', 'work', 'job')
-      
-      result = filters.filter_out(result, "PROJECTS")
+
+      result = filters.filter_out(result, "FILTER_OUT_PROJECTS", self.request.channel)
       cache.set(key, result, cache_ttl)
 
     return result
@@ -130,18 +131,18 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   filter_backends = (filters.OrderingFilter,)
   ordering_fields = ('slug', 'name')
 
-  def __init__(self, *args, **kwargs):
-    self.check_user_search_enabled()
-    return super(UserSearchResource, self).__init__(*args, **kwargs)
+  def initialize_request(self, *args, **kwargs):
+    request = super(UserSearchResource, self).initialize_request(*args, **kwargs)
+    self.check_user_search_enabled(request.channel)
+    return request
 
-  def check_user_search_enabled(self):
-    s = helpers.get_settings()
-    if not s.get('ENABLE_USER_SEARCH', False):
+  def check_user_search_enabled(self, channel):
+    if int(get_channel_setting(channel, "ENABLE_USER_SEARCH")[0]) == 0:
       raise PermissionDenied
 
   def get_queryset(self):
     params = self.request.GET
-    key = 'users-{}'.format(hash(frozenset(params.items())))
+    key = 'users-{}-{}'.format(self.request.channel, hash(frozenset(params.items())))
     cache_ttl = 120
     result = cache.get(key)
 
@@ -154,6 +155,7 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_skills(queryset, skill)
       queryset = filters.by_causes(queryset, cause)
       queryset = filters.by_name(queryset, name)
+      queryset = queryset.filter(channel=self.request.channel)
 
       result_keys = [q.pk for q in queryset]
       related_field_name = get_profile_model()._meta.get_field('user').related_query_name()
@@ -170,7 +172,7 @@ def query_country_deprecated(request, country):
   available_cities = []
 
   search_term = helpers.whoosh_raw("{}-country".format(country))
-  queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term)
+  queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, channel=request.channel)
 
   for project in queryset:
     for comp in project.address_components:
@@ -186,7 +188,7 @@ def query_country_deprecated(request, country):
 
 @decorators.api_view(["GET"])
 def available_country_cities(request, country):
-  key = "available-cities-{}".format(hash(country))
+  key = "available-cities-{}-{}".format(request.channel, hash(country))
   cache_ttl = 120
   result = cache.get(key)
 
@@ -195,10 +197,10 @@ def available_country_cities(request, country):
 
     search_term = helpers.whoosh_raw("{}-country".format(country))
 
-    queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, published=1, closed=0)
+    queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, published=1, closed=0, channel=request.channel)
     projects = helpers.get_cities(queryset)
 
-    queryset = SearchQuerySet().models(Organization).filter(address_components__exact=search_term, published=1)
+    queryset = SearchQuerySet().models(Organization).filter(address_components__exact=search_term, published=1, channel=request.channel)
     organizations = helpers.get_cities(queryset)
 
     common = projects & organizations

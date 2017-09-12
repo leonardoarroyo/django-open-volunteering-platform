@@ -1,26 +1,28 @@
 from ovp.apps.projects import models
 from ovp.apps.projects.models.apply import apply_status_choices
 
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
+
 from ovp.apps.users.serializers import ShortUserPublicRetrieveSerializer, UserApplyRetrieveSerializer
 from ovp.apps.projects.serializers import role
 
 from rest_framework import serializers
 
-class ApplyCreateSerializer(serializers.ModelSerializer):
+class ApplyCreateSerializer(ChannelRelationshipSerializer):
   email = serializers.EmailField(required=False)
 
   class Meta:
     model = models.Apply
     fields = ['username', 'email', 'phone', 'project', 'user', 'role']
 
-class ApplyUpdateSerializer(serializers.ModelSerializer):
+class ApplyUpdateSerializer(ChannelRelationshipSerializer):
   status = serializers.ChoiceField(choices=apply_status_choices)
 
   class Meta:
     model = models.Apply
     fields = ['status']
 
-class ApplyRetrieveSerializer(serializers.ModelSerializer):
+class ApplyRetrieveSerializer(ChannelRelationshipSerializer):
   user = UserApplyRetrieveSerializer()
   status = serializers.CharField()
 
@@ -32,7 +34,7 @@ class ApplyRetrieveSerializer(serializers.ModelSerializer):
     return object.get_status_display()
 
 
-class ProjectAppliesSerializer(serializers.ModelSerializer):
+class ProjectAppliesSerializer(ChannelRelationshipSerializer):
   user = ShortUserPublicRetrieveSerializer()
   role = role.VolunteerRoleApplySerializer()
 

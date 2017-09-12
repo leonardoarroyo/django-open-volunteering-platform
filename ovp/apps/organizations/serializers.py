@@ -5,12 +5,14 @@ from ovp.apps.uploads.serializers import UploadedImageSerializer
 from ovp.apps.users.models.user import User
 
 from ovp.apps.core.models import Cause
-from ovp.apps.core.helpers import get_address_serializers
+from ovp.apps.core.serializers import GoogleAddressSerializer, GoogleAddressCityStateSerializer
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
 
 from ovp.apps.organizations import models
 from ovp.apps.organizations import validators
 from ovp.apps.organizations.decorators import hide_address
+
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
 from rest_framework import serializers
 from rest_framework import permissions
@@ -19,14 +21,8 @@ from rest_framework.compat import set_many
 from rest_framework.utils import model_meta
 
 
-""" Address serializers """
-address_serializers = get_address_serializers()
-
-
-""" Serializers """
-
-class OrganizationCreateSerializer(serializers.ModelSerializer):
-  address = address_serializers[0](required=False)
+class OrganizationCreateSerializer(ChannelRelationshipSerializer):
+  address = GoogleAddressSerializer(required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
 
   class Meta:
@@ -39,12 +35,12 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
 
     # Address
     if address_data:
-      address_sr = address_serializers[0](data=address_data)
+      address_sr = GoogleAddressSerializer(data=address_data, context=self.context)
       address = address_sr.create(address_data)
       validated_data['address'] = address
 
     # Organization
-    organization = models.Organization.objects.create(**validated_data)
+    organization = super(OrganizationCreateSerializer, self).create(validated_data)
 
     # Associate causes
     for cause in causes:
@@ -67,7 +63,7 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
 
     # Save related resources
     if address_data:
-      address_sr = address_serializers[0](data=address_data)
+      address_sr = GoogleAddressSerializer(data=address_data, context=self.context)
       address = address_sr.create(address_data)
       instance.address = address
 
@@ -82,21 +78,21 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
 
     return instance
 
-class UserOrganizationRetrieveSerializer(serializers.ModelSerializer):
+class UserOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   class Meta:
     model = User
     fields = ['name', 'email', 'phone']
 
-class OrganizationSearchSerializer(serializers.ModelSerializer):
-  address = address_serializers[2]()
+class OrganizationSearchSerializer(ChannelRelationshipSerializer):
+  address = GoogleAddressCityStateSerializer()
   image = UploadedImageSerializer()
 
   class Meta:
     model = models.Organization
     fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image']
 
-class OrganizationRetrieveSerializer(serializers.ModelSerializer):
-  address = address_serializers[0]()
+class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
+  address = GoogleAddressSerializer()
   image = UploadedImageSerializer()
   cover = UploadedImageSerializer()
   causes = CauseSerializer(many=True)

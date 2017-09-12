@@ -5,22 +5,23 @@ from django.template.defaultfilters import slugify
 from django.db.models import Sum
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from ovp.apps.core.helpers import get_address_model
 
 from ovp.apps.projects import emails
 from ovp.apps.projects.models.apply import Apply
+
+from ovp.apps.channels.models import ChannelRelationship
 
 import urllib.request as request
 import urllib.parse as parse
 
 import json
 
-class Project(models.Model):
+class Project(ChannelRelationship):
   """
   Project model
   """
   image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
-  address = models.OneToOneField(get_address_model(), blank=True, null=True, verbose_name=_('address'), db_constraint=False)
+  address = models.OneToOneField('core.GoogleAddress', blank=True, null=True, verbose_name=_('address'), db_constraint=False)
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'))
   skills = models.ManyToManyField('core.Skill', verbose_name=_('skills'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'))
@@ -32,7 +33,7 @@ class Project(models.Model):
 
   # Fields
   name = models.CharField(_('Project name'), max_length=100)
-  slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
+  slug = models.SlugField(max_length=100, blank=True, null=True)
   published = models.BooleanField(_("Published"), default=False)
   highlighted = models.BooleanField(_("Highlighted"), default=False, blank=False)
   applied_count = models.IntegerField(_('Applied count'), blank=False, null=False, default=0)
@@ -83,6 +84,8 @@ class Project(models.Model):
     self.save()
 
   def save(self, *args, **kwargs):
+    creating = False
+
     if self.pk is not None:
       orig = Project.objects.get(pk=self.pk)
       if not orig.published and self.published:
@@ -98,11 +101,7 @@ class Project(models.Model):
     else:
       # Project being created
       self.slug = self.generate_slug()
-      self.mailing().sendProjectCreated({'project': self})
-      try:
-        self.admin_mailing().sendProjectCreated({'project': self})
-      except:
-        pass
+      creating = True
 
     # If there is no description, take 100 chars from the details
     if not self.description:
@@ -113,7 +112,16 @@ class Project(models.Model):
 
     self.modified_date = timezone.now()
 
-    return super(Project, self).save(*args, **kwargs)
+    obj = super(Project, self).save(*args, **kwargs)
+
+    if creating:
+      self.mailing().sendProjectCreated({'project': self})
+      try:
+        self.admin_mailing().sendProjectCreated({'project': self})
+      except:
+        pass
+
+    return obj
 
 
   def generate_slug(self):
@@ -140,9 +148,10 @@ class Project(models.Model):
     app_label = 'projects'
     verbose_name = _('project')
     verbose_name_plural = _('projects')
+    unique_together = (('slug', 'channel'), )
 
 
-class VolunteerRole(models.Model):
+class VolunteerRole(ChannelRelationship):
   """
   Volunteer role model
   """

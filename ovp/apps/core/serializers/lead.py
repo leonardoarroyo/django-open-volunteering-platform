@@ -1,8 +1,7 @@
 from ovp.apps.core import models
-from rest_framework import serializers
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
-
-class LeadSerializer(serializers.ModelSerializer):
+class LeadSerializer(ChannelRelationshipSerializer):
   class Meta:
     fields = ['name', 'email', 'phone', 'country']
     model = models.Lead

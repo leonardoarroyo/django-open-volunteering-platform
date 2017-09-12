@@ -22,6 +22,7 @@ CUSTOM_INSTALLED_APPS = (
     'ovp.apps.organizations',
     'ovp.apps.search',
     'ovp.apps.faq',
+    'ovp.apps.channels',
     'haystack',
     'vinaigrette',
     'django.contrib.admin',
@@ -37,6 +38,8 @@ ALWAYS_INSTALLED_APPS = (
 
 ALWAYS_MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'ovp.apps.channels.middlewares.channel.ChannelMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -84,7 +87,7 @@ settings.configure(
     TEMPLATE_DEBUG=False,
     ALLOWED_HOSTS=[],
     INSTALLED_APPS=ALWAYS_INSTALLED_APPS + CUSTOM_INSTALLED_APPS,
-    MIDDLEWARE_CLASSES=ALWAYS_MIDDLEWARE_CLASSES,
+    MIDDLEWARE=ALWAYS_MIDDLEWARE_CLASSES,
     ROOT_URLCONF='test.urls',
     DATABASES={
         'default': {
@@ -136,6 +139,9 @@ settings.configure(
       },
     },
     HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor',
+    SILENCED_SYSTEM_CHECKS=["auth.E003", "auth.W004"],
+    AUTHENTICATION_BACKENDS=["ovp.apps.users.auth.backends.ChannelBasedAuthentication"],
+    TEST_CHANNELS=["test-channel", "channel1"]
 )
 
 django.setup()
@@ -148,6 +154,7 @@ test_cases = [
   'ovp.apps.projects',
   'ovp.apps.search',
   'ovp.apps.faq',
+  'ovp.apps.channels',
 ]
 
 # Allow accessing test options from the command line.

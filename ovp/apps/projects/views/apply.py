@@ -2,9 +2,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
+from ovp.apps.channels.viewsets.decorators import ChannelViewSet
+from ovp.apps.channels.cache import get_channel_setting
+
 from ovp.apps.projects.serializers import apply as serializers
 from ovp.apps.projects import models
-from ovp.apps.projects import helpers
 from ovp.apps.projects.permissions import ProjectApplyPermission
 
 from rest_framework import decorators
@@ -13,6 +15,7 @@ from rest_framework import permissions
 from rest_framework import response
 from rest_framework import status
 
+@ChannelViewSet
 class ApplyResourceViewSet(viewsets.GenericViewSet):
   """
   ApplyResourceViewSet resource endpoint
@@ -104,7 +107,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
       self.permission_classes = (permissions.IsAuthenticated, ProjectApplyPermission)
 
     if self.action == 'apply':
-      if helpers.get_settings().get('UNAUTHENTICATED_APPLY', False):
+      if int(get_channel_setting(request.channel, "UNAUTHENTICATED_APPLY")[0]):
         self.permission_classes = ()
       else:
         self.permission_classes = (permissions.IsAuthenticated, )
@@ -118,4 +121,4 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
   def get_project_object(self, *args, **kwargs):
     slug=kwargs.get('project_slug')
 
-    return get_object_or_404(models.Project, slug=slug)
+    return get_object_or_404(models.Project, slug=slug, channel__slug=self.request.channel)

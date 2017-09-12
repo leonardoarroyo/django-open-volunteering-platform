@@ -2,9 +2,11 @@ from django.db.models import Q
 
 from ovp.apps.projects.serializers import project as serializers
 from ovp.apps.projects import models
-from ovp.apps.projects import helpers
 from ovp.apps.projects.permissions import ProjectCreateOwnsOrIsOrganizationMember
 from ovp.apps.projects.permissions import ProjectRetrieveOwnsOrIsOrganizationMember
+
+from ovp.apps.channels.viewsets.decorators import ChannelViewSet
+from ovp.apps.channels.cache import get_channel_setting
 
 from ovp.apps.core.helpers.xls import Response as XLSResponse
 from ovp.apps.core.mixins import CommentaryCreateMixin
@@ -22,8 +24,9 @@ from django.utils.translation import ugettext as _
 
 EXPORT_APPLIED_USERS_HEADERS = [
   _('User Name'), _('User Email'), _('User Phone'), _('Applied At'), _('Status')
-  ]
+]
 
+@ChannelViewSet
 class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet, CommentaryCreateMixin):
   """
   ProjectResourceViewSet resource endpoint
@@ -83,7 +86,7 @@ class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
 
   @decorators.list_route(['GET'])
   def manageable(self, request, *args, **kwargs):
-    projects = models.Project.objects.filter(Q(owner=request.user) | Q(organization__owner=request.user) | Q(organization__members=request.user))
+    projects = self.get_queryset().filter(Q(owner=request.user) | Q(organization__owner=request.user) | Q(organization__members=request.user))
 
     serializer = self.get_serializer_class()(projects, many=True, context=self.get_serializer_context())
     return response.Response(serializer.data)
@@ -95,7 +98,7 @@ class ProjectResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
   def get_permissions(self):
     request = self.get_serializer_context()['request']
     if self.action == 'create':
-      if helpers.get_settings().get('CAN_CREATE_PROJECTS_IN_ANY_ORGANIZATION', False):
+      if int(get_channel_setting(request.channel, "CAN_CREATE_PROJECTS_IN_ANY_ORGANIZATION")[0]):
         self.permission_classes = (permissions.IsAuthenticated, )
       else:
         self.permission_classes = (permissions.IsAuthenticated, ProjectCreateOwnsOrIsOrganizationMember)

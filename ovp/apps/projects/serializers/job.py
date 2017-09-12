@@ -1,4 +1,5 @@
 from ovp.apps.projects import models
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 from rest_framework import serializers
 
 """
@@ -17,12 +18,12 @@ def dates_validator(data):
 """
 Serializers
 """
-class JobDateSerializer(serializers.ModelSerializer):
+class JobDateSerializer(ChannelRelationshipSerializer):
   class Meta:
     model = models.JobDate
     fields = ['name', 'start_date', 'end_date']
 
-class JobSerializer(serializers.ModelSerializer):
+class JobSerializer(ChannelRelationshipSerializer):
   dates = JobDateSerializer(many=True)
 
   class Meta:
@@ -35,10 +36,10 @@ class JobSerializer(serializers.ModelSerializer):
   def create(self, validated_data):
     dates = validated_data.pop('dates')
 
-    job = models.Job.objects.create(**validated_data)
+    job = super(JobSerializer, self).create(validated_data)
 
     for date in dates:
-      sr = JobDateSerializer(data=date)
+      sr = JobDateSerializer(data=date, context=self.context)
       date_obj = sr.create(date)
       job.dates.add(date_obj)
     job.update_dates()

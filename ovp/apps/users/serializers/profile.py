@@ -7,10 +7,12 @@ from ovp.apps.core.models import Cause
 from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
 
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer
+
 from rest_framework import serializers
 
 
-class ProfileCreateUpdateSerializer(serializers.ModelSerializer):
+class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
   # we do not allow the user to create skills, only associate with
   # existing skills, so we do it manually on .create method
   skills = SkillAssociationSerializer(many=True, required=False)
@@ -26,7 +28,7 @@ class ProfileCreateUpdateSerializer(serializers.ModelSerializer):
     causes = validated_data.pop('causes', [])
 
     # Create profile
-    profile = get_profile_model().objects.create(**validated_data)
+    profile = super(ProfileCreateUpdateSerializer, self).create(validated_data)
 
     # Associate skills
     for skill in skills:
@@ -61,7 +63,7 @@ class ProfileCreateUpdateSerializer(serializers.ModelSerializer):
 
     return super(ProfileCreateUpdateSerializer, self).update(instance, validated_data)
 
-class ProfileRetrieveSerializer(serializers.ModelSerializer):
+class ProfileRetrieveSerializer(ChannelRelationshipSerializer):
   skills = SkillSerializer(many=True)
   causes = CauseSerializer(many=True)
   gender = serializers.ChoiceField(choices=gender_choices)
@@ -70,7 +72,7 @@ class ProfileRetrieveSerializer(serializers.ModelSerializer):
     model = get_profile_model()
     fields = ['full_name', 'about', 'skills', 'causes', 'gender']
 
-class ProfileSearchSerializer(serializers.ModelSerializer):
+class ProfileSearchSerializer(ChannelRelationshipSerializer):
   skills = SkillSerializer(many=True)
   causes = CauseSerializer(many=True)
   gender = serializers.ChoiceField(choices=gender_choices)

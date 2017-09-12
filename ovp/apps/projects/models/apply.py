@@ -4,6 +4,8 @@ from django.utils import timezone
 
 from ovp.apps.projects import emails
 
+from ovp.apps.channels.models.abstract import ChannelRelationship
+
 apply_status_choices = (
     ('applied', 'Applied'),
     ('unapplied', 'Canceled'),
@@ -11,7 +13,7 @@ apply_status_choices = (
     ('not-volunteer', 'Not a Volunteer'),
 )
 
-class Apply(models.Model):
+class Apply(ChannelRelationship):
   user = models.ForeignKey('users.User', blank=True, null=True, verbose_name=_('user'))
   project = models.ForeignKey('projects.Project', verbose_name=_('project'))
   status = models.CharField(_('status'), max_length=30, choices=apply_status_choices, default="applied")
@@ -33,11 +35,11 @@ class Apply(models.Model):
     return emails.ApplyMail(self, async_mail)
 
   def save(self, *args, **kwargs):
+    creating = False
 
     if self.pk == None:
       # Object being created
-      self.mailing().sendAppliedToVolunteer({'apply': self})
-      self.mailing().sendAppliedToOwner({'apply': self})
+      creating = True
     else:
       # Object being updated
       if self.__original_canceled != self.canceled:
@@ -53,16 +55,24 @@ class Apply(models.Model):
         if self.status == "unapplied":
           self.canceled = True
           self.canceled_date = timezone.now()
-          self.mailing().sendUnappliedToVolunteer({'apply': self})
-          self.mailing().sendUnappliedToOwner({'apply': self})
         else:
           self.canceled = False
           self.canceled_date = None
 
+    return_data = super(Apply, self).save(*args, **kwargs)
+
+    # Emails
+    if creating:
+      self.mailing().sendAppliedToVolunteer({'apply': self})
+      self.mailing().sendAppliedToOwner({'apply': self})
+    else:
+      if self.__original_status != self.status and self.status == "unapplied":
+        self.mailing().sendUnappliedToVolunteer({'apply': self})
+        self.mailing().sendUnappliedToOwner({'apply': self})
+
     # Update original values
     self.__original_status = self.status
     self.__original_canceled = self.canceled
-    return_data = super(Apply, self).save(*args, **kwargs)
 
     if self.role:
       if self.status == 'applied' or self.status == 'confirmed-volunteer':

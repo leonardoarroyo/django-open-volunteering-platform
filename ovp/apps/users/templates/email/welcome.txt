@@ -1,5 +1,0 @@
-{% extends "email/base.txt" %}
-
-{% block content %}
-Hello, welcome to the system.
-{% endblock %}
