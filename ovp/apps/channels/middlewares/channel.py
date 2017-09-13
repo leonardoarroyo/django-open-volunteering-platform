@@ -12,6 +12,9 @@ from django.contrib.auth.middleware import get_user
 
 import urllib.parse as parse
 
+# TODO: Refactor ChannelMiddleware and ChannelAdminMiddleware into ChannelRecognizerMiddlewate and ChannelProcessorMiddleware
+# Rationalization: The processor middleware needs to be after AuthenticationMiddleware, but the recognizer middleware needs to come before corsheaders and corsheaders must be placed a high a possible
+
 def get_user_jwt(request):
   user = get_user(request)
   if user.is_authenticated():
@@ -88,15 +91,21 @@ class ChannelMiddleware():
 
 class ChannelAdminMiddleware():
   """
-  This middleware is responsible for three things:
+  This middleware is responsible for four things:
 
   - Adding the channel slug to request object if it's a request to admin
   - Blocking requests to admin that does not include channel
   - Redirects to /admin/ if the path does not start with /admin/ or /jet/
+  - Blocks requests if logged in user is from another channel
 
   """
   def __init__(self, get_response):
     self.get_response = get_response
+
+  def _check_permissions(self, request):
+    if request.user.channel.slug == resquest.channel:
+      return True
+    return False
 
   def _is_admin_request(self, request):
     absolute_url = request.build_absolute_uri(request.get_full_path())
@@ -137,6 +146,10 @@ class ChannelAdminMiddleware():
       # Redirect if not on admin page
       if self._redirect(request):
         return redirect("/admin")
+
+      # Check user
+      #if not self._check_permissions(request):
+      #  return JsonResponse({"detail": "Invalid channel for user token."}, status=400)
 
       response = self.get_response(request)
 

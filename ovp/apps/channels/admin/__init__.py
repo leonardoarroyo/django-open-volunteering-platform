@@ -1,11 +1,9 @@
 from django.contrib.admin import AdminSite
 from django.views.decorators.cache import never_cache
-#from .forms import ChannelAuthenticationForm
-
-#site.login_form = ChannelAuthenticationForm
+from .forms import ChannelAdminAuthenticationForm
 
 class ChannelAdminSite(AdminSite):
-  site_header = 'Monty Python administration'
+  login_form = ChannelAdminAuthenticationForm
 
   @never_cache
   def login(self, request, channel_slug=None, extra_context=None):
