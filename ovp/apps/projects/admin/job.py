@@ -3,6 +3,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
+from ovp.apps.channels.admin import admin_site
 from ovp.apps.projects.models import Job, JobDate
 
 from .jobdate import JobDateAdmin, JobDateInline
@@ -32,6 +33,4 @@ class JobAdmin(admin.ModelAdmin):
 		JobDateInline,
 	)
 
-admin.site.register(Job, JobAdmin)
-
-
+admin_site.register(Job, JobAdmin)

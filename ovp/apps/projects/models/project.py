@@ -12,7 +12,6 @@ from ovp.apps.projects.models.apply import Apply
 from ovp.apps.channels.models import ChannelRelationship
 
 import urllib.request as request
-import urllib.parse as parse
 
 import json
 

@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.organizations.models import Organization
 
+from ovp.apps.channels.admin import admin_site
 from ovp.apps.core.mixins import CountryFilterMixin
 
 # This file contains some "pragma: no cover" because the admin
@@ -79,6 +80,4 @@ class OrganizationAdmin(admin.ModelAdmin, CountryFilterMixin):
     return self.filter_by_country(request, qs, 'address')
 
 
-admin.site.register(Organization, OrganizationAdmin)
-
-
+admin_site.register(Organization, OrganizationAdmin)

@@ -3,7 +3,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.projects.models import Apply
-
+from ovp.apps.channels.admin import admin_site
 from ovp.apps.core.mixins import CountryFilterMixin
 
 
@@ -88,6 +88,4 @@ class ApplyAdmin(admin.ModelAdmin, CountryFilterMixin):
     qs = super(ApplyAdmin, self).get_queryset(request)
     return self.filter_by_country(request, qs, 'project__address')
 
-admin.site.register(Apply, ApplyAdmin)
-
-
+admin_site.register(Apply, ApplyAdmin)

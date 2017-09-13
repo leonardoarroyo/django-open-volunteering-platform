@@ -1,5 +1,5 @@
 from django.conf.urls import url, include
-from django.contrib import admin
+from ovp.apps.channels.admin import admin_site
 
 import ovp.apps.core.urls
 import ovp.apps.uploads.urls
@@ -13,7 +13,7 @@ urlpatterns = [
   # Admin
   url(r'^jet/', include('jet.urls', 'jet')),
   url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
-  url(r'^admin/', admin.site.urls),
+  url(r'^admin/', admin_site.urls),
 
   # Core
   url(r'^', include(ovp.apps.core.urls)),

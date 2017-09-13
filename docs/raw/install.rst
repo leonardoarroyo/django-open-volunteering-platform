@@ -11,3 +11,4 @@ add channel middleware
 silence system checks
 setup auth backends
 setup cache!
+set allowed_hosts

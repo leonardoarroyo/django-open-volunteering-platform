@@ -2,6 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from ovp.apps.channels.admin import admin_site
 from ovp.apps.projects.models import Project, VolunteerRole
 from .job import JobInline
 from .work import WorkInline
@@ -107,6 +108,4 @@ class ProjectAdmin(admin.ModelAdmin, CountryFilterMixin):
     return self.filter_by_country(request, qs, 'address')
 
 
-admin.site.register(Project, ProjectAdmin)
-
-
+admin_site.register(Project, ProjectAdmin)

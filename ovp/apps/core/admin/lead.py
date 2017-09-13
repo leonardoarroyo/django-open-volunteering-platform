@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 import csv
 from django.http import HttpResponse
 
+from ovp.apps.channels.admin import admin_site
 from ovp.apps.core.models import Lead
 
 
@@ -43,6 +44,4 @@ class LeadAdmin(admin.ModelAdmin):
 				request._set_post(post)
 		return super(LeadAdmin, self).changelist_view(request, extra_context)
 
-admin.site.register(Lead, LeadAdmin)
-
-
+admin_site.register(Lead, LeadAdmin)

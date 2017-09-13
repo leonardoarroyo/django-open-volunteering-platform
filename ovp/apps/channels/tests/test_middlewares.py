@@ -42,3 +42,9 @@ class ChannelMiddlewareTestCase(TestCase):
     response = self.cm(self.request)
     self.assertEqual(response.status_code, 400)
     self.assertEqual(response.content, b'{"detail": "Invalid channel."}')
+
+  def test_redirect_on_admin_without_subdomais(self):
+    pass
+
+  def test_redirect_on_subdomain_if_not_admin_page(self):
+    pass

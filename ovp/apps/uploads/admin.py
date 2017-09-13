@@ -1,4 +1,5 @@
 from django.contrib import admin
+from ovp.apps.channels.admin import admin_site
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -7,11 +8,11 @@ from ovp.apps.uploads.models import UploadedImage
 
 class UploadedImageAdmin(admin.ModelAdmin):
   fields = [
-  	'id', 'image', 'image_small', 'image_medium', 'image_large'
+    'id', 'image', 'image_small', 'image_medium', 'image_large'
   ]
 
   list_display = [
-  	'id', 'image', 'user'
+    'id', 'image', 'user'
   ]
 
   list_filter = []
@@ -19,15 +20,15 @@ class UploadedImageAdmin(admin.ModelAdmin):
   list_editable = []
 
   search_fields = [
-  	'id', 'user__name', 'user__email'
+    'id', 'user__name', 'user__email'
   ]
 
   readonly_fields = [
-  	'id', 'image_small', 'image_medium', 'image_large'
+    'id', 'image_small', 'image_medium', 'image_large'
   ]
 
   raw_id_fields = [
-  	'user'
+    'user'
   ]
 
 
@@ -62,5 +63,5 @@ class ImageGaleryAdmin(admin.ModelAdmin):
     return super().get_queryset(request).filter(category__isnull=False)
 
 
-admin.site.register(UploadedImage, UploadedImageAdmin)
-admin.site.register(ImageGalery, ImageGaleryAdmin)
+admin_site.register(UploadedImage, UploadedImageAdmin)
+admin_site.register(ImageGalery, ImageGaleryAdmin)

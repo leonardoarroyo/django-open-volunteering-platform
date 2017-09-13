@@ -1,4 +1,5 @@
 from django.contrib import admin
+from ovp.apps.channels.admin import admin_site
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -31,6 +32,4 @@ class UserAdmin(admin.ModelAdmin):
   raw_id_fields = []
 
 
-admin.site.register(User, UserAdmin)
-
-
+admin_site.register(User, UserAdmin)
