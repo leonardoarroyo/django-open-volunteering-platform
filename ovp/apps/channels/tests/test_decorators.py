@@ -11,7 +11,7 @@ from ovp.apps.projects.models.project import Project
 from ovp.apps.channels.models import Channel
 from ovp.apps.channels.tests.helpers.views import ChannelProjectTestViewSet
 from ovp.apps.channels.tests.helpers.views import OverrideQuerysetTestViewSet
-from ovp.apps.channels.middlewares.channel import ChannelMiddleware
+from ovp.apps.channels.middlewares.channel import ChannelRecognizerMiddleware
 
 
 class ChannelViewsetDecoratorTestCase(TestCase):
@@ -41,7 +41,7 @@ class ChannelViewsetDecoratorTestCase(TestCase):
     return request
 
   def test_channels_restriction_through_get_queryset(self):
-    cm = ChannelMiddleware(ChannelProjectTestViewSet.as_view({'get': 'list'})) # We also pass it through the middleware
+    cm = ChannelRecognizerMiddleware(ChannelProjectTestViewSet.as_view({'get': 'list'})) # We also pass it through the middleware
     request = self._generate_request()
     response = cm(request)
     self.assertEqual(response.data["count"], 1)
@@ -53,7 +53,7 @@ class ChannelViewsetDecoratorTestCase(TestCase):
 
   def test_channels_restriction_through_queryset_property(self):
     """ Assert it's not possible to use self.queryset directly on decorated views """
-    cm = ChannelMiddleware(OverrideQuerysetTestViewSet.as_view({'get': 'list'}))
+    cm = ChannelRecognizerMiddleware(OverrideQuerysetTestViewSet.as_view({'get': 'list'}))
     request = self._generate_request()
     response = cm(request)
     self.assertEqual(response.data["count"], 1)
