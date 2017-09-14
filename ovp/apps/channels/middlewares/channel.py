@@ -143,8 +143,14 @@ class ChannelProcessorMiddleware():
   def _check_admin_permissions(self, request):
     print(request.user.channel.slug)
     print(request.channel)
+    # Allow the request to go through if authenticated user is on the correct channel
     if request.user.is_authenticated() and request.user.channel.slug == request.channel:
       return True
+
+    # Allow the request to go through if user is unauthenticated
+    if not request.user.is_authenticated():
+      return True
+
     return False
 
   def _404_admin(self, request):
