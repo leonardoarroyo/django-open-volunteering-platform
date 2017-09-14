@@ -26,7 +26,7 @@ SECRET_KEY = '#o2l1rv2g5$w7655n10fm68c8-+2lfd#h99nsmp(n5hro35cya'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [".localhost"]
 
 
 # Application definition
@@ -48,11 +48,12 @@ AUTH_USER_MODEL='users.User'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'ovp.apps.channels.middlewares.channel.ChannelMiddleware',
+    'ovp.apps.channels.middlewares.channel.ChannelRecognizerMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'ovp.apps.channels.middlewares.channel.ChannelProcessorMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

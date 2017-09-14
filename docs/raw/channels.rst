@@ -79,3 +79,6 @@ avoid using unique on channel model, instead use unique_together (field, channel
 
 channel settings model
 
+
+when defining model admin, always extend from channelmodeladmin and super() on get_queryset
+This will restrict admin queryset

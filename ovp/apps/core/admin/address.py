@@ -1,11 +1,12 @@
-from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from ovp.apps.channels.admin import admin_site
+from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.models import GoogleAddress
 
 
-class GoogleAddressAdmin(admin.ModelAdmin):
+class GoogleAddressAdmin(ChannelModelAdmin):
   fields = [
     'id', 'typed_address', 'typed_address2'
   ]
@@ -27,4 +28,4 @@ class GoogleAddressAdmin(admin.ModelAdmin):
   raw_id_fields = []
 
 
-admin.site.register(GoogleAddress, GoogleAddressAdmin)
+admin_site.register(GoogleAddress, GoogleAddressAdmin)

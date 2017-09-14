@@ -1,17 +1,18 @@
-from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from ovp.apps.channels.admin import admin_site
+from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.uploads.models import UploadedImage
 
 
-class UploadedImageAdmin(admin.ModelAdmin):
+class UploadedImageAdmin(ChannelModelAdmin):
   fields = [
-  	'id', 'image', 'image_small', 'image_medium', 'image_large'
+    'id', 'image', 'image_small', 'image_medium', 'image_large'
   ]
 
   list_display = [
-  	'id', 'image', 'user'
+    'id', 'image', 'user'
   ]
 
   list_filter = []
@@ -19,15 +20,15 @@ class UploadedImageAdmin(admin.ModelAdmin):
   list_editable = []
 
   search_fields = [
-  	'id', 'user__name', 'user__email'
+    'id', 'user__name', 'user__email'
   ]
 
   readonly_fields = [
-  	'id', 'image_small', 'image_medium', 'image_large'
+    'id', 'image_small', 'image_medium', 'image_large'
   ]
 
   raw_id_fields = [
-  	'user'
+    'user'
   ]
 
 
@@ -38,7 +39,7 @@ class ImageGalery(UploadedImage):
     verbose_name = _('image gallery')
     verbose_name_plural = _('image galleries')
 
-class ImageGaleryAdmin(admin.ModelAdmin):
+class ImageGaleryAdmin(ChannelModelAdmin):
   fields = [
     'id', 'name', 'category', 'image', 'image_small', 'image_medium', 'image_large'
   ]
@@ -59,8 +60,8 @@ class ImageGaleryAdmin(admin.ModelAdmin):
     'id', 'image_small', 'image_medium', 'image_large'
   ]
   def get_queryset(self, request):
-    return super().get_queryset(request).filter(category__isnull=False)
+    return super(ImageGaleryAdmin, self).get_queryset(request).filter(category__isnull=False)
 
 
-admin.site.register(UploadedImage, UploadedImageAdmin)
-admin.site.register(ImageGalery, ImageGaleryAdmin)
+admin_site.register(UploadedImage, UploadedImageAdmin)
+admin_site.register(ImageGalery, ImageGaleryAdmin)
