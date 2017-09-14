@@ -1,10 +1,12 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
+from django.test import Client
 from mock import Mock
 from ovp.apps.channels.middlewares.channel import ChannelRecognizerMiddleware
 from ovp.apps.channels.middlewares.channel import ChannelProcessorMiddleware
 from ovp.apps.channels.models.channel import Channel
 from ovp.apps.core.views import startup
+from ovp.apps.users.models import User
 
 class ChannelMiddlewareTestCase(TestCase):
   def setUp(self):
@@ -44,14 +46,50 @@ class ChannelMiddlewareTestCase(TestCase):
     self.assertEqual(response.status_code, 400)
     self.assertEqual(response.content, b'{"detail": "Invalid channel."}')
 
-  def test_redirect_on_admin_without_subdomais(self):
-    # TODO: write
-    pass
+  def test_404_on_admin_without_subdomains(self):
+    """ Assert trying to hit /admin/ or /jet/ without an admin subdomain triggers 404 """
+    client = Client()
+    response = client.get("/admin")
+    self.assertEqual(response.status_code, 301)
+
+    response = client.get("/admin/")
+    self.assertEqual(response.status_code, 404)
+
+    response = client.get("/admin/abc")
+    self.assertEqual(response.status_code, 404)
+
+    response = client.get("/jet/add_bookmark/")
+    self.assertEqual(response.status_code, 404)
+
+    response = client.get("/admin/", SERVER_NAME="default.admin.localhost")
+    self.assertEqual(response.status_code, 302)
+    self.assertEqual(response["location"], "/admin/login/?next=/admin/")
+
+    response = client.get("/admin/login/", SERVER_NAME="default.admin.localhost")
+    self.assertEqual(response.status_code, 200)
+
+    response = client.get("/jet/add_bookmark/", SERVER_NAME="default.admin.localhost")
+    self.assertEqual(response.status_code, 405)
 
   def test_redirect_on_subdomain_if_not_admin_page(self):
-    # TODO: write
-    pass
+    """ Assert trying to hit anything but /admin/ or /jet/ with an admin subdomain redirects to /admin/ """
+    client = Client()
+    response = client.get("/admin/login/", SERVER_NAME="default.admin.localhost")
+    self.assertEqual(response.status_code, 200)
+
+    response = client.get("/wrong/", SERVER_NAME="default.admin.localhost")
+    self.assertEqual(response.status_code, 302)
+    self.assertEqual(response["location"], "/admin")
 
   def test_logged_in_user_cookie_is_from_correct_channel(self):
-    # TODO: write
-    pass
+    """ Assert it's not possible to access admin page of a channel with another channel user """
+    user = User.objects.create_superuser(email="test_admin@email.com", password="test_password", object_channel="default")
+    client = Client()
+    client.login(email="test_admin@email.com", password="test_password", channel="default")
+
+    response = client.get("/admin/", SERVER_NAME="default.admin.localhost")
+    self.assertEqual(response.status_code, 200)
+
+    response = client.get("/admin/", SERVER_NAME="test-channel-1.admin.localhost")
+    self.assertEqual(response.content, b'Invalid channel for user.')
+    self.assertEqual(response.status_code, 400)
