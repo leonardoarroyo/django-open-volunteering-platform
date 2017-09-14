@@ -32,6 +32,11 @@ class ChannelRecognizerMiddleware():
   It must precede corsheaders middleware because corsheaders
   use this information to determine the allowed domains from
   the channel settings.
+
+  Although the API can be used for multiple channels on a single domain through
+  headers, it is not possible to do so for the admin page. Therefore, you must
+  always point a domain like "{channel-name}.admin.tld" to your server.
+  This is how this middleware identify if it is a admin request or an api request.
   """
   def __init__(self, get_response):
     self.get_response = get_response
@@ -46,20 +51,32 @@ class ChannelRecognizerMiddleware():
     return response
 
   def _add_channel(self, request):
-    request.channel = request.META.get("HTTP_X_OVP_CHANNEL", "default").strip()
+    request = self._add_admin_request_info(request)
+
+    if request.is_admin_page:
+      request.channel = request.admin_channel_domain
+    else:
+      request.channel = request.META.get("HTTP_X_OVP_CHANNEL", "default").strip()
+    return request
+
+  def _add_admin_request_info(self, request):
+    absolute_url = request.build_absolute_uri(request.get_full_path())
+    parsed_url = parse.urlparse(absolute_url)
+    domains = parsed_url.netloc.split(".")
+
+    if len(domains) >= 3 and "admin" == domains[1]:
+      request.is_admin_page = True
+      request.admin_channel_domain = domains[0]
+    else:
+      request.is_admin_page = False
+      request.admin_channel_domain = None
+
     return request
 
 
 class ChannelProcessorMiddleware():
   """
   This middleware is responsible for several things.
-  At first, it determines if this request is being made to the API or the admin.
-
-  Although the API can be used for multiple channels on a single domain through
-  headers, it is not possible to do so for the admin page. Therefore, you must
-  always point a domain like "{channel-name}.admin.tld" to your server.
-
-  This is how this middleware identify if it is a admin request or an api request.
 
   In case of API:
   - Check it is a valid channel request
@@ -77,8 +94,6 @@ class ChannelProcessorMiddleware():
     self.get_response = get_response
 
   def __call__(self, request):
-    request = self._add_admin_request_info(request)
-
     if request.is_admin_page:
       return self.admin_processor(request)
     else:
@@ -126,7 +141,9 @@ class ChannelProcessorMiddleware():
     return True
 
   def _check_admin_permissions(self, request):
-    if request.user.channel.slug == resquest.channel:
+    print(request.user.channel.slug)
+    print(request.channel)
+    if request.user.is_authenticated() and request.user.channel.slug == request.channel:
       return True
     return False
 
@@ -142,17 +159,3 @@ class ChannelProcessorMiddleware():
       return True
 
     return False
-
-  def _add_admin_request_info(self, request):
-    absolute_url = request.build_absolute_uri(request.get_full_path())
-    parsed_url = parse.urlparse(absolute_url)
-    domains = parsed_url.netloc.split(".")
-
-    if len(domains) >= 3 and "admin" == domains[1]:
-      request.is_admin_page = True
-      request.admin_channel_domain = domains[0]
-    else:
-      request.is_admin_page = False
-      request.admin_channel_domain = None
-
-    return request
