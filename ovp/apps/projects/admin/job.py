@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
 from ovp.apps.channels.admin import admin_site
+from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.projects.models import Job, JobDate
 
 from .jobdate import JobDateAdmin, JobDateInline
@@ -25,7 +26,7 @@ class JobInline(admin.TabularInline):
 	edit_dates_link.allow_tags = True
 
 
-class JobAdmin(admin.ModelAdmin):
+class JobAdmin(ChannelModelAdmin):
 	list_display = ['id', 'project', 'start_date', 'end_date']
 	search_fields = ['id', 'project__name', 'project__nonprofit__name']
 

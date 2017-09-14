@@ -3,6 +3,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.channels.admin import admin_site
+from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.projects.models import Project, VolunteerRole
 from .job import JobInline
 from .work import WorkInline
@@ -14,7 +15,7 @@ class VolunteerRoleInline(admin.TabularInline):
   model = VolunteerRole
 
 
-class ProjectAdmin(admin.ModelAdmin, CountryFilterMixin):
+class ProjectAdmin(ChannelModelAdmin, CountryFilterMixin):
   fields = [
     ('id', 'highlighted'), ('name', 'slug'),
     ('organization', 'owner'),

@@ -3,10 +3,11 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.channels.admin import admin_site
+from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.projects.models import Work
 
 
-class WorkAdmin(admin.ModelAdmin):
+class WorkAdmin(ChannelModelAdmin):
   fields = [
     ('id', 'project'),
     'weekly_hours',

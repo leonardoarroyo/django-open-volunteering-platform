@@ -1,13 +1,13 @@
-from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.projects.models import Apply
 from ovp.apps.channels.admin import admin_site
+from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.mixins import CountryFilterMixin
 
 
-class ApplyAdmin(admin.ModelAdmin, CountryFilterMixin):
+class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin):
   fields = [
     ('id', 'project__name', 'status'),
     'user', 'project', 'project__organization__name',

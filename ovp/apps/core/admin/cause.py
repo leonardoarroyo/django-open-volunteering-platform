@@ -3,13 +3,14 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.channels.admin import admin_site
+from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.models import Cause
 
 class CauseInline(admin.TabularInline):
   model = Cause
 
 
-class CauseAdmin(admin.ModelAdmin):
+class CauseAdmin(ChannelModelAdmin):
 	fields = ['id', 'name', 'image']
 
 	list_display = ['id', 'name']
