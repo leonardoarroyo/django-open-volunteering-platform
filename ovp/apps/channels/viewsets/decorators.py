@@ -31,11 +31,11 @@ def ChannelViewSet(cls):
   def patched_as_view(*args, **kwargs):
     view = as_view(*args, **kwargs)
     def signalled_view(request, *args, **kwargs):
-      before_channel_request.send(sender=cls.__class__)
+      before_channel_request.send(sender=cls, request=request)
 
       response = view(request, *args, **kwargs)
 
-      after_channel_request.send(sender=cls.__class__)
+      after_channel_request.send(sender=cls, request=request)
       return response
     return signalled_view
   cls.as_view = patched_as_view

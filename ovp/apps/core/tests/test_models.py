@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test.utils import override_settings
 
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import AddressComponent
