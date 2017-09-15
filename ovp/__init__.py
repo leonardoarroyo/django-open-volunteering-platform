@@ -10,6 +10,7 @@ def get_core_apps():
     "haystack",
     "vinaigrette",
     "corsheaders",
+    "jet",
 
     # OVP
     "ovp.apps.core",
