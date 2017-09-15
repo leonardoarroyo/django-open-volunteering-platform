@@ -1,3 +1,6 @@
+from ovp.apps.channels.signals import before_channel_request
+from ovp.apps.channels.signals import after_channel_request
+
 def ChannelViewSet(cls):
   """
   Wrapping any viewset with this decorator will make get_queryset result
@@ -22,5 +25,20 @@ def ChannelViewSet(cls):
 
   # If get_queryset calls self.queryset, there's no problem filtering twice
   # as django evaluates queries lazily
+
+  # View signals
+  as_view = getattr(cls, "as_view", None)
+  def patched_as_view(*args, **kwargs):
+    view = as_view(*args, **kwargs)
+    def signalled_view(request, *args, **kwargs):
+      before_channel_request.send(sender=cls.__class__)
+
+      response = view(request, *args, **kwargs)
+
+      after_channel_request.send(sender=cls.__class__)
+      return response
+    return signalled_view
+  cls.as_view = patched_as_view
+
 
   return cls
