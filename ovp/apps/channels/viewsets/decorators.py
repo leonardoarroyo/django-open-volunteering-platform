@@ -7,8 +7,7 @@ def ChannelViewSet(cls):
   get filtered by channel set on the request header.
 
   Use for viewsets that handle a Channel resource.
-  """
-  # Patch get queryset
+  """ # Patch get queryset
   get_queryset = getattr(cls, "get_queryset", None)
   if get_queryset:
     def patched_get_queryset(self, *args, **kwargs):
@@ -32,10 +31,9 @@ def ChannelViewSet(cls):
     view = as_view(*args, **kwargs)
     def signalled_view(request, *args, **kwargs):
       before_channel_request.send(sender=cls, request=request)
-
       response = view(request, *args, **kwargs)
+      after_channel_request.send(sender=cls, request=request, response=response)
 
-      after_channel_request.send(sender=cls, request=request)
       return response
     return signalled_view
   cls.as_view = patched_as_view

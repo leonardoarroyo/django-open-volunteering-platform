@@ -22,5 +22,5 @@ def channel_cors(sender, request, **kwargs):
 check_request_enabled.connect(channel_cors)
 
 # Custom channel signal
-before_channel_request = django.dispatch.Signal(providing_args=[])
-after_channel_request = django.dispatch.Signal(providing_args=[])
+before_channel_request = django.dispatch.Signal(providing_args=["request"])
+after_channel_request = django.dispatch.Signal(providing_args=["request", "response"])
