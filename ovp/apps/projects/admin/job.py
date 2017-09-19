@@ -1,16 +1,16 @@
-from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
+from ovp.apps.channels.admin import TabularInline
 from ovp.apps.projects.models import Job, JobDate
 
 from .jobdate import JobDateAdmin, JobDateInline
 
 
-class JobInline(admin.TabularInline):
+class JobInline(TabularInline):
 	exclude = ['title']
 	model = Job
 	verbose_name = _('Job')

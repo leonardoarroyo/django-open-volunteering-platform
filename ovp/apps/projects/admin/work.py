@@ -1,9 +1,9 @@
-from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
+from ovp.apps.channels.admin import TabularInline
 from ovp.apps.projects.models import Work
 
 
@@ -30,7 +30,7 @@ class WorkAdmin(ChannelModelAdmin):
   raw_id_fields = []
 
 
-class WorkInline(admin.TabularInline):
+class WorkInline(TabularInline):
   model = Work
 
 

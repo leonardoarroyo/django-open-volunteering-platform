@@ -1,12 +1,12 @@
-from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
+from ovp.apps.channels.admin import TabularInline
 from ovp.apps.core.models import Cause
 
-class CauseInline(admin.TabularInline):
+class CauseInline(TabularInline):
   model = Cause
 
 
