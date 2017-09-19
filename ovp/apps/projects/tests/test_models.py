@@ -98,7 +98,7 @@ class ProjectModelTestCase(TestCase):
     """ Assert that slug is not generated without name """
     user = User.objects.create_user(email="test_slug@test.com", password="test_slug_test", object_channel="default")
     project = Project(details="abc", owner=user)
-    self.assertTrue(project.generate_slug() == None)
+    self.assertTrue(project.generate_slug(channel="default") == None)
 
 
 

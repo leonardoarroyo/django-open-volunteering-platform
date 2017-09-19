@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.core import mail
-from django.test.utils import override_settings
 
 from ovp.apps.core.helpers import get_email_subject, is_email_enabled
 from ovp.apps.users.models import User

@@ -1,9 +1,9 @@
-from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
+from ovp.apps.channels.admin import TabularInline
 from ovp.apps.projects.models import Project, VolunteerRole
 from .job import JobInline
 from .work import WorkInline
@@ -11,7 +11,7 @@ from .work import WorkInline
 from ovp.apps.core.mixins import CountryFilterMixin
 
 
-class VolunteerRoleInline(admin.TabularInline):
+class VolunteerRoleInline(TabularInline):
   model = VolunteerRole
 
 

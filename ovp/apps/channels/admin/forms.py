@@ -20,3 +20,25 @@ class ChannelAdminAuthenticationForm(AdminAuthenticationForm):
         self.confirm_login_allowed(self.user_cache)
 
     return self.cleaned_data
+
+class AdminModelForm(forms.ModelForm):
+  def save(self, commit=True, request=None):
+    if self.errors:
+      raise ValueError(
+        "The %s could not be %s because the data didn't validate." % (
+          self.instance._meta.object_name,
+          'created' if self.instance._state.adding else 'changed',
+        )
+      )
+    if commit:
+      # If committing, save the instance and the m2m data immediately.
+      if self.instance.pk:
+        self.instance.save()
+      else:
+        self.instance.save(object_channel=request.user.channel.slug)
+      self._save_m2m()
+    else:
+      # If not committing, add a method to the form to allow deferred
+      # saving of m2m data.
+      self.save_m2m = self._save_m2m
+    return self.instance

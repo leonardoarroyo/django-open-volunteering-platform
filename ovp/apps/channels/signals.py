@@ -1,9 +1,9 @@
+import django.dispatch
+from django.utils.six.moves.urllib.parse import urlparse
 from ovp.apps.channels.cache import get_channel
-
 from corsheaders.signals import check_request_enabled
 
-from django.utils.six.moves.urllib.parse import urlparse
-
+# Connect to signals
 def channel_cors(sender, request, **kwargs):
   """
   This signal checks for channel `CORS_ORIGIN_WHITELIST` settings.
@@ -20,3 +20,7 @@ def channel_cors(sender, request, **kwargs):
   return False
 
 check_request_enabled.connect(channel_cors)
+
+# Custom channel signal
+before_channel_request = django.dispatch.Signal(providing_args=["request"])
+after_channel_request = django.dispatch.Signal(providing_args=["request", "response"])

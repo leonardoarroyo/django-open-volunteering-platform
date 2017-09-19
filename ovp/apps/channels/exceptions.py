@@ -8,3 +8,7 @@ class UnexpectedChannelAssociationError(Exception):
 class NoChannelSupplied(Exception):
   def __init__(self):
     super(Exception, self).__init__("A channel was expected but no channel was supplied.")
+
+class InterceptRequest(Exception):
+  def __init__(self, response):
+    self.response = response

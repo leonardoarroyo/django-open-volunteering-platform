@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test.utils import override_settings
 from django.core import mail
 from django.utils import translation
 

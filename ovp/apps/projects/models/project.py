@@ -99,7 +99,7 @@ class Project(ChannelRelationship):
         self.deleted_date = timezone.now()
     else:
       # Project being created
-      self.slug = self.generate_slug()
+      self.slug = self.generate_slug(kwargs.get("object_channel", None))
       creating = True
 
     # If there is no description, take 100 chars from the details
@@ -123,17 +123,17 @@ class Project(ChannelRelationship):
     return obj
 
 
-  def generate_slug(self):
+  def generate_slug(self, channel):
     if self.name:
       slug = slugify(self.name)[0:99]
       append = ''
       i = 0
 
-      query = Project.objects.filter(slug=slug + append)
+      query = Project.objects.filter(slug=slug + append, channel__slug=channel)
       while query.count() > 0:
         i += 1
         append = '-' + str(i)
-        query = Project.objects.filter(slug=slug + append)
+        query = Project.objects.filter(slug=slug + append, channel__slug=channel)
       return slug + append
     return None
 
