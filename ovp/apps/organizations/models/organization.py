@@ -121,13 +121,3 @@ class Organization(ChannelRelationship):
     verbose_name = _('organization')
     verbose_name_plural = _('organizations')
     unique_together = (('slug', 'channel'), )
-
-
-class OrganizationInvite(ChannelRelationship):
-  organization = models.ForeignKey("organizations.Organization")
-  invitator = models.ForeignKey("users.User", related_name="has_invited")
-  invited = models.ForeignKey("users.User", related_name="been_invited")
-
-  class Meta:
-    app_label = 'organizations'
-    verbose_name = _('organization_invite')
