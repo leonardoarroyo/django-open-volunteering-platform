@@ -18,4 +18,3 @@ class CommentaryCreateMixin:
     obj.save()
 
     return response.Response(serializer.data)
-    
