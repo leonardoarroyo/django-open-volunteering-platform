@@ -68,12 +68,24 @@ class ProjectBookmarkTestCase(TestCase):
     self.assertEqual(response.data["success"], False)
     self.assertEqual(ProjectBookmark.objects.count(), 0)
 
- # def test_can_retrive_bookmarked(self):
- #   """ Assert it's possible to retrieve bookmarked projects """
- #   response = self.client.post(reverse("project-bookmarked", ["test-project"]), format="json")
+  def test_can_retrive_bookmarked(self):
+    """ Assert it's possible to retrieve bookmarked projects """
+    response = self.client.get(reverse("project-bookmarked"), format="json")
+    self.assertEqual(response.data["count"], 0)
 
- # def test_cant_access_bookmark_routes_logged_out(self):
- #   """ Assert it's not possible to access bookmark routes if unauthenticated """
- #   response = client.post(reverse("project-bookmark", ["test-project"]), format="json")
- #   response = client.post(reverse("project-unbookmark", ["test-project"]), format="json")
- #   response = client.post(reverse("project-bookmarked", ["test-project"]), format="json")
+    self.test_can_bookmark()
+    response = self.client.get(reverse("project-bookmarked"), format="json")
+    self.assertEqual(response.data["count"], 1)
+
+  def test_cant_access_bookmark_routes_logged_out(self):
+    """ Assert it's not possible to access bookmark routes if unauthenticated """
+    client = APIClient()
+
+    response = client.post(reverse("project-bookmark", ["test-project"]), format="json")
+    self.assertTrue(response.status_code == 401)
+
+    response = client.post(reverse("project-unbookmark", ["test-project"]), format="json")
+    self.assertTrue(response.status_code == 401)
+
+    response = client.get(reverse("project-bookmarked"), format="json")
+    self.assertTrue(response.status_code == 401)

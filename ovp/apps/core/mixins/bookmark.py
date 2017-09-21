@@ -1,6 +1,7 @@
 from rest_framework import decorators
 from rest_framework import response
 from rest_framework import status
+from rest_framework import permissions
 
 class BookmarkMixin():
   """
@@ -31,6 +32,10 @@ class BookmarkMixin():
     def get_bookmark_kwargs(self):
       return {"project": self.get_object()}
 
+  You also need to return the correct serializer for 'bookmarked' action
+  on .get_serializer_class, as well as set self.permissions_classes =
+  super().get_bookmark_permissions() for actions ['bookmark', 'unbookmark', 'bookmarked']
+
   """
   @decorators.detail_route(["POST"])
   def bookmark(self, request, *args, **kwargs):
@@ -54,7 +59,15 @@ class BookmarkMixin():
 
   @decorators.list_route(["GET"])
   def bookmarked(self, request, *args, **kwargs):
-    return response.Response({})
+    queryset = self.get_queryset().filter(projectbookmark__user=request.user, projectbookmark__channel__slug=request.channel)
+
+    page = self.paginate_queryset(queryset)
+    if page is not None:
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    serializer = self.get_serializer(queryset, many=True)
+    return Response(serializer.data)
 
   def get_bookmark_object(self):
     Bookmark = self.get_bookmark_model()
@@ -64,6 +77,9 @@ class BookmarkMixin():
       return Bookmark.objects.get(user=self.request.user, channel__slug=self.request.channel, **bookmark_kwargs)
     except Bookmark.DoesNotExist:
       return None
+
+  def get_bookmark_permissions(self):
+    return (permissions.IsAuthenticated, )
 
   def get_bookmark_model(self):
     raise NotImplemented("Your viewset must override .get_bookmark_model")

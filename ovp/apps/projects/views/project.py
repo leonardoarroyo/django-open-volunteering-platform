@@ -122,6 +122,9 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     if self.action == 'close':
       self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
 
+    if self.action in ['bookmark', 'unbookmark', 'bookmarked']:
+      self.permission_classes = self.get_bookmark_permissions()
+
     return super(ProjectResourceViewSet, self).get_permissions()
 
   def get_serializer_class(self):
@@ -132,6 +135,8 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     if self.action == 'close':
       return serializers.ProjectRetrieveSerializer
     if self.action == 'retrieve':
+      return serializers.ProjectRetrieveSerializer
+    if self.action == 'bookmarked':
       return serializers.ProjectRetrieveSerializer
     if self.action == 'commentary':
       return comments_serializer.CommentaryCreateSerializer
