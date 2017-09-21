@@ -116,6 +116,9 @@ class Organization(ChannelRelationship):
       return slug + append
     return None
 
+  def is_bookmarked(self, user):
+    return self.bookmarks.filter(user=user).count() > 0
+
   class Meta:
     app_label = 'organizations'
     verbose_name = _('organization')

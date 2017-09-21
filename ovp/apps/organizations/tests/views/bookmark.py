@@ -86,3 +86,14 @@ class OrganizationBookmarkTestCase(TestCase):
 
     response = client.get(reverse("organization-bookmarked"), format="json")
     self.assertTrue(response.status_code == 401)
+
+
+  def test_organization_include_is_bookmarked_info(self):
+    """ Assert organization includes information if it's bookmarked or not """
+    response = self.client.get(reverse("organization-detail", ["test-organization"]), format="json")
+    self.assertEqual(response.data["is_bookmarked"], False)
+
+    self.test_can_bookmark()
+
+    response = self.client.get(reverse("organization-detail", ["test-organization"]), format="json")
+    self.assertEqual(response.data["is_bookmarked"], True)
