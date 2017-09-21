@@ -89,3 +89,13 @@ class ProjectBookmarkTestCase(TestCase):
 
     response = client.get(reverse("project-bookmarked"), format="json")
     self.assertTrue(response.status_code == 401)
+
+  def test_project_include_is_bookmarked_info(self):
+    """ Assert project includes information if it's bookmarked or not """
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data["is_bookmarked"], False)
+
+    self.test_can_bookmark()
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data["is_bookmarked"], True)

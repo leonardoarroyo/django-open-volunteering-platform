@@ -9,6 +9,7 @@ from ovp.apps.projects.serializers.category import CategoryRetrieveSerializer
 from ovp.apps.core.serializers.commentary import CommentaryRetrieveSerializer
 
 from ovp.apps.core import models as core_models
+from ovp.apps.core.decorators import add_is_bookmarked_representation
 from ovp.apps.core.serializers import GoogleAddressSerializer, GoogleAddressLatLngSerializer, GoogleAddressCityStateSerializer
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer, FullCauseSerializer
 from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
@@ -190,6 +191,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
     model = models.Project
     fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries']
 
+  @add_is_bookmarked_representation
   @add_current_user_is_applied_representation
   @hide_address
   @add_disponibility_representation
