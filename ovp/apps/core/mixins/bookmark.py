@@ -59,7 +59,7 @@ class BookmarkMixin():
 
   @decorators.list_route(["GET"])
   def bookmarked(self, request, *args, **kwargs):
-    queryset = self.get_queryset().filter(projectbookmark__user=request.user, projectbookmark__channel__slug=request.channel)
+    queryset = self.get_queryset().filter(projectbookmark__user=request.user, projectbookmark__channel__slug=request.channel).order_by("-projectbookmark__pk")
 
     page = self.paginate_queryset(queryset)
     if page is not None:
