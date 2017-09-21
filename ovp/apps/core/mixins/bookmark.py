@@ -21,9 +21,8 @@ class BookmarkMixin():
   related bookmark model.
 
   Such model may look something like this:
-    class ProjectBookmark(models.Model):
-      user = models.ForeignKey('User')
-      project = models.ForeignKey('Project')
+    class ProjectBookmark(AbstractBookmark):
+      project = models.ForeignKey('Project', related_name='bookmarks')
 
   And the methods like:
     def get_bookmark_model(self):
@@ -59,7 +58,7 @@ class BookmarkMixin():
 
   @decorators.list_route(["GET"])
   def bookmarked(self, request, *args, **kwargs):
-    queryset = self.get_queryset().filter(projectbookmark__user=request.user, projectbookmark__channel__slug=request.channel).order_by("-projectbookmark__pk")
+    queryset = self.get_queryset().filter(bookmarks__user=request.user, bookmarks__channel__slug=request.channel).order_by("-bookmarks__pk")
 
     page = self.paginate_queryset(queryset)
     if page is not None:
