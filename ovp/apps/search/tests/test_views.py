@@ -630,20 +630,6 @@ class CityCountryTestCase(TestCase):
     create_sample_projects()
     create_sample_organizations()
 
-  def test_query_country_deprecated(self):
-    client = APIClient()
-
-    response = client.get(reverse("search-query-country", ["Brazil"]), format="json")
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(len(response.data), 2)
-    self.assertIn("Campinas", response.data)
-    self.assertIn("São Paulo", response.data)
-
-    response = client.get(reverse("search-query-country", ["United States"]), format="json")
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(len(response.data), 1)
-    self.assertIn("New York", response.data)
-
   def test_available_country_cities(self):
     client = APIClient()
 

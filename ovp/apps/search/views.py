@@ -166,26 +166,6 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 @decorators.api_view(["GET"])
-def query_country_deprecated(request, country):
-  # Legacy/deprecated route
-  available_cities = []
-
-  search_term = helpers.whoosh_raw("{}-country".format(country))
-  queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, channel=request.channel)
-
-  for project in queryset:
-    for comp in project.address_components:
-      if "-administrative_area_level_2" in comp or "-locality" in comp:
-        city_name = comp.replace("-administrative_area_level_2", "").replace("-locality", "")
-        if city_name not in available_cities:
-          available_cities.append(city_name)
-
-  available_cities.sort()
-
-  return response.Response(available_cities)
-
-
-@decorators.api_view(["GET"])
 def available_country_cities(request, country):
   key = "available-cities-{}-{}".format(request.channel, hash(country))
   cache_ttl = 120
