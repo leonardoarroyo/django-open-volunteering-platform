@@ -5,7 +5,6 @@ from ovp.apps.uploads.serializers import UploadedImageSerializer
 from ovp.apps.users.models.user import User
 
 from ovp.apps.core.models import Cause
-from ovp.apps.core.decorators import add_is_bookmarked_representation
 from ovp.apps.core.serializers import GoogleAddressSerializer, GoogleAddressCityStateSerializer
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
 
@@ -99,12 +98,18 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   cover = UploadedImageSerializer()
   causes = CauseSerializer(many=True)
   owner = UserOrganizationRetrieveSerializer()
+  is_bookmarked = serializers.SerializerMethodField()
 
   class Meta:
     model = models.Organization
-    fields = ['slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email']
+    fields = ['slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked']
 
-  @add_is_bookmarked_representation
+  def get_is_bookmarked(self, instance):
+    user = self.context['request'].user
+    if user.is_authenticated():
+      return instance.is_bookmarked(user)
+    return False
+
   @hide_address
   def to_representation(self, instance):
     return super(OrganizationRetrieveSerializer, self).to_representation(instance)

@@ -9,7 +9,6 @@ from ovp.apps.projects.serializers.category import CategoryRetrieveSerializer
 from ovp.apps.core.serializers.commentary import CommentaryRetrieveSerializer
 
 from ovp.apps.core import models as core_models
-from ovp.apps.core.decorators import add_is_bookmarked_representation
 from ovp.apps.core.serializers import GoogleAddressSerializer, GoogleAddressLatLngSerializer, GoogleAddressCityStateSerializer
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer, FullCauseSerializer
 from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
@@ -186,12 +185,18 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   skills = SkillSerializer(many=True)
   categories = CategoryRetrieveSerializer(many=True)
   commentaries = CommentaryRetrieveSerializer(many=True)
+  is_bookmarked = serializers.SerializerMethodField()
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked']
 
-  @add_is_bookmarked_representation
+  def get_is_bookmarked(self, instance):
+    user = self.context['request'].user
+    if user.is_authenticated():
+      return instance.is_bookmarked(user)
+    return False
+
   @add_current_user_is_applied_representation
   @hide_address
   @add_disponibility_representation
