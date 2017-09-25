@@ -21,6 +21,7 @@ from ovp.apps.channels.cache import get_channel_setting
 from django.core.cache import cache
 
 from rest_framework import viewsets
+from rest_framework import views
 from rest_framework import mixins
 from rest_framework import response
 from rest_framework import decorators
@@ -164,22 +165,22 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     return result
 
+class CountryCities(views.APIView):
+  def get(self, request, country):
+    self.country = country
+    result = self.get_country_cities(country)
+    return response.Response(result)
 
-@decorators.api_view(["GET"])
-def available_country_cities(request, country):
-  key = "available-cities-{}-{}".format(request.channel, hash(country))
-  cache_ttl = 120
-  result = cache.get(key)
-
-  if not result:
+  @cached
+  def get_country_cities(self, country):
     result = {"projects": [], "organizations": [], "common": []}
 
     search_term = helpers.whoosh_raw("{}-country".format(country))
 
-    queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, published=1, closed=0, channel=request.channel)
+    queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, published=1, closed=0, channel=self.request.channel)
     projects = helpers.get_cities(queryset)
 
-    queryset = SearchQuerySet().models(Organization).filter(address_components__exact=search_term, published=1, channel=request.channel)
+    queryset = SearchQuerySet().models(Organization).filter(address_components__exact=search_term, published=1, channel=self.request.channel)
     organizations = helpers.get_cities(queryset)
 
     common = projects & organizations
@@ -190,6 +191,7 @@ def available_country_cities(request, country):
     result["projects"] = sorted(projects)
     result["organizations"] = sorted(organizations)
 
-    cache.set(key, result, cache_ttl)
+    return result
 
-  return response.Response(result)
+  def get_cache_key(self):
+    return "available-cities-{}-{}".format(self.request.channel, hash(self.country))

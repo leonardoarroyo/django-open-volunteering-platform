@@ -7,7 +7,7 @@ def cached(func):
       Caches a queryset.
   """
   @wraps(func)
-  def _impl(self):
+  def _impl(self, *args, **kwargs):
     key = self.get_cache_key()
     ttl = 120
 
@@ -18,7 +18,7 @@ def cached(func):
     if result:
       return result
 
-    result = func(self)
+    result = func(self, *args, **kwargs)
     cache.set(key, result, ttl)
 
     return result
