@@ -34,6 +34,5 @@ class ChannelRelationship(ChannelCreatorMixin, models.Model):
       self.check_direct_channel_association_instance()
       channel, kwargs = self.pop_channel_as_object_from_kwargs(kwargs)
       self.channel = channel
-      pass
 
     super(ChannelRelationship, self).save(*args, **kwargs)
