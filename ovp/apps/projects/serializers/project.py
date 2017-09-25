@@ -185,10 +185,17 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   skills = SkillSerializer(many=True)
   categories = CategoryRetrieveSerializer(many=True)
   commentaries = CommentaryRetrieveSerializer(many=True)
+  is_bookmarked = serializers.SerializerMethodField()
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked']
+
+  def get_is_bookmarked(self, instance):
+    user = self.context['request'].user
+    if user.is_authenticated():
+      return instance.is_bookmarked(user)
+    return False
 
   @add_current_user_is_applied_representation
   @hide_address
@@ -229,13 +236,13 @@ class ProjectSearchSerializer(ChannelRelationshipSerializer):
   owner = ShortUserPublicRetrieveSerializer()
   disponibility = DisponibilitySerializer()
   categories = CategoryRetrieveSerializer(many=True)
+  is_bookmarked = serializers.BooleanField()
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'disponibility', 'highlighted', 'published_date', 'address', 'organization', 'owner', 'applied_count', 'max_applies', 'hidden_address', 'categories']
+    fields = ['slug', 'image', 'name', 'description', 'disponibility', 'highlighted', 'published_date', 'address', 'organization', 'owner', 'applied_count', 'max_applies', 'hidden_address', 'categories', 'is_bookmarked']
 
   @hide_address
   @add_disponibility_representation
   def to_representation(self, instance):
     return super(ProjectSearchSerializer, self).to_representation(instance)
-
