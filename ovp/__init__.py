@@ -22,6 +22,7 @@ def get_core_apps():
     "ovp.apps.faq",
     "ovp.apps.search",
     "ovp.apps.channels",
+    "ovp.apps.catalogue",
   ]
 
   return CORE_APPS
