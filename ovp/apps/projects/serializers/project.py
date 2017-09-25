@@ -231,13 +231,13 @@ class ProjectSearchSerializer(ChannelRelationshipSerializer):
   owner = ShortUserPublicRetrieveSerializer()
   disponibility = DisponibilitySerializer()
   categories = CategoryRetrieveSerializer(many=True)
+  is_bookmarked = serializers.BooleanField()
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'disponibility', 'highlighted', 'published_date', 'address', 'organization', 'owner', 'applied_count', 'max_applies', 'hidden_address', 'categories']
+    fields = ['slug', 'image', 'name', 'description', 'disponibility', 'highlighted', 'published_date', 'address', 'organization', 'owner', 'applied_count', 'max_applies', 'hidden_address', 'categories', 'is_bookmarked']
 
   @hide_address
   @add_disponibility_representation
   def to_representation(self, instance):
     return super(ProjectSearchSerializer, self).to_representation(instance)
-

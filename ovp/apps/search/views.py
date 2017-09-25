@@ -1,5 +1,7 @@
 from django.core.exceptions import PermissionDenied
 
+from ovp.apps.core.mixins import BookmarkAnnotationMixin
+
 from ovp.apps.projects.serializers.project import ProjectSearchSerializer
 from ovp.apps.projects.models import Project
 
@@ -63,23 +65,23 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
     return result
 
 
-class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
+class ProjectSearchResource(BookmarkAnnotationMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = ProjectSearchSerializer
   filter_backends = (filters.ProjectRelevanceOrderingFilter,)
   ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance')
 
   def get_base_queryset(self, pks = None):
-    base_queryset = Project.objects.filter(deleted=False, closed=False)
+    queryset = Project.objects \
+            .filter(deleted=False, closed=False) \
+            .prefetch_related('skills', 'causes', 'categories', 'job__dates').select_related('address', 'owner', 'work', 'job')
+    queryset = self.annotate_bookmark(queryset)
 
-    if len(pks) > 0:
-      return base_queryset.filter(pk__in=pks)
-
-    return base_queryset.filter(pk__in=[])
+    return queryset
 
   def get_queryset(self):
     params = self.request.GET
 
-    key = 'projects-{}-{}'.format(self.request.channel, hash(frozenset(params.items())))
+    key = 'projects-{}-{}-{}'.format(self.request.channel, self.get_user_cache_id(), hash(frozenset(params.items())))
     cache_ttl = 120
     result = cache.get(key)
 
@@ -112,7 +114,8 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
       result_keys = [q.pk for q in queryset]
 
-      result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'categories', 'job__dates').select_related('address', 'owner', 'work', 'job')
+      result = self.get_base_queryset().filter(pk__in=result_keys)
+
       if not_organization:
         org = [o for o in not_organization.split(',')]
         result = result.exclude(organization__in=org)
