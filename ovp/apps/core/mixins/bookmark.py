@@ -104,9 +104,3 @@ class BookmarkAnnotationMixin():
                  )
     else:
       return queryset.annotate(is_bookmarked=Value(False, BooleanField()))
-
-  def get_user_cache_id(self):
-    if self.request.user.is_authenticated():
-      return self.request.user.uuid
-    else:
-      return "anonymous"

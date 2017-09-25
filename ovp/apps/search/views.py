@@ -29,13 +29,23 @@ from rest_framework import decorators
 from haystack.query import SearchQuerySet, SQ
 
 
-class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
+class OrganizationSearchResource(BookmarkAnnotationMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = OrganizationSearchSerializer
   filter_backends = (filters.OrderingFilter,)
   ordering_fields = ('slug', 'name', 'website', 'facebook_page', 'details', 'description', 'type', 'hidden_address')
 
+  def get_base_queryset(self, pks = None):
+    queryset = Organization.objects.filter(deleted=False) \
+                .prefetch_related('causes') \
+                .select_related('address') \
+                .order_by('-highlighted')
+    queryset = self.annotate_bookmark(queryset)
+    return queryset
+
   def get_cache_key(self):
-    return 'organizations-{}-{}'.format(self.request.channel, hash(frozenset(self.request.GET.items())))
+    if self.request.user.is_anonymous():
+      return 'organizations-{}-{}'.format(self.request.channel, hash(frozenset(self.request.GET.items())))
+    return None
 
   @cached
   def get_queryset(self):
@@ -59,7 +69,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
     queryset = queryset.filter(channel=self.request.channel)
 
     result_keys = [q.pk for q in queryset]
-    result = Organization.objects.filter(pk__in=result_keys, deleted=False).prefetch_related('causes').select_related('address').order_by('-highlighted')
+    result = self.get_base_queryset().filter(pk__in=result_keys)
     result = filters.filter_out(result, "FILTER_OUT_ORGANIZATIONS", self.request.channel)
 
     return result
@@ -79,7 +89,9 @@ class ProjectSearchResource(BookmarkAnnotationMixin, mixins.ListModelMixin, view
     return queryset
 
   def get_cache_key(self):
-    return 'projects-{}-{}-{}'.format(self.request.channel, self.get_user_cache_id(), hash(frozenset(self.request.GET.items())))
+    if self.request.user.is_anonymous():
+      return 'projects-{}-{}'.format(self.request.channel, hash(frozenset(self.request.GET.items())))
+    return None
 
   @cached
   def get_queryset(self):

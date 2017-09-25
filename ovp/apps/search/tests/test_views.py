@@ -8,7 +8,7 @@ from rest_framework.test import APIClient
 from ovp.apps.users.models import User
 from ovp.apps.users.models.profile import get_profile_model
 from ovp.apps.projects.models import Project, Job, Category, Work, ProjectBookmark
-from ovp.apps.organizations.models import Organization
+from ovp.apps.organizations.models import Organization, OrganizationBookmark
 from ovp.apps.core.models import GoogleAddress, Cause, Skill
 from ovp.apps.channels.models import Channel
 from ovp.apps.channels.models import ChannelSetting
@@ -674,6 +674,7 @@ class BookmarkTestCase(TestCase):
     call_command('clear_index', '--noinput', verbosity=0)
     Channel.objects.create(name="Test channel", slug="test-channel")
     create_sample_projects()
+    create_sample_organizations()
     self.client = APIClient()
 
 
@@ -691,7 +692,6 @@ class BookmarkTestCase(TestCase):
       # Only 7 queries
       # 2 are channel related
       # 5 are search related
-      # 0 is bookmark related
       response = self.client.get(reverse("search-projects-list"), format="json")
       self.assertEqual(response.data["results"][0]["is_bookmarked"], False)
 
@@ -701,16 +701,11 @@ class BookmarkTestCase(TestCase):
       response = self.client.get(reverse("search-projects-list"), format="json")
       self.assertEqual(response.data["results"][0]["is_bookmarked"], False)
 
-    # Redo query, assert caches
-    with self.assertNumQueries(0):
-      response = self.client.get(reverse("search-projects-list"), format="json")
-
     # When creating a bookmark, we should clear the cache
     ProjectBookmark.objects.create(user=user, project=project, object_channel="default")
-    cache.clear()
 
     # Logged in and bookmarked
-    with self.assertNumQueries(7):
+    with self.assertNumQueries(5):
       response = self.client.get(reverse("search-projects-list"), format="json")
       self.assertEqual(response.data["results"][0]["is_bookmarked"], True)
 
@@ -718,4 +713,42 @@ class BookmarkTestCase(TestCase):
     self.client.force_authenticate(user=user2)
     with self.assertNumQueries(5):
       response = self.client.get(reverse("search-projects-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], False)
+
+
+  def test_is_bookmarked_field_on_organization(self):
+    """
+    Test searching is_bookmarked_field on organization along with correct caching
+    """
+    user = User.objects.filter(channel__slug="default").first()
+    user2 = User.objects.create_user(name="a", email="testmail-2@test.com", password="test_returned", object_channel="default")
+    organization = Organization.objects.get(name="test organization2", channel__slug="default")
+
+    # Logged out
+    cache.clear()
+    with self.assertNumQueries(4):
+      # Only 4 queries
+      # 2 are channel related
+      # 2 are search related
+      response = self.client.get(reverse("search-organizations-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], False)
+
+    # Logged in
+    self.client.force_authenticate(user=user)
+    with self.assertNumQueries(2):
+      response = self.client.get(reverse("search-organizations-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], False)
+
+    # When creating a bookmark, we should clear the cache
+    OrganizationBookmark.objects.create(user=user, organization=organization, object_channel="default")
+
+    # Logged in and bookmarked
+    with self.assertNumQueries(2):
+      response = self.client.get(reverse("search-organizations-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], True)
+
+    # Logged in as another user(not bookmarked)
+    self.client.force_authenticate(user=user2)
+    with self.assertNumQueries(2):
+      response = self.client.get(reverse("search-organizations-list"), format="json")
       self.assertEqual(response.data["results"][0]["is_bookmarked"], False)

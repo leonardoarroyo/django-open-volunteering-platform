@@ -87,10 +87,11 @@ class UserOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
 class OrganizationSearchSerializer(ChannelRelationshipSerializer):
   address = GoogleAddressCityStateSerializer()
   image = UploadedImageSerializer()
+  is_bookmarked = serializers.BooleanField()
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image']
+    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'is_bookmarked']
 
 class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   address = GoogleAddressSerializer()
