@@ -107,7 +107,6 @@ def update_address(sender, instance, **kwargs):
   maps_language = get_channel_setting(instance.channel.slug, "MAPS_API_LANGUAGE")
 
   addressline = instance.typed_address
-
   url = 'https://maps.googleapis.com/maps/api/geocode/json?language={}&address={}'.format(maps_language, addressline)
 
   key = os.environ.get('GOOGLE_MAPS_KEY', None)
