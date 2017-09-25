@@ -82,8 +82,10 @@ class ProjectSearchResource(BookmarkAnnotationMixin, mixins.ListModelMixin, view
 
   def get_base_queryset(self, pks = None):
     queryset = Project.objects \
+            .prefetch_related('skills', 'causes', 'categories', 'job__dates') \
+            .select_related('address', 'owner', 'work', 'job') \
             .filter(deleted=False, closed=False) \
-            .prefetch_related('skills', 'causes', 'categories', 'job__dates').select_related('address', 'owner', 'work', 'job')
+            .order_by('-pk')
     queryset = self.annotate_bookmark(queryset)
 
     return queryset
@@ -173,7 +175,7 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     result_keys = [q.pk for q in queryset]
     related_field_name = get_profile_model()._meta.get_field('user').related_query_name()
 
-    result = User.objects.filter(pk__in=result_keys, public=True).prefetch_related(related_field_name + '__skills', related_field_name + '__causes').select_related(related_field_name)
+    result = User.objects.order_by('-pk').filter(pk__in=result_keys, public=True).prefetch_related(related_field_name + '__skills', related_field_name + '__causes').select_related(related_field_name)
 
     return result
 

@@ -684,7 +684,7 @@ class BookmarkTestCase(TestCase):
     """
     user = User.objects.filter(channel__slug="default").first()
     user2 = User.objects.create_user(name="a", email="testmail-2@test.com", password="test_returned", object_channel="default")
-    project = Project.objects.get(name="test project", channel__slug="default")
+    project = Project.objects.get(name="test project3", channel__slug="default")
 
     # Logged out
     cache.clear()
