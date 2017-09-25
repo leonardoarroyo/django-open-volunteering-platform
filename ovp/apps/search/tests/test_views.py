@@ -506,13 +506,13 @@ class UserSearchTestCase(TestCase):
     """
     response = self.client.get(reverse("search-users-list") + "?cause=1,2", format="json")
     self.assertEqual(len(response.data["results"]), 2)
-    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user one")
-    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user one")
 
     response = self.client.get(reverse("search-users-list") + "?cause=OR,1,2", format="json")
     self.assertEqual(len(response.data["results"]), 2)
-    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user one")
-    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user one")
 
     response = self.client.get(reverse("search-users-list") + "?cause=AND,1,2", format="json")
     self.assertEqual(len(response.data["results"]), 1)
@@ -525,8 +525,8 @@ class UserSearchTestCase(TestCase):
     """
     response = self.client.get(reverse("search-users-list") + "?skill=1,2", format="json")
     self.assertEqual(len(response.data["results"]), 2)
-    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user one")
-    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user one")
 
   def test_name_filter(self):
     """
