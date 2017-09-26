@@ -73,7 +73,7 @@ admin_site.register(SectionFilter, SectionFilterAdmin)
 # Filters admin                  #
 ##################################
 class CategoryFilterAdmin(ChannelModelAdmin):
-  fields = []
+  fields = ["categories"]
   list_display = []
   search_fields = []
 

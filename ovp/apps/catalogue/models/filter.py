@@ -15,5 +15,7 @@ class Filter(ChannelRelationship):
     abstract = True
 
 class CategoryFilter(Filter):
+  categories = models.ManyToManyField("projects.Category")
+
   def __str__(self):
     return "Category Filter"
