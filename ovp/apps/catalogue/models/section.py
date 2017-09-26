@@ -5,8 +5,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
+from ovp.apps.catalogue.models.filter import CategoryFilter
+
+CATEGORY = "CATEGORY"
+
 FILTER_TYPES = (
-  ("CATEGORY", "Category"),
+  (CATEGORY, "Category"),
 )
 
 class Section(ChannelRelationship):
@@ -21,6 +25,17 @@ class SectionFilter(ChannelRelationship):
   section = models.ForeignKey("catalogue.Section")
   type = models.CharField(_("Filter type"), max_length=30, choices=FILTER_TYPES)
 
-  content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+  content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
   object_id = models.PositiveIntegerField(blank=True, null=True)
   content_object = GenericForeignKey()
+
+  def save(self, *args, **kwargs):
+    if not self.pk:
+      channel = kwargs.get("object_channel")
+      self.create_filter_object(channel)
+
+    super(SectionFilter, self).save(*args, **kwargs)
+
+  def create_filter_object(self, channel):
+    if self.type == CATEGORY:
+      self.content_object = CategoryFilter.objects.create(object_channel=channel)
