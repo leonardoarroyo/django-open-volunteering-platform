@@ -19,3 +19,9 @@ class CategoryFilter(Filter):
 
   def __str__(self):
     return "Category Filter"
+
+  def filter_information(self):
+    categories_str = ""
+    for category in self.categories.all():
+      categories_str += "%s\n" % category.name
+    return categories_str

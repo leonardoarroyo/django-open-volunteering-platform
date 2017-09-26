@@ -24,6 +24,11 @@ class FilterObjectMixin():
       return _('No filter')
   filter_object.allow_tags = True
 
+  def filter_information(self, obj):
+    if obj.filter:
+      return obj.filter.filter_information().replace("\n", "<br>")
+    return _('No filter')
+  filter_information.allow_tags = True
 
 
 ##################################
@@ -36,10 +41,9 @@ class SectionInline(CompactInline):
 
 class SectionFilterInline(FilterObjectMixin, CompactInline):
   model = SectionFilter
-  fields = ["section", "type", "filter_object"]
-  readonly_fields = ["filter_object"]
+  fields = ["section", "type", "filter_object", "filter_information"]
+  readonly_fields = ["filter_object", "filter_information"]
   show_change_link = True
-
 
 
 ##################################
@@ -58,9 +62,9 @@ class SectionAdmin(ChannelModelAdmin):
   inlines = [SectionFilterInline]
 
 class SectionFilterAdmin(FilterObjectMixin, ChannelModelAdmin):
-  fields = ["section", "type", "filter_object"]
+  fields = ["section", "type", "filter_object", "filter_information"]
   list_display = ["section", "type"]
-  readonly_fields = ["filter_object"]
+  readonly_fields = ["filter_object", "filter_information"]
   search_fields = []
 
 
