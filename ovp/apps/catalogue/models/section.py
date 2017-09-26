@@ -27,10 +27,10 @@ class SectionFilter(ChannelRelationship):
 
   content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
   object_id = models.PositiveIntegerField(blank=True, null=True)
-  content_object = GenericForeignKey()
+  filter = GenericForeignKey()
 
   def __str__(self):
-    filter_name = self.content_object.__str__()
+    filter_name = self.filter.__str__()
     if filter_name != "None":
       return filter_name
 
@@ -44,4 +44,4 @@ class SectionFilter(ChannelRelationship):
 
   def create_filter_object(self, **kwargs):
     if self.type == CATEGORY:
-      self.content_object = CategoryFilter.objects.create(object_channel=kwargs.get("object_channel"))
+      self.filter = CategoryFilter.objects.create(object_channel=kwargs.get("object_channel"))
