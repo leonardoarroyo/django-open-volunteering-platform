@@ -29,13 +29,19 @@ class SectionFilter(ChannelRelationship):
   object_id = models.PositiveIntegerField(blank=True, null=True)
   content_object = GenericForeignKey()
 
+  def __str__(self):
+    filter_name = self.content_object.__str__()
+    if filter_name != "None":
+      return filter_name
+
+    return "Empty filter"
+
   def save(self, *args, **kwargs):
     if not self.pk:
-      channel = kwargs.get("object_channel")
-      self.create_filter_object(channel)
+      self.create_filter_object(**kwargs)
 
     super(SectionFilter, self).save(*args, **kwargs)
 
-  def create_filter_object(self, channel):
+  def create_filter_object(self, **kwargs):
     if self.type == CATEGORY:
-      self.content_object = CategoryFilter.objects.create(object_channel=channel)
+      self.content_object = CategoryFilter.objects.create(object_channel=kwargs.get("object_channel"))
