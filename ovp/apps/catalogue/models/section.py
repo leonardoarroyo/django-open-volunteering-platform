@@ -9,13 +9,6 @@ FILTER_TYPES = (
   ("CATEGORY", "Category"),
 )
 
-class Catalogue(ChannelRelationship):
-  name = models.CharField(_("Name"), max_length=100)
-  slug = models.SlugField(_("Slug"), max_length=100)
-
-  def __str__(self):
-    return self.name
-
 class Section(ChannelRelationship):
   catalogue = models.ForeignKey("catalogue.Catalogue")
   name = models.CharField(_("Name"), max_length=100)
@@ -27,3 +20,7 @@ class Section(ChannelRelationship):
 class SectionFilter(ChannelRelationship):
   section = models.ForeignKey("catalogue.Section")
   type = models.CharField(_("Filter type"), max_length=30, choices=FILTER_TYPES)
+
+  content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+  object_id = models.PositiveIntegerField(blank=True, null=True)
+  content_object = GenericForeignKey()
