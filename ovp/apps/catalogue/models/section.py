@@ -14,7 +14,7 @@ FILTER_TYPES = (
 )
 
 class Section(ChannelRelationship):
-  catalogue = models.ForeignKey("catalogue.Catalogue")
+  catalogue = models.ForeignKey("catalogue.Catalogue", related_name="sections")
   name = models.CharField(_("Name"), max_length=100)
   slug = models.SlugField(_("Slug"), max_length=100)
 
@@ -22,7 +22,7 @@ class Section(ChannelRelationship):
     return self.name
 
 class SectionFilter(ChannelRelationship):
-  section = models.ForeignKey("catalogue.Section")
+  section = models.ForeignKey("catalogue.Section", related_name="filters")
   type = models.CharField(_("Filter type"), max_length=30, choices=FILTER_TYPES)
 
   content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
