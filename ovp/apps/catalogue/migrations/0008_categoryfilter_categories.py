@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0050_merge_20170912_1958'),
+        ('projects', '0045_merge_20170803_2020'),
         ('catalogue', '0007_auto_20170926_1936'),
     ]
 
