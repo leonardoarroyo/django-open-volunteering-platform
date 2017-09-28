@@ -122,7 +122,6 @@ class Project(ChannelRelationship):
 
     return obj
 
-
   def generate_slug(self, channel):
     if self.name:
       slug = slugify(self.name)[0:99]
@@ -139,6 +138,9 @@ class Project(ChannelRelationship):
 
   def active_apply_set(self):
     return self.apply_set.filter(canceled=False)
+
+  def is_bookmarked(self, user):
+    return self.bookmarks.filter(user=user).count() > 0
 
   def __str__(self):
       return  '%s' % (self.name)

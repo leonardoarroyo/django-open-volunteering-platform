@@ -86,10 +86,11 @@ class UserOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
 class OrganizationSearchSerializer(ChannelRelationshipSerializer):
   address = GoogleAddressCityStateSerializer()
   image = UploadedImageSerializer()
+  is_bookmarked = serializers.BooleanField()
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image']
+    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'is_bookmarked']
 
 class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   address = GoogleAddressSerializer()
@@ -97,10 +98,17 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   cover = UploadedImageSerializer()
   causes = CauseSerializer(many=True)
   owner = UserOrganizationRetrieveSerializer()
+  is_bookmarked = serializers.SerializerMethodField()
 
   class Meta:
     model = models.Organization
-    fields = ['slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email']
+    fields = ['slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked']
+
+  def get_is_bookmarked(self, instance):
+    user = self.context['request'].user
+    if user.is_authenticated():
+      return instance.is_bookmarked(user)
+    return False
 
   @hide_address
   def to_representation(self, instance):

@@ -1,6 +1,7 @@
 from ovp.apps.users.models import User
 
 from ovp.apps.core.serializers import EmptySerializer
+from ovp.apps.core.mixins import BookmarkMixin
 
 from ovp.apps.organizations import serializers
 from ovp.apps.organizations import models
@@ -26,7 +27,7 @@ from django.shortcuts import get_object_or_404
 import json
 
 @ChannelViewSet
-class OrganizationResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
   """
   OrganizationResourceViewSet resource endpoint
   """
@@ -134,6 +135,26 @@ class OrganizationResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelM
 
     return response.Response(serializer.data)
 
+  def create(self, request, *args, **kwargs):
+    request.data['owner'] = request.user.id
+
+    serializer = self.get_serializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    organization = serializer.save()
+    organization.members.add(request.user)
+
+    headers = self.get_success_headers(serializer.data)
+    return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+  ###################
+  # ViewSet methods #
+  ###################
+  def get_bookmark_model(self):
+    return models.OrganizationBookmark
+
+  def get_bookmark_kwargs(self):
+    return {"organization": self.get_object()}
+
   def get_serializer_class(self):
     request = self.get_serializer_context()['request']
     if self.action in ['create', 'partial_update']:
@@ -146,9 +167,10 @@ class OrganizationResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelM
       return serializers.MemberRemoveSerializer
     if self.action == 'projects':
       return ProjectOnOrganizationRetrieveSerializer
+    if self.action in ['bookmarked']:
+      return serializers.OrganizationRetrieveSerializer
     if self.action in ['leave', 'join']: # pragma: no cover
       return EmptySerializer
-
 
   def get_permissions(self):
     request = self.get_serializer_context()['request']
@@ -166,16 +188,7 @@ class OrganizationResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelM
       self.permission_classes = (permissions.IsAuthenticated, organization_permissions.IsOrganizationMember)
     if self.action == 'remove_member':
       self.permission_classes = (permissions.IsAuthenticated, organization_permissions.OwnsOrganization)
+    if self.action in ['bookmark', 'unbookmark', 'bookmarked']:
+      self.permission_classes = self.get_bookmark_permissions()
 
     return super(OrganizationResourceViewSet, self).get_permissions()
-
-  def create(self, request, *args, **kwargs):
-    request.data['owner'] = request.user.id
-
-    serializer = self.get_serializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    organization = serializer.save()
-    organization.members.add(request.user)
-
-    headers = self.get_success_headers(serializer.data)
-    return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

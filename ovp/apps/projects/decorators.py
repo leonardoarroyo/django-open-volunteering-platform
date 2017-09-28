@@ -46,7 +46,6 @@ def add_current_user_is_applied_representation(func):
   """
   @wraps(func)
   def _impl(self, instance):
-    # We pop current_user_is_applied field to avoid AttributeError on default Serializer.to_representation
     ret = func(self, instance)
 
     user = self.context["request"].user

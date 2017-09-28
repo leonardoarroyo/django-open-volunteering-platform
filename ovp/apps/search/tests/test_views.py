@@ -7,8 +7,8 @@ from rest_framework.test import APIClient
 
 from ovp.apps.users.models import User
 from ovp.apps.users.models.profile import get_profile_model
-from ovp.apps.projects.models import Project, Job, Category, Work
-from ovp.apps.organizations.models import Organization
+from ovp.apps.projects.models import Project, Job, Category, Work, ProjectBookmark
+from ovp.apps.organizations.models import Organization, OrganizationBookmark
 from ovp.apps.core.models import GoogleAddress, Cause, Skill
 from ovp.apps.channels.models import Channel
 from ovp.apps.channels.models import ChannelSetting
@@ -506,13 +506,13 @@ class UserSearchTestCase(TestCase):
     """
     response = self.client.get(reverse("search-users-list") + "?cause=1,2", format="json")
     self.assertEqual(len(response.data["results"]), 2)
-    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user one")
-    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user one")
 
     response = self.client.get(reverse("search-users-list") + "?cause=OR,1,2", format="json")
     self.assertEqual(len(response.data["results"]), 2)
-    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user one")
-    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user one")
 
     response = self.client.get(reverse("search-users-list") + "?cause=AND,1,2", format="json")
     self.assertEqual(len(response.data["results"]), 1)
@@ -525,8 +525,8 @@ class UserSearchTestCase(TestCase):
     """
     response = self.client.get(reverse("search-users-list") + "?skill=1,2", format="json")
     self.assertEqual(len(response.data["results"]), 2)
-    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user one")
-    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user two")
+    self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user one")
 
   def test_name_filter(self):
     """
@@ -630,20 +630,6 @@ class CityCountryTestCase(TestCase):
     create_sample_projects()
     create_sample_organizations()
 
-  def test_query_country_deprecated(self):
-    client = APIClient()
-
-    response = client.get(reverse("search-query-country", ["Brazil"]), format="json")
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(len(response.data), 2)
-    self.assertIn("Campinas", response.data)
-    self.assertIn("São Paulo", response.data)
-
-    response = client.get(reverse("search-query-country", ["United States"]), format="json")
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(len(response.data), 1)
-    self.assertIn("New York", response.data)
-
   def test_available_country_cities(self):
     client = APIClient()
 
@@ -681,3 +667,88 @@ class CityCountryTestCase(TestCase):
     self.assertEqual(len(response.data["organizations"]), 0)
     self.assertEqual(len(response.data["common"]), 1)
     self.assertIn("New York", response.data["common"])
+
+
+class BookmarkTestCase(TestCase):
+  def setUp(self):
+    call_command('clear_index', '--noinput', verbosity=0)
+    Channel.objects.create(name="Test channel", slug="test-channel")
+    create_sample_projects()
+    create_sample_organizations()
+    self.client = APIClient()
+
+
+  def test_is_bookmarked_field_on_project(self):
+    """
+    Test searching is_bookmarked_field on project along with correct caching
+    """
+    user = User.objects.filter(channel__slug="default").first()
+    user2 = User.objects.create_user(name="a", email="testmail-2@test.com", password="test_returned", object_channel="default")
+    project = Project.objects.get(name="test project3", channel__slug="default")
+
+    # Logged out
+    cache.clear()
+    with self.assertNumQueries(7):
+      # Only 7 queries
+      # 2 are channel related
+      # 5 are search related
+      response = self.client.get(reverse("search-projects-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], False)
+
+    # Logged in
+    self.client.force_authenticate(user=user)
+    with self.assertNumQueries(5):
+      response = self.client.get(reverse("search-projects-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], False)
+
+    # When creating a bookmark, we should clear the cache
+    ProjectBookmark.objects.create(user=user, project=project, object_channel="default")
+
+    # Logged in and bookmarked
+    with self.assertNumQueries(5):
+      response = self.client.get(reverse("search-projects-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], True)
+
+    # Logged in as another user(not bookmarked)
+    self.client.force_authenticate(user=user2)
+    with self.assertNumQueries(5):
+      response = self.client.get(reverse("search-projects-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], False)
+
+
+  def test_is_bookmarked_field_on_organization(self):
+    """
+    Test searching is_bookmarked_field on organization along with correct caching
+    """
+    user = User.objects.filter(channel__slug="default").first()
+    user2 = User.objects.create_user(name="a", email="testmail-2@test.com", password="test_returned", object_channel="default")
+    organization = Organization.objects.get(name="test organization2", channel__slug="default")
+
+    # Logged out
+    cache.clear()
+    with self.assertNumQueries(4):
+      # Only 4 queries
+      # 2 are channel related
+      # 2 are search related
+      response = self.client.get(reverse("search-organizations-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], False)
+
+    # Logged in
+    self.client.force_authenticate(user=user)
+    with self.assertNumQueries(2):
+      response = self.client.get(reverse("search-organizations-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], False)
+
+    # When creating a bookmark, we should clear the cache
+    OrganizationBookmark.objects.create(user=user, organization=organization, object_channel="default")
+
+    # Logged in and bookmarked
+    with self.assertNumQueries(2):
+      response = self.client.get(reverse("search-organizations-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], True)
+
+    # Logged in as another user(not bookmarked)
+    self.client.force_authenticate(user=user2)
+    with self.assertNumQueries(2):
+      response = self.client.get(reverse("search-organizations-list"), format="json")
+      self.assertEqual(response.data["results"][0]["is_bookmarked"], False)
