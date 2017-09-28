@@ -17,6 +17,7 @@ class Section(ChannelRelationship):
   catalogue = models.ForeignKey("catalogue.Catalogue", related_name="sections")
   name = models.CharField(_("Name"), max_length=100)
   slug = models.SlugField(_("Slug"), max_length=100)
+  amount = models.IntegerField(_("Amount"), default=20)
 
   def __str__(self):
     return self.name

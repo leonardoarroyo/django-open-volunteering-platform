@@ -25,6 +25,7 @@ def get_catalogue(channel, slug):
         section_dict = {
           "name": section.name,
           "slug": section.slug,
+          "amount": section.amount,
           "filters": []
         }
         for section_filter in section.filters.all():
