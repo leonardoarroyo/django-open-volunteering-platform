@@ -13,6 +13,7 @@ from ovp.apps.core.mixins import CountryFilterMixin
 
 class VolunteerRoleInline(TabularInline):
   model = VolunteerRole
+  exclude = ['channel']
 
 
 class ProjectAdmin(ChannelModelAdmin, CountryFilterMixin):

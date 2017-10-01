@@ -11,7 +11,7 @@ from .jobdate import JobDateAdmin, JobDateInline
 
 
 class JobInline(TabularInline):
-	exclude = ['title']
+	exclude = ['title', 'channel']
 	model = Job
 	verbose_name = _('Job')
 	verbose_name_plural = _('Job')

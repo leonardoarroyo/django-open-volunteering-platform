@@ -32,6 +32,7 @@ class WorkAdmin(ChannelModelAdmin):
 
 class WorkInline(TabularInline):
   model = Work
+  exclude = ['channel']
 
 
 admin_site.register(Work, WorkAdmin)
