@@ -32,12 +32,18 @@ class Job(ChannelRelationship):
     end_date = self.end_date and self.end_date.strftime("%d/%m/%Y") or ''
     return "{}: {} ~ {}".format(name, start_date, end_date)
 
-  def update_dates(self):
+  def save(self):
+    self.update_dates()
+    super(Job, self).save()
+
+  def update_dates(self, save=True):
     start = self.dates.all().order_by('start_date').first().start_date
     end   = self.dates.all().order_by('-end_date').first().end_date
     self.start_date = start
     self.end_date = end
-    self.save()
+
+    if save:
+      self.save()
 
   class Meta:
     app_label = 'projects'
