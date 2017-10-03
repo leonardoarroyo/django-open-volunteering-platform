@@ -64,6 +64,14 @@ class CatalogueCacheTestCase(TestCase):
       catalogue2 = get_catalogue("default", "home")
     self.assertEqual(catalogue, catalogue2)
 
+  def test_fetch_catalogue_num_queries(self):
+    catalogue = get_catalogue("default", "home")
+
+    with self.assertNumQueries(12):
+      # 4 queries for each section(projects + skills + causes + categories)
+      # We have 3 sections on the test case, so there are 12 queries
+      fetched = fetch_catalogue(catalogue, serializer=ProjectSearchSerializer)
+
   def test_fetch_queryset_without_serializer(self):
     catalogue = get_catalogue("default", "home")
     fetched = fetch_catalogue(catalogue)
@@ -106,5 +114,4 @@ class CategoryFilterTestCase(TestCase):
     self.assertEqual(len(response.data["sections"][1]["projects"]), 1)
     self.assertEqual(response.data["sections"][1]["projects"][0]["name"], "sample 2")
 
-# TODO: Assert query amount
 # TODO: Date filter
