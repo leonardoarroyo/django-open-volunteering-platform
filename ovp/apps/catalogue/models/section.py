@@ -22,6 +22,12 @@ class Section(ChannelRelationship):
   def __str__(self):
     return self.name
 
+  class Meta:
+    app_label = 'catalogue'
+    verbose_name = _('catalogue')
+    verbose_name_plural = _('catalogues')
+    unique_together = (('slug', 'catalogue'), )
+
 class SectionFilter(ChannelRelationship):
   section = models.ForeignKey("catalogue.Section", related_name="filters")
   type = models.CharField(_("Filter type"), max_length=30, choices=FILTER_TYPES)
