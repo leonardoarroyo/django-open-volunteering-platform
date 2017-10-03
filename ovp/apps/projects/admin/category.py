@@ -7,6 +7,6 @@ from ovp.apps.projects.models.category import Category
 
 class CategoryAdmin(ChannelModelAdmin):
   list_display = ['id', 'name']
-  exclude = ['channel']
+  fields = ["name", "slug", "description", "image", "highlighted"]
 
 admin_site.register(Category, CategoryAdmin)

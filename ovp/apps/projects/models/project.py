@@ -27,6 +27,7 @@ class Project(ChannelRelationship):
   commentaries = models.ManyToManyField('core.Commentary', verbose_name=_('commentaries'))
 
   # Relationships
+  categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'))
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
   organization = models.ForeignKey('organizations.Organization', blank=False, null=True, verbose_name=_('organization'))
 

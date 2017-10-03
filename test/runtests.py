@@ -23,6 +23,7 @@ CUSTOM_INSTALLED_APPS = (
     'ovp.apps.search',
     'ovp.apps.faq',
     'ovp.apps.channels',
+    'ovp.apps.catalogue',
     'jet',
     'jet.dashboard',
     'haystack',
@@ -158,6 +159,7 @@ test_cases = [
   'ovp.apps.search',
   'ovp.apps.faq',
   'ovp.apps.channels',
+  'ovp.apps.catalogue',
 ]
 
 # Allow accessing test options from the command line.

@@ -2,6 +2,7 @@ from django.contrib.admin import ModelAdmin
 from django.contrib.admin.options import InlineModelAdmin
 from .forms import AdminModelForm
 from .formset import AdminInlineFormSet
+from jet.admin import CompactInline as BaseCompactInline
 
 class StackedInline(InlineModelAdmin):
   template = 'admin/edit_inline/stacked.html'
@@ -9,6 +10,9 @@ class StackedInline(InlineModelAdmin):
 
 class TabularInline(InlineModelAdmin):
   template = 'admin/edit_inline/tabular.html'
+  formset = AdminInlineFormSet
+
+class CompactInline(BaseCompactInline):
   formset = AdminInlineFormSet
 
 class ChannelModelAdmin(ModelAdmin):
