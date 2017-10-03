@@ -9,3 +9,9 @@ class Catalogue(ChannelRelationship):
 
   def __str__(self):
     return self.name
+
+  class Meta:
+    app_label = 'catalogue'
+    verbose_name = _('catalogue')
+    verbose_name_plural = _('catalogues')
+    unique_together = (('slug', 'channel'), )
