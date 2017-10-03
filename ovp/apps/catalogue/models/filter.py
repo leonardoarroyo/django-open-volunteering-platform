@@ -3,10 +3,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
-FILTER_TYPES = (
-  ("CATEGORY", "Category"),
-)
-
 class Filter(ChannelRelationship):
   """
   This base class can be extended to create custom catalogue filters.
@@ -27,6 +23,11 @@ class Filter(ChannelRelationship):
     """
     raise NotImplementedError("You must override .get_filter_kwargs when implementing your custom catalogue filter.")
 
+
+###################
+# Category Filter #
+###################
+
 class CategoryFilter(Filter):
   categories = models.ManyToManyField("projects.Category")
 
@@ -42,3 +43,32 @@ class CategoryFilter(Filter):
   def get_filter_kwargs(self):
     pks = list(self.categories.all().values_list("pk", flat=True))
     return {"categories__pk__in": pks}
+
+
+####################
+# DateDelta Filter #
+####################
+
+DATEDELTA_OPERATORS = (
+  ("exact", _("Exact")),
+  ("gt", _("Greater than")),
+  ("gte", _("Greater than or equal to")),
+  ("lt", _("Lesser than")),
+  ("lte", _("Lesser than or equal to")),
+)
+
+class DateDeltaFilter(Filter):
+  days = models.IntegerField(_("Days"), default=0)
+  weeks = models.IntegerField(_("Weeks"), default=0)
+  months = models.IntegerField(_("Months"), default=0)
+  years = models.IntegerField(_("Years"), default=0)
+  operator = models.CharField(_("Operator"), choices=DATEDELTA_OPERATORS, default="exact", max_length=30)
+
+  def __str__(self):
+    return "DateDelta Filter"
+
+  def filter_information(self):
+    return  ""
+
+  def get_filter_kwargs(self):
+    return {}
