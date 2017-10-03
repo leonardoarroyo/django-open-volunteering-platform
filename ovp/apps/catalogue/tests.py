@@ -1,6 +1,9 @@
+from dateutil.relativedelta import relativedelta
+
 from django.test import TestCase
 from django.core.cache import cache
 from django.db.models.query import QuerySet
+from django.utils import timezone
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -9,6 +12,8 @@ from rest_framework.utils.serializer_helpers import ReturnList
 from ovp.apps.users.models import User
 
 from ovp.apps.projects.models import Project
+from ovp.apps.projects.models import Job
+from ovp.apps.projects.models import JobDate
 from ovp.apps.projects.models import Category
 from ovp.apps.projects.serializers.project import ProjectSearchSerializer
 
@@ -35,15 +40,30 @@ def setUp():
   section2_filter = SectionFilter.objects.create(section=section2, type="CATEGORY", object_channel="default")
   section2_filter.filter.categories.add(category2)
 
-  section3 = Section.objects.create(name="This week", slug="this-week", catalogue=catalogue, object_channel="default")
+  section3 = Section.objects.create(name="Coming up", slug="coming-up", catalogue=catalogue, object_channel="default")
+  section3_filter1 = SectionFilter.objects.create(section=section3, type="DATEDELTA", object_channel="default")
+  section3_filter1.filter.operator ="gte"
+  section3_filter1.filter.save()
+  section3_filter2 = SectionFilter.objects.create(section=section3, type="DATEDELTA", object_channel="default")
+  section3_filter2.filter.operator = "lte"
+  section3_filter2.filter.weeks = 1
+  section3_filter2.filter.save()
 
   # Projects
   user = User.objects.create(email="sample@user.com", password="sample-user", object_channel="default")
   project1 = Project.objects.create(name="sample 1", owner=user, description="description", details="detail", object_channel="default", published=True)
   project1.categories.add(category1)
+  job1 = Job.objects.create(project=project1, object_channel="default")
+  date1 = JobDate.objects.create(job=job1, start_date=timezone.now(), end_date=timezone.now(), object_channel="default")
 
   project2 = Project.objects.create(name="sample 2", owner=user, description="description", details="detail", object_channel="default", published=True)
   project2.categories.add(category2)
+  job2 = Job.objects.create(project=project2, object_channel="default")
+  date2 = JobDate.objects.create(job=job2, start_date=timezone.now()+relativedelta(days=3), end_date=timezone.now()+relativedelta(days=3), object_channel="default")
+
+  project3 = Project.objects.create(name="sample 3", owner=user, description="description", details="detail", object_channel="default", published=True)
+  job3 = Job.objects.create(project=project3, object_channel="default")
+  date3 = JobDate.objects.create(job=job3, start_date=timezone.now()+relativedelta(weeks=1, days=1), end_date=timezone.now()+relativedelta(weeks=1, days=1), object_channel="default")
 
   cache.clear()
 
@@ -52,11 +72,11 @@ class CatalogueCacheTestCase(TestCase):
     setUp()
 
   def test_get_catalogue_caching(self):
-    with self.assertNumQueries(7):
+    with self.assertNumQueries(9):
       # 4 from catalogue, section and section filters models
-      # 2 from applied filters(category 1)
-      # 2 from applied filters(category 2)
-      # 0 from applied filters(category 3)
+      # 2 from category filters(section "hot")
+      # 2 from category filters(section "get your hands dirty")
+      # 2 from datedelta filters(section "coming up")
       catalogue = get_catalogue("default", "home")
     self.assertEqual(len(catalogue["sections"]), 3)
 
@@ -67,9 +87,8 @@ class CatalogueCacheTestCase(TestCase):
   def test_fetch_catalogue_num_queries(self):
     catalogue = get_catalogue("default", "home")
 
-    with self.assertNumQueries(12):
-      # 4 queries for each section(projects + skills + causes + categories)
-      # We have 3 sections on the test case, so there are 12 queries
+    with self.assertNumQueries(15):
+      # 5 queries for section hot(projects + skills + causes + categories + job_dates)
       fetched = fetch_catalogue(catalogue, serializer=ProjectSearchSerializer)
 
   def test_fetch_queryset_without_serializer(self):
@@ -114,4 +133,12 @@ class CategoryFilterTestCase(TestCase):
     self.assertEqual(len(response.data["sections"][1]["projects"]), 1)
     self.assertEqual(response.data["sections"][1]["projects"][0]["name"], "sample 2")
 
-# TODO: Date filter
+class DateDeltaFilterTestCase(TestCase):
+  def setUp(self):
+    setUp()
+    self.client = APIClient()
+
+  def test_datedelta_filter(self):
+    response = self.client.get(reverse("catalogue", ["home"]), format="json")
+    self.assertEqual(len(response.data["sections"][2]["projects"]), 1)
+    self.assertEqual(response.data["sections"][2]["projects"][0]["name"], "sample 2")

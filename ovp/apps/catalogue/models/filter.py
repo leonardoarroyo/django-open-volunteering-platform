@@ -1,4 +1,7 @@
+from dateutil.relativedelta import relativedelta
+
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
@@ -71,4 +74,6 @@ class DateDeltaFilter(Filter):
     return  "{} {} days, {} weeks, {} months, {} years".format(self.get_operator_display(), self.days, self.weeks, self.months, self.years)
 
   def get_filter_kwargs(self):
-    return {}
+    k = "job__start_date__{}".format(self.operator)
+    v = timezone.now() + relativedelta(days=self.days, weeks=self.weeks, months=self.months, years=self.years)
+    return {k: v}
