@@ -12,7 +12,7 @@ def get_catalogue(channel, slug):
   """
   Generates and caches a dictionary containing information about
   a given catalogue. This does not query the database to fetch
-  the projects for a given catalog, it should be passed to evaluate_catalogue
+  the projects for a given catalog, it should be passed to fetch_catalogue
   for that.
   """
   key = "catalogue-{}-{}".format(channel, slug)
