@@ -1,7 +1,5 @@
 from django.core.cache import cache
 
-from ovp.apps.core.mixins.bookmark import BookmarkAnnotationMixin
-
 from ovp.apps.catalogue.models import Catalogue
 
 from ovp.apps.projects.models import Project
