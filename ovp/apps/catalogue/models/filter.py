@@ -68,7 +68,7 @@ class DateDeltaFilter(Filter):
     return "DateDelta Filter"
 
   def filter_information(self):
-    return  ""
+    return  "{} {} days, {} weeks, {} months, {} years".format(self.get_operator_display(), self.days, self.weeks, self.months, self.years)
 
   def get_filter_kwargs(self):
     return {}

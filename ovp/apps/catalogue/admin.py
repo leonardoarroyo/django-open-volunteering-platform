@@ -10,6 +10,7 @@ from ovp.apps.catalogue.models import Section
 from ovp.apps.catalogue.models import SectionFilter
 
 from ovp.apps.catalogue.models import CategoryFilter
+from ovp.apps.catalogue.models import DateDeltaFilter
 
 
 ##################################
@@ -81,4 +82,10 @@ class CategoryFilterAdmin(ChannelModelAdmin):
   list_display = []
   search_fields = []
 
+class DateDeltaFilterAdmin(ChannelModelAdmin):
+  fields = ["operator", "days", "weeks", "months", "years"]
+  list_display = []
+  search_fields = []
+
 admin_site.register(CategoryFilter, CategoryFilterAdmin)
+admin_site.register(DateDeltaFilter, DateDeltaFilterAdmin)
