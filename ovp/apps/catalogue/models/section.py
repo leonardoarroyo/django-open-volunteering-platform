@@ -24,8 +24,8 @@ class Section(ChannelRelationship):
 
   class Meta:
     app_label = 'catalogue'
-    verbose_name = _('catalogue')
-    verbose_name_plural = _('catalogues')
+    verbose_name = _('section')
+    verbose_name_plural = _('sections')
     unique_together = (('slug', 'catalogue'), )
 
 class SectionFilter(ChannelRelationship):
