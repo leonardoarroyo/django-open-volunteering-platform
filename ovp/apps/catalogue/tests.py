@@ -89,9 +89,9 @@ class CatalogueViewTestCase(TestCase):
     response = self.client.get(reverse("catalogue", ["home"]), format="json")
     self.assertEqual(response.status_code, 200)
 
-  # def test_is_bookmarked(self):
-  #   response = self.client.get(reverse("catalogue", ["home"]), format="json")
-  #   self.assertTrue("is_bookmarked" in response.data["sections"][0]["projects"])
+  def test_is_bookmarked(self):
+    response = self.client.get(reverse("catalogue", ["home"]), format="json")
+    self.assertTrue("is_bookmarked" in response.data["sections"][0]["projects"][0])
 
 class CategoryFilterTestCase(TestCase):
   def setUp(self):
