@@ -25,19 +25,24 @@ def setUp():
 
   # Catalogue
   catalogue = Catalogue.objects.create(name="Home", slug="home", object_channel="default")
+
+  # Sections
   section1 = Section.objects.create(name="Hot", slug="hot", catalogue=catalogue, object_channel="default")
   section1_filter = SectionFilter.objects.create(section=section1, type="CATEGORY", object_channel="default")
   section1_filter.filter.categories.add(category1)
 
   section2 = Section.objects.create(name="Get your hands dirty", slug="get-your-hands-dirty", catalogue=catalogue, object_channel="default")
+  section2_filter = SectionFilter.objects.create(section=section2, type="CATEGORY", object_channel="default")
+  section2_filter.filter.categories.add(category2)
+
   section3 = Section.objects.create(name="This week", slug="this-week", catalogue=catalogue, object_channel="default")
 
   # Projects
   user = User.objects.create(email="sample@user.com", password="sample-user", object_channel="default")
-  project1 = Project.objects.create(name="sample 1", owner=user, description="description", details="detail", object_channel="default")
+  project1 = Project.objects.create(name="sample 1", owner=user, description="description", details="detail", object_channel="default", published=True)
   project1.categories.add(category1)
 
-  project2 = Project.objects.create(name="sample 2", owner=user, description="description", details="detail", object_channel="default")
+  project2 = Project.objects.create(name="sample 2", owner=user, description="description", details="detail", object_channel="default", published=True)
   project2.categories.add(category2)
 
   cache.clear()
@@ -47,9 +52,11 @@ class CatalogueCacheTestCase(TestCase):
     setUp()
 
   def test_get_catalogue_caching(self):
-    with self.assertNumQueries(5):
+    with self.assertNumQueries(7):
       # 4 from catalogue, section and section filters models
-      # 1 from applied filters
+      # 2 from applied filters(category 1)
+      # 2 from applied filters(category 2)
+      # 0 from applied filters(category 3)
       catalogue = get_catalogue("default", "home")
     self.assertEqual(len(catalogue["sections"]), 3)
 
@@ -82,6 +89,10 @@ class CatalogueViewTestCase(TestCase):
     response = self.client.get(reverse("catalogue", ["home"]), format="json")
     self.assertEqual(response.status_code, 200)
 
+  # def test_is_bookmarked(self):
+  #   response = self.client.get(reverse("catalogue", ["home"]), format="json")
+  #   self.assertTrue("is_bookmarked" in response.data["sections"][0]["projects"])
+
 class CategoryFilterTestCase(TestCase):
   def setUp(self):
     setUp()
@@ -89,6 +100,11 @@ class CategoryFilterTestCase(TestCase):
 
   def test_category_filter(self):
     response = self.client.get(reverse("catalogue", ["home"]), format="json")
-    import pudb;pudb.set_trace()
+    self.assertEqual(len(response.data["sections"][0]["projects"]), 1)
+    self.assertEqual(response.data["sections"][0]["projects"][0]["name"], "sample 1")
+
+    self.assertEqual(len(response.data["sections"][1]["projects"]), 1)
+    self.assertEqual(response.data["sections"][1]["projects"][0]["name"], "sample 2")
 
 # TODO: Assert query amount
+# TODO: Date filter

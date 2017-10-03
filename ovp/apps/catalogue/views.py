@@ -15,6 +15,6 @@ class CatalogueView(views.APIView):
     if not catalogue:
       return response.Response({"detail": "This catalog does not exist"}, status=404)
 
-    fetched = fetch_catalogue(catalogue, serializer=ProjectSearchSerializer)
+    fetched = fetch_catalogue(catalogue, serializer=ProjectSearchSerializer, request=self.request)
 
     return response.Response(fetched)
