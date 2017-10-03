@@ -8,9 +8,11 @@ from ovp.apps.channels.models.abstract import ChannelRelationship
 from ovp.apps.catalogue.models.filter import CategoryFilter
 
 CATEGORY = "CATEGORY"
+DATEDELTA = "DATEDELTA"
 
 FILTER_TYPES = (
   (CATEGORY, "Category"),
+  (DATEDELTA, "Date delta"),
 )
 
 class Section(ChannelRelationship):
