@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
 from ovp.apps.catalogue.models.filter import CategoryFilter
+from ovp.apps.catalogue.models.filter import DateDeltaFilter
 
 CATEGORY = "CATEGORY"
 DATEDELTA = "DATEDELTA"
@@ -54,3 +55,5 @@ class SectionFilter(ChannelRelationship):
   def create_filter_object(self, **kwargs):
     if self.type == CATEGORY:
       self.filter = CategoryFilter.objects.create(object_channel=kwargs.get("object_channel"))
+    if self.type == DATEDELTA:
+      self.filter = DateDeltaFilter.objects.create(object_channel=kwargs.get("object_channel"))
