@@ -4,6 +4,8 @@ from ovp.apps.catalogue.models import Catalogue
 
 from ovp.apps.projects.models import Project
 
+from ovp.apps.search.querysets import get_project_queryset
+
 from collections import OrderedDict
 
 def get_catalogue(channel, slug):
@@ -58,19 +60,7 @@ def fetch_catalogue(catalogue_dict, serializer=None, request=None):
   by passing a serializer argument.
   """
   # Base queryset
-  base_queryset = Project.objects \
-          .prefetch_related('skills', 'causes', 'categories', 'job__dates') \
-          .select_related('address', 'owner', 'work', 'job') \
-          .filter(published=True, deleted=False, closed=False) \
-          .order_by('-pk')
-
-  # Annotate with bookmark
-  # if request:
-    # BookmarkAnnotationMixin is usually used on viewsets, so we instantiate
-    # it alone and set the request object.
-    # bookmark_annotation = BookmarkAnnotationMixin()
-    # bookmark_annotation.request = request
-    # base_queryset = bookmark_annotation.annotate_bookmark(base_queryset)
+  base_queryset = get_project_queryset(request=request)
 
   for i, section in enumerate(catalogue_dict["sections"]):
     qs = base_queryset
