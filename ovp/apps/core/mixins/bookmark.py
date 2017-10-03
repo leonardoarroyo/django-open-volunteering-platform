@@ -1,5 +1,3 @@
-from django.db.models import Count, Case, Value, When, BooleanField
-
 from rest_framework import decorators
 from rest_framework import response
 from rest_framework import status
@@ -87,20 +85,3 @@ class BookmarkMixin():
 
   def get_bookmark_kwargs(self):
     raise NotImplemented("Your viewset must override .get_bookmark_kwargs")
-
-
-class BookmarkAnnotationMixin():
-  """
-  Annotates a queryset with information about wether an object was bookmarked or not.
-
-  Used on search viewsets.
-  """
-  def annotate_bookmark(self, queryset):
-    if self.request.user.is_authenticated():
-      return queryset.annotate(is_bookmarked=Count(Case(
-                     When(bookmarks__user=self.request.user, then=True),
-                     output_field=BooleanField()
-                   ))
-                 )
-    else:
-      return queryset.annotate(is_bookmarked=Value(False, BooleanField()))

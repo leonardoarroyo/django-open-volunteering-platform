@@ -9,6 +9,12 @@ class JobDate(ChannelRelationship):
   end_date = models.DateTimeField(_('End date'))
   job = models.ForeignKey('Job', models.CASCADE, blank=True, null=True, related_name='dates', verbose_name=_('job'))
 
+  def save(self, *args, **kwargs):
+    super(JobDate, self).save(*args, **kwargs)
+
+    if self.job:
+      self.job.update_dates()
+
   def __str__(self):
     start_date = self.start_date and self.start_date.strftime("%d/%m/%Y %T") or '#'
     end_date = self.end_date and self.end_date.strftime("%d/%m/%Y %T") or '#'
@@ -32,12 +38,21 @@ class Job(ChannelRelationship):
     end_date = self.end_date and self.end_date.strftime("%d/%m/%Y") or ''
     return "{}: {} ~ {}".format(name, start_date, end_date)
 
-  def update_dates(self):
-    start = self.dates.all().order_by('start_date').first().start_date
-    end   = self.dates.all().order_by('-end_date').first().end_date
-    self.start_date = start
-    self.end_date = end
-    self.save()
+  def save(self, *args, **kwargs):
+    self.update_dates(save=False)
+    super(Job, self).save(*args, **kwargs)
+
+  def update_dates(self, save=True):
+    start = self.dates.all().order_by('start_date').first()
+    end   = self.dates.all().order_by('-end_date').first()
+
+    if start:
+      self.start_date = start.start_date
+    if end:
+      self.end_date = end.end_date
+
+    if save:
+      self.save()
 
   class Meta:
     app_label = 'projects'

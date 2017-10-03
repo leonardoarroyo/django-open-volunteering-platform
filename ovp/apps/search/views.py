@@ -1,7 +1,5 @@
 from django.core.exceptions import PermissionDenied
 
-from ovp.apps.core.mixins import BookmarkAnnotationMixin
-
 from ovp.apps.projects.serializers.project import ProjectSearchSerializer
 from ovp.apps.projects.models import Project
 
@@ -14,6 +12,7 @@ from ovp.apps.users.models.profile import get_profile_model, UserProfile
 
 from ovp.apps.search import helpers
 from ovp.apps.search import filters
+from ovp.apps.search import querysets
 from ovp.apps.search.decorators import cached
 
 from ovp.apps.channels.cache import get_channel_setting
@@ -29,18 +28,10 @@ from rest_framework import decorators
 from haystack.query import SearchQuerySet, SQ
 
 
-class OrganizationSearchResource(BookmarkAnnotationMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = OrganizationSearchSerializer
   filter_backends = (filters.OrderingFilter,)
   ordering_fields = ('slug', 'name', 'website', 'facebook_page', 'details', 'description', 'type', 'hidden_address')
-
-  def get_base_queryset(self, pks = None):
-    queryset = Organization.objects.filter(deleted=False) \
-                .prefetch_related('causes') \
-                .select_related('address') \
-                .order_by('-highlighted')
-    queryset = self.annotate_bookmark(queryset)
-    return queryset
 
   def get_cache_key(self):
     if self.request.user.is_anonymous():
@@ -69,26 +60,16 @@ class OrganizationSearchResource(BookmarkAnnotationMixin, mixins.ListModelMixin,
     queryset = queryset.filter(channel=self.request.channel)
 
     result_keys = [q.pk for q in queryset]
-    result = self.get_base_queryset().filter(pk__in=result_keys)
+    result = querysets.get_organization_queryset(request=self.request).filter(pk__in=result_keys)
     result = filters.filter_out(result, "FILTER_OUT_ORGANIZATIONS", self.request.channel)
 
     return result
 
 
-class ProjectSearchResource(BookmarkAnnotationMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = ProjectSearchSerializer
   filter_backends = (filters.ProjectRelevanceOrderingFilter,)
   ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance')
-
-  def get_base_queryset(self, pks = None):
-    queryset = Project.objects \
-            .prefetch_related('skills', 'causes', 'categories', 'job__dates') \
-            .select_related('address', 'owner', 'work', 'job') \
-            .filter(deleted=False, closed=False) \
-            .order_by('-pk')
-    queryset = self.annotate_bookmark(queryset)
-
-    return queryset
 
   def get_cache_key(self):
     if self.request.user.is_anonymous():
@@ -127,7 +108,7 @@ class ProjectSearchResource(BookmarkAnnotationMixin, mixins.ListModelMixin, view
 
     result_keys = [q.pk for q in queryset]
 
-    result = self.get_base_queryset().filter(pk__in=result_keys)
+    result = querysets.get_project_queryset(request=self.request).filter(pk__in=result_keys)
 
     if not_organization:
       org = [o for o in not_organization.split(',')]
