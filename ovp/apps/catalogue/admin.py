@@ -79,13 +79,15 @@ admin_site.register(SectionFilter, SectionFilterAdmin)
 ##################################
 class CategoryFilterAdmin(ChannelModelAdmin):
   fields = ["categories"]
-  list_display = []
-  search_fields = []
+
+  def get_model_perms(self, request):
+    return {'change': False, 'add': False, 'delete': False}
 
 class DateDeltaFilterAdmin(ChannelModelAdmin):
   fields = ["operator", "days", "weeks", "months", "years"]
-  list_display = []
-  search_fields = []
+
+  def get_model_perms(self, request):
+    return {'change': False, 'add': False, 'delete': False}
 
 admin_site.register(CategoryFilter, CategoryFilterAdmin)
 admin_site.register(DateDeltaFilter, DateDeltaFilterAdmin)
