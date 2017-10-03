@@ -8,6 +8,7 @@ import ovp.apps.projects.urls
 import ovp.apps.organizations.urls
 import ovp.apps.search.urls
 import ovp.apps.faq.urls
+import ovp.apps.catalogue.urls
 
 urlpatterns = [
   # Admin
@@ -35,5 +36,8 @@ urlpatterns = [
 
   # FAQ
   url(r'^', include(ovp.apps.faq.urls)),
+
+  # Catalogue
+  url(r'^', include(ovp.apps.catalogue.urls)),
 ]
 
