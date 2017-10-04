@@ -21,6 +21,7 @@ class Project(ChannelRelationship):
   """
   image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
   address = models.OneToOneField('core.GoogleAddress', blank=True, null=True, verbose_name=_('address'), db_constraint=False)
+  categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)
   skills = models.ManyToManyField('core.Skill', verbose_name=_('skills'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'))
   commentaries = models.ManyToManyField('core.Commentary', verbose_name=_('commentaries'))
