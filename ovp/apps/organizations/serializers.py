@@ -5,7 +5,7 @@ from ovp.apps.uploads.serializers import UploadedImageSerializer
 from ovp.apps.users.models.user import User
 
 from ovp.apps.core.models import Cause
-from ovp.apps.core.serializers import GoogleAddressSerializer, GoogleAddressCityStateSerializer
+from ovp.apps.core.serializers import GoogleAddressSerializer, GoogleAddressCityStateSerializer, GoogleAddressLatLngSerializer
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
 
 from ovp.apps.organizations import models
@@ -93,7 +93,7 @@ class OrganizationSearchSerializer(ChannelRelationshipSerializer):
     fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'is_bookmarked']
 
 class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
-  address = GoogleAddressSerializer()
+  address = GoogleAddressLatLngSerializer()
   image = UploadedImageSerializer()
   cover = UploadedImageSerializer()
   causes = CauseSerializer(many=True)
@@ -126,3 +126,9 @@ class MemberRemoveSerializer(serializers.Serializer):
 
   class Meta:
     fields = ['email']
+
+class OrganizationOwnerRetrieveSerializer(ChannelRelationshipSerializer):
+  image = UploadedImageSerializer()
+  class Meta:
+    model = models.Organization
+    fields = ['slug', 'name', 'details', 'description', 'image']

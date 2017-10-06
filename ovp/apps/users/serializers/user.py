@@ -9,6 +9,7 @@ from ovp.apps.users.serializers.profile import get_profile_serializers
 from ovp.apps.users.serializers.profile import ProfileSearchSerializer
 from ovp.apps.users.validators import PasswordReuse
 from ovp.apps.users.decorators import expired_password
+from ovp.apps.organizations.serializers import OrganizationSearchSerializer, OrganizationOwnerRetrieveSerializer
 
 from ovp.apps.projects.serializers.apply_user import ApplyUserRetrieveSerializer
 from ovp.apps.projects import models as model_project
@@ -127,10 +128,11 @@ class UserUpdateSerializer(UserCreateSerializer):
 class CurrentUserSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
+  organization_owner = OrganizationOwnerRetrieveSerializer(many=True)
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'phone', 'avatar', 'email', 'locale', 'profile', 'slug', 'public']
+    fields = ['uuid', 'name', 'phone', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organization_owner']
 
   @expired_password
   def to_representation(self, *args, **kwargs):
