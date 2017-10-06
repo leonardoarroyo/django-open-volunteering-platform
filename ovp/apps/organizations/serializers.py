@@ -126,3 +126,9 @@ class MemberRemoveSerializer(serializers.Serializer):
 
   class Meta:
     fields = ['email']
+
+class OrganizationOwnerRetrieveSerializer(ChannelRelationshipSerializer):
+  image = UploadedImageSerializer()
+  class Meta:
+    model = models.Organization
+    fields = ['slug', 'name', 'details', 'description', 'image']

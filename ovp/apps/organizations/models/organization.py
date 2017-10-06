@@ -18,7 +18,7 @@ ORGANIZATION_TYPES = (
 
 class Organization(ChannelRelationship):
   # Relationships
-  owner = models.ForeignKey('users.User', verbose_name=_('owner'))
+  owner = models.ForeignKey('users.User', verbose_name=_('owner'), related_name="organization_owner")
   address = models.OneToOneField('core.GoogleAddress', blank=True, null=True, verbose_name=_('address'), db_constraint=False)
   image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
   cover = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, related_name="+", verbose_name=_('cover'))
