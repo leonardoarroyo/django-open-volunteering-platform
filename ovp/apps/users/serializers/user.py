@@ -128,11 +128,11 @@ class UserUpdateSerializer(UserCreateSerializer):
 class CurrentUserSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
-  organization_owner = OrganizationOwnerRetrieveSerializer(many=True)
+  organizations = OrganizationOwnerRetrieveSerializer(many=True)
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'phone', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organization_owner']
+    fields = ['uuid', 'name', 'phone', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations']
 
   @expired_password
   def to_representation(self, *args, **kwargs):
