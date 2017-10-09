@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from django.template.defaultfilters import slugify
+
+from ovp.apps.core.helpers import generate_slug
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
@@ -81,7 +82,7 @@ class Organization(ChannelRelationship):
         self.deleted_date = timezone.now()
     else:
       # Organization being created
-      self.slug = self.generate_slug()
+      self.slug = generate_slug(kwargs.get("object_channel", None), Organization, self.name)
       creating = True
 
     # If there is no description, take 100 chars from the details
@@ -101,20 +102,6 @@ class Organization(ChannelRelationship):
         pass
 
     return obj
-
-  def generate_slug(self):
-    if self.name:
-      slug = slugify(self.name)[0:99]
-      append = ''
-      i = 0
-
-      query = Organization.objects.filter(slug=slug + append)
-      while query.count() > 0:
-        i += 1
-        append = '-' + str(i)
-        query = Organization.objects.filter(slug=slug + append)
-      return slug + append
-    return None
 
   def is_bookmarked(self, user):
     return self.bookmarks.filter(user=user).count() > 0

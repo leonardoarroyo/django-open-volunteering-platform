@@ -94,12 +94,6 @@ class ProjectModelTestCase(TestCase):
     project = Project.objects.create(name="test slug", details="abc", owner=user, object_channel="default")
     self.assertTrue(project.slug == "test-slug-1")
 
-  def test_slug_is_not_generated_without_name(self):
-    """ Assert that slug is not generated without name """
-    user = User.objects.create_user(email="test_slug@test.com", password="test_slug_test", object_channel="default")
-    project = Project(details="abc", owner=user)
-    self.assertTrue(project.generate_slug(channel="default") == None)
-
 
 
 class VolunteerRoleModelTestCase(TestCase):

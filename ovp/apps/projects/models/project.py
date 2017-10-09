@@ -1,10 +1,11 @@
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django.template.defaultfilters import slugify
 from django.db.models import Sum
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+
+from ovp.apps.core.helpers import generate_slug
 
 from ovp.apps.projects import emails
 from ovp.apps.projects.models.apply import Apply
@@ -100,7 +101,7 @@ class Project(ChannelRelationship):
         self.deleted_date = timezone.now()
     else:
       # Project being created
-      self.slug = self.generate_slug(kwargs.get("object_channel", None))
+      self.slug = generate_slug(kwargs.get("object_channel", None), Project, self.name)
       creating = True
 
     # If there is no description, take 100 chars from the details
@@ -122,20 +123,6 @@ class Project(ChannelRelationship):
         pass
 
     return obj
-
-  def generate_slug(self, channel):
-    if self.name:
-      slug = slugify(self.name)[0:99]
-      append = ''
-      i = 0
-
-      query = Project.objects.filter(slug=slug + append, channel__slug=channel)
-      while query.count() > 0:
-        i += 1
-        append = '-' + str(i)
-        query = Project.objects.filter(slug=slug + append, channel__slug=channel)
-      return slug + append
-    return None
 
   def active_apply_set(self):
     return self.apply_set.filter(canceled=False)

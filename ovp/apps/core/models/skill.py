@@ -1,5 +1,7 @@
 import vinaigrette
 
+from ovp.apps.core.helpers import generate_slug
+
 from ovp.apps.channels.models import Channel
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
@@ -13,13 +15,19 @@ skills = ['Arts/Handcrafting', 'Communication', 'Dance/Music', 'Law', 'Education
 
 class Skill(ChannelRelationship):
   name = models.CharField(_('name'), max_length=100)
-
-  def __str__(self):
-    return self.name
+  slug = models.SlugField('slug', max_length=100, blank=True, null=True)
 
   class Meta:
     app_label = 'core'
     verbose_name = _('skill')
+
+  def __str__(self):
+    return self.name
+
+  def save(self, *args, **kwargs):
+    if not self.pk:
+      self.slug = generate_slug(kwargs.get("object_channel", None), Skill, self.name)
+    super(Skill, self).save(*args, **kwargs)
 
 @receiver(post_save, sender=Channel)
 def create_default_skills(sender, instance, **kwargs):

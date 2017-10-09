@@ -78,9 +78,3 @@ class OrganizationModelTestCase(TestCase):
     organization = Organization(name="test organization", details="abc", owner=self.user, type=0)
     organization.save(object_channel="default")
     self.assertTrue(organization.slug == "test-organization-1")
-
-
-  def test_slug_is_not_generated_without_name(self):
-    """ Assert that slug is not generated without name """
-    organization = Organization()
-    self.assertTrue(organization.generate_slug() == None)
