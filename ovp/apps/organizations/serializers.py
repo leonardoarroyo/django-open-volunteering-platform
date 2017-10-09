@@ -24,6 +24,7 @@ from rest_framework.utils import model_meta
 class OrganizationCreateSerializer(ChannelRelationshipSerializer):
   address = GoogleAddressSerializer(required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
+  image = UploadedImageSerializer()
 
   class Meta:
     model = models.Organization
