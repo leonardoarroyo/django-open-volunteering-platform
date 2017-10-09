@@ -27,7 +27,7 @@ class Cause(ChannelRelationship):
 
   def save(self, *args, **kwargs):
     if not self.pk:
-      self.slug = generate_slug(kwargs.get("object_channel", None), Cause, skill.name)
+      self.slug = generate_slug(kwargs.get("object_channel", None), Cause, self.name)
     super(Cause, self).save(*args, **kwargs)
 
 @receiver(post_save, sender=Channel)

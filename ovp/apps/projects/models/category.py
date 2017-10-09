@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.template.defaultfilters import slugify
+
+from ovp.apps.core.helpers import generate_slug
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
@@ -15,21 +16,8 @@ class Category(ChannelRelationship):
     return self.name
 
   def save(self, *args, **kwargs):
-    self.slug = self.generate_slug()
-
+    if not self.pk:
+      self.slug = generate_slug(kwargs.get("object_channel", None), Category, self.name)
+    else:
+      self.slug = generate_slug(self.channel.slug, Category, self.name)
     return super(Category, self).save(*args, **kwargs)
-
-  def generate_slug(self):
-    if self.name:
-      slug = slugify(self.name)[0:99]
-      append = ''
-      i = 0
-
-      query = Category.objects.filter(slug=slug + append)
-      while query.count() > 0:
-        i += 1
-        append = '-' + str(i)
-        query = Category.objects.filter(slug=slug + append)
-      return slug + append
-
-    return None
