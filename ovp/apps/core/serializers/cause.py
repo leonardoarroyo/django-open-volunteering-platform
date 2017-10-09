@@ -7,12 +7,12 @@ from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 class FullCauseSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
   class Meta:
-    fields = ['id', 'name', 'image']
+    fields = ['id', 'name', 'slug', 'image']
     model = models.Cause
 
 class CauseSerializer(ChannelRelationshipSerializer):
 	class Meta:
-		fields = ['id', 'name']
+		fields = ['id', 'name', 'slug']
 		model = models.Cause
 
 class CauseAssociationSerializer(ChannelRelationshipSerializer):

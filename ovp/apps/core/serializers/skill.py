@@ -6,7 +6,7 @@ from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
 class SkillSerializer(ChannelRelationshipSerializer):
   class Meta:
-    fields = ['id', 'name']
+    fields = ['id', 'name', 'slug']
     model = models.Skill
 
 class SkillAssociationSerializer(ChannelRelationshipSerializer):

@@ -1,5 +1,7 @@
 import vinaigrette
 
+from ovp.apps.core.helpers import generate_slug
+
 from ovp.apps.channels.models import Channel
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
@@ -14,13 +16,19 @@ causes = ['Professional Training', 'Fight Poverty', 'Conscious consumption', 'Cu
 class Cause(ChannelRelationship):
   name = models.CharField('name', max_length=100)
   image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
-
-  def __str__(self):
-    return self.name
+  slug = models.SlugField('slug', max_length=100, blank=True, null=True)
 
   class Meta:
     app_label = 'core'
     verbose_name = _('cause')
+
+  def __str__(self):
+    return self.name
+
+  def save(self, *args, **kwargs):
+    if not self.pk:
+      self.slug = generate_slug(kwargs.get("object_channel", None), Cause, skill.name)
+    super(Cause, self).save(*args, **kwargs)
 
 @receiver(post_save, sender=Channel)
 def create_default_skills(sender, instance, **kwargs):

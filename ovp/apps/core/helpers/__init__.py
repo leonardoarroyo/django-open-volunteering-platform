@@ -2,6 +2,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.template.loader import get_template
 from django.template.exceptions import TemplateDoesNotExist
+from django.template.defaultfilters import slugify
 import importlib
 
 from ovp.apps.channels.cache import get_channel_setting
@@ -38,3 +39,17 @@ def get_email_subject(channel, email, default):
     title = default
 
   return _(title)
+
+def generate_slug(channel, model, name):
+  if name:
+    slug = slugify(name)[0:99]
+    append = ''
+    i = 0
+
+    query = model.objects.filter(slug=slug + append, channel__slug=channel)
+    while query.count() > 0:
+      i += 1
+      append = '-' + str(i)
+      query = model.objects.filter(slug=slug + append, channel__slug=channel)
+    return slug + append
+  return None
