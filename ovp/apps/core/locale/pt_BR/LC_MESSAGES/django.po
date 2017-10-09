@@ -71,3 +71,76 @@ msgstr "Inglês"
 #: django-ovp-core/ovp_core/tests/runtests.py:81
 msgid "Portuguese"
 msgstr "Português"
+
+#: Skills
+msgid "Arts/Handcrafting"
+msgstr "Artes/Trabalho manual"
+
+msgid "Communication"
+msgstr "Comunicação"
+
+msgid "Dance/Music"
+msgstr "Dança/Música"
+
+msgid "Law"
+msgstr "Direito"
+
+msgid "Education"
+msgstr "Educação"
+
+msgid "Sports"
+msgstr "Esportes"
+
+msgid "Cooking"
+msgstr "Cozinha"
+
+msgid "Management"
+msgstr "Gerenciamento"
+
+msgid "Idioms"
+msgstr "Idiomas"
+
+msgid "Computers/Technology"
+msgstr "Computadores/Tecnologia"
+
+msgid "Health"
+msgstr "Saúde"
+
+msgid "Other"
+msgstr "Outro"
+
+#: Causes
+msgid "Professional Training"
+msgstr "Treinamento Profissional"
+
+msgid "Fight Poverty"
+msgstr "Combate à Pobreza"
+
+msgid "Conscious consumption"
+msgstr "Consumo Consciente"
+
+msgid "Culture, Sport and Art"
+msgstr "Cultura, Esportes e Arte"
+
+msgid "Human Rights"
+msgstr "Direitos Humanos"
+
+msgid "Youth"
+msgstr "Jovens"
+
+msgid "Elders"
+msgstr "Idosos"
+
+msgid "Environment"
+msgstr "Meio Ambiente"
+
+msgid "Citizen Participation"
+msgstr "Participação Cidadã"
+
+msgid "Animal Protection"
+msgstr "Proteção Animal"
+
+msgid "People with disabilities"
+msgstr "Pessoas com Deficiência"
+
+
