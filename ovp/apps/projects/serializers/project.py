@@ -1,3 +1,5 @@
+from ovp.apps.uploads.serializers import UploadedImageSerializer
+
 from ovp.apps.projects import models
 from ovp.apps.projects.decorators import hide_address, add_current_user_is_applied_representation
 from ovp.apps.projects.serializers.disponibility import DisponibilitySerializer, add_disponibility_representation
@@ -45,10 +47,12 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   roles = VolunteerRoleSerializer(many=True, required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
   skills = SkillAssociationSerializer(many=True, required=False)
+  image = UploadedImageSerializer(required=False, read_only=True)
+  image_id = serializers.IntegerField(required=False)
 
   class Meta:
     model = models.Project
-    fields = ['id', 'image', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills']
+    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills']
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date']
 
   def validate(self, data):
