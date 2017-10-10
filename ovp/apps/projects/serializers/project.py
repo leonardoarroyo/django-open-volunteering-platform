@@ -16,6 +16,7 @@ from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSer
 from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
 
 from ovp.apps.organizations.serializers import OrganizationSearchSerializer
+from ovp.apps.organizations.serializers import OrganizationRetrieveSerializer
 from ovp.apps.organizations.models import Organization
 
 from ovp.apps.uploads.serializers import UploadedImageSerializer
@@ -47,16 +48,18 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   roles = VolunteerRoleSerializer(many=True, required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
   skills = SkillAssociationSerializer(many=True, required=False)
-  image = UploadedImageSerializer(required=False, read_only=True)
+  image = UploadedImageSerializer(read_only=True)
   image_id = serializers.IntegerField(required=False)
+  organization = OrganizationRetrieveSerializer(read_only=True)
+  organization_id = serializers.IntegerField(required=False)
 
   class Meta:
     model = models.Project
-    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills']
+    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills']
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date']
 
   def validate(self, data):
-    required_organization(self.context["request"], data.get("organization", None))
+    required_organization(self.context["request"], data.get("organization_id", None))
     return super(ProjectCreateUpdateSerializer, self).validate(data)
 
   def create(self, validated_data):

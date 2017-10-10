@@ -42,7 +42,7 @@ class ChannelPermissionsTestCase(TestCase):
   def setUp(self):
     self.user = User.objects.create(email="sample_user@gmail.com", password="sample_user", object_channel="default")
     self.organization = Organization.objects.create(name="sample organization", owner=self.user, object_channel="default")
-    self.data = {"name": "Valid Name", "details": "test details", "address": {"typed_address": "r. tecainda, 81, sao paulo"}, "disponibility": {"type": "work", "work": {"description": "abc"}}, "owner": self.user.pk, "organization": self.organization.pk}
+    self.data = {"name": "Valid Name", "details": "test details", "address": {"typed_address": "r. tecainda, 81, sao paulo"}, "disponibility": {"type": "work", "work": {"description": "abc"}}, "owner": self.user.pk, "organization_id": self.organization.pk}
 
     self.client = APIClient()
     Channel(name="Test", slug="test-channel").save()
