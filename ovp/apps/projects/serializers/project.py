@@ -212,7 +212,7 @@ class CompactOrganizationSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = Organization
-    fields = ['name', 'address']
+    fields = ['name', 'address', 'slug']
 
 class ProjectOnOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
