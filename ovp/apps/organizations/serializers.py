@@ -132,4 +132,4 @@ class OrganizationOwnerRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
   class Meta:
     model = models.Organization
-    fields = ['slug', 'name', 'description', 'image']
+    fields = ['slug', 'name', 'description', 'image', 'id']
