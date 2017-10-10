@@ -4,9 +4,9 @@ from ovp.apps.projects.models import VolunteerRole
 class VolunteerRoleSerializer(ChannelRelationshipSerializer):
   class Meta:
     model = VolunteerRole
-    fields = ['name', 'prerequisites', 'details', 'vacancies', 'applied_count']
+    fields = ['name', 'prerequisites', 'details', 'vacancies', 'applied_count', 'id']
 
 class VolunteerRoleApplySerializer(ChannelRelationshipSerializer):
   class Meta:
     model = VolunteerRole
-    fields = ['name', 'details']
+    fields = ['name', 'details', 'id']
