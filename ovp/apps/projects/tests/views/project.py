@@ -165,10 +165,10 @@ class ProjectWithOrganizationTestCase(TestCase):
 
   def test_organization_is_int(self):
     """Test organization field must be int"""
-    self.data['organization'] = 'str'
+    self.data['organization_id'] = 'str'
 
     response = self.client.post(reverse("project-list"), self.data, format="json")
-    self.assertTrue(response.data["organization"] == ["Incorrect type. Expected pk value, received str."])
+    self.assertTrue(response.data["organization_id"] == ["A valid integer is required."])
     self.assertTrue(response.status_code == 400)
 
   def test_user_is_owner_or_member(self):
@@ -176,7 +176,7 @@ class ProjectWithOrganizationTestCase(TestCase):
     wrong_org = Organization(name="test", type=0, owner=self.second_user)
     wrong_org.save(object_channel="default")
 
-    self.data['organization'] = wrong_org.pk
+    self.data['organization_id'] = wrong_org.pk
     response = self.client.post(reverse("project-list"), self.data, format="json")
     self.assertTrue(response.status_code == 403)
 
@@ -188,7 +188,7 @@ class ProjectWithOrganizationTestCase(TestCase):
     wrong_org = Organization(name="test", type=0, owner=self.second_user)
     wrong_org.save(object_channel="default")
 
-    self.data['organization'] = wrong_org.pk
+    self.data['organization_id'] = wrong_org.pk
     response = self.client.post(reverse("project-list"), self.data, format="json")
     self.assertTrue(response.status_code == 201)
 
@@ -198,7 +198,7 @@ class ProjectWithOrganizationTestCase(TestCase):
     organization.save(object_channel="default")
     organization.members.add(self.second_user)
 
-    self.data['organization'] = organization.pk
+    self.data['organization_id'] = organization.pk
     response = self.client.post(reverse("project-list"), self.data, format="json")
     self.assertTrue(response.status_code == 201)
 
@@ -212,7 +212,7 @@ class ProjectWithOrganizationTestCase(TestCase):
     org.save(object_channel="default")
     org.members.add(self.second_user)
 
-    self.data['organization'] = org.pk
+    self.data['organization_id'] = org.pk
     self.data['hidden_address'] = True
     response = self.client.post(reverse("project-list"), self.data, format="json")
 

@@ -15,7 +15,7 @@ class ProjectCreateOwnsOrIsOrganizationMember(permissions.BasePermission):
   """ Permission that only allows an organization owner or member to create
       a project for the given organization. """
   def has_permission(self, request, view):
-    organization_pk = request.data.get('organization', None)
+    organization_pk = request.data.get('organization_id', None)
 
     if not organization_pk:
       return True
