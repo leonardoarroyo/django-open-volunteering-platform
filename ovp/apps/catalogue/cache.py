@@ -21,7 +21,7 @@ def get_catalogue(channel, slug):
 
   if not result:
     try:
-      catalogue = Catalogue.objects.prefetch_related("sections", "sections__filters").get(slug=slug, channel__name=channel)
+      catalogue = Catalogue.objects.prefetch_related("sections", "sections__filters").get(slug=slug, channel__slug=channel)
     except Catalogue.DoesNotExist:
       result = None
     else:
