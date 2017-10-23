@@ -13,3 +13,4 @@ setup auth backends
 setup cache!
 set allowed_hosts
 setup cors header allowed
+setup jet dashboard settings
