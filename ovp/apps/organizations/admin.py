@@ -16,7 +16,7 @@ class OrganizationAdmin(ChannelModelAdmin, CountryFilterMixin):
     ('id', 'highlighted'), ('name', 'slug'),
     ('owner'), #- 'type'
 
-    ('published', 'deleted'),
+    ('published', 'deleted', 'verified'),
     ('published_date', 'deleted_date'),
 
     'address',
