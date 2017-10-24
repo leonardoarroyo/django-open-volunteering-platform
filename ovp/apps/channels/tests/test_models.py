@@ -4,8 +4,6 @@ from ovp.apps.channels.models import Channel
 from ovp.apps.channels.exceptions import UnexpectedChannelAssociationError
 from ovp.apps.channels.exceptions import NoChannelSupplied
 
-from ovp.apps.projects.models import Project
-
 from ovp.apps.users.models import User
 
 class ChannelTestCase(TestCase):

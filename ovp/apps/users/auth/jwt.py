@@ -12,57 +12,56 @@ jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 class ChannelJSONWebTokenSerializer(JSONWebTokenSerializer):
+  """
+  Serializer class used to validate a username and password.
+
+  'username' is identified by the custom UserModel.USERNAME_FIELD.
+
+  Returns a JSON Web Token that can be used to authenticate later calls.
+  """
+  def __init__(self, *args, **kwargs):
     """
-    Serializer class used to validate a username and password.
-
-    'username' is identified by the custom UserModel.USERNAME_FIELD.
-
-    Returns a JSON Web Token that can be used to authenticate later calls.
+    Dynamically add the USERNAME_FIELD to self.fields.
     """
-    def __init__(self, *args, **kwargs):
-      """
-      Dynamically add the USERNAME_FIELD to self.fields.
-      """
-      super(ChannelJSONWebTokenSerializer, self).__init__(*args, **kwargs)
-      #self.fields['channel'] = serializers.CharField(write_only=True)
+    super(ChannelJSONWebTokenSerializer, self).__init__(*args, **kwargs)
+    #self.fields['channel'] = serializers.CharField(write_only=True)
 
-    def validate(self, attrs):
-      credentials = {
-        self.username_field: attrs.get(self.username_field),
-        'password': attrs.get('password'),
-        'channel': self.context["request"].channel
-      }
+  def validate(self, attrs):
+    credentials = {
+      self.username_field: attrs.get(self.username_field),
+      'password': attrs.get('password'),
+      'channel': self.context["request"].channel
+    }
 
-      if all(credentials.values()):
-        user = authenticate(**credentials)
+    if all(credentials.values()):
+      user = authenticate(**credentials)
 
-        if user:
-          if not user.is_active:
-            msg = _('User account is disabled.')
-            raise serializers.ValidationError(msg)
-
-          payload = jwt_payload_handler(user)
-
-          return {
-            'token': jwt_encode_handler(payload),
-            'user': user
-          }
-        else:
-          msg = _('Unable to log in with provided credentials.')
+      if user:
+        if not user.is_active:
+          msg = _('User account is disabled.')
           raise serializers.ValidationError(msg)
-      else:
-        msg = _('Must include "{username_field}" and "password".')
-        msg = msg.format(username_field=self.username_field)
-        raise serializers.ValidationError(msg)
 
+        payload = jwt_payload_handler(user)
+
+        return {
+          'token': jwt_encode_handler(payload),
+          'user': user
+        }
+      else:
+        msg = _('Unable to log in with provided credentials.')
+        raise serializers.ValidationError(msg)
+    else:
+      msg = _('Must include "{username_field}" and "password".')
+      msg = msg.format(username_field=self.username_field)
+      raise serializers.ValidationError(msg)
 
 @ChannelViewSet
 class ObtainJSONWebToken(JSONWebTokenAPIView):
-    """
-    API View that receives a POST with a user's username and password.
+  """
+  API View that receives a POST with a user's username and password.
 
-    Returns a JSON Web Token that can be used for authenticated requests.
-    """
-    serializer_class = ChannelJSONWebTokenSerializer
+  Returns a JSON Web Token that can be used for authenticated requests.
+  """
+  serializer_class = ChannelJSONWebTokenSerializer
 
 obtain_jwt_token = ObtainJSONWebToken.as_view()
