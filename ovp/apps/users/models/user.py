@@ -63,6 +63,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
   is_superuser = models.BooleanField(_('Superuser'), default=False)
   is_active = models.BooleanField(_('Active'), default=True)
   is_email_verified = models.BooleanField(_('Email verified'), default=False)
+  is_subscribed_to_newsletter = models.BooleanField(_('Subscribed to newsletter'), default=True)
 
   # Meta
   joined_date = models.DateTimeField(_('Joined date'), auto_now_add=True, null=True, blank=True)

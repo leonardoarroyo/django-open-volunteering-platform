@@ -29,7 +29,7 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'email', 'password', 'phone', 'avatar', 'locale', 'profile', 'public', 'slug']
+    fields = ['uuid', 'name', 'email', 'password', 'phone', 'avatar', 'locale', 'profile', 'public', 'slug', 'is_subscribed_to_newsletter']
     extra_kwargs = {'password': {'write_only': True}}
 
   def validate(self, data):
@@ -74,7 +74,7 @@ class UserUpdateSerializer(UserCreateSerializer):
   class Meta:
     model = models.User
     permission_classes = (permissions.IsAuthenticated,)
-    fields = ['name', 'phone', 'password', 'avatar', 'current_password', 'locale', 'profile', 'public']
+    fields = ['name', 'phone', 'password', 'avatar', 'current_password', 'locale', 'profile', 'public', 'is_subscribed_to_newsletter']
     extra_kwargs = {'password': {'write_only': True}}
 
 
@@ -132,7 +132,7 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'phone', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations']
+    fields = ['uuid', 'name', 'phone', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'is_subscribed_to_newsletter' ]
 
   @expired_password
   def to_representation(self, *args, **kwargs):
