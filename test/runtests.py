@@ -56,7 +56,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
     'PAGINATE_BY_PARAM': 'page_size',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'ovp.apps.users.auth.jwt_authenticator.ChannelJSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
