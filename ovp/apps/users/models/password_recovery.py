@@ -15,11 +15,7 @@ class PasswordRecoveryToken(ChannelRelationship, models.Model):
   def save(self, *args, **kwargs):
     if not self.pk:
       self.token = uuid.uuid4()
-
-      if self.user.exceeded_login_attempts:
-        self.user.mailing().sendExceededLoginAttempts({'token': self})
-      else:
-        self.user.mailing().sendRecoveryToken({'token': self})
+      self.user.mailing().sendRecoveryToken({'token': self})
 
     super(PasswordRecoveryToken, self).save(*args, **kwargs)
 
