@@ -49,22 +49,22 @@ class UserManager(ChannelRelationshipManager, BaseUserManager):
 class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
   uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
   email = models.EmailField(_('Email'), max_length=190)
-  name = models.CharField(_('Name'), max_length=200, null=False, blank=False)
-  slug = models.SlugField(_('Slug'), max_length=100, null=True, blank=True)
-  phone = models.CharField(_('Phone'), max_length=30, null=True, blank=True)
-  avatar = models.ForeignKey('uploads.UploadedImage', blank=False, null=True, related_name='avatar_user', verbose_name=_('avatar'))
-  public = models.BooleanField(_('Public'), default=True)
-  login_attempts = models.IntegerField(default=0)
-  last_login_attempt = models.DateTimeField(auto_now=True, null=True, blank=True)
-  exceeded_login_attempts = models.BooleanField(default=False)
-
   locale = models.CharField(_('Locale'), max_length=8, null=False, blank=True, default='en')
 
+  # User information
+  name = models.CharField(_('Name'), max_length=200, null=False, blank=False)
+  slug = models.SlugField(_('Slug'), max_length=100, null=True, blank=True)
+  avatar = models.ForeignKey('uploads.UploadedImage', blank=False, null=True, related_name='avatar_user', verbose_name=_('avatar'))
+  phone = models.CharField(_('Phone'), max_length=30, null=True, blank=True)
+
+  # Flags
+  public = models.BooleanField(_('Public'), default=True)
   is_staff = models.BooleanField(_('Staff'), default=False)
   is_superuser = models.BooleanField(_('Superuser'), default=False)
   is_active = models.BooleanField(_('Active'), default=True)
   is_email_verified = models.BooleanField(_('Email verified'), default=False)
 
+  # Meta
   joined_date = models.DateTimeField(_('Joined date'), auto_now_add=True, null=True, blank=True)
   modified_date = models.DateTimeField(_('Modified date'), auto_now=True, null=True, blank=True)
 
