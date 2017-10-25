@@ -50,6 +50,7 @@ def record_lead(request):
     email=request.data.get('email', None),
     phone=request.data.get('phone', None),
     country=request.data.get('country', None),
+    city=request.data.get('city', None),
     object_channel=request.channel
   )
   return response.Response({"success": True})
