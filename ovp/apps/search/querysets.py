@@ -16,7 +16,7 @@ def get_project_queryset(request=None):
   queryset = Project.objects \
           .prefetch_related('skills', 'causes', 'categories', 'job__dates') \
           .select_related('address', 'owner', 'work', 'job') \
-          .filter(deleted=False, closed=False) \
+          .filter(deleted=False) \
           .order_by('-pk')
   queryset = annotate_bookmark(queryset, request=request)
   return queryset

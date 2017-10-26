@@ -60,7 +60,7 @@ def fetch_catalogue(catalogue_dict, serializer=None, request=None, context=None)
   by passing a serializer argument.
   """
   # Base queryset
-  base_queryset = get_project_queryset(request=request)
+  base_queryset = get_project_queryset(request=request).filter(closed=False)
 
   for i, section in enumerate(catalogue_dict["sections"]):
     qs = base_queryset

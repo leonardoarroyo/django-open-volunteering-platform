@@ -88,6 +88,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     highlighted = (params.get('highlighted') == 'true')
     name = params.get('name', None)
     published = params.get('published', 'true')
+    closed = params.get('closed', 'false')
     organization = params.get('organization', None)
     not_organization = params.get('not_organization', None)
     disponibility = params.get('disponibility', None)
@@ -97,6 +98,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = queryset.filter(highlighted=1) if highlighted else queryset
     queryset = queryset.filter(content=query) if query else queryset
     queryset = filters.by_published(queryset, published)
+    queryset = filters.by_closed(queryset, closed)
     queryset = filters.by_address(queryset, address, project=True)
     queryset = filters.by_name(queryset, name)
     queryset = filters.by_skills(queryset, skill)
