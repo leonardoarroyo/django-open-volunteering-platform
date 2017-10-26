@@ -35,11 +35,13 @@ def create_sample_projects():
   address3 = GoogleAddress(typed_address="New york, New york - United States")
   address4 = GoogleAddress(typed_address="New york, New york - United States")
   address5 = GoogleAddress(typed_address="New york, New york - United States")
+  address6 = GoogleAddress(typed_address="New york, New york - United States")
   address1.save(object_channel="default")
   address2.save(object_channel="default")
   address3.save(object_channel="default")
   address4.save(object_channel="default")
-  address5.save(object_channel="test-channel")
+  address5.save(object_channel="default")
+  address6.save(object_channel="test-channel")
 
   project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=user1, address=address1, published=True)
   project.save(object_channel="default")
@@ -69,7 +71,10 @@ def create_sample_projects():
   project = Project(name="test project4", slug="test-slug4", details="abc", description="abc", owner=user1, address=address4, published=False)
   project.save(object_channel="default")
 
-  project = Project(name="test project5", slug="test-slug5", details="abc", description="abc", owner=user2, address=address5, published=True)
+  project = Project(name="test project5", slug="test-slug5", details="abc", description="abc", owner=user1, address=address5, published=True, closed=True)
+  project.save(object_channel="default")
+
+  project = Project(name="test project6", slug="test-slug6", details="abc", description="abc", owner=user2, address=address6, published=True)
   project.save(object_channel="test-channel")
 
 def create_sample_organizations():
@@ -205,6 +210,19 @@ class ProjectSearchTestCase(TestCase):
     self.assertEqual(len(response.data["results"]), 1)
 
     response = self.client.get(reverse("search-projects-list") + "?published=both", format="json")
+    self.assertEqual(len(response.data["results"]), 4)
+
+  def test_closed_filter(self):
+    """
+    Test searching with closed filter == "true", "false" and "both" return correct projects
+    """
+    response = self.client.get(reverse("search-projects-list") + "?closed=true", format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+
+    response = self.client.get(reverse("search-projects-list") + "?closed=false", format="json")
+    self.assertEqual(len(response.data["results"]), 3)
+
+    response = self.client.get(reverse("search-projects-list") + "?closed=both", format="json")
     self.assertEqual(len(response.data["results"]), 4)
 
   def test_name_filter(self):

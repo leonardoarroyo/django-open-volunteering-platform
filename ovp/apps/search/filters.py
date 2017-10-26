@@ -102,7 +102,7 @@ def by_disponibility(queryset, disponibility_string=None):
         q_obj.add(SQ(work=True), operator)
       elif len(d) > 0 and d == 'remotely':
         q_obj.add(SQ(can_be_done_remotely=True), operator)
-    
+
     queryset = queryset.filter(q_obj)
   return queryset
 
@@ -113,7 +113,7 @@ def by_date(queryset, date_string=None):
     q_obj = SQ()
     date = datetime.strptime(items[0]+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     q_obj.add(SQ(start_date=date) | SQ(end_date=date), operator)
-    
+
     queryset = queryset.filter(q_obj)
 
   return queryset
@@ -150,6 +150,15 @@ def by_published(queryset, published_string='true'):
   elif published_string == 'false':
     queryset = queryset.filter(published=0)
   # Any other value will return both published and unpublished
+  return queryset
+
+def by_closed(queryset, closed_string='true'):
+  """ Filter queryset by closed status """
+  if closed_string == 'true':
+    queryset = queryset.filter(closed=1)
+  elif closed_string == 'false':
+    queryset = queryset.filter(closed=0)
+  # Any other value will return both closed and open
   return queryset
 
 
