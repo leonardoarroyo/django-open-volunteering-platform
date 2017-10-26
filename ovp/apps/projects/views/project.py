@@ -74,19 +74,16 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
   def export_applied_users(self, request, *args, **kwargs):
     project = self.get_object()
 
-    if request.user.is_authenticated:
-      applied_users = [EXPORT_APPLIED_USERS_HEADERS]
-      for apply in project.apply_set.all():
-        user = apply.user
-        applied_users.append([
-          apply.username, apply.email, apply.phone,
-          apply.date.strftime('%d/%m/%Y %T'), apply.status,
-          ])
+    applied_users = [EXPORT_APPLIED_USERS_HEADERS]
+    for apply in project.apply_set.all():
+      user = apply.user
+      applied_users.append([
+        apply.username, apply.email, apply.phone,
+        apply.date.strftime('%d/%m/%Y %T'), apply.status,
+        ])
 
-      filename = '{}-applied-users.xls'.format(project.slug)
-      return XLSResponse(applied_users, filename, _('Applied Users'))
-
-    return response.Response({"detail": "you don't have permission to download this file"}, status=403)
+    filename = '{}-applied-users.xls'.format(project.slug)
+    return XLSResponse(applied_users, filename, _('Applied Users'))
 
   @decorators.list_route(['GET'])
   def manageable(self, request, *args, **kwargs):
@@ -127,6 +124,9 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
 
     if self.action in ['bookmark', 'unbookmark', 'bookmarked']:
       self.permission_classes = self.get_bookmark_permissions()
+
+    if self.action == 'export_applied_users':
+      self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
 
     return super(ProjectResourceViewSet, self).get_permissions()
 
