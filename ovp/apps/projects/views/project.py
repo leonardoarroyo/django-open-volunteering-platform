@@ -125,6 +125,9 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     if self.action in ['bookmark', 'unbookmark', 'bookmarked']:
       self.permission_classes = self.get_bookmark_permissions()
 
+    if self.action == 'export_applied_users':
+      self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
+
     return super(ProjectResourceViewSet, self).get_permissions()
 
   def get_serializer_class(self):
