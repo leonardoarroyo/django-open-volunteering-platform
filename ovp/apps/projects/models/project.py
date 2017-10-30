@@ -12,6 +12,8 @@ from ovp.apps.projects.models.apply import Apply
 
 from ovp.apps.channels.models import ChannelRelationship
 
+from ckeditor.fields import RichTextField
+
 import urllib.request as request
 
 import json
@@ -55,7 +57,7 @@ class Project(ChannelRelationship):
   modified_date = models.DateTimeField(_('Modified date'), auto_now=True)
 
   # About
-  details = models.TextField(_('Details'), max_length=3000)
+  details = RichTextField(_('Details'), max_length=3000)
   description = models.TextField(_('Short description'), max_length=160, blank=True, null=True)
 
   def mailing(self, async_mail=None):
