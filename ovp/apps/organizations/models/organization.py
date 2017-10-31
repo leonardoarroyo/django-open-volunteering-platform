@@ -8,6 +8,8 @@ from ovp.apps.channels.models.abstract import ChannelRelationship
 from ovp.apps.organizations.emails import OrganizationMail
 from ovp.apps.organizations.emails import OrganizationAdminMail
 
+from ckeditor.fields import RichTextField
+
 from django.utils.translation import ugettext_lazy as _
 
 ORGANIZATION_TYPES = (
@@ -32,7 +34,7 @@ class Organization(ChannelRelationship):
   website = models.URLField(_('Website'), blank=True, null=True, default=None)
   facebook_page = models.CharField(_('Facebook'), max_length=255, blank=True, null=True, default=None)
   type = models.PositiveSmallIntegerField(_('Type'), choices=ORGANIZATION_TYPES, default=0)
-  details = models.TextField(_('Details'), max_length=3000, blank=True, null=True, default=None)
+  details = RichTextField(_('Details'), max_length=3000, blank=True, null=True, default=None)
   description = models.CharField(_('Short description'), max_length=160, blank=True, null=True)
   hidden_address = models.BooleanField(_('Hidden address'), default=False)
   verified = models.BooleanField(_('verified'), default=False)
