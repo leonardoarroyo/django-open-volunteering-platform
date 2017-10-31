@@ -9,24 +9,25 @@ from ovp.apps.users.models import User
 class UserAdmin(ChannelModelAdmin):
   fields = [
     ('id', 'name', 'email'), 'slug', 'phone',
-    ('is_staff','is_superuser','is_active','is_email_verified','public',)
-    ]
+    ('is_staff','is_superuser','is_active','is_email_verified','public',),
+    'groups'
+  ]
 
   list_display = [
     'id', 'email', 'name', 'last_login', 'is_active', 'is_staff', 'is_email_verified'
-    ]
+  ]
 
   list_filter = [
     'is_active', 'is_staff', 'last_login', 'joined_date'
-    ]
+  ]
 
   list_editable = [
     'is_active', 'is_staff', 'is_email_verified'
-    ]
+  ]
 
   search_fields = [
     'email', 'name'
-    ]
+  ]
 
   readonly_fields = ['id']
   raw_id_fields = []
