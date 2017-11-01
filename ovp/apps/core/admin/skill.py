@@ -12,7 +12,7 @@ class SkillInline(TabularInline):
 
 
 class SkillAdmin(ChannelModelAdmin):
-	fields = ['id', 'name']
+	fields = ['id', 'name', 'slug']
 
 	list_display = ['id', 'name']
 
