@@ -11,7 +11,7 @@ class CauseInline(TabularInline):
 
 
 class CauseAdmin(ChannelModelAdmin):
-	fields = ['id', 'name', 'image']
+	fields = ['id', 'name', 'image', 'slug']
 
 	list_display = ['id', 'name']
 
