@@ -13,7 +13,7 @@ def startup(request):
   """ This view provides initial data to the client, such as available skills and causes """
   with translation.override(translation.get_language_from_request(request)):
     skills = serializers.SkillSerializer(models.Skill.objects.filter(channel__slug=request.channel), many=True)
-    causes = serializers.CauseSerializer(models.Cause.objects.filter(channel__slug=request.channel), many=True)
+    causes = serializers.FullCauseSerializer(models.Cause.objects.filter(channel__slug=request.channel), many=True, context={'request': request})
 
     return response.Response({
       "skills": skills.data,
