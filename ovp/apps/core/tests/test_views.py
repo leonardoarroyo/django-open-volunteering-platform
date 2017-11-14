@@ -11,7 +11,7 @@ from ovp.apps.core import serializers
 class TestStartupView(TestCase):
   def setUp(self):
     self.skills_data = serializers.SkillSerializer(models.Skill.objects.all(), many=True).data
-    self.causes_data = serializers.CauseSerializer(models.Cause.objects.all(), many=True).data
+    self.causes_data = serializers.FullCauseSerializer(models.Cause.objects.all(), many=True).data
 
   def test_returns_startup_data(self):
     """ Test startup route returns skills and causes """
@@ -29,7 +29,7 @@ class TestStartupView(TestCase):
 
     with translation.override('pt-br'):
       skills_data = serializers.SkillSerializer(models.Skill.objects.all(), many=True).data
-      causes_data = serializers.CauseSerializer(models.Cause.objects.all(), many=True).data
+      causes_data = serializers.FullCauseSerializer(models.Cause.objects.all(), many=True).data
       self.assertTrue(response.status_code == 200)
       self.assertTrue(response.data["skills"] == skills_data)
       self.assertTrue(response.data["causes"] == causes_data)
