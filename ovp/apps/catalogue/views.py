@@ -18,6 +18,7 @@ class CatalogueView(generics.GenericAPIView):
     fetched = fetch_catalogue(catalogue,
         serializer=ProjectSearchSerializer,
         request=self.request,
-        context=self.get_serializer_context())
+        context=self.get_serializer_context(),
+        channel=request.channel)
 
     return response.Response(fetched)
