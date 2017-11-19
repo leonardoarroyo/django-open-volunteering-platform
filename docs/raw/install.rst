@@ -14,3 +14,8 @@ setup cache!
 set allowed_hosts
 setup cors header allowed
 setup jet dashboard settings
+
+
+include social oauth apps and create a client
+OR
+set up jwt
