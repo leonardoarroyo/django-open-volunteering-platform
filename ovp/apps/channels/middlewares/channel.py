@@ -1,7 +1,6 @@
 from ovp.apps.channels.cache import get_channel
 
 from rest_framework.request import Request
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 from django.http import JsonResponse
 from django.http import HttpResponse
@@ -12,16 +11,40 @@ from django.contrib.auth.middleware import get_user
 
 import urllib.parse as parse
 
-def get_user_jwt(request):
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+
+def get_user_jwt_or_oauth2(request):
   user = get_user(request)
+
   if user.is_authenticated():
     return user
+
+  # JWT
   try:
-    user_jwt = JSONWebTokenAuthentication().authenticate(Request(request))
-    if user_jwt is not None:
-      return user_jwt[0]
-  except:
+    from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+
+    try:
+      user_jwt = JSONWebTokenAuthentication().authenticate(Request(request))
+      if user_jwt is not None:
+        return user_jwt[0]
+    except:
+      pass
+  except ModuleNotFoundError:
     pass
+
+  # OAuth2
+  try:
+    from oauth2_provider.contrib.rest_framework import OAuth2Authentication
+
+    try:
+      user_o2 = OAuth2Authentication().authenticate(request)
+      if user_o2 is not None:
+        return user_o2[0]
+    except:
+      pass
+  except ModuleNotFoundError:
+    pass
+
   return user
 
 class ChannelRecognizerMiddleware():
@@ -131,7 +154,8 @@ class ChannelProcessorMiddleware():
 
   def _check_api_permissions(self, request):
     # https://github.com/GetBlimp/django-rest-framework-jwt/issues/45
-    user = get_user_jwt(request)
+    import pudb;pudb.set_trace()
+    user = get_user_jwt_or_oauth2(request)
 
     if user.is_authenticated():
       user_channel = user.channel.slug
