@@ -16,3 +16,4 @@ djangorestframework-jwt
 dateutils
 pyexcel_xls
 django-cors-headers
+django-rest-framework-social-oauth2
