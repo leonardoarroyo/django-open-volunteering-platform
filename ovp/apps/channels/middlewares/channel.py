@@ -154,7 +154,6 @@ class ChannelProcessorMiddleware():
 
   def _check_api_permissions(self, request):
     # https://github.com/GetBlimp/django-rest-framework-jwt/issues/45
-    import pudb;pudb.set_trace()
     user = get_user_jwt_or_oauth2(request)
 
     if user.is_authenticated():
