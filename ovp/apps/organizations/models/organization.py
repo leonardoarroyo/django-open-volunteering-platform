@@ -26,7 +26,7 @@ class Organization(ChannelRelationship):
   image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
   cover = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, related_name="+", verbose_name=_('cover'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'), blank=True)
-  members = models.ManyToManyField('users.User', verbose_name=_('members'), related_name="organizations_member")
+  members = models.ManyToManyField('users.User', verbose_name=_('members'), related_name="organizations_member", blank=True)
 
   # Fields
   slug = models.SlugField(_('Slug'), max_length=100, unique=True, blank=True, null=True)
