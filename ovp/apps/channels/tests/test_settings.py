@@ -14,28 +14,29 @@ class ChannelSettingsTestCase(TestCase):
     Channel.objects.create(slug="test-two", name="Test two")
     cache.clear()
 
-  def test_cors(self):
-    ChannelSetting.objects.create(key="CORS_ORIGIN_WHITELIST", value="default.com", object_channel="default")
-    ChannelSetting.objects.create(key="CORS_ORIGIN_WHITELIST", value="www.default.com", object_channel="default")
-    ChannelSetting.objects.create(key="CORS_ORIGIN_WHITELIST", value="test.com", object_channel="test-one")
-
-    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="default", HTTP_ORIGIN="http://default.com")
-    self.assertEqual("http://default.com", response.get("Access-Control-Allow-Origin"))
-
-    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="default", HTTP_ORIGIN="http://www.default.com")
-    self.assertEqual("http://www.default.com", response.get("Access-Control-Allow-Origin"))
-
-    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="default", HTTP_ORIGIN="http://invalid.com")
-    self.assertEqual(None, response.get("Access-Control-Allow-Origin", None))
-
-    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="default", HTTP_ORIGIN="http://test.com")
-    self.assertEqual(None, response.get("Access-Control-Allow-Origin", None))
-
-    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="test-one", HTTP_ORIGIN="http://test.com")
-    self.assertEqual("http://test.com", response.get("Access-Control-Allow-Origin"))
-
-    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="test-one", HTTP_ORIGIN="http://invalid.com")
-    self.assertEqual(None, response.get("Access-Control-Allow-Origin", None))
-
-    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="test-two", HTTP_ORIGIN="http://invalid.com")
-    self.assertEqual(None, response.get("Access-Control-Allow-Origin", None))
+#  This test is commented out. Please check ovp.apps.channels.signals for more information.
+#  def test_cors(self):
+#    ChannelSetting.objects.create(key="CORS_ORIGIN_WHITELIST", value="default.com", object_channel="default")
+#    ChannelSetting.objects.create(key="CORS_ORIGIN_WHITELIST", value="www.default.com", object_channel="default")
+#    ChannelSetting.objects.create(key="CORS_ORIGIN_WHITELIST", value="test.com", object_channel="test-one")
+#
+#    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="default", HTTP_ORIGIN="http://default.com")
+#    self.assertEqual("http://default.com", response.get("Access-Control-Allow-Origin"))
+#
+#    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="default", HTTP_ORIGIN="http://www.default.com")
+#    self.assertEqual("http://www.default.com", response.get("Access-Control-Allow-Origin"))
+#
+#    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="default", HTTP_ORIGIN="http://invalid.com")
+#    self.assertEqual(None, response.get("Access-Control-Allow-Origin", None))
+#
+#    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="default", HTTP_ORIGIN="http://test.com")
+#    self.assertEqual(None, response.get("Access-Control-Allow-Origin", None))
+#
+#    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="test-one", HTTP_ORIGIN="http://test.com")
+#    self.assertEqual("http://test.com", response.get("Access-Control-Allow-Origin"))
+#
+#    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="test-one", HTTP_ORIGIN="http://invalid.com")
+#    self.assertEqual(None, response.get("Access-Control-Allow-Origin", None))
+#
+#    response = self.client.get(reverse("test-projects-list"), format="json", HTTP_X_OVP_CHANNEL="test-two", HTTP_ORIGIN="http://invalid.com")
+#    self.assertEqual(None, response.get("Access-Control-Allow-Origin", None))
