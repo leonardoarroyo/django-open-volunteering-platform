@@ -1,8 +1,8 @@
-from rest_framework import decorators
 from rest_framework import response
+from rest_framework.decorators import detail_route
 
 class CommentaryCreateMixin:
-  @decorators.detail_route(['POST'], url_path='commentary')
+  @detail_route(['POST'], url_path='commentary')
   def commentary(self, request, slug, pk=None):
     data = request.data
     user = request.user
