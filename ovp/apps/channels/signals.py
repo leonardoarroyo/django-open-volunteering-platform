@@ -4,6 +4,15 @@ from ovp.apps.channels.cache import get_channel
 from corsheaders.signals import check_request_enabled
 
 # Connect to signals
+# TODO: This needs to be fixed! OPTIONS request do not include
+# custom headers, therefore the recognized channel is always 'default'
+#
+# For now, we are disabling the signal and using the default
+# CORS_ORIGIN_WHITELIST setting. This is slightly insecure because
+# a channel client will be allowed to make requests to another channel.
+# This should not be a problem if you are in control of all channels you are
+# hosting, which is our situation right now and therefore why there is not a fix
+# yet. Pull requests welcome.
 def channel_cors(sender, request, **kwargs):
   """
   This signal checks for channel `CORS_ORIGIN_WHITELIST` settings.
@@ -19,7 +28,7 @@ def channel_cors(sender, request, **kwargs):
 
   return False
 
-check_request_enabled.connect(channel_cors)
+# check_request_enabled.connect(channel_cors)
 
 # Custom channel signal
 before_channel_request = django.dispatch.Signal(providing_args=["request"])
