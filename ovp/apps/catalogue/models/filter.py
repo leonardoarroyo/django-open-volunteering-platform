@@ -35,7 +35,7 @@ class CategoryFilter(Filter):
   categories = models.ManyToManyField("projects.Category")
 
   def __str__(self):
-    return "Category Filter"
+    return _("Category Filter")
 
   def filter_information(self):
     categories_str = ""
@@ -68,7 +68,7 @@ class DateDeltaFilter(Filter):
   operator = models.CharField(_("Operator"), choices=DATEDELTA_OPERATORS, default="exact", max_length=30)
 
   def __str__(self):
-    return "DateDelta Filter"
+    return _("DateDelta Filter")
 
   def filter_information(self):
     return  "{} {} days, {} weeks, {} months, {} years".format(self.get_operator_display(), self.days, self.weeks, self.months, self.years)

@@ -12,8 +12,8 @@ CATEGORY = "CATEGORY"
 DATEDELTA = "DATEDELTA"
 
 FILTER_TYPES = (
-  (CATEGORY, "Category"),
-  (DATEDELTA, "Date delta"),
+  (CATEGORY, _("Category")),
+  (DATEDELTA, _("Date delta")),
 )
 
 class Section(ChannelRelationship):
@@ -39,12 +39,17 @@ class SectionFilter(ChannelRelationship):
   object_id = models.PositiveIntegerField(blank=True, null=True)
   filter = GenericForeignKey()
 
+  class Meta:
+    app_label = 'catalogue'
+    verbose_name = _('section filter')
+    verbose_name_plural = _('section filters')
+
   def __str__(self):
     filter_name = self.filter.__str__()
     if filter_name != "None":
       return filter_name
 
-    return "Empty filter"
+    return _("Empty filter")
 
   def save(self, *args, **kwargs):
     if not self.pk:

@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, Count
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 from ovp.apps.channels.cache import get_channel_setting
@@ -30,12 +31,12 @@ class GoogleRegion(ChannelRelationship):
   filter_by = models.CharField(max_length=400)
 
 class GoogleAddress(ChannelRelationship):
-  typed_address = models.CharField(max_length=400, blank=True, null=True)
-  typed_address2 = models.CharField(max_length=400, blank=True, null=True)
-  address_line = models.CharField(max_length=400, blank=True, null=True)
-  city_state = models.CharField(max_length=400, blank=True, null=True)
-  lat = models.FloatField('lat', blank=True, null=True)
-  lng = models.FloatField('lng', blank=True, null=True)
+  typed_address = models.CharField(_("Typed address"), max_length=400, blank=True, null=True)
+  typed_address2 = models.CharField(_("Typed address 2"), max_length=400, blank=True, null=True)
+  address_line = models.CharField(_("Address line"), max_length=400, blank=True, null=True)
+  city_state = models.CharField(_("City/state"), max_length=400, blank=True, null=True)
+  lat = models.FloatField(_('Latitude'), blank=True, null=True)
+  lng = models.FloatField(_('Longitude'), blank=True, null=True)
   address_components = models.ManyToManyField(AddressComponent)
 
   def get_city_state(self):
@@ -97,6 +98,11 @@ class GoogleAddress(ChannelRelationship):
       return self.address_line
 
     return self.typed_address
+
+  class Meta:
+    app_label = 'core'
+    verbose_name = _('google address')
+    verbose_name_plural = _('google addresses')
 
 
 @receiver(post_save, sender=GoogleAddress)

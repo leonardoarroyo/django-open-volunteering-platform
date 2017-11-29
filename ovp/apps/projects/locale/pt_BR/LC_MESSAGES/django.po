@@ -316,6 +316,14 @@ msgstr "ação recorrente"
 msgid "works"
 msgstr "ações recorrentes"
 
+#: django-ovp-projects/ovp.apps.projects/models/category.py:27
+msgid "category"
+msgstr "categoria"
+
+#: django-ovp-projects/ovp.apps.projects/models/category.py:28
+msgid "categories"
+msgstr "categorias"
+
 #: django-ovp-projects/ovp.apps.projects/views/project.py:22
 msgid "User Name"
 msgstr "Nome do voluntário"

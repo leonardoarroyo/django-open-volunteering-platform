@@ -14,9 +14,9 @@ from django.utils.translation import ugettext_lazy as _
 causes = ['Professional Training', 'Fight Poverty', 'Conscious consumption', 'Culture, Sport and Art', 'Human Rights', 'Education', 'Youth', 'Elders', 'Environment', 'Citizen Participation', 'Animal Protection', 'Health', 'People with disabilities']
 
 class Cause(ChannelRelationship):
-  name = models.CharField('name', max_length=100)
+  name = models.CharField(_('name'), max_length=100)
   image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
-  slug = models.SlugField('slug', max_length=100, blank=True, null=True)
+  slug = models.SlugField(_('slug'), max_length=100, blank=True, null=True)
 
   class Meta:
     app_label = 'core'

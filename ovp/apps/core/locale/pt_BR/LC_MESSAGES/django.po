@@ -64,6 +64,38 @@ msgstr "nome"
 msgid "skill"
 msgstr "habilidade"
 
+#: django-ovp-core/ovp_core/models/address.py:34
+msgid "Typed address"
+msgstr "Endereço digitado"
+
+#: django-ovp-core/ovp_core/models/address.py:35
+msgid "Typed address 2"
+msgstr "Complemento"
+
+#: django-ovp-core/ovp_core/models/address.py:36
+msgid "Address line"
+msgstr "Linha de endereço"
+
+#: django-ovp-core/ovp_core/models/address.py:37
+msgid "City/state"
+msgstr "Cidade/estado"
+
+#: django-ovp-core/ovp_core/models/address.py:38
+msgid "Latitude"
+msgstr "Latitude"
+
+#: django-ovp-core/ovp_core/models/address.py:39
+msgid "Longitude"
+msgstr "Longitude"
+
+#: django-ovp-core/ovp_core/models/address.py:104
+msgid "google address"
+msgstr "endereço"
+
+#: django-ovp-core/ovp_core/models/address.py:105
+msgid "google addresses"
+msgstr "endereços"
+
 #: django-ovp-core/ovp_core/tests/runtests.py:80
 msgid "English"
 msgstr "Inglês"

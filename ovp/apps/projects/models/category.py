@@ -21,3 +21,8 @@ class Category(ChannelRelationship):
     else:
       self.slug = generate_slug(self.channel.slug, Category, self.name)
     return super(Category, self).save(*args, **kwargs)
+
+  class Meta:
+    app_label = 'projects'
+    verbose_name = _('category')
+    verbose_name_plural = _('categories')

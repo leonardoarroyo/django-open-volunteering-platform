@@ -15,7 +15,7 @@ skills = ['Arts/Handcrafting', 'Communication', 'Dance/Music', 'Law', 'Education
 
 class Skill(ChannelRelationship):
   name = models.CharField(_('name'), max_length=100)
-  slug = models.SlugField('slug', max_length=100, blank=True, null=True)
+  slug = models.SlugField(_('slug'), max_length=100, blank=True, null=True)
 
   class Meta:
     app_label = 'core'

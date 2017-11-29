@@ -14,6 +14,7 @@ class JobDateInline(TabularInline):
 class JobDateAdmin(ChannelModelAdmin):
   list_display = ['id', 'start_date', 'end_date']
   raw_id_fields = ['job']
+  exclude = ['channel']
 
 
 admin_site.register(JobDate, JobDateAdmin)

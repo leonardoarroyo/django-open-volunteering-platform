@@ -11,27 +11,28 @@ from .jobdate import JobDateAdmin, JobDateInline
 
 
 class JobInline(TabularInline):
-	exclude = ['title', 'channel']
-	model = Job
-	verbose_name = _('Job')
-	verbose_name_plural = _('Job')
+  exclude = ['title', 'channel']
+  model = Job
+  verbose_name = _('Job')
+  verbose_name_plural = _('Job')
 
-	#fields = ('edit_dates_link',)
-	readonly_fields = ['edit_dates_link']
+  #fields = ('edit_dates_link',)
+  readonly_fields = ['edit_dates_link']
 
-	def edit_dates_link(self, obj):
-		edit_dates_url = reverse("admin:{}_{}_change".format(obj._meta.app_label, obj._meta.model_name), args=(obj.id,))
-		return '<a href="{}" target="_blank">{}</a>'.format(edit_dates_url, _('edit'))
-	edit_dates_link.short_escription = _('Edit dates')
-	edit_dates_link.allow_tags = True
+  def edit_dates_link(self, obj):
+    edit_dates_url = reverse("admin:{}_{}_change".format(obj._meta.app_label, obj._meta.model_name), args=(obj.id,))
+    return '<a href="{}" target="_blank">{}</a>'.format(edit_dates_url, _('edit'))
+  edit_dates_link.short_escription = _('Edit dates')
+  edit_dates_link.allow_tags = True
 
 
 class JobAdmin(ChannelModelAdmin):
-	list_display = ['id', 'project', 'start_date', 'end_date']
-	search_fields = ['id', 'project__name', 'project__nonprofit__name']
+  list_display = ['id', 'project', 'start_date', 'end_date']
+  search_fields = ['id', 'project__name', 'project__nonprofit__name']
+  exclude = ['channel']
 
-	inlines = (
-		JobDateInline,
-	)
+  inlines = (
+    JobDateInline,
+  )
 
 admin_site.register(Job, JobAdmin)
