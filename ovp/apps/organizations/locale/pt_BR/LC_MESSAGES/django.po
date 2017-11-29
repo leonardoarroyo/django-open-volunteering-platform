@@ -24,6 +24,10 @@ msgstr ""
 msgid "None"
 msgstr "Nenhum"
 
+#: django-ovp-organizations/ovp.apps.organizations/apps.py:6
+msgid "Organizations"
+msgstr "Organizações"
+
 #: django-ovp-organizations/ovp.apps.organizations/admin.py:58
 msgid "Owner's Name"
 msgstr "Nome do Responsável"

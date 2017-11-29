@@ -28,6 +28,10 @@ msgstr ""
 msgid "None"
 msgstr "Nenhum"
 
+#: django-ovp-projects/ovp.apps.projects/apps.py:7
+msgid "Projects"
+msgstr "Projetos"
+
 #: django-ovp-projects/ovp.apps.projects/admin/apply.py:44
 msgid "Name"
 msgstr "Nome"

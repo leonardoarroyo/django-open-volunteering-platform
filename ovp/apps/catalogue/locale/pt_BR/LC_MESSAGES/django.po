@@ -20,6 +20,10 @@ msgstr ""
 msgid "No filter"
 msgstr "Sem filtro"
 
+#: apps.py:6
+msgid "Catalogue"
+msgstr "Catálogo"
+
 #: models/catalogue.py:7 models/section.py:21
 msgid "Name"
 msgstr "Nome"

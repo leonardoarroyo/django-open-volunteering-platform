@@ -18,6 +18,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: django-ovp-users/ovp_users/apps.py:6
+msgid "Users"
+msgstr "Usuários"
+
 #: django-ovp-users/ovp_users/models/password_recovery.py:9
 msgid "Token"
 msgstr "Token"
