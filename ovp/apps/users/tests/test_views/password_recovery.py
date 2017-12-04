@@ -63,7 +63,7 @@ class RecoverPasswordViewSetTestCase(TestCase):
 
     # Test authentication new password
     auth = authenticate('test_can_recover@password.com', 'newpwvalidpw*')
-    self.assertTrue(auth.data['token'] != None)
+    self.assertTrue(auth.data['access_token'] != None)
 
   def test_cant_recover_with_empty_password(self):
     """Assert that it's impossible to update password through recovery to an empty password"""

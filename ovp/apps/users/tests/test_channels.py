@@ -13,6 +13,8 @@ from ovp.apps.users.tests.helpers import create_token
 
 from ovp.apps.channels.models import Channel
 
+from oauth2_provider.models import Application
+
 class UserChannelTestCase(TestCase):
   def setUp(self):
     Channel.objects.create(name="Test channel", slug="test-channel")
@@ -43,20 +45,24 @@ class UserChannelTestCase(TestCase):
 
   def test_user_channel_based_auth_view(self):
     """ Test user authentication on different channel """
+    a = Application.objects.create(authorization_grant_type="password", client_type="confidential")
+    client_id = a.client_id
+    client_secret = a.client_secret
+
     # Authenticate user one
-    response = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNEL="default")
+    response = self.client.post(reverse("token"), {"username": "sample_user@gmail.com", "password": "sample_user", "grant_type": "password", "client_id": client_id, "client_secret": client_secret}, format="json", HTTP_X_OVP_CHANNEL="default")
     self.assertTrue(response.status_code == 200)
-    self.assertTrue("token" in response.data)
+    self.assertTrue("access_token" in response.data)
 
     # Authenticate user two
-    response = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNEL="test-channel")
+    response = self.client.post(reverse("token"), {"username": "sample_user@gmail.com", "password": "sample_user", "grant_type": "password", "client_id": client_id, "client_secret": client_secret}, format="json", HTTP_X_OVP_CHANNEL="test-channel")
     self.assertTrue(response.status_code == 200)
-    self.assertTrue("token" in response.data)
+    self.assertTrue("access_token" in response.data)
 
     # Wrong channel authentication
-    response = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNEL="wrong-channel")
-    self.assertTrue(response.status_code == 400)
-    self.assertTrue(response.data == {"non_field_errors": ["Unable to log in with provided credentials."]})
+    response = self.client.post(reverse("token"), {"username": "sample_user@gmail.com", "password": "sample_user", "grant_type": "password", "client_id": client_id, "client_secret": client_secret}, format="json", HTTP_X_OVP_CHANNEL="wrong-channel")
+    self.assertTrue(response.status_code == 401)
+    self.assertTrue(response.data == {"error": "invalid_grant", "error_description": "Invalid credentials given."})
 
   def test_channel_based_user_creation(self):
     """ Test user channel based user creation """

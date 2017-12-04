@@ -24,11 +24,14 @@ CUSTOM_INSTALLED_APPS = (
     'ovp.apps.faq',
     'ovp.apps.channels',
     'ovp.apps.catalogue',
+    'django.contrib.admin',
     'jet',
     'jet.dashboard',
     'haystack',
     'vinaigrette',
-    'django.contrib.admin',
+    'oauth2_provider',
+    'social_django',
+    'rest_framework_social_oauth2',
 )
 
 ALWAYS_INSTALLED_APPS = (
@@ -56,7 +59,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
     'PAGINATE_BY_PARAM': 'page_size',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'ovp.apps.users.auth.jwt_authenticator.ChannelJSONWebTokenAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'django.contrib.auth.backends.ModelBackend',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
@@ -144,7 +148,7 @@ settings.configure(
     },
     HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor',
     SILENCED_SYSTEM_CHECKS=["auth.E003", "auth.W004"],
-    AUTHENTICATION_BACKENDS=["ovp.apps.users.auth.backends.ChannelBasedAuthentication"],
+    AUTHENTICATION_BACKENDS = ['ovp.apps.users.auth.oauth2.backends.facebook.FacebookOAuth2', 'ovp.apps.users.auth.oauth2.backends.google.GoogleOAuth2', 'rest_framework_social_oauth2.backends.DjangoOAuth2', 'ovp.apps.users.auth.backends.ChannelBasedAuthentication'],
     TEST_CHANNELS=["test-channel", "channel1"]
 )
 
