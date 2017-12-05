@@ -1,6 +1,8 @@
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
+from oauth2_provider.models import Application
+
 def create_user(email="validemail@gmail.com", password="validpassword", extra_data={}, headers={}):
   data = {
     'name': 'Valid Name',
@@ -25,13 +27,21 @@ def create_user_with_profile(email="validemail@gmail.com", password="validpasswo
   return client.post(reverse('user-list'), data, format="json", **headers)
 
 def authenticate(email='test_can_login@test.com', password='validpassword', headers={}):
+  a = Application.objects.create(authorization_grant_type="password", client_type="confidential")
+  client_id = a.client_id
+  client_secret = a.client_secret
+
   data = {
-    'email': email,
+    'grant_type': 'password',
+    'client_id': client_id,
+    'client_secret': client_secret,
+    'username': email,
     'password': password
   }
 
+
   client = APIClient()
-  return client.post('/api-token-auth/', data, format="json", **headers)
+  return client.post(reverse('token'), data, format="json", **headers)
 
 
 def create_token(email='test@recovery.token', headers={}):

@@ -61,7 +61,7 @@ class UserResourceViewSetTestCase(TestCase):
     self.assertTrue("password" not in response.data)
 
     response = authenticate('test_can_patch_password@test.com', data['password'])
-    self.assertTrue(response.data['token'] != None)
+    self.assertTrue(response.data['access_token'] != None)
 
   def test_cant_update_invalid_password(self):
     """Assert that it's impossible to update user password to a invalid password"""

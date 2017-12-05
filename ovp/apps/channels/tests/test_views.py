@@ -12,6 +12,8 @@ from ovp.apps.organizations.models import Organization
 
 from ovp.apps.users.models import User
 
+from oauth2_provider.models import Application
+
 
 class ChannelCreateViewsetTestCase(TestCase):
   def setUp(self):
@@ -49,9 +51,13 @@ class ChannelPermissionsTestCase(TestCase):
 
   def test_accessing_another_channel_resource(self):
     """ Assert it's impossible to access another channel resource while authenticated """
+    a = Application.objects.create(authorization_grant_type="password", client_type="confidential")
+    client_id = a.client_id
+    client_secret = a.client_secret
+
     # Wrong request with jwt token
-    token = self.client.post(reverse("api-token-auth"), {"email": "sample_user@gmail.com", "password": "sample_user"}, format="json", HTTP_X_OVP_CHANNEL="default").data["token"]
-    response = self.client.post(reverse("test-projects-list"), self.data, format="json", HTTP_X_OVP_CHANNEL="test-channel", HTTP_AUTHORIZATION="JWT {}".format(token))
+    token = self.client.post(reverse("token"), {"username": "sample_user@gmail.com", "password": "sample_user", "grant_type": "password", "client_id": client_id, "client_secret": client_secret}, format="json", HTTP_X_OVP_CHANNEL="default").data["access_token"]
+    response = self.client.post(reverse("test-projects-list"), self.data, format="json", HTTP_X_OVP_CHANNEL="test-channel", HTTP_AUTHORIZATION="Bearer {}".format(token))
     self.assertEqual(response.status_code, 400)
     self.assertEqual(response.content, b'{"detail": "Invalid channel for user token."}')
 

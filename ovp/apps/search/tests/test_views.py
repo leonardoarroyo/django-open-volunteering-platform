@@ -161,9 +161,10 @@ class ProjectSearchTestCase(TestCase):
     """
     Test project search does only 4 queries
     """
+    # 1 is user related
     # 5 queries are search related
     # 2 are middleware/channel related
-    with self.assertNumQueries(7):
+    with self.assertNumQueries(8):
       response = self.client.get(reverse("search-projects-list"), format="json")
 
   def test_query_gets_cached(self):
@@ -173,7 +174,8 @@ class ProjectSearchTestCase(TestCase):
     response = self.client.get(reverse("search-projects-list"), format="json")
 
     # Second request should not hit db
-    with self.assertNumQueries(0):
+    # There a single user-related query
+    with self.assertNumQueries(1):
       response = self.client.get(reverse("search-projects-list"), format="json")
 
   def test_no_filter(self):
@@ -361,9 +363,10 @@ class OrganizationSearchTestCase(TestCase):
     """
     Test organization search does only 2 queries
     """
+    # 1 is user related
     # 2 queries are search related
     # 2 are middleware/channel related
-    with self.assertNumQueries(4):
+    with self.assertNumQueries(5):
       response = self.client.get(reverse("search-organizations-list"), format="json")
 
   def test_query_gets_cached(self):
@@ -373,7 +376,8 @@ class OrganizationSearchTestCase(TestCase):
     response = self.client.get(reverse("search-organizations-list"), format="json")
 
     # Second request should not hit db
-    with self.assertNumQueries(0):
+    # There is a single user-related query
+    with self.assertNumQueries(1):
       response = self.client.get(reverse("search-organizations-list"), format="json")
 
   def test_no_filter(self):
@@ -489,9 +493,10 @@ class UserSearchTestCase(TestCase):
     """
     Test user search does only 3 queries
     """
+    # 1 query is user related
     # 3 queries are search related
     # 2 are middleware/channel related
-    with self.assertNumQueries(5):
+    with self.assertNumQueries(6):
       response = self.client.get(reverse("search-users-list"), format="json")
 
   def test_query_gets_cached(self):
@@ -501,7 +506,8 @@ class UserSearchTestCase(TestCase):
     response = self.client.get(reverse("search-users-list"), format="json")
 
     # Second request should not hit db
-    with self.assertNumQueries(0):
+    # There is a single user-related query
+    with self.assertNumQueries(1):
       response = self.client.get(reverse("search-users-list"), format="json")
 
   def test_no_filter(self):
@@ -706,8 +712,9 @@ class BookmarkTestCase(TestCase):
 
     # Logged out
     cache.clear()
-    with self.assertNumQueries(7):
+    with self.assertNumQueries(8):
       # Only 7 queries
+      # 1 is user related
       # 2 are channel related
       # 5 are search related
       response = self.client.get(reverse("search-projects-list"), format="json")
@@ -744,8 +751,9 @@ class BookmarkTestCase(TestCase):
 
     # Logged out
     cache.clear()
-    with self.assertNumQueries(4):
+    with self.assertNumQueries(5):
       # Only 4 queries
+      # 1 user related
       # 2 are channel related
       # 2 are search related
       response = self.client.get(reverse("search-organizations-list"), format="json")

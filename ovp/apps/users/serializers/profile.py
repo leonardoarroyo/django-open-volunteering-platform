@@ -6,6 +6,7 @@ from ovp.apps.core.models import Skill
 from ovp.apps.core.models import Cause
 from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
+from ovp.apps.core.serializers import GoogleAddressSerializer
 
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
@@ -18,14 +19,22 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
   skills = SkillAssociationSerializer(many=True, required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
   gender = serializers.ChoiceField(choices=gender_choices)
+  address = GoogleAddressSerializer(required=False)
 
   class Meta:
     model = get_profile_model()
-    fields = ['full_name', 'about', 'skills', 'causes', 'gender']
+    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address']
 
   def create(self, validated_data):
     skills = validated_data.pop('skills', [])
     causes = validated_data.pop('causes', [])
+    address_data = validated_data.pop('address', None)
+
+    # Address
+    if address_data:
+      address_sr = GoogleAddressSerializer(data=address_data, context=self.context)
+      address = address_sr.create(address_data)
+      validated_data['address'] = address
 
     # Create profile
     profile = super(ProfileCreateUpdateSerializer, self).create(validated_data)
@@ -67,10 +76,11 @@ class ProfileRetrieveSerializer(ChannelRelationshipSerializer):
   skills = SkillSerializer(many=True)
   causes = CauseSerializer(many=True)
   gender = serializers.ChoiceField(choices=gender_choices)
+  address = GoogleAddressSerializer(required=False)
 
   class Meta:
     model = get_profile_model()
-    fields = ['full_name', 'about', 'skills', 'causes', 'gender']
+    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address']
 
 class ProfileSearchSerializer(ChannelRelationshipSerializer):
   skills = SkillSerializer(many=True)

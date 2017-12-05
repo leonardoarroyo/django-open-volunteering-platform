@@ -17,6 +17,8 @@ class UserProfile(ChannelRelationship, models.Model):
   causes = models.ManyToManyField("core.Cause")
   about = models.TextField(_("About me"), null=True, blank=True)
   gender = models.CharField(_("Gender"), max_length=20, choices=gender_choices, default='unspecified')
+  address = models.OneToOneField('core.GoogleAddress', blank=True, null=True, verbose_name=_('address'), db_constraint=False)
+  hidden_address = models.BooleanField(_('Hidden address'), default=False)
 
 def get_profile_model():
   s = get_settings()
