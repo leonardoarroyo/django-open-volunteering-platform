@@ -14,7 +14,10 @@ class ProfileTestCase(TestCase):
       'skills': [{'id': 1}, {'id': 2, 'name': 'test'}],
       'causes': [{'id': 1}, {'id': 2, 'name': 'test'}],
       'about': 'I\'m a test user and that\'s all you must know about me',
-      'gender': 'male'
+      'gender': 'male',
+      'address': {
+        'typed_address': 'São Paulo, SP'
+      }
     }
     self.client = APIClient()
 
@@ -25,6 +28,7 @@ class ProfileTestCase(TestCase):
     self.assertTrue(response.data['profile']['full_name'] == self.profile['full_name'])
     self.assertTrue(response.data['profile']['about'] == self.profile['about'])
     self.assertTrue(response.data['profile']['gender'] == 'male')
+    self.assertTrue(response.data['profile']['address']['typed_address'] == self.profile['address']['typed_address'])
     self._assert_causes_and_skills_in_response(response)
     return response
 
@@ -38,6 +42,7 @@ class ProfileTestCase(TestCase):
     self.assertTrue(response.data['profile']['full_name'] == self.profile['full_name'])
     self.assertTrue(response.data['profile']['about'] == self.profile['about'])
     self.assertTrue(response.data['profile']['gender'] == 'male')
+    self.assertTrue(response.data['profile']['address']['typed_address'] == self.profile['address']['typed_address'])
     self._assert_causes_and_skills_in_response(response)
 
 
