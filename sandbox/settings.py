@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'oauth2_provider',
+    'social_django',
+    'rest_framework_social_oauth2',
 ] + get_core_apps()
 
 AUTH_USER_MODEL='users.User'
@@ -132,7 +135,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
     'PAGINATE_BY_PARAM': 'page_size',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'ovp.apps.users.auth.jwt_authenticator.ChannelJSONWebTokenAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'django.contrib.auth.backends.ModelBackend',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
@@ -173,4 +177,9 @@ SILENCED_SYSTEM_CHECKS = ["auth.E003", "auth.W004"]
 
 # Authentication backends
 
-AUTHENTICATION_BACKENDS = ["ovp.apps.users.auth.backends.ChannelBasedAuthentication"]
+AUTHENTICATION_BACKENDS = [
+    "ovp.apps.users.auth.oauth2.backends.facebook.FacebookOAuth2",
+    "ovp.apps.users.auth.oauth2.backends.google.GoogleOAuth2",
+    "rest_framework_social_oauth2.backends.DjangoOAuth2",
+    "ovp.apps.users.auth.backends.ChannelBasedAuthentication"
+]
