@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='availability',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='availability_channel', to='channels.Channel'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='availability_channel', to='channels.Channel'),
             preserve_default=False,
         ),
     ]
