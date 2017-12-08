@@ -1,3 +1,5 @@
+from ovp.apps.channels.models import ChannelRelationship
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -17,7 +19,7 @@ availability_weekdays = (
   (6, 'Sábado')
 )
 
-class Availability(models.Model):
+class Availability(ChannelRelationship):
   weekday = models.PositiveSmallIntegerField(_('Weekday'), choices=availability_weekdays, default=0)
   period = models.PositiveSmallIntegerField(_('Day period'), choices=availability_periods, default=0)
   period_index = models.PositiveSmallIntegerField(db_index=True)
