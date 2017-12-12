@@ -35,7 +35,7 @@ class Organization(ChannelRelationship):
   facebook_page = models.CharField(_('Facebook'), max_length=255, blank=True, null=True, default=None)
   type = models.PositiveSmallIntegerField(_('Type'), choices=ORGANIZATION_TYPES, default=0)
   details = RichTextField(_('Details'), max_length=3000, blank=True, null=True, default=None)
-  description = models.CharField(_('Short description'), max_length=160, blank=True, null=True)
+  description = models.CharField(_('Short description'), max_length=320, blank=True, null=True)
   hidden_address = models.BooleanField(_('Hidden address'), default=False)
   verified = models.BooleanField(_('verified'), default=False)
 
