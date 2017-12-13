@@ -19,16 +19,16 @@ class UploadedImageSerializer(ChannelRelationshipSerializer):
     extra_kwargs = {'image': {'write_only': True}, 'crop_rect': {'write_only': True}}
 
   def get_image_url(self, obj):
-    return helpers.build_absolute_uri(self.context['request'], obj.image)
+    return helpers.build_absolute_uri(self.context['request'], obj.image) if obj.image else ""
 
   def get_image_small_url(self, obj):
-    return helpers.build_absolute_uri(self.context['request'], obj.image_small)
+    return helpers.build_absolute_uri(self.context['request'], obj.image_small) if obj.image_small else ""
 
   def get_image_medium_url(self, obj):
-    return helpers.build_absolute_uri(self.context['request'], obj.image_medium)
+    return helpers.build_absolute_uri(self.context['request'], obj.image_medium) if obj.image_medium else ""
 
   def get_image_large_url(self, obj):
-    return helpers.build_absolute_uri(self.context['request'], obj.image_large)
+    return helpers.build_absolute_uri(self.context['request'], obj.image_large) if obj.image_large else ""
 
 class ImageGallerySerializer(UploadedImageSerializer):
   name = serializers.CharField(read_only=True)
