@@ -10,7 +10,7 @@ class Work(ChannelRelationship):
   can_be_done_remotely = models.BooleanField(_('This job can be done remotely'), default=False)
 
   def __str__(self):
-    return _('%d hours per week') % (self.weekly_hours)
+    return _('%d hours per week') % (self.weekly_hours if self.weekly_hours else 0)
 
   class Meta:
     app_label = 'projects'
