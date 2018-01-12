@@ -152,7 +152,7 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.User
-    fields = ['name', 'avatar', 'profile', 'slug', 'applies']
+    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'details']
 
 class UserProjectRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
