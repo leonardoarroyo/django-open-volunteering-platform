@@ -10,13 +10,34 @@ from .work import WorkInline
 
 from ovp.apps.core.mixins import CountryFilterMixin
 
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
+from import_export.fields import Field
 
 class VolunteerRoleInline(TabularInline):
   model = VolunteerRole
   exclude = ['channel']
 
+class ProjectResource(resources.ModelResource):
+  organization = Field()
+  project = Field()
+  address = Field()
+  
+  class Meta:
+    model = Project
+    exclude = ('channel', 'image', 'skills', 'causes', 'categories', 'commentaries', 'owner', 'name', 'slug', 'published', 'highlighted', 'max_applies_from_roles', 'max_applies', 'public_project', 'minimum_age', 'hidden_address', 'crowdfunding', 'published_date', 'closed', 'closed_date', 'deleted', 'deleted_date', 'created_date', 'modified_date', 'details', 'description')
+    
+  def dehydrate_organization(self, project):
+    return project.organization.name
 
-class ProjectAdmin(ChannelModelAdmin, CountryFilterMixin):
+  def dehydrate_project(self, project):
+    return project.name
+
+  def dehydrate_address(self, project):
+    if project.address is not None:
+      return project.address.typed_address
+
+class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
   fields = [
     ('id', 'highlighted'), ('name', 'slug'),
     ('organization', 'owner'),
@@ -39,6 +60,8 @@ class ProjectAdmin(ChannelModelAdmin, CountryFilterMixin):
     'description', 'details',
     'skills', 'causes',
     ]
+
+  resource_class = ProjectResource 
 
   list_display = [
     'id', 'created_date', 'name', 'organization__name', 'applied_count', # fix: CIDADE, PONTUAL OU RECORRENTE
@@ -72,6 +95,9 @@ class ProjectAdmin(ChannelModelAdmin, CountryFilterMixin):
     VolunteerRoleInline,
     JobInline, WorkInline
   ]
+
+  #def Resource(model, **kwargs):
+    
 
   def can_be_done_remotely(self, obj):
     if obj.hasattr('job') and obj.job:

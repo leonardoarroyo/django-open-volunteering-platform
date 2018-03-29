@@ -55,3 +55,4 @@ class CustomIndexDashboard(Dashboard):
       column=0,
       order=1
     ))
+
