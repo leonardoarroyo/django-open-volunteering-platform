@@ -9,7 +9,6 @@ from ovp.apps.core.models import Cause
 class CauseInline(TabularInline):
   model = Cause
 
-
 class CauseAdmin(ChannelModelAdmin):
 	fields = ['id', 'name', 'image', 'slug']
 

@@ -7,11 +7,42 @@ from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.mixins import CountryFilterMixin
 
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
+from import_export.fields import Field
+
 # This file contains some "pragma: no cover" because the admin
 # class is not covered by the test suite
 
+class OrganizationResource(resources.ModelResource):
+  organization = Field()
+  address = Field()
+  contact_name = Field()
+  contact_email = Field()
+  contact_phone = Field()
+  
+  class Meta:
+    model = Organization
+    exclude = ('cover', 'website', 'members', 'facebook_page', 'type', 'verified', 'channel', 'image', 'skills', 'causes', 'categories', 'commentaries', 'owner', 'name', 'slug', 'published', 'highlighted', 'max_applies_from_roles', 'max_applies', 'public_project', 'minimum_age', 'hidden_address', 'crowdfunding', 'published_date', 'closed', 'closed_date', 'deleted', 'deleted_date', 'created_date', 'modified_date', 'details', 'description')
+  
+  def dehydrate_organization(self, organization):
+    return organization.name
 
-class OrganizationAdmin(ChannelModelAdmin, CountryFilterMixin):
+  def dehydrate_address(self, organization):
+    if organization.address is not None and organization.address is not None:
+      return organization.address.typed_address
+
+  def dehydrate_contact_name(self, organization):
+    return organization.owner.name
+
+  def dehydrate_contact_email(self, organization):
+    return organization.owner.email
+
+  def dehydrate_contact_phone(self, organization):
+    return organization.owner.phone
+
+
+class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
   fields = [
     ('id', 'highlighted'), ('name', 'slug'),
     ('owner'), #- 'type'
@@ -29,6 +60,8 @@ class OrganizationAdmin(ChannelModelAdmin, CountryFilterMixin):
 
     ('created_date', 'modified_date'),
     ]
+
+  resource_class = OrganizationResource
 
   list_display = [
     'id', 'created_date', 'name', 'owner__email', 'owner__phone', 'address', 'highlighted', 'published', 'deleted', 'modified_date'
