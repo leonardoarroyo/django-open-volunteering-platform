@@ -13,6 +13,11 @@ class UserMail(BaseMail):
     """
     return self.sendEmail('welcome', 'Welcome', context)
 
+  def sendLogin(self, context={}):
+    """
+    Sent when user registers
+    """
+    return self.sendEmail('login', 'Login', context)
 
   def sendRecoveryToken(self, context):
     """

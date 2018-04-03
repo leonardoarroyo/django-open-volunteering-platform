@@ -88,6 +88,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
   def save(self, *args, **kwargs):
     hash_password = False
     creating = False
+    original_password = self.password
 
     if not self.pk:
       self.slug = encode_uuid(self.uuid)
@@ -103,8 +104,14 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
       self.__original_password = self.password
 
     obj = super(User, self).save(*args, **kwargs)
+    
+    if self.channel.slug == 'pv':
+      self.mailing().sendLogin(context={'name': self.name, 'password': original_password, 'email': self.email})
 
-    if creating:
+    print(self.channel.slug)
+    print(self.channel.slug != 'pv')
+    if creating and self.channel.slug != 'pv':
+      print('aaaaaaaaaa')
       self.mailing().sendWelcome()
 
     return obj
