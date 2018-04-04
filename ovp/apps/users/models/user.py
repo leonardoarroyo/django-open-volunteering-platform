@@ -104,11 +104,8 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
       self.__original_password = self.password
 
     obj = super(User, self).save(*args, **kwargs)
-    
-    if self.channel.slug == 'pv':
-      self.mailing().sendLogin(context={'name': self.name, 'password': original_password, 'email': self.email})
 
-    if creating and self.channel.slug != 'pv':
+    if creating:
       self.mailing().sendWelcome()
 
     return obj
