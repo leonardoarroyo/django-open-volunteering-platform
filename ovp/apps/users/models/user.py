@@ -105,7 +105,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
 
     obj = super(User, self).save(*args, **kwargs)
 
-    if creating:
+    if creating and self.channel.slug != 'pv':
       self.mailing().sendWelcome()
 
     return obj
