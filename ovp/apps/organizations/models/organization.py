@@ -7,10 +7,14 @@ from ovp.apps.channels.models.abstract import ChannelRelationship
 
 from ovp.apps.organizations.emails import OrganizationMail
 from ovp.apps.organizations.emails import OrganizationAdminMail
+from ovp.apps.organizations.validators import validate_CNPJ, formata
 
 from ckeditor.fields import RichTextField
 
 from django.utils.translation import ugettext_lazy as _
+
+from django import db
+db.connections.close_all()
 
 ORGANIZATION_TYPES = (
   (0, _('Organization')),
@@ -28,6 +32,7 @@ class Organization(ChannelRelationship):
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'), blank=True)
   members = models.ManyToManyField('users.User', verbose_name=_('members'), related_name="organizations_member", blank=True)
 
+
   # Fields
   slug = models.SlugField(_('Slug'), max_length=100, unique=True, blank=True, null=True)
   name = models.CharField(_('Name'), max_length=150)
@@ -38,6 +43,7 @@ class Organization(ChannelRelationship):
   description = models.CharField(_('Short description'), max_length=320, blank=True, null=True)
   hidden_address = models.BooleanField(_('Hidden address'), default=False)
   verified = models.BooleanField(_('verified'), default=False)
+  document = models.CharField(_('document'), unique=True, max_length=18, validators=[validate_CNPJ])
 
   # Organization contact
   contact_name = models.CharField(_('Responsible name'), max_length=150, blank=True, null=True)
@@ -75,6 +81,7 @@ class Organization(ChannelRelationship):
 
   def save(self, *args, **kwargs):
     creating = False
+    force_update=True
 
     if self.pk is not None:
       if not self.__orig_published and self.published:
@@ -87,6 +94,8 @@ class Organization(ChannelRelationship):
       # Organization being created
       self.slug = generate_slug(kwargs.get("object_channel", None), Organization, self.name)
       creating = True
+
+    self.document = formata(self.document)
 
     # If there is no description, take 100 chars from the details
     if not self.description and self.details:
@@ -114,3 +123,5 @@ class Organization(ChannelRelationship):
     verbose_name = _('organization')
     verbose_name_plural = _('organizations')
     unique_together = (('slug', 'channel'), )
+
+  

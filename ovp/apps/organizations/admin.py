@@ -6,6 +6,7 @@ from ovp.apps.organizations.models import Organization
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.mixins import CountryFilterMixin
+from ovp.apps.organizations import validators
 
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
@@ -51,6 +52,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     ('published_date', 'deleted_date'),
 
     'address',
+    'document',
     'image', 'cover',
 
     'facebook_page', 'website',
@@ -114,3 +116,6 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
 
 
 admin_site.register(Organization, OrganizationAdmin)
+
+"""class document(InputMask):
+    mask = {'mask': 'xx.xxx.xxx/xxxx-xx'}"""
