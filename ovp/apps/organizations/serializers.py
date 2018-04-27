@@ -131,6 +131,8 @@ class MemberRemoveSerializer(serializers.Serializer):
 
 class OrganizationOwnerRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
+  causes = CauseSerializer(many=True)
+  address = GoogleAddressLatLngSerializer()
   class Meta:
     model = models.Organization
-    fields = ['slug', 'name', 'description', 'image', 'id']
+    fields = ['slug', 'name', 'description', 'image', 'id', 'causes', 'address']
