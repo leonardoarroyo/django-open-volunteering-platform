@@ -114,10 +114,10 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     if not_organization:
       org = [o for o in not_organization.split(',')]
-      result = result.exclude(organization__slug__in=org)
+      result = result.exclude(organization__in=org)
     elif organization:
       org = [o for o in organization.split(',')]
-      result = result.filter(organization__slug__in=org)
+      result = result.filter(organization__in=org)
 
     result = filters.filter_out(result, "FILTER_OUT_PROJECTS", self.request.channel)
 
