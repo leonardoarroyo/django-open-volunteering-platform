@@ -19,6 +19,7 @@ class UserProfile(ChannelRelationship, models.Model):
   gender = models.CharField(_("Gender"), max_length=20, choices=gender_choices, default='unspecified')
   address = models.OneToOneField('core.GoogleAddress', blank=True, null=True, verbose_name=_('address'), db_constraint=False)
   hidden_address = models.BooleanField(_('Hidden address'), default=False)
+  birthday_date = models.DateField(blank=True, null=True)
 
 def get_profile_model():
   s = get_settings()

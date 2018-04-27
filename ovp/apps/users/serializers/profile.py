@@ -4,6 +4,7 @@ from ovp.apps.users.helpers import get_settings, import_from_string
 
 from ovp.apps.core.models import Skill
 from ovp.apps.core.models import Cause
+from ovp.apps.core.models.address import GoogleAddress
 from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
 from ovp.apps.core.serializers import GoogleAddressSerializer
@@ -23,7 +24,7 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = get_profile_model()
-    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address']
+    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address', 'birthday_date']
 
   def create(self, validated_data):
     skills = validated_data.pop('skills', [])
@@ -55,6 +56,7 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
   def update(self, instance, validated_data):
     skills = validated_data.pop('skills', None)
     causes = validated_data.pop('causes', None)
+    address_data = validated_data.pop('address', None)
 
     # Associate skills
     if skills:
@@ -70,6 +72,12 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
         c = Cause.objects.get(pk=cause['id'])
         instance.causes.add(c)
 
+    # Address
+    if address_data:
+      address_sr = GoogleAddress(typed_address=address_data['typed_address'], typed_address2=address_data['typed_address2'])
+      address_sr.save(object_channel=instance.channel.slug)
+      validated_data['address'] = address_sr
+    
     return super(ProfileCreateUpdateSerializer, self).update(instance, validated_data)
 
 class ProfileRetrieveSerializer(ChannelRelationshipSerializer):
