@@ -132,7 +132,7 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'phone', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'is_subscribed_to_newsletter' ]
+    fields = ['uuid', 'name', 'phone', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'is_subscribed_to_newsletter', 'birthday_date']
 
   @expired_password
   def to_representation(self, *args, **kwargs):
