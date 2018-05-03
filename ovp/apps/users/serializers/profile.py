@@ -88,7 +88,7 @@ class ProfileRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = get_profile_model()
-    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address']
+    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address', 'birthday_date']
 
 class ProfileSearchSerializer(ChannelRelationshipSerializer):
   skills = SkillSerializer(many=True)
