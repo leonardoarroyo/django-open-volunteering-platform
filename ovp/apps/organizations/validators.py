@@ -11,10 +11,6 @@ from django.forms import ValidationError
 from django.core import validators
 
 from django.utils.translation import ugettext_lazy as _
-#from input_mask.widgets import InputMask
-
-
-
 
 def invite_email_validator(email):
   try:
@@ -67,9 +63,8 @@ def validate_CNPJ(value):
     if value[-2:] != orig_dv:
         raise ValidationError(error_messages['invalid'])
 
-    #value = '{}.{}.{}/{}-{}'.format(value[0:2], value[2:5], value[5:8], value[9:12], value[12:14])
     return orig_value
     
-def formata(value):
-	value = re.sub("[-/\.]", "", value)
-	return '{}.{}.{}/{}-{}'.format(value[0:2], value[2:5], value[5:8], value[8:12], value[12:])
+def format_CNPJ(value):
+  value = re.sub("[-/\.]", "", value)
+  return '{}.{}.{}/{}-{}'.format(value[0:2], value[2:5], value[5:8], value[8:12], value[12:])

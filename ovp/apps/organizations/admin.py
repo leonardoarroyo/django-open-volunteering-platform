@@ -116,6 +116,3 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
 
 
 admin_site.register(Organization, OrganizationAdmin)
-
-"""class document(InputMask):
-    mask = {'mask': 'xx.xxx.xxx/xxxx-xx'}"""

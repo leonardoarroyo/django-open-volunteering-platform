@@ -4,16 +4,11 @@ from ovp.admin.jet.modules import OVPRecentActions
 from jet.dashboard.dashboard import Dashboard, AppIndexDashboard
 from jet.dashboard import modules
 from jet.utils import get_admin_site_name
-from jet.dashboard.dashboard_modules import google_analytics
-
 
 class CustomIndexDashboard(Dashboard):
   columns = 3
 
   def init_with_context(self, context):
-    self.available_children.append(google_analytics.GoogleAnalyticsVisitorsTotals)
-    self.available_children.append(google_analytics.GoogleAnalyticsVisitorsChart)
-    self.available_children.append(google_analytics.GoogleAnalyticsPeriodVisitors)
     self.available_children.append(modules.LinkList)
     self.available_children.append(modules.Feed)
 
