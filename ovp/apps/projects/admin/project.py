@@ -64,7 +64,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
   resource_class = ProjectResource 
 
   list_display = [
-    'id', 'created_date', 'name', 'organization__name', 'applied_count', # fix: CIDADE, PONTUAL OU RECORRENTE
+    'id', 'created_date', 'name', 'organization__name', 'city_state', 'applied_count', # fix: CIDADE, PONTUAL OU RECORRENTE
     'highlighted', 'published', 'closed', 'deleted', #fix: EMAIL STATUS
     ]
 
@@ -135,5 +135,8 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     qs = super(ProjectAdmin, self).get_queryset(request)
     return self.filter_by_country(request, qs, 'address')
 
+  def city_state(self, obj):
+    if obj.address is not None:
+      return obj.address.city_state
 
 admin_site.register(Project, ProjectAdmin)

@@ -99,7 +99,6 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
       if self.__original_password != self.password and not self.check_password(self._password):
         hash_password = True
 
-    print(self.__original_password)
     if hash_password and self.__original_password.split('$')[0] == 'pbkdf2_sha256':
       self.set_password(self.password) # hash it
       self.__original_password = self.password
