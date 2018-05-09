@@ -5,8 +5,9 @@ from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.models import GoogleAddress
 
+from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
-class GoogleAddressAdmin(ChannelModelAdmin):
+class GoogleAddressAdmin(ChannelModelAdmin, ForeignKeyAutocompleteAdmin):
   fields = [
     'id', 'typed_address', 'typed_address2'
   ]

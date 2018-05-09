@@ -82,6 +82,9 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
     super(User, self).__init__(*args, **kwargs)
     self.__original_password = self.password
 
+  def __str__(self):
+    return self.name
+
   def mailing(self, async_mail=None):
     return emails.UserMail(self, async_mail)
 

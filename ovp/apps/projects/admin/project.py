@@ -5,6 +5,7 @@ from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
 from ovp.apps.projects.models import Project, VolunteerRole
+from ovp.apps.organizations.models import Organization
 from .job import JobInline
 from .work import WorkInline
 
@@ -13,6 +14,8 @@ from ovp.apps.core.mixins import CountryFilterMixin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
+
+from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
 class VolunteerRoleInline(TabularInline):
   model = VolunteerRole
@@ -37,7 +40,13 @@ class ProjectResource(resources.ModelResource):
     if project.address is not None:
       return project.address.typed_address
 
-class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
+class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin, ForeignKeyAutocompleteAdmin):
+  related_search_fields = {
+    'organization': ('name', 'slug'),
+    'owner': ('name', 'email'),
+    'address': ('typed_address', 'address_line'),
+  }
+
   fields = [
     ('id', 'highlighted'), ('name', 'slug'),
     ('organization', 'owner'),

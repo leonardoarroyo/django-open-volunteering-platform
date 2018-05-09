@@ -11,6 +11,8 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
+from django_extensions.admin import ForeignKeyAutocompleteAdmin
+
 # This file contains some "pragma: no cover" because the admin
 # class is not covered by the test suite
 
@@ -42,7 +44,7 @@ class OrganizationResource(resources.ModelResource):
     return organization.owner.phone
 
 
-class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
+class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin, ForeignKeyAutocompleteAdmin):
   fields = [
     ('id', 'highlighted'), ('name', 'slug'),
     ('owner'), #- 'type'

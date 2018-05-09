@@ -9,6 +9,8 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
+from django_extensions.admin import ForeignKeyAutocompleteAdmin
+
 class UserResource(resources.ModelResource):
   user = Field()
   address = Field()
@@ -24,7 +26,7 @@ class UserResource(resources.ModelResource):
     if user.profile is not None and user.profile.address is not None:
       return user.profile.address.typed_address
 
-class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin):
+class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocompleteAdmin):
   fields = [
     ('id', 'name', 'email'), 'slug', 'phone',
     ('is_staff','is_superuser','is_active','is_email_verified','public',),
