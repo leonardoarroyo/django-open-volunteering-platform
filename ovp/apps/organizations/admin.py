@@ -45,6 +45,11 @@ class OrganizationResource(resources.ModelResource):
 
 
 class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin, ForeignKeyAutocompleteAdmin):
+  related_search_fields = {
+    'owner': ('name', 'email'),
+    'address': ('typed_address', 'address_line'),
+  }
+
   fields = [
     ('id', 'highlighted'), ('name', 'slug'),
     ('owner'), #- 'type'
@@ -53,12 +58,12 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     ('published_date', 'deleted_date'),
 
     'address',
-    'image', 'cover',
+    'image',
 
     'facebook_page', 'website',
 
     'description', 'details',
-    'causes', 'members',
+    'causes',
 
     ('created_date', 'modified_date'),
     ]
