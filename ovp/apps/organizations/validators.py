@@ -40,9 +40,10 @@ def validate_CNPJ(value):
     group of 14 characters.
     :type value: object
     """
+    if value is None or len(value) == 0:
+      return None
+
     value = str(value)
-    if value in EMPTY_VALUES:
-        return u''
     if not value.isdigit():
         value = re.sub("[-/\.]", "", value)
     orig_value = value[:]
@@ -66,5 +67,7 @@ def validate_CNPJ(value):
     return orig_value
     
 def format_CNPJ(value):
+  if value is None or len(value) == 0:
+    return None
   value = re.sub("[-/\.]", "", value)
   return '{}.{}.{}/{}-{}'.format(value[0:2], value[2:5], value[5:8], value[8:12], value[12:])

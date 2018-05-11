@@ -29,7 +29,7 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'image_id', 'cover', 'hidden_address', 'causes', 'contact_name', 'contact_email', 'contact_phone']
+    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'image_id', 'cover', 'hidden_address', 'causes', 'contact_name', 'contact_email', 'contact_phone', 'document']
 
   def create(self, validated_data):
     causes = validated_data.pop('causes', [])
@@ -40,7 +40,7 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
       address_sr = GoogleAddressSerializer(data=address_data, context=self.context)
       address = address_sr.create(address_data)
       validated_data['address'] = address
-
+    
     # Organization
     organization = super(OrganizationCreateSerializer, self).create(validated_data)
 
