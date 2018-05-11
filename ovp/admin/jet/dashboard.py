@@ -5,7 +5,6 @@ from jet.dashboard.dashboard import Dashboard, AppIndexDashboard
 from jet.dashboard import modules
 from jet.utils import get_admin_site_name
 
-
 class CustomIndexDashboard(Dashboard):
   columns = 3
 
@@ -54,5 +53,4 @@ class CustomIndexDashboard(Dashboard):
       10,
       column=0,
       order=1
-    ))
-
+    ))   

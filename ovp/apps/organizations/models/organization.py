@@ -7,6 +7,7 @@ from ovp.apps.channels.models.abstract import ChannelRelationship
 
 from ovp.apps.organizations.emails import OrganizationMail
 from ovp.apps.organizations.emails import OrganizationAdminMail
+from ovp.apps.organizations.validators import validate_CNPJ, format_CNPJ
 
 from ckeditor.fields import RichTextField
 
@@ -38,6 +39,7 @@ class Organization(ChannelRelationship):
   description = models.CharField(_('Short description'), max_length=320, blank=True, null=True)
   hidden_address = models.BooleanField(_('Hidden address'), default=False)
   verified = models.BooleanField(_('verified'), default=False)
+  document = models.CharField(_('document'), unique=True, max_length=18, validators=[validate_CNPJ], blank=True, null=True)
 
   # Organization contact
   contact_name = models.CharField(_('Responsible name'), max_length=150, blank=True, null=True)
@@ -75,6 +77,7 @@ class Organization(ChannelRelationship):
 
   def save(self, *args, **kwargs):
     creating = False
+    force_update=True
 
     if self.pk is not None:
       if not self.__orig_published and self.published:
@@ -87,6 +90,8 @@ class Organization(ChannelRelationship):
       # Organization being created
       self.slug = generate_slug(kwargs.get("object_channel", None), Organization, self.name)
       creating = True
+
+    self.document = format_CNPJ(self.document)
 
     # If there is no description, take 100 chars from the details
     if not self.description and self.details:
@@ -114,3 +119,5 @@ class Organization(ChannelRelationship):
     verbose_name = _('organization')
     verbose_name_plural = _('organizations')
     unique_together = (('slug', 'channel'), )
+
+  
