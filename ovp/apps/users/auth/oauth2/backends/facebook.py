@@ -3,7 +3,7 @@ from rest_framework.exceptions import AuthenticationFailed
 
 class FacebookOAuth2(FacebookOAuth2Base):
   def auth_allowed(self, response, details):
-    if not response.get("verified", False):
+    if not response.get("email", False):
       raise AuthenticationFailed({
         "error": "access_denied",
         "error_description": "Your email is not verified by the provider"
