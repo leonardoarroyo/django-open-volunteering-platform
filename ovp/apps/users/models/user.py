@@ -71,6 +71,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
 
   objects = UserManager()
   USERNAME_FIELD = 'email'
+  LOGIN = False
 
   class Meta:
     app_label = 'users'
@@ -102,7 +103,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
       if self.__original_password != self.password and not self.check_password(self._password):
         hash_password = True
 
-    if hash_password and (creating or self.__original_password.split('$')[0] == 'pbkdf2_sha256'):
+    if hash_password and self.LOGIN == False:
       self.set_password(self.password) # hash it
       self.__original_password = self.password
 

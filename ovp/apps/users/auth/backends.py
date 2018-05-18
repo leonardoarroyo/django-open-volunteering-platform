@@ -14,6 +14,7 @@ class ChannelBasedAuthentication(ModelBackend):
 
     try:
       user = UserModel.objects.get(email=username, channel__slug=channel)
+      user.LOGIN = True
     except UserModel.DoesNotExist:
       # Run the default password hasher once to reduce the timing
       # difference between an existing and a non-existing user (#20760).
