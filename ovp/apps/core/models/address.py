@@ -110,7 +110,7 @@ def update_address(sender, instance, **kwargs):
   if kwargs.get('raw', False): # pragma: no cover
     return None
 
-  maps_language = get_channel_setting(instance.channel.slug, "MAPS_API_LANGUAGE")
+  maps_language = get_channel_setting(instance.channel.slug, "MAPS_API_LANGUAGE")[0]
 
   addressline = instance.typed_address
   url = 'https://maps.googleapis.com/maps/api/geocode/json?language={}&address={}'.format(maps_language, addressline)
