@@ -18,7 +18,6 @@ from django_extensions.admin import ForeignKeyAutocompleteAdmin
 # class is not covered by the test suite
 
 class OrganizationResource(resources.ModelResource):
-  organization = Field()
   address = Field()
   contact_name = Field()
   contact_email = Field()
@@ -26,10 +25,8 @@ class OrganizationResource(resources.ModelResource):
   
   class Meta:
     model = Organization
-    exclude = ('cover', 'website', 'members', 'facebook_page', 'type', 'verified', 'channel', 'image', 'skills', 'causes', 'categories', 'commentaries', 'owner', 'name', 'slug', 'published', 'highlighted', 'max_applies_from_roles', 'max_applies', 'public_project', 'minimum_age', 'hidden_address', 'crowdfunding', 'published_date', 'closed', 'closed_date', 'deleted', 'deleted_date', 'created_date', 'modified_date', 'details', 'description')
-  
-  def dehydrate_organization(self, organization):
-    return organization.name
+    fields = ('id', 'name', 'contact_name', 'contact_email', 'contact_phone', 'address', 'published', 'highlighted', 'closed', 'deleted', 'created_date', 'modified_date')
+    # exclude = ('cover', 'website', 'members', 'facebook_page', 'type', 'verified', 'channel', 'image', 'skills', 'causes', 'categories', 'commentaries', 'owner', 'slug', 'max_applies_from_roles', 'max_applies', 'public_project', 'minimum_age', 'hidden_address', 'crowdfunding', 'published_date', 'closed_date', 'deleted_date', 'details', 'description', 'id')
 
   def dehydrate_address(self, organization):
     if organization.address is not None and organization.address is not None:
