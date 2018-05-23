@@ -6,8 +6,53 @@ from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.mixins import CountryFilterMixin
 
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
+from import_export.fields import Field
 
-class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin):
+class ApplyResource(resources.ModelResource):
+  organization = Field()
+  address = Field()
+  volunteer_name = Field()
+  volunteer_email = Field()
+  volunteer_phone = Field()
+  project = Field()
+  
+  class Meta:
+    model = Apply
+    fields = ('name', 'volunteer_name', 'volunteer_phone', 'volunteer_email', 'status', 'project', 'organization', 'date', 'canceled')
+    
+  def dehydrate_organization(self, apply):
+    return apply.project.organization.name
+
+  def dehydrate_project(self, apply):
+    return apply.project.name
+
+  def dehydrate_address(self, apply):
+    if apply.project.address is not None:
+      return apply.project.address.typed_address
+
+  def dehydrate_volunteer_name(self, apply):
+    if apply.user is not None:
+      return apply.user.name
+
+    return apply.username
+
+  def dehydrate_volunteer_email(self, apply):
+    if apply.user is not None:
+      return apply.user.email
+
+    return apply.email
+
+  def dehydrate_volunteer_phone(self, apply):
+    if apply.user is not None:
+      return apply.user.phone
+
+    return apply.phone
+
+class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
+  resource_class = ApplyResource
+
   fields = [
     ('id', 'project__name', 'status'),
     'user', 'project', 'project__organization__name',
