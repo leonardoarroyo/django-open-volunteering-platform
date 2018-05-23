@@ -23,18 +23,14 @@ class VolunteerRoleInline(TabularInline):
 
 class ProjectResource(resources.ModelResource):
   organization = Field()
-  project = Field()
   address = Field()
   
   class Meta:
     model = Project
-    exclude = ('channel', 'image', 'skills', 'causes', 'categories', 'commentaries', 'owner', 'name', 'slug', 'published', 'highlighted', 'max_applies_from_roles', 'max_applies', 'public_project', 'minimum_age', 'hidden_address', 'crowdfunding', 'published_date', 'closed', 'closed_date', 'deleted', 'deleted_date', 'created_date', 'modified_date', 'details', 'description')
+    fields = ('name', 'applied_count', 'organization', 'address', 'highlighted', 'published', 'closed', 'deleted')
     
   def dehydrate_organization(self, project):
     return project.organization.name
-
-  def dehydrate_project(self, project):
-    return project.name
 
   def dehydrate_address(self, project):
     if project.address is not None:
