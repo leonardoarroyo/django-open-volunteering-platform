@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
@@ -46,6 +46,7 @@ class SectionFilter(ChannelRelationship):
 
   def __str__(self):
     filter_name = self.filter.__str__()
+
     if filter_name != "None":
       return filter_name
 
