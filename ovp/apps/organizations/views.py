@@ -3,9 +3,11 @@ from ovp.apps.users.models import User
 from ovp.apps.core.serializers import EmptySerializer
 from ovp.apps.core.mixins import BookmarkMixin
 
+from django.core.exceptions import ValidationError
 from ovp.apps.organizations import serializers
 from ovp.apps.organizations import models
 from ovp.apps.organizations import permissions as organization_permissions
+from ovp.apps.organizations.validators import format_CNPJ, validate_CNPJ
 
 from ovp.apps.projects.serializers.project import ProjectOnOrganizationRetrieveSerializer
 from ovp.apps.projects.models import Project
@@ -13,6 +15,7 @@ from ovp.apps.projects.models import Project
 from ovp.apps.uploads import models as upload_models
 
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
+
 
 from rest_framework import decorators
 from rest_framework import viewsets
@@ -23,6 +26,7 @@ from rest_framework import permissions
 from rest_framework import status
 
 from django.shortcuts import get_object_or_404
+
 
 import json
 
@@ -48,6 +52,17 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
       serializer = self.get_serializer(instance)
 
     return response.Response(serializer.data)
+
+  @decorators.list_route(methods=["GET"], url_path='check-doc/(?P<doc>[0-9]+)')
+  def check_doc(self, request, doc):
+    formated_doc = format_CNPJ(doc)
+    try:
+      validate_CNPJ(formated_doc)
+    except ValidationError as validation_error:
+      return response.Response({ "invalid": True, "message": validation_error.message }, status=400)
+
+    taken = models.Organization.objects.filter(document=formated_doc).count() > 0
+    return response.Response({ "taken": taken })
 
   @decorators.detail_route(methods=["POST"])
   def invite_user(self, request, *args, **kwargs):
