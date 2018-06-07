@@ -49,10 +49,11 @@ class BaseMail:
     msg = EmailMultiAlternatives(subject, text_content, self.from_email, [self.email_address])
     msg.attach_alternative(html_content, "text/html")
 
+    async_flag = None
     if self.async_mail:
-      async_flag="async"
+      async_flag = "async"
     elif self.async_mail == None:
-      async_flag=getattr(settings, "DEFAULT_SEND_EMAIL", "async")
+      async_flag = getattr(settings, "DEFAULT_SEND_EMAIL", "async")
 
     if async_flag == "async":
       t = EmailThread(msg)
