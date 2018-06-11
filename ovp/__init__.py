@@ -15,6 +15,7 @@ def get_core_apps():
 
     # OVP
     "ovp.apps.core",
+    "ovp.apps.admin",
     "ovp.apps.uploads",
     "ovp.apps.users",
     "ovp.apps.projects",

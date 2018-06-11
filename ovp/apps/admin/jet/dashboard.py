@@ -1,6 +1,7 @@
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from ovp.admin.jet.modules import OVPRecentActions
+from ovp.apps.admin.jet.modules import OVPRecentActions
+from ovp.apps.admin.jet.modules import Indicators
 from jet.dashboard.dashboard import Dashboard, AppIndexDashboard
 from jet.dashboard import modules
 from jet.utils import get_admin_site_name
@@ -53,4 +54,9 @@ class CustomIndexDashboard(Dashboard):
       10,
       column=0,
       order=1
+    ))   
+
+    # append a recent actions module
+    self.children.append(Indicators(
+      _('Indicators'),
     ))   
