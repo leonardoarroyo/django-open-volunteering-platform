@@ -28,9 +28,9 @@ class GoogleAddressAdmin(ChannelModelAdmin, ForeignKeyAutocompleteAdmin):
 
   raw_id_fields = []
 
-admin.site.register(GoogleAddress, GoogleAddressAdmin)
+admin_site.register(GoogleAddress, GoogleAddressAdmin)
 
-class SimpleAddressAdmin(admin.ModelAdmin):
+class SimpleAddressAdmin(ChannelModelAdmin):
   fields = [
     'id', 'zipcode', 'street', 'number', 'supplement', 'neighbourhood', 'city', 'state'
   ]
@@ -51,4 +51,4 @@ class SimpleAddressAdmin(admin.ModelAdmin):
 
   raw_id_fields = []
 
-admin.site.register(SimpleAddress, SimpleAddressAdmin)
+admin_site.register(SimpleAddress, SimpleAddressAdmin)
