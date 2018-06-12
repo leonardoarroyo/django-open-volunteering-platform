@@ -53,3 +53,35 @@ def generate_slug(channel, model, name):
       query = model.objects.filter(slug=slug + append, channel__slug=channel)
     return slug + append
   return None
+
+def get_address_model():
+  """ Returns application address model
+
+  The address model can be modified by setting OVP_CORE.ADDRESS_MODEL.
+
+  Returns:
+    class: Address model class
+
+    The default model returned is ovp_core.models.GoogleAddress
+
+  """
+  model_name = get_settings().get("ADDRESS_MODEL", "ovp.apps.core.models.GoogleAddress")
+  return import_from_string(model_name)
+
+
+def get_address_serializers():
+  """ Return application address serializer tuple
+
+  The tuple can be modified by setting OVP_CORE.ADDRESS_SERIALIZER_TUPLE.
+
+  Returns:
+    tuple: A tuple with 3 serializers
+
+    The default tuple returned is (GoogleAddressSerializer, GoogleAddressLatLngSerializer, GoogleAddressCityStateSerializer).
+    The first one is the default serializer, usually used to create and update addresses.
+    The second extends the first one but also includes 'lat' and 'lng' field, used to create pins on maps.
+    The third is a simplified serializer containing only field 'city_state'. This is used on search.
+
+  """
+  serializers = get_settings().get('ADDRESS_SERIALIZER_TUPLE', ('ovp.apps.core.serializers.GoogleAddressSerializer', 'ovp.apps.core.serializers.GoogleAddressLatLngSerializer', 'ovp.apps.core.serializers.GoogleAddressCityStateSerializer'))
+  return [import_from_string(s) for s in serializers]

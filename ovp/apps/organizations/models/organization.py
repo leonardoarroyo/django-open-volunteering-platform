@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 from ovp.apps.core.helpers import generate_slug
+from ovp.apps.core.helpers import get_address_model
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
@@ -23,7 +24,7 @@ ORGANIZATION_TYPES = (
 class Organization(ChannelRelationship):
   # Relationships
   owner = models.ForeignKey('users.User', verbose_name=_('owner'), related_name="organizations")
-  address = models.OneToOneField('core.GoogleAddress', blank=True, null=True, verbose_name=_('address'), db_constraint=False)
+  address = models.OneToOneField(get_address_model(), blank=True, null=True, verbose_name=_('address'), db_constraint=False)
   image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
   cover = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, related_name="+", verbose_name=_('cover'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'), blank=True)
