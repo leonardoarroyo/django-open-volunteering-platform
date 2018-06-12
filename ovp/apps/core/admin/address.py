@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
-from ovp.apps.core.models import GoogleAddress
+from ovp.apps.core.models import GoogleAddress, SimpleAddress
 
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
@@ -28,5 +28,27 @@ class GoogleAddressAdmin(ChannelModelAdmin, ForeignKeyAutocompleteAdmin):
 
   raw_id_fields = []
 
-
 admin_site.register(GoogleAddress, GoogleAddressAdmin)
+
+class SimpleAddressAdmin(ChannelModelAdmin):
+  fields = [
+    'id', 'zipcode', 'street', 'number', 'supplement', 'neighbourhood', 'city', 'state'
+  ]
+
+  list_display = [
+    'id', 'street', 'city'
+  ]
+
+  list_filter = []
+
+  list_editable = []
+
+  search_fields = ['street', 'city']
+
+  readonly_fields = [
+    'id'
+  ]
+
+  raw_id_fields = []
+
+admin_site.register(SimpleAddress, SimpleAddressAdmin)

@@ -162,14 +162,15 @@ class OrganizationResourceViewSetTestCase(TestCase):
   def test_check_doc(self):
     user = User.objects.create_user(email="test_can_create_organization@gmail.com", password="testcancreate", object_channel="default")
     data = copy.copy(base_organization)
-    data.document="111111111111"
+    data["document"] = "64479764000194"
     client = APIClient()
     client.force_authenticate(user=user)
+    response = client.post(reverse("organization-list"), data, format="json")
 
-    invalidCheckResponse = client.get(reverse("check-doc",["222222222222"]), data, format="json")
-    validCheckResponse = client.get(reverse("check-doc",["111111111111"]), data, format="json")
-    self.assertEqual(validCheckResponse.exists, True)
-    self.assertEqual(invalidCheckResponse.exists, True)
+    invalid_response = client.get("/organizations/check-doc/{}/".format("22222222222222"), format="json")
+    taken_response = client.get("/organizations/check-doc/{}/".format("64479764000194"), format="json")
+    self.assertEqual(taken_response.data["taken"], True)
+    self.assertEqual(invalid_response.data["invalid"], True)
 
 
 class OrganizationInviteTestCase(TestCase):

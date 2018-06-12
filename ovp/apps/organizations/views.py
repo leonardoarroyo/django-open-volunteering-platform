@@ -55,13 +55,15 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
   @decorators.list_route(methods=["GET"], url_path='check-doc/(?P<doc>[0-9]+)')
   def check_doc(self, request, doc):
-    formated_doc = format_CNPJ(doc)
+    formatted_doc = format_CNPJ(doc)
     try:
-      validate_CNPJ(formated_doc)
+      validate_CNPJ(formatted_doc)
     except ValidationError as validation_error:
       return response.Response({ "invalid": True, "message": validation_error.message }, status=400)
+    except:
+      return response.Response({ "invalid": True }, status=400)
 
-    taken = models.Organization.objects.filter(document=formated_doc).count() > 0
+    taken = models.Organization.objects.filter(document=formatted_doc).count() > 0
     return response.Response({ "taken": taken })
 
   @decorators.detail_route(methods=["POST"])
