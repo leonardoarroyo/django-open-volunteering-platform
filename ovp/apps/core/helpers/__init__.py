@@ -7,6 +7,9 @@ import importlib
 
 from ovp.apps.channels.cache import get_channel_setting
 
+def get_settings(string="OVP_CORE"):
+  return getattr(settings, string, {})
+
 def import_from_string(val):
   try:
     # Nod to tastypie's use of importlib.

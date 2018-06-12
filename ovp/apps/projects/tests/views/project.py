@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.test import override_settings
 
 from django.core.cache import cache
 
@@ -148,15 +149,17 @@ class ProjectCommentTestCase(TestCase):
 
 # This tests should run if declaring the following setings on runtests.py
 # They can't work without rerunning migrations as django expects the default GoogleAddress related model
-#
-#@override_settings(OVP_CORE={"ADDRESS_MODEL": "ovp.apps.core.models.SimpleAddress", "ADDRESS_SERIALIZER_TUPLE": ("ovp.apps.core.serializers.SimpleAddressSerializer", "ovp.apps.core.serializers.SimpleAddressSerializer", "ovp.apps.core.serializers.SimpleAddressSerializer")})
-#class ProjectWithSimpleAddressTestCase(TestCase):
+# 
+# @override_settings(OVP_CORE={"ADDRESS_MODEL": "ovp.apps.core.models.SimpleAddress", "ADDRESS_SERIALIZER_TUPLE": ("ovp.apps.core.serializers.SimpleAddressSerializer", "ovp.apps.core.serializers.SimpleAddressSerializer", "ovp.apps.core.serializers.SimpleAddressSerializer")})
+# class ProjectWithSimpleAddressTestCase(TestCase):
 #  def setUp(self):
-#    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate")
+#    self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
+#    self.organization = Organization.objects.create(name="test", owner=self.user, object_channel="default")
 #    self.client = APIClient()
 #    self.client.force_authenticate(user=self.user)
-#
+
 #    self.data = copy.copy(base_project)
+#    self.data["organization_id"] = self.organization.pk
 #    self.data["address"] = {
 #      "street": "Av. Paulista",
 #      "number": "1000",
@@ -165,15 +168,14 @@ class ProjectCommentTestCase(TestCase):
 #      "state": "São Paulo",
 #      "country": "Brazil",
 #      "zipcode": "01310-100",
-#      "supplement": "Casa B"
+#      "supplement": "Casa B",
 #    }
-#
-#
+
+
 #  def test_can_create_project(self):
 #    """Assert that it's possible to create a project with simple address"""
-#    import pudb;pudb.set_trace()
 #    p = Project()
-#
+
 #    response = self.client.post(reverse("project-list"), self.data, format="json")
 #    self.assertTrue(response.status_code == 201)
 #    self.assertTrue(response.data["id"])
@@ -185,13 +187,13 @@ class ProjectCommentTestCase(TestCase):
 #    self.assertTrue(response.data["address"]["country"] == self.data["address"]["country"])
 #    self.assertTrue(response.data["address"]["zipcode"] == self.data["address"]["zipcode"])
 #    self.assertTrue(response.data["address"]["supplement"] == self.data["address"]["supplement"])
-#
+
 #  def test_project_retrieval(self):
 #    """Assert projects can be retrieved with simple address"""
-#
+
 #    response = self.client.post(reverse("project-list"), self.data, format="json")
 #    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
-#
+
 #    self.assertTrue(response.data["address"]["street"] == self.data["address"]["street"])
 #    self.assertTrue(response.data["address"]["number"] == self.data["address"]["number"])
 #    self.assertTrue(response.data["address"]["neighbourhood"] == self.data["address"]["neighbourhood"])

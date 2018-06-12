@@ -138,7 +138,7 @@ settings.configure(
     AUTH_PASSWORD_VALIDATORS=AUTH_PASSWORD_VALIDATORS,
     AUTH_USER_MODEL='users.User',
     OVP_CORE={
-      'VALID_CONTACT_RECIPIENTS': ['testemail@1.com', 'testemail@2.com']
+      'VALID_CONTACT_RECIPIENTS': ['testemail@1.com', 'testemail@2.com'],
     },
     HAYSTACK_CONNECTIONS={
     'default': {

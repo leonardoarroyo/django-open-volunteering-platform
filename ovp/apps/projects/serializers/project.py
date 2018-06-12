@@ -212,13 +212,8 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   def to_representation(self, instance):
     return super(ProjectRetrieveSerializer, self).to_representation(instance)
 
-<<<<<<< HEAD
-class CompactOrganizationSerializer(ChannelRelationshipSerializer):
-  address = GoogleAddressCityStateSerializer()
-=======
 class CompactOrganizationSerializer(serializers.ModelSerializer):
   address = address_serializers[2]()
->>>>>>> parent of f8ea64f... Remove dynamic address model settings
 
   class Meta:
     model = Organization
