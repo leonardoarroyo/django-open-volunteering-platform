@@ -12,6 +12,7 @@ from ovp.apps.users.decorators import expired_password
 from ovp.apps.organizations.serializers import OrganizationSearchSerializer, OrganizationOwnerRetrieveSerializer
 
 from ovp.apps.projects.serializers.apply_user import ApplyUserRetrieveSerializer
+from ovp.apps.projects.serializers.bookmark_user import BookmarkUserRetrieveSerializer
 from ovp.apps.projects import models as model_project
 
 from ovp.apps.uploads.serializers import UploadedImageSerializer
@@ -149,10 +150,11 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
   applies = ApplyUserRetrieveSerializer(many=True, source="apply_set")
+  bookmarked_projects = BookmarkUserRetrieveSerializer(many=True, source="projectbookmark_set")
 
   class Meta:
     model = models.User
-    fields = ['name', 'avatar', 'profile', 'slug', 'applies']
+    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects']
 
 class UserProjectRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
