@@ -78,6 +78,12 @@ class Project(ChannelRelationship):
   def get_volunteers_numbers(self):
     return Apply.objects.filter(project=self, canceled=False).count()
 
+  def is_bookmarked(self, user):
+    return self.bookmarks.filter(user=user).count() > 0
+
+  def bookmark_count(self):
+    return self.bookmarks.count()
+
   '''
   Model operation methods
   '''
@@ -128,9 +134,6 @@ class Project(ChannelRelationship):
 
   def active_apply_set(self):
     return self.apply_set.filter(canceled=False)
-
-  def is_bookmarked(self, user):
-    return self.bookmarks.filter(user=user).count() > 0
 
   def __str__(self):
       return  '%s' % (self.name)

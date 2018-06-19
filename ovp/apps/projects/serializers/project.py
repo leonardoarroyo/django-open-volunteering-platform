@@ -195,16 +195,20 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   categories = CategoryRetrieveSerializer(many=True)
   commentaries = CommentaryRetrieveSerializer(many=True)
   is_bookmarked = serializers.SerializerMethodField()
+  bookmark_count = serializers.SerializerMethodField()
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
     if user.is_authenticated():
       return instance.is_bookmarked(user)
     return False
+
+  def get_bookmark_count(self, instance):
+    return instance.bookmark_count()
 
   @add_current_user_is_applied_representation
   @hide_address
