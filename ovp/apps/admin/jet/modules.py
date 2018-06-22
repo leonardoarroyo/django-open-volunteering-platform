@@ -1,10 +1,14 @@
+import datetime
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 from jet.dashboard.modules import RecentActions
 from jet.dashboard.modules import DashboardModule
 from django.contrib.admin.models import LogEntry
 from django.db.models import Q
 from ovp.apps.organizations.models import Organization
-from ovp.apps.projects.models import Project
+from ovp.apps.projects.models import Project, Apply
 from ovp.apps.users.models import User
+from channels.pv.models import PVUserInfo
 
 class OVPRecentActions(RecentActions):
   def init_with_context(self, context):
@@ -57,6 +61,28 @@ class Indicators(DashboardModule):
     def init_with_context(self, context):
       organizations = Organization.objects.filter(deleted=False)
       projects = Project.objects.filter(deleted=False)
-      self.organizations = "{}/{}".format(organizations.filter(published=True).count(), organizations.count())
-      self.projects = "{}/{}".format(projects.filter(published=True, closed=False).count(), projects.count())
-      self.users = User.objects.all().count()
+      able_to_apply = PVUserInfo.objects.filter(can_apply=True)
+
+      self.organizations_count = organizations.count()
+      self.organizations_published_count = organizations.filter(published=True).count()
+      self.projects_count = projects.count()
+      self.projects_published_count = projects.filter(published=True).count()
+      self.users_count = User.objects.count()
+      self.users_can_apply_count = able_to_apply.count()
+      self.applies_count = Apply.objects.count()
+
+      # Monthly
+      now = timezone.now()
+      day_one_month_before = (now - datetime.timedelta(365/12)).replace(tzinfo=timezone.utc)
+      month_organizations = organizations.filter(created_date__gte=day_one_month_before)
+      month_projects = projects.filter(created_date__gte=day_one_month_before)
+      month_users = User.objects.filter(joined_date__gte=day_one_month_before)
+
+      self.month_organizations_count = month_organizations.count()
+      self.month_organizations_published_count = month_organizations.filter(published=True).count()
+      self.month_projects_count = month_projects.count()
+      self.month_projects_published_count = month_projects.filter(published=True).count()
+      self.month_users_count = month_users.count()
+      self.month_users_can_apply_count = month_users.filter(pvuserinfo__in=able_to_apply).count()
+      self.month_applies_count = Apply.objects.filter(date__gte=day_one_month_before).count()
+

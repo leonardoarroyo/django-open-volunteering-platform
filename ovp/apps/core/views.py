@@ -20,7 +20,6 @@ def startup(request):
       "causes": causes.data
     })
 
-
 @decorators.api_view(["POST"])
 def contact(request):
   name = request.data.get("name", "")
