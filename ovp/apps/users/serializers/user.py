@@ -75,7 +75,7 @@ class UserUpdateSerializer(UserCreateSerializer):
   class Meta:
     model = models.User
     permission_classes = (permissions.IsAuthenticated,)
-    fields = ['name', 'phone', 'password', 'avatar', 'current_password', 'locale', 'profile', 'public', 'is_subscribed_to_newsletter']
+    fields = ['name', 'email', 'phone', 'password', 'avatar', 'current_password', 'locale', 'profile', 'public', 'is_subscribed_to_newsletter']
     extra_kwargs = {'password': {'write_only': True}}
 
 

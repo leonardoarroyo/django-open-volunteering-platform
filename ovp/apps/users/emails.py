@@ -31,3 +31,9 @@ class UserMail(BaseMail):
     Sent when volunteer make contact with another volunteer
     """
     return self.sendEmail('messageToVolunteer', 'Volunteer Message', context)
+
+  def sendUpdateEmail(self, context):
+    """
+    Sent when volunteer requests reset email
+    """
+    return self.sendEmail('updateEmail', 'Update Email', context)
