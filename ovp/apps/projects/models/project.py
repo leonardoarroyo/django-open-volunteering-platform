@@ -137,6 +137,17 @@ class Project(ChannelRelationship):
 
   def __str__(self):
       return  '%s' % (self.name)
+  
+  def __init__(self, *args, **kwargs):
+    super(Project, self).__init__(*args, **kwargs)
+    
+    if self.closed_date is not None:
+      # change closed if date expired
+      self.closed = abs(timezone.now() > self.closed_date)
+
+  def update_closed_date(self, end_date):
+    self.closed_date = end_date
+    self.save()
 
   class Meta:
     app_label = 'projects'
