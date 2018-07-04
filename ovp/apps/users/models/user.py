@@ -94,6 +94,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
     hash_password = False
     creating = False
     original_password = self.password
+    update_email = False
 
     if not self.pk:
       self.slug = encode_uuid(self.uuid)
