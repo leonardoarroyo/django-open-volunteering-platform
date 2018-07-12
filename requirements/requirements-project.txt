@@ -17,4 +17,5 @@ dateutils
 pyexcel_xls
 django-cors-headers
 django-rest-framework-social-oauth2
+martor
 -e git+https://github.com/django-import-export/django-import-export.git@7645954f241aa7f042e9ed7871482f352927097c#egg=django_import_export

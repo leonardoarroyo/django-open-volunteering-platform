@@ -182,7 +182,7 @@ class ChannelProcessorMiddleware():
 
   def _admin_should_redirect_to_admin_page(self, request):
     path = request.get_full_path()
-    if not path.startswith("/admin") and not path.startswith("/jet") and not path.startswith("/static"):
+    if not path.startswith("/admin") and not path.startswith("/jet") and not path.startswith("/static") and not path.startswith("/martor"):
       return True
 
     return False

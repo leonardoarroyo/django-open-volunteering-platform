@@ -12,6 +12,8 @@ def get_core_apps():
     "corsheaders",
     "jet",
     "jet.dashboard",
+    "martor",
+
 
     # OVP
     "ovp.apps.core",

@@ -1,4 +1,6 @@
 from django import forms
+from django.db import models
+from martor.widgets import AdminMartorWidget
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.organizations.models import Organization
@@ -45,6 +47,10 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   related_search_fields = {
     'owner': ('name', 'email'),
     'address': ('typed_address', 'address_line'),
+  }
+
+  formfield_overrides = {
+    models.TextField: {'widget': AdminMartorWidget},
   }
 
   fields = [

@@ -1,5 +1,8 @@
 from django import forms
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from martor.widgets import AdminMartorWidget
+
 
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
@@ -41,6 +44,10 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     'organization': ('name', 'slug'),
     'owner': ('name', 'email'),
     'address': ('typed_address', 'address_line'),
+  }
+
+  formfield_overrides = {
+    models.TextField: {'widget': AdminMartorWidget},
   }
 
   fields = [
