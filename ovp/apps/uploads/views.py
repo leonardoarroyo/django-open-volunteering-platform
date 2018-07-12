@@ -1,7 +1,7 @@
 import json
 
-from ovp.apps.uploads.models import UploadedImage
-from ovp.apps.uploads.serializers import UploadedImageSerializer, ImageGallerySerializer
+from ovp.apps.uploads.models import UploadedImage, UploadedDocument
+from ovp.apps.uploads.serializers import UploadedImageSerializer, ImageGallerySerializer, UploadedDocumentSerializer
 
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 
@@ -11,6 +11,7 @@ from rest_framework import response
 from rest_framework import status
 
 from .helpers import perform_image_crop
+
 
 @ChannelViewSet
 class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -61,3 +62,35 @@ class ImageGalleryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     if category is not None:
       queryset = queryset.filter(category=category)
     return queryset
+
+
+@ChannelViewSet
+class UploadedDocumentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+  queryset = UploadedDocument.objects.all()
+  serializer_class = UploadedDocumentSerializer
+
+  def create(self, request, *args, **kwargs):
+    upload_data = {}
+
+    if request.data.get('document', None):
+      upload_data['document'] = request.data.get('document')
+
+    upload_header = request.META.get('HTTP_X_UNAUTHENTICATED_UPLOAD', None)
+    is_authenticated = request.user.is_authenticated()
+
+    if is_authenticated or upload_header:
+      if upload_header:
+        upload_data['user'] = None
+
+      if is_authenticated:
+        upload_data['user'] = request.user.id
+
+      serializer = self.get_serializer(data=upload_data)
+
+      if serializer.is_valid():
+        self.object = serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+      
+      return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return response.Response(status=status.HTTP_401_UNAUTHORIZED)

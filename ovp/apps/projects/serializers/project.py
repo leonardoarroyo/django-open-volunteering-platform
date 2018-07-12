@@ -263,3 +263,4 @@ class ProjectSearchSerializer(ChannelRelationshipSerializer):
   @add_disponibility_representation
   def to_representation(self, instance):
     return super(ProjectSearchSerializer, self).to_representation(instance)
+

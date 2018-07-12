@@ -19,6 +19,7 @@ import urllib.request as request
 
 import json
 
+
 class Project(ChannelRelationship):
   """
   Project model
@@ -31,6 +32,7 @@ class Project(ChannelRelationship):
 
   # Relationships
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)
+  items = models.ManyToManyField('items.Item', verbose_name=_('items'), blank=True)
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
   organization = models.ForeignKey('organizations.Organization', blank=False, null=True, verbose_name=_('organization'))
 
@@ -189,3 +191,4 @@ def update_max_applies_from_roles(sender, **kwargs):
       vacancies = queryset.aggregate(Sum('vacancies')).get('vacancies__sum')
       project.max_applies_from_roles = vacancies if vacancies else 0
       project.save()
+
