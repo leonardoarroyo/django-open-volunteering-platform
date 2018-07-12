@@ -22,7 +22,7 @@ class Project(ChannelRelationship):
   Project model
   """
   image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
-  address = models.OneToOneField(get_address_model(), blank=True, null=True, verbose_name=_('address'), db_constraint=False)
+  address = models.ForeignKey(get_address_model(), blank=True, null=True, verbose_name=_('address'), db_constraint=False)
   skills = models.ManyToManyField('core.Skill', verbose_name=_('skills'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'))
   commentaries = models.ManyToManyField('core.Commentary', verbose_name=_('commentaries'))
