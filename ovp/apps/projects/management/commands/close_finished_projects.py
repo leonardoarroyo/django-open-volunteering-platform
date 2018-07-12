@@ -14,4 +14,8 @@ class Command(BaseCommand):
                  .filter(closed=False, \
                          job__end_date__lt=timezone.now())
     print("Closing {} finished projects".format(projects.count()))
-    projects.update(closed=True)
+
+    for project in projects:
+      # Do not use update because of signals
+      project.closed=True
+      project.save()
