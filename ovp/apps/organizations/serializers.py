@@ -92,7 +92,7 @@ class UserOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
     fields = ['name', 'email', 'phone']
 
 class OrganizationSearchSerializer(ChannelRelationshipSerializer):
-  address = address_serializers[2]()
+  address = address_serializers[1]()
   image = UploadedImageSerializer()
   is_bookmarked = serializers.BooleanField()
 
