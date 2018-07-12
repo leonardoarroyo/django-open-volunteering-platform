@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import markdownx.models
 
 
 class Migration(migrations.Migration):
@@ -22,6 +21,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='details',
-            field=markdownx.models.MarkdownxField(max_length=3000, verbose_name='Details'),
+            field=models.TextField(max_length=3000, verbose_name='Details'),
         ),
     ]
