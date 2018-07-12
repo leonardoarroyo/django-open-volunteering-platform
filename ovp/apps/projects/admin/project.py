@@ -3,7 +3,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from martor.widgets import AdminMartorWidget
 
-
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
