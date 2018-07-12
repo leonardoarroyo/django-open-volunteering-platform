@@ -25,11 +25,11 @@ def export_all_as_csv(model_admin, request, queryset):
 
 
 class LeadAdmin(ChannelModelAdmin):
-	fields = ['id', 'name', 'email', 'phone']
-	list_display = ['id', 'name', 'email', 'phone']
+	fields = ['id', 'name', 'email', 'phone', 'type', 'employee_number']
+	list_display = ['id', 'name', 'email', 'phone', 'type']
 	list_filter = []
 	list_editable = ['name']
-	search_fields = ['id', 'name', 'email', 'phone']
+	search_fields = ['id', 'name', 'email', 'phone', 'type']
 	readonly_fields = ['id']
 	raw_id_fields = []
 
