@@ -1,43 +1,43 @@
 <style>
-  .indicator-value {
+  .indicators-value {
     font-size: 32px;
     font-weight: normal;
     margin-bottom: 0;
   }
 
-  .indicator-label {
+  .indicators-label {
     text-transform: uppercase;
     color: #aab2bd;
     font-size: 12px;
     font-weight: bold;
   }
 
-  .indicator-row {
+  .indicators-row {
     display: flex;
     border-bottom: 1px solid #eee;
   }
 
-  .indicator-row:last-child {
+  .indicators-row:last-child {
     border-bottom-width: 0;
   }
 
-  .indicator-col {
+  .indicators-col {
     width: 50%;
     border-left: 1px solid #eee;
     padding: 5px 10px;
   }
 
-  .indicator-row .indicator-col:first-child {
+  .indicators-row .indicators-col:first-child {
     border-left-width: 0
   }
 
-  .indicator-header {
+  .indicators-header {
     background: #59677e;
     padding: 8px 10px 5px;
     line-height: 1;
   }
 
-  .indicator-header h4 {
+  .indicators-header h4 {
     margin: 2px 0;
     color: #fff;
     font-weight: normal;
@@ -45,87 +45,156 @@
     text-transform: uppercase;
     display: block;
   }
+
+  .indicators-footer {
+    padding: 10px;
+  }
+
+  .indicators-button {
+    border-radius: 0 3px 3px 0;
+    background: #59677e;
+    color: #fff;
+    padding: 5px 14px;
+    font-size: 14px;
+    border-width: 0;
+    cursor: pointer;
+    white-space: nowrap;
+    flex: 1 1 auto;
+  }
+
+  .indicators-button:hover {
+    background: #48566f;
+  }
+
+  .indicators-footer *,
+  .indicators-footer *::after,
+  .indicators-footer *::before {
+    box-sizing: border-box !important
+  }
+
+  .indicators-input-group {
+    height: 32px;
+    position: relative;
+  }
+
+  .indicators-input-group input,
+  .indicators-input-group button {
+    float: left;
+  }
+
+  .indicators-input-group,
+  .indicators-input-group input,
+  .indicators-input-group button {
+    height: 32px;
+  }
+
+  .indicators-input-group input {
+    margin: 0;
+    border-radius: 0;
+    border-right-width: 0;
+    min-width: auto;
+    width: 100px;
+    display: block;
+    float: left;
+  }
+
+  .indicators-input-group input:first-child {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+
+  .indicators-input-group::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-width: 6px 0 6px 6px;
+    border-color: rgba(255, 255, 255, 0) #ddd;
+    border-style: solid;
+    left: 100px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+  }
 </style>
 <div>
-  <div class="indicator-header">
+  <div class="indicators-header">
     <h4>Números totais</h4>
   </div>
-  <div class="indicator-row">
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.organizations_count }}</h1>
-      <p class="indicator-label">ONGs cadastradas</p>
+  <div class="indicators-row">
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.organizations_count }}</h1>
+      <p class="indicators-label">ONGs cadastradas</p>
     </div>
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.organizations_published_count }}</h1>
-      <p class="indicator-label">ONGs publicadas</p>
-    </div>
-  </div>
-  <div class="indicator-row">
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.projects_count }}</h1>
-      <p class="indicator-label">Vagas cadastradas</p>
-    </div>
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.projects_published_count }}</h1>
-      <p class="indicator-label">Vagas publicadas</p>
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.organizations_published_count }}</h1>
+      <p class="indicators-label">ONGs publicadas</p>
     </div>
   </div>
-
-  <div class="indicator-row">
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.users_count }}</h1>
-      <p class="indicator-label">Usuários</p>
+  <div class="indicators-row">
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.projects_count }}</h1>
+      <p class="indicators-label">Vagas cadastradas</p>
     </div>
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.users_can_apply_count }}</h1>
-      <p class="indicator-label">Voluntarios aptos</p>
-    </div>
-  </div>
-  <div class="indicator-row">
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.applies_count }}</h1>
-      <p class="indicator-label">Voluntários inscritos</p>
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.projects_published_count }}</h1>
+      <p class="indicators-label">Vagas publicadas</p>
     </div>
   </div>
 
-  <div class="indicator-header">
+  <div class="indicators-row">
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.users_count }}</h1>
+      <p class="indicators-label">Usuários</p>
+    </div>
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.applies_count }}</h1>
+      <p class="indicators-label">Voluntários inscritos</p>
+    </div>
+  </div>
+  <div class="indicators-header">
     <h4>Números dos últimos 30 dias</h4>
   </div>
-  <div class="indicator-row">
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.month_organizations_count }}</h1>
-      <p class="indicator-label">ONGs cadastradas</p>
+  <div class="indicators-row">
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.month_organizations_count }}</h1>
+      <p class="indicators-label">ONGs cadastradas</p>
     </div>
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.month_organizations_published_count }}</h1>
-      <p class="indicator-label">ONGs publicadas</p>
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.month_organizations_published_count }}</h1>
+      <p class="indicators-label">ONGs publicadas</p>
     </div>
   </div>
-  <div class="indicator-row">
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.month_projects_count }}</h1>
-      <p class="indicator-label">Vagas cadastradas</p>
+  <div class="indicators-row">
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.month_projects_count }}</h1>
+      <p class="indicators-label">Vagas cadastradas</p>
     </div>
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.month_projects_published_count }}</h1>
-      <p class="indicator-label">Vagas publicadas</p>
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.month_projects_published_count }}</h1>
+      <p class="indicators-label">Vagas publicadas</p>
     </div>
   </div>
 
-  <div class="indicator-row">
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.month_users_count }}</h1>
-      <p class="indicator-label">Usuários</p>
+  <div class="indicators-row">
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.month_users_count }}</h1>
+      <p class="indicators-label">Usuários</p>
     </div>
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.month_users_can_apply_count }}</h1>
-      <p class="indicator-label">Voluntarios aptos</p>
+    <div class="indicators-col">
+      <h1 class="indicators-value">{{ module.month_applies_count }}</h1>
+      <p class="indicators-label">Voluntarios inscritos</p>
     </div>
   </div>
-  <div class="indicator-row">
-    <div class="indicator-col">
-      <h1 class="indicator-value">{{ module.month_applies_count }}</h1>
-      <p class="indicator-label">Voluntários inscritos</p>
+  <div class="indicators-footer">
+    <div class="indicators-input-group">
+      <form action="/admin/analytics" method="GET" target="_blank">
+        <input name="start_date" type="text" placeholder="de: __/__/____">
+        <input name="end_date" type="text" placeholder="até: __/__/____">
+        <button class="indicators-button">Extrair CSV
+          <span class="icon-book"></span>
+        </button>
+      </form>
     </div>
   </div>
 </div>

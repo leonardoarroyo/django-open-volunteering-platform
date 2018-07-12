@@ -21,6 +21,7 @@ def get_core_apps():
     "ovp.apps.projects",
     "ovp.apps.organizations",
     "ovp.apps.faq",
+    "ovp.apps.analytics",
     "ovp.apps.search",
     "ovp.apps.channels",
     "ovp.apps.catalogue",
