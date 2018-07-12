@@ -51,7 +51,8 @@ def record_lead(request):
     country=request.data.get('country', None),
     city=request.data.get('city', None),
     type=request.data.get('type', None),
+    employee_number=request.data.get('employee_number', None),
     object_channel=request.channel
   )
-  
+
   return response.Response({"success": True})
