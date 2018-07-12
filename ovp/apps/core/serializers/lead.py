@@ -3,5 +3,5 @@ from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
 class LeadSerializer(ChannelRelationshipSerializer):
   class Meta:
-    fields = ['name', 'email', 'phone', 'country']
+    fields = ['name', 'email', 'phone', 'country', 'type']
     model = models.Lead
