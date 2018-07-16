@@ -15,6 +15,8 @@ from ovp.apps.core.helpers import get_address_serializers
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer, FullCauseSerializer
 from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
 
+from ovp.apps.items.serializers import ItemSerializer
+
 from ovp.apps.organizations.serializers import OrganizationSearchSerializer
 from ovp.apps.organizations.serializers import OrganizationRetrieveSerializer
 from ovp.apps.organizations.models import Organization
@@ -54,10 +56,12 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   image_id = serializers.IntegerField(required=False)
   organization = OrganizationRetrieveSerializer(read_only=True)
   organization_id = serializers.IntegerField(required=False)
+  item = ItemSerializer(read_only=True)
+  item_id = serializers.IntegerField(required=False)
 
   class Meta:
     model = models.Project
-    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills']
+    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'item', 'item_id']
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date']
 
   def validate(self, data):
@@ -198,10 +202,11 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   commentaries = CommentaryRetrieveSerializer(many=True)
   is_bookmarked = serializers.SerializerMethodField()
   bookmark_count = serializers.SerializerMethodField()
+  item = ItemSerializer()
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user

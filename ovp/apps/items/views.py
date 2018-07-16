@@ -5,49 +5,31 @@ from ovp.apps.items.serializers import ItemSerializer, ItemImageSerializer, Item
 
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 
+from rest_framework import decorators
 from rest_framework import mixins
-from rest_framework import viewsets
 from rest_framework import response
-from rest_framework import status
+from rest_framework import viewsets
 
 
 @ChannelViewSet
-class ItemViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class ItemViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
   queryset = Item.objects.all()
   serializer_class = ItemSerializer
 
-  def create(self, request, *args, **kwargs):
-    serializer = self.get_serializer(data=request.data, context=self.get_serializer_context())
+  def partial_update(self, request, *args, **kwargs):
+    instance = self.get_object()
+    serializer = self.get_serializer(instance, data=request.data, partial=True)
     serializer.is_valid(raise_exception=True)
     serializer.save()
-
-    headers = self.get_success_headers(serializer.data)
-    return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-
+    return response.Response(serializer.data)
+    
+    
 @ChannelViewSet
 class ItemImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
   queryset = ItemImage.objects.all()
   serializer_class = ItemImageSerializer
 
-  def create(self, request, *args, **kwargs):
-    serializer = self.get_serializer(data=request.data, context=self.get_serializer_context())
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-
-    headers = self.get_success_headers(serializer.data)
-    return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-
 @ChannelViewSet
 class ItemDocumentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
   queryset = ItemDocument.objects.all()
   serializer_class = ItemDocumentSerializer
-
-  def create(self, request, *args, **kwargs):
-    serializer = self.get_serializer(data=request.data, context=self.get_serializer_context())
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-
-    headers = self.get_success_headers(serializer.data)
-    return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

@@ -32,9 +32,9 @@ class Project(ChannelRelationship):
 
   # Relationships
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)
-  items = models.ManyToManyField('items.Item', verbose_name=_('items'), blank=True)
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
   organization = models.ForeignKey('organizations.Organization', blank=False, null=True, verbose_name=_('organization'))
+  item = models.ForeignKey('items.Item', blank=True, null=True, verbose_name=_('item'))
 
   # Fields
   name = models.CharField(_('Project name'), max_length=100)

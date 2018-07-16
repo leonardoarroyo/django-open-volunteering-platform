@@ -11,14 +11,20 @@ class Item(ChannelRelationship):
   Item model
   """
   name = models.CharField(_('Item name'), max_length=100)
-  imageable = models.CharField(_('Imageable name'), blank=True, null=True, max_length=100)
-  imageable_id = models.IntegerField(_('Imageable id'), blank=True, null=True, default=0)
+  deleted = models.BooleanField(_("Deleted"), default=False)
+  # Date fields
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
   modified_date = models.DateTimeField(_('Modified date'), auto_now=True)
+  deleted_date = models.DateTimeField(_("Deleted date"), blank=True, null=True)
 
   def save(self, *args, **kwargs):
     self.modified_date = timezone.now()
-    super(Item, self).save(*args, **kwargs)
+    return super(Item, self).save(*args, **kwargs)
+
+  def delete(self, *args, **kwargs):
+    self.deleted = True
+    self.deleted_date = timezone.now()
+    self.save()
 
   class Meta:
     app_label = 'items'
@@ -30,14 +36,22 @@ class ItemImage(ChannelRelationship):
   """
   ItemImage model
   """
-  image = models.ForeignKey('uploads.UploadedImage', blank=False, null=False, verbose_name=_('image'))
+  image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'))
   item = models.ForeignKey('Item', models.CASCADE, blank=True, null=True, verbose_name=_('item'))
+  deleted = models.BooleanField(_("Deleted"), default=False)
+  # Date fields
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
   modified_date = models.DateTimeField(_('Modified date'), auto_now=True)
+  deleted_date = models.DateTimeField(_("Deleted date"), blank=True, null=True)
 
   def save(self, *args, **kwargs):
     self.modified_date = timezone.now()
-    super(ItemImage, self).save(*args, **kwargs)
+    return super(ItemImage, self).save(*args, **kwargs)
+
+  def delete(self, *args, **kwargs):
+    self.deleted = True
+    self.deleted_date = timezone.now()
+    self.save()
 
   class Meta:
     app_label = 'items'
@@ -49,15 +63,23 @@ class ItemDocument(ChannelRelationship):
   """
   ItemDocument model
   """
-  document = models.ForeignKey('uploads.UploadedDocument', blank=False, null=False, verbose_name=_('document'))
+  document = models.ForeignKey('uploads.UploadedDocument', blank=True, null=True, verbose_name=_('document'))
   item = models.ForeignKey('Item', models.CASCADE, blank=True, null=True, verbose_name=_('item'))
+  about = RichTextField(_('About'), blank=False, null=False, max_length=3000)
+  deleted = models.BooleanField(_("Deleted"), default=False)
+  # Date fields
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
   modified_date = models.DateTimeField(_('Modified date'), auto_now=True)
-  about = RichTextField(_('About'), max_length=3000)
+  deleted_date = models.DateTimeField(_("Deleted date"), blank=True, null=True)
 
   def save(self, *args, **kwargs):
     self.modified_date = timezone.now()
     return super(ItemDocument, self).save(*args, **kwargs)
+
+  def delete(self, *args, **kwargs):
+    self.deleted = True
+    self.deleted_date = timezone.now()
+    self.save()
     
   class Meta:
     app_label = 'items'

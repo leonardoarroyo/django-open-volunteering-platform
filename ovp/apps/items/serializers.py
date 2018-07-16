@@ -1,10 +1,9 @@
 from ovp.apps.items.models import Item, ItemImage, ItemDocument
-
 from ovp.apps.uploads.serializers import UploadedImageSerializer, UploadedDocumentSerializer
-
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
 from rest_framework import serializers
+from rest_framework.utils import model_meta
 
 
 class ItemImageSerializer(ChannelRelationshipSerializer):
@@ -28,12 +27,14 @@ class ItemDocumentSerializer(ChannelRelationshipSerializer):
 
 
 class ItemSerializer(ChannelRelationshipSerializer):
+  images_data = serializers.SerializerMethodField()
+  documents_data = serializers.SerializerMethodField()
   images = ItemImageSerializer(many=True, required=False)
   documents = ItemDocumentSerializer(many=True, required=False)
 
   class Meta:
     model = Item
-    fields = ['id', 'name', 'imageable', 'imageable_id', 'images', 'documents']
+    fields = ['id', 'name', 'images', 'images_data', 'documents_data', 'documents']
 
   def create(self, validated_data):
     images = validated_data.pop('images', [])
@@ -54,3 +55,46 @@ class ItemSerializer(ChannelRelationshipSerializer):
       document = document_sr.create(document_data)
 
     return item
+
+  def update(self, instance, validated_data):
+    images = validated_data.pop('images', [])
+    documents = validated_data.pop('documents', [])
+
+    info = model_meta.get_field_info(instance)
+    for attr, value in validated_data.items():
+      setattr(instance, attr, value)
+
+    # Images
+    if images:
+      # ItemImage.objects.filter(item=instance).delete()
+      for image_data in images:
+        image_data['item'] = instance
+        image_sr = ItemImageSerializer(data=image_data, context=self.context)
+        image = image_sr.create(image_data)
+
+    # Documents
+    if documents:
+      items = ItemDocument.objects.filter(item=instance, deleted=False)
+      
+      for document_data in documents:
+        if document_data['document_id'] not in [item.document_id for item in items]:
+          document_data['item'] = instance
+          document_sr = ItemDocumentSerializer(data=document_data, context=self.context)
+          document = document_sr.create(document_data)
+
+      for item in items:
+        if item.document_id not in [document['document_id'] for document in documents]: item.delete()   
+
+    instance.save()
+
+    return instance
+
+  def get_images_data(self, item):
+    queryset = ItemImage.objects.filter(item=item)
+    serialized_data = ItemImageSerializer(queryset, many=True, context=self.context)
+    return serialized_data.data
+
+  def get_documents_data(self, item):
+    queryset = ItemDocument.objects.filter(item=item)
+    serialized_data = ItemDocumentSerializer(queryset, many=True, context=self.context)
+    return serialized_data.data
