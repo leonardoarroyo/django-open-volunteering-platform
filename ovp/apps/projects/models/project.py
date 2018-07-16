@@ -96,12 +96,18 @@ class Project(ChannelRelationship):
     if self.pk is not None:
       orig = Project.objects.get(pk=self.pk)
       if not orig.published and self.published:
-        self.published_date = timezone.now()
-        self.mailing().sendProjectPublished({'project': self})
+        try:
+          self.published_date = timezone.now()
+          self.mailing().sendProjectPublished({'project': self})
+        except:
+          pass
 
       if not orig.closed and self.closed:
-        self.closed_date = timezone.now()
-        self.mailing().sendProjectClosed({'project': self})
+        try:
+          self.closed_date = timezone.now()
+          self.mailing().sendProjectClosed({'project': self})
+        except:
+          pass
 
       if not orig.deleted and self.deleted:
         self.deleted_date = timezone.now()
