@@ -39,11 +39,11 @@ class ProjectResource(resources.ModelResource):
       return project.address.typed_address
 
 class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin, ForeignKeyAutocompleteAdmin):
-  related_search_fields = {
-    'organization': ('name', 'slug'),
-    'owner': ('name', 'email'),
-    'address': ('typed_address', 'address_line'),
-  }
+  # related_search_fields = {
+  #   'organization': ('name', 'slug'),
+  #   'owner': ('name', 'email'),
+  #   'address': ('typed_address', 'address_line'),
+  # }
 
   formfield_overrides = {
     models.TextField: {'widget': AdminMartorWidget},
@@ -51,7 +51,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   fields = [
     ('id', 'highlighted'), ('name', 'slug'),
-    ('organization', 'owner'),
+    # ('organization', 'owner'),
 
     ('owner__name', 'owner__email', 'owner__phone'),
 
@@ -62,7 +62,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     ('published', 'closed', 'deleted'),
     ('published_date', 'closed_date', 'deleted_date'),
 
-    'address',
+    # 'address',
     'image',
     'categories',
 
