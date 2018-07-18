@@ -6,6 +6,9 @@ from ovp.apps.core import models
 from ovp.apps.core import serializers
 from ovp.apps.core import emails
 
+from ovp.apps.users.models.user import User
+from ovp.apps.organizations.models.organization import Organization
+
 from django.utils import translation
 
 @decorators.api_view(["GET"])
@@ -17,7 +20,9 @@ def startup(request):
 
     return response.Response({
       "skills": skills.data,
-      "causes": causes.data
+      "causes": causes.data,
+      "volunteer_count": User.objects.filter(channel__slug=request.channel).count(),
+      "nonprofit_count": Organization.objects.filter(channel__slug=request.channel).count(),
     })
 
 @decorators.api_view(["POST"])
