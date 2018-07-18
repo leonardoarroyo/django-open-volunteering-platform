@@ -104,7 +104,6 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
       job_data['project'] = project
       job_sr = JobSerializer(data=job_data, context=self.context)
       job = job_sr.create(job_data)
-      project.update_closed_date(job.end_date)
 
     # Associate causes
     for cause in causes:
@@ -164,7 +163,6 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
         job_data['project'] = instance
         job_sr = JobSerializer(data=job_data, context=self.context)
         job = job_sr.create(job_data)
-        instance.update_closed_date(job.end_date)
 
     # Associate causes
     if causes:
