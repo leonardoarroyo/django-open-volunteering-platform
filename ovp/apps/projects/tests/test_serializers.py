@@ -24,6 +24,7 @@ class HiddenAddressTestCase(TestCase):
     self.project = Project.objects.create(name="test project", slug="test slug", details="abc", description="abc", owner=self.user, hidden_address=True, address=address, organization=organization, object_channel="default")
 
     self.request = RequestFactory().get('/')
+    self.request.channel = "default"
 
 
   def test_project_search_serializer_hides_address(self):
