@@ -44,10 +44,10 @@ class OrganizationResource(resources.ModelResource):
 
 
 class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin, ForeignKeyAutocompleteAdmin):
-  # related_search_fields = {
-  #   'owner': ('name', 'email'),
-  #   'address': ('typed_address', 'address_line'),
-  # }
+  related_search_fields = {
+    'owner': ('name', 'email'),
+    'address': ('typed_address', 'address_line'),
+  }
 
   formfield_overrides = {
     models.TextField: {'widget': AdminMartorWidget},
@@ -55,12 +55,12 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
 
   fields = [
     ('id', 'highlighted'), ('name', 'slug'),
-    # ('owner'), #- 'type'
+    ('owner'), #- 'type'
 
     ('published', 'deleted', 'verified'),
     ('published_date', 'deleted_date'),
 
-    # 'address',
+    'address',
     'image',
     'document',
 
