@@ -87,7 +87,6 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
       role = role_sr.create(role_data)
       project.roles.add(role)
 
-
     # Disponibility
     if disp['type'] == 'work':
       work_data = disp['work']
@@ -112,7 +111,6 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
       project.skills.add(s)
 
     return project
-
 
   def update(self, instance, validated_data):
     causes = validated_data.pop('causes', [])
@@ -208,7 +206,12 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
     return False
 
   def get_bookmark_count(self, instance):
-    return instance.bookmark_count()
+    is_bookmark_count_enabled = int(get_channel_setting(self.context['request'].channel, "ENABLE_PROJECT_BOOKMARK_COUNT")[0])
+
+    if is_bookmark_count_enabled:
+      return instance.bookmark_count()
+
+    return None
 
   @add_current_user_is_applied_representation
   @hide_address
@@ -216,12 +219,14 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   def to_representation(self, instance):
     return super(ProjectRetrieveSerializer, self).to_representation(instance)
 
+
 class CompactOrganizationSerializer(serializers.ModelSerializer):
   address = address_serializers[2]()
 
   class Meta:
     model = Organization
     fields = ['name', 'address', 'slug']
+
 
 class ProjectOnOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()

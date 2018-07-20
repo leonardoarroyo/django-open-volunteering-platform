@@ -18,6 +18,7 @@ from ovp.apps.projects import models as model_project
 from ovp.apps.uploads.serializers import UploadedImageSerializer
 
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
+from ovp.apps.channels.cache import get_channel_setting
 
 from rest_framework import serializers
 from rest_framework import permissions
@@ -155,6 +156,15 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
   class Meta:
     model = models.User
     fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects']
+
+  def to_representation(self, *args, **kwargs):
+    ret = super(LongUserPublicRetrieveSerializer, self).to_representation(*args, **kwargs)
+    is_bookmarked_projects_on_user_enabled = int(get_channel_setting(self.context['request'].channel, "ENABLE_PUBLIC_USER_BOOKMARKED_PROJECTS")[0])
+
+    if not is_bookmarked_projects_on_user_enabled:
+      ret["bookmarked_projects"] = None
+
+    return ret
 
 class UserProjectRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()

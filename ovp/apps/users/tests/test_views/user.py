@@ -14,6 +14,9 @@ from ovp.apps.channels.models.channel_setting import ChannelSetting
 
 
 class UserResourceViewSetTestCase(TestCase):
+  def setUp(self, *args, **kwargs):
+    cache.clear()
+
   def test_can_create_user(self):
     """Assert that it's possible to create an user"""
     response = create_user()
@@ -131,6 +134,23 @@ class UserResourceViewSetTestCase(TestCase):
     response = client.get(reverse('public-users-detail', [response.data['slug']]), format="json")
     self.assertTrue(response.data['slug'])
     self.assertTrue("applies" in response.data)
+
+  def test_public_bookmarks(self):
+    """ Assert user bookmarks are public """
+    response = create_user()
+
+    client = APIClient()
+    response = client.get(reverse('public-users-detail', [response.data['slug']]), format="json")
+    self.assertTrue(type(response.data["bookmarked_projects"]) is list)
+
+  def test_hidden_bookmarks(self):
+    """ Assert user bookmarks are are hidden bookmarks if setting applied """
+    ChannelSetting.objects.create(key="ENABLE_PUBLIC_USER_BOOKMARKED_PROJECTS", value="0", object_channel="default")
+    response = create_user()
+
+    client = APIClient()
+    response = client.get(reverse('public-users-detail', [response.data['slug']]), format="json")
+    self.assertTrue(response.data["bookmarked_projects"] == None)
 
   def test_cant_retrieve_hidden_user(self):
     """ Assert it's not possible to retrieve a hidden profile """

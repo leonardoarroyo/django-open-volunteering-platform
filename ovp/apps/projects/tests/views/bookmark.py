@@ -19,7 +19,6 @@ class ProjectBookmarkTestCase(TestCase):
     cache.clear()
 
     self.user = User.objects.create(email="sample@user.com", password="sample@user.com", object_channel="default")
-
     self.project = Project.objects.create(name="test project", description="test project", owner=self.user, object_channel="default")
 
     self.client = APIClient()
@@ -109,3 +108,16 @@ class ProjectBookmarkTestCase(TestCase):
 
     response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
     self.assertEqual(response.data["bookmark_count"], 1)
+
+  def test_project_hides_bookmarked_count_if_set(self):
+    """ Assert project hides information about bookmark count if setting disabled """
+    ChannelSetting.objects.create(key="ENABLE_PROJECT_BOOKMARK_COUNT", value="0", object_channel="default")
+    cache.clear()
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data["bookmark_count"], None)
+
+    self.test_can_bookmark()
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data["bookmark_count"], None)
