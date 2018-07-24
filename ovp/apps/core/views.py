@@ -22,7 +22,7 @@ def startup(request):
       "skills": skills.data,
       "causes": causes.data,
       "volunteer_count": User.objects.filter(channel__slug=request.channel).count(),
-      "nonprofit_count": Organization.objects.filter(channel__slug=request.channel).count(),
+      "nonprofit_count": Organization.objects.filter(channel__slug=request.channel, published=True).count(),
     })
 
 @decorators.api_view(["POST"])
