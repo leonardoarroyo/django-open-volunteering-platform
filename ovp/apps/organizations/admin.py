@@ -14,7 +14,7 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
-from django_extensions.admin import ForeignKeyAutocompleteAdmin
+from jet.filters import RelatedFieldAjaxListFilter
 
 # This file contains some "pragma: no cover" because the admin
 # class is not covered by the test suite
@@ -43,24 +43,25 @@ class OrganizationResource(resources.ModelResource):
     return organization.owner.phone
 
 
-class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin, ForeignKeyAutocompleteAdmin):
-  # related_search_fields = {
-  #   'owner': ('name', 'email'),
-  #   'address': ('typed_address', 'address_line'),
-  # }
+class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
 
   formfield_overrides = {
     models.TextField: {'widget': AdminMartorWidget},
   }
 
+  list_filter = (
+    ('owner', RelatedFieldAjaxListFilter),
+    ('address', RelatedFieldAjaxListFilter),
+  )
+
   fields = [
     ('id', 'highlighted'), ('name', 'slug'),
-    # ('owner'), #- 'type'
+    ('owner'), #- 'type'
 
     ('published', 'deleted', 'verified'),
     ('published_date', 'deleted_date'),
 
-    # 'address',
+    'address',
     'image',
     'document',
 
