@@ -11,5 +11,9 @@ class SimpleAddress(ChannelRelationship):
   country = models.CharField(max_length=100, null=True, blank=True, verbose_name='País')
   supplement = models.CharField(max_length=100, null=True, blank=True, verbose_name='Complemento')
 
+  @staticmethod
+  def autocomplete_search_fields():
+    return 'street', 'city',
+
   def __str__(self):
     return self.street + ', ' + self.number + ' - ' + self.neighbourhood + ' - ' + self.city

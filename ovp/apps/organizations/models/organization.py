@@ -54,6 +54,9 @@ class Organization(ChannelRelationship):
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
   modified_date = models.DateTimeField(_('Modified date'), auto_now=True)
 
+  @staticmethod
+  def autocomplete_search_fields():
+    return 'name',
 
   def __init__(self, *args, **kwargs):
     super(Organization, self).__init__(*args, **kwargs)

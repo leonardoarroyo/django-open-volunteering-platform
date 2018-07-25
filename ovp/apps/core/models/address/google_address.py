@@ -39,6 +39,10 @@ class GoogleAddress(ChannelRelationship):
   lng = models.FloatField(_('Longitude'), blank=True, null=True)
   address_components = models.ManyToManyField(AddressComponent)
 
+  @staticmethod
+  def autocomplete_search_fields():
+    return 'typed_address',
+
   def get_city_state(self):
     state = self.address_components.filter(types__name='administrative_area_level_1')
     county = self.address_components.filter(types__name='administrative_area_level_2')

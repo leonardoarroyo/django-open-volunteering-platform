@@ -73,6 +73,10 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
   USERNAME_FIELD = 'email'
   LOGIN = False
 
+  @staticmethod
+  def autocomplete_search_fields():
+    return 'name', 'email',
+
   class Meta:
     app_label = 'users'
     verbose_name = _('user')
