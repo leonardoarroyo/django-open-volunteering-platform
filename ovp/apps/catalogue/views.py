@@ -11,7 +11,7 @@ from ovp.apps.catalogue.cache import fetch_catalogue
 @ChannelViewSet
 class CatalogueView(generics.GenericAPIView):
   def get(self, request, slug):
-    catalogue = get_catalogue(request.channel, slug)
+    catalogue = get_catalogue(request.channel, slug, request)
     if not catalogue:
       return response.Response({"detail": "This catalog does not exist"}, status=404)
 
@@ -19,6 +19,7 @@ class CatalogueView(generics.GenericAPIView):
         serializer=ProjectSearchSerializer,
         request=self.request,
         context=self.get_serializer_context(),
-        channel=request.channel)
+        channel=request.channel,
+        slug=slug)
 
     return response.Response(fetched)
