@@ -16,12 +16,11 @@ from datetime import datetime
 ## ViewSet filters ##
 #####################
 
-class ProjectRelevanceOrderingFilter(OrderingFilter):
-  def get_skills_and_causes(self, request):
-    if not request.user.is_authenticated():
+class UserSkillsCausesFilter:
+  def get_skills_and_causes(self, user):
+    if not user.is_authenticated():
       raise NotAuthenticated()
 
-    user = request.user
     output = {"skills": [], "causes": []}
 
     if user.profile:
@@ -30,8 +29,8 @@ class ProjectRelevanceOrderingFilter(OrderingFilter):
 
     return output
 
-  def annotate_queryset(self, queryset, request):
-    skills_causes = self.get_skills_and_causes(request)
+  def annotate_queryset(self, queryset, user):
+    skills_causes = self.get_skills_and_causes(user)
 
     queryset = queryset\
                 .annotate(\
@@ -49,12 +48,13 @@ class ProjectRelevanceOrderingFilter(OrderingFilter):
 
     return queryset
 
+class ProjectRelevanceOrderingFilter(OrderingFilter):
   def filter_queryset(self, request, queryset, view):
     ordering = self.get_ordering(request, queryset, view)
 
     if ordering:
       if "relevance" in ordering or "-relevance" in ordering:
-        queryset = self.annotate_queryset(queryset, request)
+        queryset = UserSkillsCausesFilter().annotate_queryset(queryset, request.user)
 
     if ordering:
       return queryset.order_by(*ordering)
