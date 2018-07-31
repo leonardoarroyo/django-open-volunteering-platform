@@ -70,38 +70,40 @@ def setUp():
 class CatalogueCacheTestCase(TestCase):
   def setUp(self):
     setUp()
+    self.client = APIClient()
 
   def test_get_catalogue_caching(self):
-    with self.assertNumQueries(9):
+    with self.assertNumQueries(27):
       # 4 from catalogue, section and section filters models
       # 2 from category filters(section "hot")
       # 2 from category filters(section "get your hands dirty")
       # 2 from datedelta filters(section "coming up")
-      catalogue = get_catalogue("default", "home")
-    self.assertEqual(len(catalogue["sections"]), 3)
+      response = self.client.get(reverse("catalogue", ["home"]), format="json")
+    self.assertEqual(len(response.data["sections"]), 3)
 
-    with self.assertNumQueries(0):
-      catalogue2 = get_catalogue("default", "home")
-    self.assertEqual(catalogue, catalogue2)
+    with self.assertNumQueries(1):
+      response2 = self.client.get(reverse("catalogue", ["home"]), format="json")
+    self.assertEqual(response.data, response2.data)
 
   def test_fetch_catalogue_num_queries(self):
-    catalogue = get_catalogue("default", "home")
-
-    with self.assertNumQueries(15):
-      # 5 queries for section hot(projects + skills + causes + categories + job_dates)
-      fetched = fetch_catalogue(catalogue, serializer=ProjectSearchSerializer)
+    with self.assertNumQueries(27):
+      # 4 from catalogue, section and section filters models
+      # 2 from category filters(section "hot")
+      # 2 from category filters(section "get your hands dirty")
+      # 2 from datedelta filters(section "coming up")
+      response = self.client.get(reverse("catalogue", ["home"]), format="json")
 
   def test_fetch_queryset_without_serializer(self):
-    catalogue = get_catalogue("default", "home")
-    fetched = fetch_catalogue(catalogue)
-
-    self.assertEqual(fetched["sections"][0]["projects"].__class__, QuerySet)
+    # catalogue = get_catalogue("default", "home")
+    # fetched = fetch_catalogue(catalogue)
+    response = self.client.get(reverse("catalogue", ["home"]), format="json")
+    self.assertEqual(response.data["sections"][0]["projects"].__class__, QuerySet)
 
   def test_fetch_queryset_with_serializer(self):
-    catalogue = get_catalogue("default", "home")
-    fetched = fetch_catalogue(catalogue, serializer=ProjectSearchSerializer)
-
-    self.assertEqual(fetched["sections"][0]["projects"].__class__, ReturnList)
+    # catalogue = get_catalogue("default", "home")
+    # fetched = fetch_catalogue(catalogue, serializer=ProjectSearchSerializer)
+    response = self.client.get(reverse("catalogue", ["home"]), format="json")
+    self.assertEqual(response.data["sections"][0]["projects"].__class__, ReturnList)
 
 class CatalogueViewTestCase(TestCase):
   def setUp(self):
