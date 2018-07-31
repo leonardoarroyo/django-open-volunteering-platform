@@ -31,18 +31,18 @@ class ProjectRelevanceOrderingFilter(OrderingFilter):
     return output
 
   def annotate_queryset(self, queryset, request):
-    self.get_skills_and_causes(request)
+    skills_causes = self.get_skills_and_causes(request)
 
     queryset = queryset\
                 .annotate(\
                   cause_relevance =
                     Count(
-                      Case(When(causes__pk__in=[1,3], then=1),
+                      Case(When(causes__pk__in=skills_causes["causes"], then=1),
                            output_field=IntegerField()),
                       distinct=True),
                   skill_relevance =
                     Count(
-                      Case(When(skills__pk__in=[1,2,4], then=1),
+                      Case(When(skills__pk__in=skills_causes["skills"], then=1),
                                 output_field=IntegerField()),
                       distinct=True))\
                 .annotate(relevance = F('cause_relevance') + F('skill_relevance'))
