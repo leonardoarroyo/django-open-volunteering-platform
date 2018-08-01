@@ -1,34 +1,30 @@
+import threading, sys
+import boto3
+from botocore.exceptions import ClientError
+
 from django.core.mail import EmailMultiAlternatives
 from django.template import Template
 from django.template.loader import get_template
 from django.template.exceptions import TemplateDoesNotExist
 from django.conf import settings
 from django.utils import translation
+
 from ovp.apps.core.helpers import is_email_enabled, get_email_subject
 from ovp.apps.channels.cache import get_channel_setting
-
-import threading, sys
-
-class EmailThread(threading.Thread):
-  def __init__(self, msg):
-    self.msg = msg
-    threading.Thread.__init__(self)
-
-  def run (self):
-    return self.msg.send() > 0
-
 
 class BaseMail:
   """
   This class is responsible for firing emails
   """
-  from_email = ''
+  aws_access_key = getattr(settings, "AWS_ACCESS_KEY")
+  aws_secret_key = getattr(settings, "AWS_SECRET_KEY")
+  aws_region = getattr(settings, "AWS_REGION")
+  from_email = getattr(settings, "SENDER")
 
   def __init__(self, email_address, channel=None, async_mail=None, locale=None):
     self.channel = channel
     self.email_address = email_address
     self.async_mail = async_mail
-    self.locale = locale or getattr(settings, "LANGUAGE_CODE", "en-us")
 
   def sendEmail(self, template_name, subject, context={}):
     if not is_email_enabled(self.channel, template_name):
@@ -41,28 +37,35 @@ class BaseMail:
       "txt": "{}/email/base-body.txt".format(self.channel)
     }
 
-    self.__setLocale()
     subject = get_email_subject(self.channel, template_name, subject)
     text_content, html_content = self.__render(template_name, ctx)
-    self.__resetLocale()
+    charset = "UTF-8"
 
-    msg = EmailMultiAlternatives(subject, text_content, self.from_email, [self.email_address])
-    msg.attach_alternative(html_content, "text/html")
+    message = {}
+    message.setdefault('Body', {})
+    message.setdefault('Subject', {})
 
-    async_flag = None
-    if self.async_mail:
-      async_flag = "async"
-    elif self.async_mail == None:
-      async_flag = getattr(settings, "DEFAULT_SEND_EMAIL", "async")
+    message['Body']['Html'] = {'Charset': charset, 'Data': html_content}
+    message['Body']['Text'] = {'Charset': charset, 'Data': text_content}
+    message['Subject'] = {'Charset': charset, 'Data': subject}
 
-    if async_flag == "async":
-      t = EmailThread(msg)
-      t.start()
-      result = t
-    else:
-      result = msg.send() > 0
-
-    return result
+    client = boto3.client(
+      'ses',
+      aws_access_key_id=self.aws_access_key, 
+      aws_secret_access_key=self.aws_secret_key, 
+      region_name=self.aws_region
+    )
+     # Try to send the email.
+    try:
+      #Provide the contents of the email.
+      response = client.send_email(
+        Destination={'ToAddresses': [self.email_address]},
+        Message=message,
+        Source=self.from_email,
+      )
+    # Display an error if something goes wrong.	
+    except ClientError as e:
+      print(e.response['Error']['Message'])
 
   def __render(self, template_name, ctx):
     test_channels = getattr(settings, "TEST_CHANNELS", [])
@@ -79,14 +82,6 @@ class BaseMail:
       raise(e)
 
     return (text_content, html_content)
-
-  def __setLocale(self):
-    self.__active_locale = translation.get_language()
-    translation.activate(self.locale)
-
-  def __resetLocale(self):
-    translation.activate(self.__active_locale)
-    self.__active_locale = None
 
 class ContactFormMail(BaseMail):
   """
