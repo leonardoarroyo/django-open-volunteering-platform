@@ -25,6 +25,7 @@ from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 from ovp.apps.channels.cache import get_channel_setting
 
 from ovp.apps.users.serializers import ShortUserPublicRetrieveSerializer, UserProjectRetrieveSerializer
+from ovp.apps.users.models import User
 
 from rest_framework import serializers
 from rest_framework import fields
@@ -41,6 +42,17 @@ def required_organization(request, pk):
 
   if not allow_no_org and not pk:
     raise exceptions.ValidationError({'organization': 'This field is required.'})
+
+def project_owner_is_organization_member_or_self(request, organization_pk):
+  owner_pk = request.data.get("owner", None)
+
+  if owner_pk and request.user.pk != owner_pk:
+    if not organization_pk:
+      raise exceptions.ValidationError({'owner': 'Organization field must be set to set owner.'})
+    try:
+      user = User.objects.get(pk=owner_pk, organizations_member__pk=organization_pk)
+    except User.DoesNotExist:
+      raise exceptions.ValidationError({'owner': 'User is a not a member of the organization.'})
 
 
 """ Serializers """
@@ -62,6 +74,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
   def validate(self, data):
     required_organization(self.context["request"], data.get("organization_id", None))
+    project_owner_is_organization_member_or_self(self.context["request"], data.get("organization_id", None))
     return super(ProjectCreateUpdateSerializer, self).validate(data)
 
   def create(self, validated_data):

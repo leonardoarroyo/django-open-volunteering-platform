@@ -43,7 +43,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
   ##################
 
   def create(self, request, *args, **kwargs):
-    request.data['owner'] = request.user.pk
+    request.data['owner'] = request.data.get('owner', None) or request.user.pk
 
     serializer = self.get_serializer(data=request.data, context=self.get_serializer_context())
     serializer.is_valid(raise_exception=True)
