@@ -140,6 +140,13 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
     return response.Response({"detail": "Member was removed."})
 
+  @decorators.detail_route(methods=["GET"])
+  def members(self, request, *args, **kwargs):
+    organization = self.get_object()
+    members = User.objects.filter(pk=organization.owner.pk) | organization.members.all()
+    serializer = self.get_serializer(members, many=True)
+    return response.Response(serializer.data)
+
   @decorators.detail_route(methods=['GET'])
   def projects(self, request, slug, pk=None):
     organization = self.get_object()
@@ -186,6 +193,8 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
       return ProjectOnOrganizationRetrieveSerializer
     if self.action in ['bookmarked']:
       return serializers.OrganizationRetrieveSerializer
+    if self.action == 'members':
+      return serializers.MemberListRetrieveSerializer
     if self.action in ['leave', 'join']: # pragma: no cover
       return EmptySerializer
 
@@ -205,6 +214,8 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
       self.permission_classes = (permissions.IsAuthenticated, organization_permissions.IsOrganizationMember)
     if self.action == 'remove_member':
       self.permission_classes = (permissions.IsAuthenticated, organization_permissions.OwnsOrganization)
+    if self.action == 'members':
+      self.permission_classes = (permissions.IsAuthenticated, organization_permissions.OwnsOrIsOrganizationMember)
     if self.action in ['bookmark', 'unbookmark', 'bookmarked']:
       self.permission_classes = self.get_bookmark_permissions()
 

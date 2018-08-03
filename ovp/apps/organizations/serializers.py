@@ -135,6 +135,11 @@ class MemberRemoveSerializer(serializers.Serializer):
   class Meta:
     fields = ['email']
 
+class MemberListRetrieveSerializer(ChannelRelationshipSerializer):
+  class Meta:
+    model = User
+    fields = ['id', 'uuid', 'name', 'email', 'avatar', 'slug']
+
 class OrganizationOwnerRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
   causes = CauseSerializer(many=True)

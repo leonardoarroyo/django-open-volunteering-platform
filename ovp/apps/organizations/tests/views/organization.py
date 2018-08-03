@@ -457,3 +457,33 @@ class OrganizationLeaveTestCase(TestCase):
       self.assertTrue(get_email_subject("default", "userRemoved-toUser", "You have have been removed from an organization"))
     if is_email_enabled("default", "userRemoved-toOwner"): # pragma: no cover
       self.assertTrue(get_email_subject("default", "userRemoved-toOwner", "You have removed an user from an organization you own"))
+
+
+class OrganizationMemberList(TestCase):
+  def setUp(self):
+    self.user = User.objects.create_user(email="testemail@email.com", password="test_returned", object_channel="default")
+    self.user2 = User.objects.create_user(email="valid@user.com", password="test_returned", object_channel="default")
+    self.user3 = User.objects.create_user(email="invalid@user.com", password="test_returned", object_channel="default")
+
+    organization = Organization(name="test organization", slug="test-organization", owner=self.user, type=0, published=True)
+    organization.save(object_channel="default")
+    organization.members.add(self.user2)
+    self.organization = organization
+    self.client = APIClient()
+
+  def test_can_list_members_in_organization(self):
+    self.client.force_authenticate(user=self.user2)
+    response = self.client.get(reverse("organization-members", ["test-organization"]), format="json")
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(len(response.data), 2)
+    self.assertEqual(response.data[0]["email"], "testemail@email.com")
+    self.assertEqual(response.data[1]["email"], "valid@user.com")
+
+  def test_cant_list_members_in_organization_if_unauthenticated(self):
+    response = self.client.get(reverse("organization-members", ["test-organization"]), format="json")
+    self.assertEqual(response.status_code, 401)
+
+  def test_cant_list_members_in_organization_if_not_part_of_organization(self):
+    self.client.force_authenticate(user=self.user3)
+    response = self.client.get(reverse("organization-members", ["test-organization"]), format="json")
+    self.assertEqual(response.status_code, 403)
