@@ -29,7 +29,7 @@ class ProjectResource(resources.ModelResource):
   
   class Meta:
     model = Project
-    fields = ('name', 'applied_count', 'organization', 'address', 'highlighted', 'published', 'closed', 'deleted')
+    fields = ('name', 'applied_count', 'organization', 'address', 'highlighted', 'published', 'newsletter', 'closed', 'deleted')
     
   def dehydrate_organization(self, project):
     return project.organization.name
@@ -51,7 +51,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
   }
 
   fields = [
-    ('id', 'highlighted'), ('name', 'slug'),
+    ('id', 'highlighted', 'newsletter'), ('name', 'slug'),
     ('organization', 'owner'),
     ('owner__name', 'owner__email', 'owner__phone'),
 
@@ -76,16 +76,16 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   list_display = [
     'id', 'created_date', 'name', 'organization__name', 'city_state', 'applied_count', # fix: CIDADE, PONTUAL OU RECORRENTE
-    'highlighted', 'published', 'closed', 'deleted', #fix: EMAIL STATUS
+    'highlighted', 'published', 'newsletter', 'closed', 'deleted', #fix: EMAIL STATUS
     ]
 
   list_filter = [
     'created_date', # fix: PONTUAL OU RECORRENTE
-    'highlighted', 'published', 'closed', 'deleted'
+    'highlighted', 'published', 'newsletter', 'closed', 'deleted'
   ]
 
   list_editable = [
-    'highlighted', 'published', 'closed'
+    'highlighted', 'published', 'newsletter', 'closed'
   ]
 
   search_fields = [

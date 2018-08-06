@@ -1,30 +1,37 @@
-import sys
-
-from django.utils import timezone
 from django.core.management.base import BaseCommand
-from django.db.models import Q
+
+import requests
 
 from ovp.apps.users.models import User
-from ovp.apps.projects.models import Project
-from ovp.apps.projects.models import Job
-from ovp.apps.core.newsletter import Newsletter
+from ovp.apps.projects.models import Project, Category
+from ovp.apps.search.filters import UserSkillsCausesFilter
 
 class Command(BaseCommand):
   help = "Send newsletter automatic"
-  projects = []
   def handle(self, *args, **options):
-    for user in User.objects.all():
-      skills = user.profile.skills.values_list('id', flat=True)
-      causes = user.profile.causes.values_list('id', flat=True)
-      
-      criterion1 = Q(start_date__gt=timezone.now())
-      criterion2 = Q(end_date__lte=timezone.now() + timezone.timedelta(days=7))
-      criterion3 = Q(project__skills__in=skills)
-      criterion4 = Q(project__causes__in=causes)
-      criterion5 = Q(project__published=True)
 
-      jobs = Job.objects.filter(criterion1 & criterion2 & criterion3 & criterion4 & criterion5)
-      projects = [job.project for job in jobs]
-      
-      if len(projects):
-        Newsletter(user).sendNewsletter({'projects': projects[:5]})
+    context = {}
+    context.setdefault('blog', {})
+    context.setdefault('category', {})
+    context.setdefault('highlight', None)
+    context.setdefault('projects', [])
+
+    highlight = Project.objects.filter(newsletter=True).order_by('-pk')
+    context['highlight'] = highlight and highlight[0]
+
+    blog = requests.get('https://blog.atados.com.br/wp-json/wp/v2/posts?per_page=1').json()
+    context['blog'] = {
+      'title': blog[0]['title']['rendered'], 
+      'link': blog[0]['link']
+    }
+
+    category = Category.objects.filter(newsletter=True).order_by('-pk')
+    if category:
+      context['category'] = {
+        'name': category[0].name,
+        'projects': Project.objects.filter(categories=category[0])[:5]
+      }
+  
+    for user in User.objects.all()[99:105]:
+      context['projects'] = UserSkillsCausesFilter().annotate_queryset(Project.objects.all(), user)[:5]
+      # Newsletter(user).sendNewsletter(context)

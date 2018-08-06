@@ -11,6 +11,7 @@ class Category(ChannelRelationship):
   description = models.CharField(_('description'), max_length=3000, blank=True, null=True)
   image = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, verbose_name=_('image'), related_name="category_image")
   highlighted = models.BooleanField(_("Highlighted"), default=False, blank=False)
+  newsletter = models.BooleanField(_("Newsletter"), default=False, blank=False)
 
   def __str__(self):
     return self.name
