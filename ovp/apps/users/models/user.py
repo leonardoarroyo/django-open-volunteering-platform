@@ -137,6 +137,10 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
     except model.DoesNotExist:
       return None
 
+  @property
+  def organizations_member_or_owner(self):
+    return self.organizations.all() | self.organizations_member.all()
+
 
 @receiver(post_save, sender=User)
 def update_history(sender, instance, raw=False, **kwargs):

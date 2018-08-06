@@ -130,7 +130,7 @@ class UserUpdateSerializer(UserCreateSerializer):
 class CurrentUserSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
-  organizations = OrganizationOwnerRetrieveSerializer(many=True)
+  organizations = OrganizationOwnerRetrieveSerializer(many=True, source='organizations_member_or_owner')
 
   class Meta:
     model = models.User
