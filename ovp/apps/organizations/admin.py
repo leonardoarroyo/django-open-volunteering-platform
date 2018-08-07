@@ -64,6 +64,9 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     'address',
     'image',
     'document',
+    'contact_name',
+    'contact_phone',
+    'contact_email',
 
     'facebook_page', 'website',
 
