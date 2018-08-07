@@ -19,7 +19,6 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
   # existing skills, so we do it manually on .create method
   skills = SkillAssociationSerializer(many=True, required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
-  gender = serializers.ChoiceField(choices=gender_choices)
   address = GoogleAddressSerializer(required=False)
 
   class Meta:
