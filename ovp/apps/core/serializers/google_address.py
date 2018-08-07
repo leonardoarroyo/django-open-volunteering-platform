@@ -6,7 +6,7 @@ class GoogleAddressSerializer(ChannelRelationshipSerializer):
   class Meta:
     model = models.GoogleAddress
     fields = ['typed_address', 'typed_address2', 'address_line', 'city_state']
-    read_only_fields = ['address_line', 'city_state']
+    read_only_fields = ['address_line']
 
 
 class GoogleAddressLatLngSerializer(ChannelRelationshipSerializer):
