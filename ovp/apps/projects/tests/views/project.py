@@ -297,6 +297,37 @@ class ProjectWithOrganizationTestCase(TestCase):
     self.assertTrue(response.data["address"] == None)
     self.assertTrue(response.data["hidden_address"] == True)
 
+  def test_can_create_project_with_another_owner(self):
+    """Assert that it's possible to create a project with another owner"""
+    ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
+    cache.clear()
+    
+    client = APIClient()
+    client.force_authenticate(user=self.user)
+
+    data = copy.copy(base_project)
+    data["owner"] = self.second_user.pk
+
+    # Without organization
+    response = client.post(reverse("project-list"), data, format="json")
+    self.assertTrue(response.status_code == 400)
+    self.assertTrue(response.data["owner"][0] == "Organization field must be set to set owner.")
+
+    # Not part of the organization
+    organization = Organization(name="test", type=0, owner=self.user)
+    organization.save(object_channel="default")
+    data["organization_id"] = organization.pk
+    response = client.post(reverse("project-list"), data, format="json")
+    self.assertTrue(response.status_code == 400)
+    self.assertTrue(response.data["owner"][0] == "User is a not a member of the organization.")
+    
+    # Part of the organization
+    organization.members.add(self.second_user)
+    response = client.post(reverse("project-list"), data, format="json")
+    self.assertTrue(response.status_code == 201)
+    project = Project.objects.get(pk=response.data["id"])
+    self.assertTrue(project.owner.id == self.second_user.id)
+
 
 class ManageableProjectsRouteTestCase(TestCase):
   def setUp(self):
@@ -403,6 +434,7 @@ class ProjectResourceUpdateTestCase(TestCase):
     updated_project = {"roles": [{"name": "test", "prerequisites": "test2", "details": "test3", "vacancies": 5}]}
     response = self.client.patch(reverse("project-detail", ["test-project"]), updated_project, format="json")
 
+    print(response.data)
     self.assertTrue(response.status_code == 200)
     self.assertTrue(response.data["roles"] == expected_response)
 
