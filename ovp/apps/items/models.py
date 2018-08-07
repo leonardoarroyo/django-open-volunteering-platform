@@ -10,7 +10,8 @@ class Item(ChannelRelationship):
   """
   Item model
   """
-  name = models.CharField(_('Item name'), max_length=100)
+  name = models.CharField(_('Item name'), blank=True, null=True, max_length=100)
+  about = RichTextField(_('About'), blank=True, null=True, max_length=3000)
   deleted = models.BooleanField(_("Deleted"), default=False)
   # Date fields
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
@@ -65,7 +66,6 @@ class ItemDocument(ChannelRelationship):
   """
   document = models.ForeignKey('uploads.UploadedDocument', blank=True, null=True, verbose_name=_('document'))
   item = models.ForeignKey('Item', models.CASCADE, blank=True, null=True, verbose_name=_('item'))
-  about = RichTextField(_('About'), blank=False, null=False, max_length=3000)
   deleted = models.BooleanField(_("Deleted"), default=False)
   # Date fields
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)

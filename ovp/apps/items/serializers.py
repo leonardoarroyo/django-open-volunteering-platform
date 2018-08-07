@@ -22,7 +22,7 @@ class ItemDocumentSerializer(ChannelRelationshipSerializer):
   
   class Meta:
     model = ItemDocument
-    fields = ['id', 'document', 'document_id', 'item', 'about']
+    fields = ['id', 'document', 'document_id', 'item']
     extra_kwargs = {'item': {'write_only': True}}
 
 
@@ -34,7 +34,7 @@ class ItemSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = Item
-    fields = ['id', 'name', 'images', 'images_data', 'documents_data', 'documents']
+    fields = ['id', 'name', 'about', 'images', 'images_data', 'documents_data', 'documents']
 
   def create(self, validated_data):
     images = validated_data.pop('images', [])
@@ -66,16 +66,21 @@ class ItemSerializer(ChannelRelationshipSerializer):
 
     # Images
     if images:
-      # ItemImage.objects.filter(item=instance).delete()
+      items = ItemImage.objects.filter(item=instance, deleted=False)
+
       for image_data in images:
-        image_data['item'] = instance
-        image_sr = ItemImageSerializer(data=image_data, context=self.context)
-        image = image_sr.create(image_data)
+        if image_data['image_id'] not in [item.image_id for item in items]:
+          image_data['item'] = instance
+          image_sr = ItemImageSerializer(data=image_data, context=self.context)
+          image = image_sr.create(image_data)
+      
+      for item in items:
+        if item.image_id not in [image['image_id'] for image in images]: item.delete()
 
     # Documents
     if documents:
       items = ItemDocument.objects.filter(item=instance, deleted=False)
-      
+
       for document_data in documents:
         if document_data['document_id'] not in [item.document_id for item in items]:
           document_data['item'] = instance
@@ -90,11 +95,11 @@ class ItemSerializer(ChannelRelationshipSerializer):
     return instance
 
   def get_images_data(self, item):
-    queryset = ItemImage.objects.filter(item=item)
+    queryset = ItemImage.objects.filter(item=item, deleted=False)
     serialized_data = ItemImageSerializer(queryset, many=True, context=self.context)
     return serialized_data.data
 
   def get_documents_data(self, item):
-    queryset = ItemDocument.objects.filter(item=item)
+    queryset = ItemDocument.objects.filter(item=item, deleted=False)
     serialized_data = ItemDocumentSerializer(queryset, many=True, context=self.context)
     return serialized_data.data
