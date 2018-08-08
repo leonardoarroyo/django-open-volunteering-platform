@@ -65,30 +65,29 @@ class ItemSerializer(ChannelRelationshipSerializer):
       setattr(instance, attr, value)
 
     # Images
-    if images:
-      items = ItemImage.objects.filter(item=instance, deleted=False)
+    
+    items = ItemImage.objects.filter(item=instance, deleted=False)
 
-      for image_data in images:
-        if image_data['image_id'] not in [item.image_id for item in items]:
-          image_data['item'] = instance
-          image_sr = ItemImageSerializer(data=image_data, context=self.context)
-          image = image_sr.create(image_data)
+    for image_data in images:
+      if image_data['image_id'] not in [item.image_id for item in items]:
+        image_data['item'] = instance
+        image_sr = ItemImageSerializer(data=image_data, context=self.context)
+        image = image_sr.create(image_data)
       
-      for item in items:
-        if item.image_id not in [image['image_id'] for image in images]: item.delete()
+    for item in items:
+      if item.image_id not in [image['image_id'] for image in images]: item.delete()
 
     # Documents
-    if documents:
-      items = ItemDocument.objects.filter(item=instance, deleted=False)
+    items = ItemDocument.objects.filter(item=instance, deleted=False)
 
-      for document_data in documents:
-        if document_data['document_id'] not in [item.document_id for item in items]:
-          document_data['item'] = instance
-          document_sr = ItemDocumentSerializer(data=document_data, context=self.context)
-          document = document_sr.create(document_data)
+    for document_data in documents:
+      if document_data['document_id'] not in [item.document_id for item in items]:
+        document_data['item'] = instance
+        document_sr = ItemDocumentSerializer(data=document_data, context=self.context)
+        document = document_sr.create(document_data)
 
-      for item in items:
-        if item.document_id not in [document['document_id'] for document in documents]: item.delete()   
+    for item in items:
+      if item.document_id not in [document['document_id'] for document in documents]: item.delete()   
 
     instance.save()
 
