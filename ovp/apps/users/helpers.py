@@ -14,3 +14,10 @@ def import_from_string(val):
   except ImportError as e:
     msg = "Could not import '%s' for setting. %s: %s." % (val, e.__class__.__name__, e)
     raise ImportError(msg)
+
+def check_profile_completed(profile):
+  for field in profile._meta.get_fields():
+    value = getattr(profile, field.name)
+    if value is None: return False
+  return True
+    

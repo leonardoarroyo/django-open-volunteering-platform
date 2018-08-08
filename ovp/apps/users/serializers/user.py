@@ -3,7 +3,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 
 from ovp.apps.users import models
-from ovp.apps.users.helpers import get_settings, import_from_string
+from ovp.apps.users.helpers import get_settings, import_from_string, check_profile_completed
 from ovp.apps.users.models.profile import get_profile_model
 from ovp.apps.users.serializers.profile import get_profile_serializers
 from ovp.apps.users.serializers.profile import ProfileSearchSerializer
@@ -123,6 +123,9 @@ class UserUpdateSerializer(UserCreateSerializer):
       profile_sr = get_profile_serializers()[0](profile, data=profile_data, partial=True)
       profile_sr.is_valid(raise_exception=True)
       profile = profile_sr.update(profile, profile_sr.validated_data)
+      
+      if not instance.is_profile_completed:
+        data['is_profile_completed'] = check_profile_completed(profile)
 
     return super(UserUpdateSerializer, self).update(instance, data)
 
