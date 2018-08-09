@@ -56,6 +56,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
   slug = models.SlugField(_('Slug'), max_length=100, null=True, blank=True)
   avatar = models.ForeignKey('uploads.UploadedImage', blank=False, null=True, related_name='avatar_user', verbose_name=_('avatar'))
   phone = models.CharField(_('Phone'), max_length=30, null=True, blank=True)
+  phone2 = models.CharField(_('Phone 2'), max_length=30, null=True, blank=True)
 
   # Flags
   public = models.BooleanField(_('Public'), default=True)
