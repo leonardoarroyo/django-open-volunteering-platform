@@ -144,6 +144,7 @@ class OrganizationOwnerRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
   causes = CauseSerializer(many=True)
   address = address_serializers[1]()
+  
   class Meta:
     model = models.Organization
     fields = ['slug', 'name', 'description', 'image', 'id', 'causes', 'address']
