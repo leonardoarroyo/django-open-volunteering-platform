@@ -17,7 +17,6 @@ from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 from rest_framework import serializers
 from rest_framework import permissions
 from rest_framework import fields
-from rest_framework.compat import set_many
 from rest_framework.utils import model_meta
 
 
@@ -64,10 +63,11 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
     # Iterate and save fields as drf default
     info = model_meta.get_field_info(instance)
     for attr, value in validated_data.items():
-      if attr in info.relations and info.relations[attr].to_many: # pragma: no cover
-        set_many(instance, attr, value)
-      else:
-        setattr(instance, attr, value)
+        if attr in info.relations and info.relations[attr].to_many:
+            field = getattr(instance, attr)
+            field.set(value)
+        else:
+            setattr(instance, attr, value)
 
     # Save related resources
     if address_data:
@@ -144,6 +144,7 @@ class OrganizationOwnerRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
   causes = CauseSerializer(many=True)
   address = address_serializers[1]()
+  
   class Meta:
     model = models.Organization
     fields = ['slug', 'name', 'description', 'image', 'id', 'causes', 'address']

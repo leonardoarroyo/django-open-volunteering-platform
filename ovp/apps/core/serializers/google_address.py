@@ -22,3 +22,10 @@ class GoogleAddressCityStateSerializer(ChannelRelationshipSerializer):
     fields = ['city_state']
 
 
+class GoogleAddressShortSerializer(ChannelRelationshipSerializer):
+  class Meta:
+    model = models.GoogleAddress
+    fields = ['lat', 'lng']
+    read_only_fields = ['lat', 'lng']
+
+

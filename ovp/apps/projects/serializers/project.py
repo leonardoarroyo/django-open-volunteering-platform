@@ -30,7 +30,6 @@ from ovp.apps.users.models import User
 from rest_framework import serializers
 from rest_framework import fields
 from rest_framework import exceptions
-from rest_framework.compat import set_many
 from rest_framework.utils import model_meta
 
 """ Address serializers """
@@ -135,12 +134,11 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     # Iterate and save fields as drf default
     info = model_meta.get_field_info(instance)
     for attr, value in validated_data.items():
-      # The following line is not covered because the current model does not implement
-      # any many-to-many(except for roles, which is manually implemented)
-      if attr in info.relations and info.relations[attr].to_many: # pragma: no cover
-        set_many(instance, attr, value)
-      else:
-        setattr(instance, attr, value)
+        if attr in info.relations and info.relations[attr].to_many: # pragma: no cover
+            field = getattr(instance, attr)
+            field.set(value)
+        else:
+            setattr(instance, attr, value)
 
     # Save related resources
     if address_data:
@@ -279,3 +277,10 @@ class ProjectSearchSerializer(ChannelRelationshipSerializer):
   @add_disponibility_representation
   def to_representation(self, instance):
     return super(ProjectSearchSerializer, self).to_representation(instance)
+
+class ProjectMapDataSearchRetrieveSerializer(ChannelRelationshipSerializer):
+  address = address_serializers[3]()
+
+  class Meta:
+    model = models.Project
+    fields = ['slug', 'address']

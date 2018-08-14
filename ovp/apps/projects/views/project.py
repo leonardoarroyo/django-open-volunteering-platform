@@ -81,7 +81,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     for apply in project.apply_set.all():
       user = apply.user
       applied_users.append([
-        apply.username, apply.email, apply.phone,
+        apply.username, apply.email or apply.user.email, apply.phone or apply.user.phone,
         apply.date.strftime('%d/%m/%Y %T'), apply.status,
         ])
 

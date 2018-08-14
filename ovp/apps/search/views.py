@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 
-from ovp.apps.projects.serializers.project import ProjectSearchSerializer
+from ovp.apps.projects.serializers.project import ProjectSearchSerializer, ProjectMapDataSearchRetrieveSerializer
 from ovp.apps.projects.models import Project
 
 from ovp.apps.organizations.models import Organization
@@ -67,7 +67,6 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
 
 class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
-  serializer_class = ProjectSearchSerializer
   filter_backends = (filters.ProjectRelevanceOrderingFilter,)
   ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance')
 
@@ -123,6 +122,11 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     return result
 
+  def get_serializer_class(self):
+    if self.request.META.get('PATH_INFO', None) == '/search/projects/map-data/':
+      return ProjectMapDataSearchRetrieveSerializer
+
+    return ProjectSearchSerializer
 
 class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = get_user_search_serializer()
