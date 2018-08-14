@@ -84,7 +84,7 @@ class Organization(ChannelRelationship):
     if self.pk is not None:
       if not self.__orig_published and self.published:
         self.published_date = timezone.now()
-        self.mailing().sendOrganizationPublished()
+        self.mailing().sendOrganizationPublished({"organization":self})
 
       if not self.__orig_deleted and self.deleted:
         self.deleted_date = timezone.now()
@@ -105,9 +105,9 @@ class Organization(ChannelRelationship):
     obj = super(Organization, self).save(*args, **kwargs)
 
     if creating:
-      self.mailing().sendOrganizationCreated()
+      self.mailing().sendOrganizationCreated({"organization":self})
       try:
-        self.admin_mailing().sendOrganizationCreated()
+        self.admin_mailing().sendOrganizationCreated({"organization":self})
       except:
         pass
 

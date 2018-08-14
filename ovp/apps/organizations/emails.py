@@ -113,3 +113,9 @@ class OrganizationAdminMail(BaseMail):
     Sent when organization is created
     """
     return self.sendEmail('organizationCreatedToAdmin', 'Organization created', context)
+
+  def sendOrganizationReminder(self, context={}):
+    """
+    Sent when organization is inactive
+    """
+    return self.sendEmail('organizationReminder', 'Que saudade! Por onde andam?', context)
