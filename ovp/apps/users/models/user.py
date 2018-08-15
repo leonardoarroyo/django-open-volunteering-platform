@@ -87,6 +87,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
   def __init__(self, *args, **kwargs):
     super(User, self).__init__(*args, **kwargs)
     self.__original_password = self.password
+    self.__original_email = self.email
 
   def __str__(self):
     return self.name
@@ -98,6 +99,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
     hash_password = False
     creating = False
     original_password = self.password
+    update_email = False
 
     if not self.pk:
       self.slug = encode_uuid(self.uuid)
@@ -107,10 +109,19 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
       # checks if password has changed and if it was set by set_password
       if self.__original_password != self.password and not self.check_password(self._password):
         hash_password = True
+      # checks if email has changed
+      if self.__original_email != self.email:
+        update_email = True
 
     if hash_password and self.LOGIN == False:
       self.set_password(self.password) # hash it
       self.__original_password = self.password
+
+    if update_email:
+      context = {"name": self.name, "email": self.email}
+      self.email = self.__original_email
+      self.mailing().sendUpdateEmail(context)
+      self.email = context['email']
 
     obj = super(User, self).save(*args, **kwargs)
 

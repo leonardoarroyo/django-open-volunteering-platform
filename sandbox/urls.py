@@ -9,6 +9,7 @@ import ovp.apps.organizations.urls
 import ovp.apps.search.urls
 import ovp.apps.faq.urls
 import ovp.apps.catalogue.urls
+import ovp.apps.items.urls
 
 urlpatterns = [
   # Admin
@@ -40,5 +41,9 @@ urlpatterns = [
 
   # Catalogue
   url(r'^', include(ovp.apps.catalogue.urls)),
+
+  # Items
+  url(r'^', include(ovp.apps.items.urls)),
+
 ]
 

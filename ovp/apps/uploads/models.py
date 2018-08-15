@@ -10,6 +10,7 @@ from django_resized import ResizedImageField
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
+
 @deconstructible
 class ImageName(object):
   def __init__(self, sub_path=""):
@@ -65,3 +66,46 @@ class UploadedImage(ChannelRelationship):
 
   category = models.CharField(_('Category'), max_length=24, choices=IMAGE_GALERY_CATEGORIES, default=None, null=True, blank=True)
   name = models.CharField(_('Name'),max_length=64, default=None, null=True, blank=True)
+
+
+@deconstructible
+class DocumentName(object):
+  def __init__(self, sub_path=""):
+    self.path = sub_path
+  
+  def __call__(self, instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (instance.uuid, ext)
+    return 'user-uploaded/documents%s/%s' % (self.path, filename)
+
+document = DocumentName()
+
+
+class UploadedDocument(ChannelRelationship):
+  def save(self, *args, **kwargs):
+    if not self.pk:
+      self.uuid = str(uuid.uuid4())
+
+    if not self.document._committed:
+      self.extension = self.document.name.split('.')[-1]
+      self.size = self.document.size
+      
+    self.modified_date = timezone.now()
+    return super(UploadedDocument, self).save(*args, **kwargs)
+
+  def __str__(self):
+    return self.uuid
+
+  class Meta:
+    app_label = 'uploads'
+    verbose_name = _('uploaded document')
+    verbose_name_plural = _('uploaded documents')
+
+  user = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, null=True, blank=True)
+  document = models.FileField(upload_to=document)
+  created_date = models.DateTimeField(auto_now_add=True)
+  modified_date = models.DateTimeField(auto_now=True)
+  uuid = models.CharField('UUID', max_length=36, default=None, null=False, blank=True)
+  name = models.CharField(_('Name'),max_length=64, default=None, null=True, blank=True)
+  extension = models.CharField(_('Extension'), blank=True, null=True, max_length=5)
+  size = models.IntegerField(_('Size'), blank=True, null=True, default=0)

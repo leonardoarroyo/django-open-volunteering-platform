@@ -1,5 +1,5 @@
 from ovp.apps.uploads import helpers
-from ovp.apps.uploads.models import UploadedImage
+from ovp.apps.uploads.models import UploadedImage, UploadedDocument
 
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
@@ -37,3 +37,15 @@ class ImageGallerySerializer(UploadedImageSerializer):
     model = UploadedImage
     read_only_fields = ('image_small', 'image_medium', 'image_large')
     fields = ('id', 'image_url', 'image_small_url', 'image_medium_url', 'image_large_url', 'name', 'category')
+
+
+class UploadedDocumentSerializer(ChannelRelationshipSerializer):
+  document_url = serializers.SerializerMethodField()
+
+  class Meta:
+    model = UploadedDocument
+    fields = ('id', 'user', 'document', 'document_url')
+    extra_kwargs = {'document': {'write_only': True}}
+
+  def get_document_url(self, obj):
+    return helpers.build_absolute_uri(self.context['request'], obj.document) if obj.document else ""

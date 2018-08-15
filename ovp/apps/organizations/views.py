@@ -159,6 +159,15 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
     return response.Response(serializer.data)
 
+  def retrieve(self, request, *args, **kwargs):
+    instance = self.get_object()
+    if instance.deleted:
+      content = {'detail': 'This project was deleted'}
+      return response.Response(content, status=status.HTTP_404_NOT_FOUND)
+    else:
+      serializer = self.get_serializer(instance)
+      return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+  
   def create(self, request, *args, **kwargs):
     request.data['owner'] = request.user.id
 

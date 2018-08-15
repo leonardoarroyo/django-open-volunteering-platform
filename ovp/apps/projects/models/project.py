@@ -17,6 +17,7 @@ import urllib.request as request
 
 import json
 
+
 class Project(ChannelRelationship):
   """
   Project model
@@ -31,6 +32,7 @@ class Project(ChannelRelationship):
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
   organization = models.ForeignKey('organizations.Organization', blank=False, null=True, verbose_name=_('organization'))
+  item = models.ForeignKey('items.Item', blank=True, null=True, verbose_name=_('item'))
 
   # Fields
   name = models.CharField(_('Project name'), max_length=100)
@@ -141,7 +143,7 @@ class Project(ChannelRelationship):
 
   def __str__(self):
       return  '%s' % (self.name)
-
+  
   class Meta:
     app_label = 'projects'
     verbose_name = _('project')
@@ -182,3 +184,4 @@ def update_max_applies_from_roles(sender, **kwargs):
       vacancies = queryset.aggregate(Sum('vacancies')).get('vacancies__sum')
       project.max_applies_from_roles = vacancies if vacancies else 0
       project.save()
+
