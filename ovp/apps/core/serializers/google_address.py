@@ -27,5 +27,3 @@ class GoogleAddressShortSerializer(ChannelRelationshipSerializer):
     model = models.GoogleAddress
     fields = ['lat', 'lng']
     read_only_fields = ['lat', 'lng']
-
-
