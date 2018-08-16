@@ -8,8 +8,9 @@ from ovp.apps.core import emails
 
 from ovp.apps.users.models.user import User
 from ovp.apps.organizations.models.organization import Organization
+from ovp.apps.projects.models import  Apply, Project
 
-from django.utils import translation
+from django.utils import translation, timezone
 
 @decorators.api_view(["GET"])
 def startup(request):
@@ -23,6 +24,7 @@ def startup(request):
       "causes": causes.data,
       "volunteer_count": User.objects.filter(channel__slug=request.channel).count(),
       "nonprofit_count": Organization.objects.filter(channel__slug=request.channel, published=True).count(),
+      "volunteer_hours": get_voluntariometro()
     })
 
 @decorators.api_view(["POST"])
@@ -61,3 +63,32 @@ def record_lead(request):
   )
 
   return response.Response({"success": True})
+
+def get_voluntariometro():
+  volunteer_hours = timezone.timedelta(hours=0)
+  
+  for aplly in Apply.objects.all():
+    project =  Project.objects.get(pk=aplly.project_id)
+    if hasattr(project, 'job'):
+        jobs = project.job.dates
+        for job in jobs.values():
+          volunteer_hours += job['end_date'] - job['start_date']
+    else:
+      if project.closed:
+          last_time = project.closed_date
+      else:
+          last_time = timezone.now()
+      weeks = (last_time - aplly.date).days // 7
+      project_hours = project.work.weekly_hours * (weeks+1)
+      volunteer_hours += timezone.timedelta(hours=project_hours)
+    
+  resp = {
+    "years": (volunteer_hours.days // 30) // 12,
+    "months": (volunteer_hours.days // 30) % 12,
+    "days": (volunteer_hours.days % 30),
+    "hours": volunteer_hours.seconds // 3600, 
+    "minutes": (volunteer_hours.seconds % 3600) // 60,
+  }
+      
+  return resp
+  
