@@ -53,6 +53,9 @@ class Organization(ChannelRelationship):
   deleted_date = models.DateTimeField(_('Deleted date'), blank=True, null=True)
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
   modified_date = models.DateTimeField(_('Modified date'), auto_now=True)
+  is_inactive = models.BooleanField(_('Inactive'), default=False, blank=False)
+  reminder_sent = models.BooleanField(_('Reminder'), default=False, blank=False)
+  reminder_sent_date = models.DateTimeField(_('Reminder sent date'), blank=True, null=True)
 
   @staticmethod
   def autocomplete_search_fields():
