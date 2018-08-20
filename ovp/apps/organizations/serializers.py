@@ -148,3 +148,11 @@ class OrganizationOwnerRetrieveSerializer(ChannelRelationshipSerializer):
   class Meta:
     model = models.Organization
     fields = ['slug', 'name', 'description', 'image', 'id', 'causes', 'address']
+
+
+class OrganizationMapDataSearchRetrieveSerializer(ChannelRelationshipSerializer):
+  address = address_serializers[3]()
+
+  class Meta:
+    model = models.Organization
+    fields = ['slug', 'address']

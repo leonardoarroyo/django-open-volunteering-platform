@@ -1,10 +1,12 @@
 from django.core.exceptions import PermissionDenied
 
-from ovp.apps.projects.serializers.project import ProjectSearchSerializer, ProjectMapDataSearchRetrieveSerializer
+from ovp.apps.projects.serializers.project import ProjectSearchSerializer
+from ovp.apps.projects.serializers.project import ProjectMapDataSearchRetrieveSerializer
 from ovp.apps.projects.models import Project
 
 from ovp.apps.organizations.models import Organization
 from ovp.apps.organizations.serializers import OrganizationSearchSerializer
+from ovp.apps.organizations.serializers import OrganizationMapDataSearchRetrieveSerializer
 
 from ovp.apps.users.models.user import User
 from ovp.apps.users.serializers.user import get_user_search_serializer
@@ -29,7 +31,6 @@ from haystack.query import SearchQuerySet, SQ
 
 
 class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
-  serializer_class = OrganizationSearchSerializer
   filter_backends = (filters.OrderingFilter,)
   ordering_fields = ('slug', 'name', 'website', 'facebook_page', 'details', 'description', 'type', 'hidden_address')
 
@@ -64,6 +65,12 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
     result = filters.filter_out(result, "FILTER_OUT_ORGANIZATIONS", self.request.channel)
 
     return result
+
+  def get_serializer_class(self):
+    if self.request.META.get('PATH_INFO', None) == '/search/organizations/map-data/':
+      return OrganizationMapDataSearchRetrieveSerializer
+
+    return OrganizationSearchSerializer
 
 
 class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):

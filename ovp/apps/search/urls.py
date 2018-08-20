@@ -9,6 +9,7 @@ project_search.register(r'projects/map-data', views.ProjectSearchResource, 'sear
 
 organization_search = routers.SimpleRouter()
 organization_search.register(r'organizations', views.OrganizationSearchResource, 'search-organizations')
+project_search.register(r'organizations/map-data', views.OrganizationSearchResource, 'search-organizations-map-data')
 
 user_search = routers.SimpleRouter()
 user_search.register(r'users', views.UserSearchResource, 'search-users')
