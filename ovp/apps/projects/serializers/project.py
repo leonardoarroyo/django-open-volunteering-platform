@@ -68,11 +68,10 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   organization = OrganizationRetrieveSerializer(read_only=True)
   organization_id = serializers.IntegerField(required=False)
   item = ItemSerializer(read_only=True)
-  item_id = serializers.IntegerField(required=False)
 
   class Meta:
     model = models.Project
-    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'item', 'item_id']
+    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'item']
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date']
 
   def validate(self, data):
