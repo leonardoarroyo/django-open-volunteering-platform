@@ -8,6 +8,7 @@ from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
 from ovp.apps.projects.models import Project, VolunteerRole
 from ovp.apps.organizations.models import Organization
+from ovp.apps.organizations.admin import StateListFilter
 from .job import JobInline
 from .work import WorkInline
 
@@ -55,7 +56,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     ('organization', 'owner'),
     ('owner__name', 'owner__email', 'owner__phone'),
 
-    ('applied_count', 'max_applies_from_roles'),
+    ('applied_count'),
 
     ('can_be_done_remotely'),
 
@@ -75,13 +76,13 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
   resource_class = ProjectResource 
 
   list_display = [
-    'id', 'created_date', 'name', 'organization__name', 'city_state', 'applied_count', # fix: CIDADE, PONTUAL OU RECORRENTE
-    'highlighted', 'published', 'closed', 'deleted', #fix: EMAIL STATUS
+    'id', 'created_date', 'name', 'highlighted', 'published', 'closed', 'organization__name', 'city_state', 'applied_count', # fix: CIDADE, PONTUAL OU RECORRENTE
+    'deleted', #fix: EMAIL STATUS
     ]
 
   list_filter = [
     'created_date', # fix: PONTUAL OU RECORRENTE
-    'highlighted', 'published', 'closed', 'deleted'
+    'highlighted', 'published', 'closed', 'deleted', StateListFilter
   ]
 
   list_editable = [
