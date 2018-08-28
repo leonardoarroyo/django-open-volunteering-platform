@@ -3,8 +3,10 @@ import sys
 from social_django.strategy import DjangoStrategy
 from django.contrib.auth import get_user_model
 from django.core.exceptions import FieldError
+from ovp.apps.users.models.profile import get_profile_model
 
 User = get_user_model()
+UserProfile = get_profile_model()
 
 class OVPDjangoStrategy(DjangoStrategy):
   def get_kwargs(self, **kwargs):
@@ -25,7 +27,9 @@ class OVPDjangoStrategy(DjangoStrategy):
     get_kwargs, create_kwargs = self.get_kwargs(**kwargs)
 
     try:
-      return super(OVPDjangoStrategy, self).create_user(*args, **create_kwargs)
+      user = super(OVPDjangoStrategy, self).create_user(*args, **create_kwargs)
+      UserProfile.objects.create(user=user, object_channel=self.request.channel)
+      return user
     except FieldError:
       # This happens because DjangoStorage is trying to .get the User
       # passing object_channel which is a write only field. We try to fetch
