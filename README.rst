@@ -73,4 +73,3 @@ This project is licensed under the GNU GPLv3 License see the `LICENSE.md <https:
 Thanks
 ---------------
 A thanks for django-oscar for some great ideas for code structure.
-
