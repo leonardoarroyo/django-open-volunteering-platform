@@ -1,5 +1,7 @@
 from django.core.exceptions import PermissionDenied
 
+from ovp.apps.core.pagination import NoPagination
+
 from ovp.apps.projects.serializers.project import ProjectSearchSerializer
 from ovp.apps.projects.serializers.project import ProjectMapDataSearchRetrieveSerializer
 from ovp.apps.projects.models import Project
@@ -33,6 +35,7 @@ from haystack.query import SearchQuerySet, SQ
 class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   filter_backends = (filters.OrderingFilter,)
   ordering_fields = ('slug', 'name', 'website', 'facebook_page', 'details', 'description', 'type', 'hidden_address')
+  serializer_class = OrganizationSearchSerializer
 
   def get_cache_key(self):
     if self.request.user.is_anonymous():
@@ -66,16 +69,16 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
     return result
 
-  def get_serializer_class(self):
-    if self.request.META.get('PATH_INFO', None) == '/search/organizations/map-data/':
-      return OrganizationMapDataSearchRetrieveSerializer
 
-    return OrganizationSearchSerializer
+class OrganizationMapDataResource(OrganizationSearchResource):
+  pagination_class = NoPagination
+  serializer_class = OrganizationMapDataSearchRetrieveSerializer
 
 
 class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   filter_backends = (filters.ProjectRelevanceOrderingFilter,)
   ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance')
+  serializer_class = ProjectSearchSerializer
 
   def get_cache_key(self):
     if self.request.user.is_anonymous():
@@ -129,11 +132,11 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     return result
 
-  def get_serializer_class(self):
-    if self.request.META.get('PATH_INFO', None) == '/search/projects/map-data/':
-      return ProjectMapDataSearchRetrieveSerializer
 
-    return ProjectSearchSerializer
+class ProjectMapDataResource(ProjectSearchResource):
+  pagination_class = NoPagination
+  serializer_class = ProjectMapDataSearchRetrieveSerializer
+
 
 class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = get_user_search_serializer()
