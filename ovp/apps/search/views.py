@@ -71,7 +71,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
 
 class OrganizationMapDataResource(OrganizationSearchResource):
-  pagination_class = NoPagination
+  # pagination_class = NoPagination
   serializer_class = OrganizationMapDataSearchRetrieveSerializer
 
 
@@ -134,7 +134,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class ProjectMapDataResource(ProjectSearchResource):
-  pagination_class = NoPagination
+  # pagination_class = NoPagination
   serializer_class = ProjectMapDataSearchRetrieveSerializer
 
 
