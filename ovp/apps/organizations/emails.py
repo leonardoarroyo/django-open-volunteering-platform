@@ -15,6 +15,12 @@ class OrganizationMail(BaseMail):
     locale = locale or organization.owner.locale
     super(OrganizationMail, self).__init__(receiver, channel=organization.channel.slug, async_mail=self.async_mail, locale=locale)
 
+  def sendOrganizationReminder(self, context={}):
+    """
+    Sent when organization is inactive
+    """
+    return self.sendEmail('organizationReminder', 'Nonprofit Inactive', context)
+
   def sendOrganizationCreated(self, context={}):
     """
     Sent when organization is created
@@ -113,9 +119,3 @@ class OrganizationAdminMail(BaseMail):
     Sent when organization is created
     """
     return self.sendEmail('organizationCreatedToAdmin', 'Organization created', context)
-
-  def sendOrganizationReminder(self, context={}):
-    """
-    Sent when organization is inactive
-    """
-    return self.sendEmail('organizationReminder', 'Que saudade! Por onde andam?', context)

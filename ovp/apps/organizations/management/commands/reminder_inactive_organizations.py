@@ -25,21 +25,23 @@ class Command(BaseCommand):
               .distinct()
     
     for project in projects:
-      organization = Organization.objects.get(pk=project['organization'])
+      try:
+        organization = Organization.objects.get(pk=project['organization'], published=True)
+        if not organization.is_inactive:
+          limite = today - project['created_date']
+          organization.is_inactive = (limite.days > 365)
 
-      if not organization.is_inactive:
-        limite = today - project['created_date']
-        organization.is_inactive = (limite.days > 365)
+          if organization.reminder_sent:
+            interval = today - organization.reminder_sent_date
 
-        if organization.reminder_sent:
-          interval = today - organization.reminder_sent_date
-          
-          if interval.days > 90:
+            if interval.days > 90:
+              organization.reminder_sent_date = today
+              organization.mailing().sendOrganizationReminder(context={"organization": organization})
+          else:
+            organization.reminder_sent = True
             organization.reminder_sent_date = today
-            organization.admin_mailing().sendOrganizationReminder({"organization": organization})
-        else:
-          organization.reminder_sent = True
-          organization.reminder_sent_date = today
-          organization.admin_mailing().sendOrganizationReminder({"organization": organization})
+            organization.mailing().sendOrganizationReminder(context={"organization": organization})
 
-        organization.save()
+          organization.save()
+      except:
+        pass
