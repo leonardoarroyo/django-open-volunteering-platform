@@ -129,6 +129,21 @@ class OrganizationInviteSerializer(serializers.Serializer):
   class Meta:
     fields = ['email']
 
+class OrganizationInviteUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
+  avatar = UploadedImageSerializer()
+
+  class Meta:
+    model = User
+    fields = ['uuid', 'name', 'email', 'avatar', 'slug']
+
+class OrganizationInviteRetrieveSerializer(ChannelRelationshipSerializer):
+  invitator = OrganizationInviteUserPublicRetrieveSerializer()
+  invited = OrganizationInviteUserPublicRetrieveSerializer()
+
+  class Meta:
+    model = models.OrganizationInvite
+    fields = ['invitator', 'invited']
+
 class MemberRemoveSerializer(serializers.Serializer):
   email = fields.EmailField(validators=[validators.invite_email_validator])
 

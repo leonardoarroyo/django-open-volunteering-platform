@@ -362,6 +362,32 @@ class OrganizationInviteTestCase(TestCase):
     if is_email_enabled("default", "userInvitedRevoked-toMemberInviter"): # pragma: no cover
       self.assertTrue(get_email_subject("default", "userInvitedRevoked-toMemberInviter", "You have revoked an user invitation"))
 
+  def test_pending_invites_permission_class(self):
+    """ Test it's not possible to retrieve pending invites if unauthenticated or not in organization """
+    response = APIClient().get(reverse("organization-pending-invites", ["test-organization"]), format="json")
+    self.assertEqual(response.status_code, 401)
+
+    client = APIClient()
+    client.force_authenticate(user=self.user2)
+    response = client.get(reverse("organization-pending-invites", ["test-organization"]), format="json")
+    self.assertEqual(response.status_code, 403)
+
+  def test_pending_invites_list(self):
+    """ Test it's possible to retrieve pending invites """
+    response = self.client.get(reverse("organization-pending-invites", ["test-organization"]), format="json")
+    self.assertTrue(response.status_code == 200)
+    self.assertTrue(response.data == [])
+
+    self.test_can_invite_user()
+    response = self.client.get(reverse("organization-pending-invites", ["test-organization"]), format="json")
+    self.assertEqual(len(response.data), 2)
+    self.assertEqual(response.data[0]["invitator"]["email"], "testemail@email.com")
+    self.assertEqual(response.data[0]["invited"]["email"], "valid@user.com")
+
+  def test_revoked_and_used_not_included_in_pending_invites_list(self):
+    """ Test revoked and used invites are not included in pending list """
+    pass
+
 
 class OrganizationLeaveTestCase(TestCase):
   def setUp(self):

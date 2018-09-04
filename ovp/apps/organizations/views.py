@@ -66,6 +66,14 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     taken = models.Organization.objects.filter(document=formatted_doc, channel__slug=request.channel).count() > 0
     return response.Response({ "taken": taken })
 
+  @decorators.detail_route(methods=["GET"])
+  def pending_invites(self, request, *args, **kwargs):
+    organization = self.get_object()
+    invites = organization.organizationinvite_set.all()
+    serializer = self.get_serializer(invites, many=True)
+
+    return response.Response(serializer.data)
+
   @decorators.detail_route(methods=["POST"])
   def invite_user(self, request, *args, **kwargs):
     organization = self.get_object()
@@ -194,6 +202,8 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
       return serializers.OrganizationCreateSerializer
     if self.action == 'retrieve':
       return serializers.OrganizationRetrieveSerializer
+    if self.action == 'pending_invites':
+      return serializers.OrganizationInviteRetrieveSerializer
     if self.action in ['invite_user', 'revoke_invite']:
       return serializers.OrganizationInviteSerializer
     if self.action == 'remove_member':
@@ -215,7 +225,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
       self.permission_classes = (permissions.IsAuthenticated, organization_permissions.OwnsOrIsOrganizationMember)
     if self.action == 'retrieve':
       self.permission_classes = ()
-    if self.action in ['invite_user', 'revoke_invite']:
+    if self.action in ['pending_invites', 'invite_user', 'revoke_invite']:
       self.permission_classes = (permissions.IsAuthenticated, organization_permissions.OwnsOrIsOrganizationMember)
     if self.action == 'join':
       self.permission_classes = (permissions.IsAuthenticated, organization_permissions.IsInvitedToOrganization)
