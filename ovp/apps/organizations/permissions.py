@@ -32,7 +32,7 @@ class IsInvitedToOrganization(permissions.BasePermission):
   def has_object_permission(self, request, view, obj):
     if request.user.is_authenticated:
       try:
-        OrganizationInvite.objects.get(invited=request.user, organization=obj)
+        OrganizationInvite.objects.get(invited=request.user, organization=obj, revoked_date=None, joined_date=None)
         return True
       except OrganizationInvite.DoesNotExist:
         raise exceptions.PermissionDenied() #403

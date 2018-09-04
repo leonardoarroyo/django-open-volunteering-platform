@@ -26,6 +26,7 @@ from rest_framework import permissions
 from rest_framework import status
 
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 
 import json
@@ -69,7 +70,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
   @decorators.detail_route(methods=["GET"])
   def pending_invites(self, request, *args, **kwargs):
     organization = self.get_object()
-    invites = organization.organizationinvite_set.all()
+    invites = organization.organizationinvite_set.filter(joined_date=None, revoked_date=None)
     serializer = self.get_serializer(invites, many=True)
 
     return response.Response(serializer.data)
@@ -83,8 +84,11 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
     invited = User.objects.get(email=request.data["email"], channel__slug=request.channel)
 
+    if organization.members.filter(pk=invited.pk).count():
+      return response.Response({"email": ["This user is already part of this organization."]}, status=400)
+
     try:
-      models.OrganizationInvite.objects.get(organization=organization, invited=invited, channel__slug=request.channel)
+      models.OrganizationInvite.objects.get(organization=organization, invited=invited, joined_date=None, revoked_date=None, channel__slug=request.channel)
       return response.Response({"email": ["This user is already invited to this organization."]}, status=400)
     except models.OrganizationInvite.DoesNotExist:
       pass
@@ -101,6 +105,10 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     organization = self.get_object()
     organization.members.add(request.user)
 
+    invite = models.OrganizationInvite.objects.get(organization=organization, invited=request.user, joined_date=None, revoked_date=None, channel__slug=request.channel)
+    invite.joined_date = timezone.now()
+    invite.save()
+
     organization.mailing().sendUserJoined(context={"user": request.user, "organization": organization})
 
     return response.Response({"detail": "Joined organization."})
@@ -112,14 +120,15 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     try:
       try:
         user = User.objects.get(email=request.data.get("email", ""), channel__slug=request.channel)
-        invite = models.OrganizationInvite.objects.get(invited=user, organization=organization, channel__slug=request.channel)
+        invite = models.OrganizationInvite.objects.get(invited=user, organization=organization, joined_date=None, revoked_date=None, channel__slug=request.channel)
       except User.DoesNotExist:
         return response.Response({"email": ["This user is not valid."]}, status=400)
     except models.OrganizationInvite.DoesNotExist:
-      return response.Response({"detail": "This user is not invited to this organization."}, status=400)
+      return response.Response({"detail": "There is no pending invites for this user in this organization."}, status=400)
 
+    invite.revoked_date = timezone.now()
+    invite.save()
     organization.mailing().sendUserInvitationRevoked(context={"invite": invite})
-    invite.delete()
 
     return response.Response({"detail": "Invite has been revoked."})
 

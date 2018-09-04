@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.core import mail
+from django.utils import timezone
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -297,12 +298,20 @@ class OrganizationInviteTestCase(TestCase):
     self.assertTrue(response.data["detail"] == "Joined organization.")
     self.assertTrue(self.user2 in self.organization.members.all())
 
-
     subjects = [x.subject for x in mail.outbox]
     if is_email_enabled("default", "userJoined-toUser"): # pragma: no cover
       self.assertTrue(get_email_subject("default", "userJoined-toUser", "You have joined an organization"))
     if is_email_enabled("default", "userJoined-toOwner"): # pragma: no cover
       self.assertTrue(get_email_subject("default", "userJoined-toOwner", "An user has joined an organization you own"))
+
+    # Don't allow joining twice or has after invite used
+    response = client.post(reverse("organization-join", ["test-organization"]), {}, format="json")
+    self.assertTrue(response.status_code == 403)
+
+    self.organization.members.remove(self.user2)
+    self.assertTrue(self.user2 not in self.organization.members.all())
+    response = client.post(reverse("organization-join", ["test-organization"]), {}, format="json")
+    self.assertTrue(response.status_code == 403)
 
   def test_cant_revoke_if_unauthenticated(self):
     """ Test it's not possible to revoke invitation if not authenticated"""
@@ -329,7 +338,7 @@ class OrganizationInviteTestCase(TestCase):
     """ Test it's not possible to revoke invitation if invitation does not exist """
     response = self.client.post(reverse("organization-revoke-invite", ["test-organization"]), {"email": "valid@user.com"}, format="json")
     self.assertTrue(response.status_code == 400)
-    self.assertTrue(response.data["detail"] == "This user is not invited to this organization.")
+    self.assertTrue(response.data["detail"] == "There is no pending invites for this user in this organization.")
 
   def test_can_revoke_invite(self):
     """ Test it's possible to revoke invitation """
@@ -337,11 +346,11 @@ class OrganizationInviteTestCase(TestCase):
 
     mail.outbox = []
     self.assertTrue(len(mail.outbox) == 0)
-    self.assertTrue(OrganizationInvite.objects.all().count() == 2)
+    self.assertTrue(OrganizationInvite.objects.filter(revoked_date=None).count() == 2)
     response = self.client.post(reverse("organization-revoke-invite", ["test-organization"]), {"email": "valid@user.com"}, format="json")
     self.assertTrue(response.status_code == 200)
     self.assertTrue(response.data["detail"] == "Invite has been revoked.")
-    self.assertTrue(OrganizationInvite.objects.all().count() == 1)
+    self.assertTrue(OrganizationInvite.objects.filter(revoked_date=None).count() == 1)
 
     subjects = [x.subject for x in mail.outbox]
     if is_email_enabled("default", "userInvitedRevoked-toUser"): # pragma: no cover
@@ -386,7 +395,19 @@ class OrganizationInviteTestCase(TestCase):
 
   def test_revoked_and_used_not_included_in_pending_invites_list(self):
     """ Test revoked and used invites are not included in pending list """
-    pass
+    self.test_can_invite_user()
+    response = self.client.get(reverse("organization-pending-invites", ["test-organization"]), format="json")
+    self.assertEqual(len(response.data), 2)
+
+    i1 = OrganizationInvite.objects.first()
+    i1.joined_date = timezone.now()
+    i1.save()
+    i2 = OrganizationInvite.objects.last()
+    i2.revoked_date = timezone.now()
+    i2.save()
+
+    response = self.client.get(reverse("organization-pending-invites", ["test-organization"]), format="json")
+    self.assertEqual(len(response.data), 0)
 
 
 class OrganizationLeaveTestCase(TestCase):
