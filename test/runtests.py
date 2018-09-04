@@ -24,6 +24,7 @@ CUSTOM_INSTALLED_APPS = (
     'ovp.apps.faq',
     'ovp.apps.channels',
     'ovp.apps.catalogue',
+    'ovp.apps.items',
     'django.contrib.admin',
     'jet',
     'jet.dashboard',

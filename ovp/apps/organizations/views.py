@@ -63,7 +63,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     except:
       return response.Response({ "invalid": True }, status=400)
 
-    taken = models.Organization.objects.filter(document=formatted_doc).count() > 0
+    taken = models.Organization.objects.filter(document=formatted_doc, channel__slug=request.channel).count() > 0
     return response.Response({ "taken": taken })
 
   @decorators.detail_route(methods=["POST"])
@@ -73,10 +73,10 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     serializer = self.get_serializer_class()(data=request.data)
     serializer.is_valid(raise_exception=True)
 
-    invited = User.objects.get(email=request.data["email"])
+    invited = User.objects.get(email=request.data["email"], channel__slug=request.channel)
 
     try:
-      models.OrganizationInvite.objects.get(organization=organization, invited=invited)
+      models.OrganizationInvite.objects.get(organization=organization, invited=invited, channel__slug=request.channel)
       return response.Response({"email": ["This user is already invited to this organization."]}, status=400)
     except models.OrganizationInvite.DoesNotExist:
       pass
@@ -103,8 +103,8 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
     try:
       try:
-        user = User.objects.get(email=request.data.get("email", ""))
-        invite = models.OrganizationInvite.objects.get(invited=user, organization=organization)
+        user = User.objects.get(email=request.data.get("email", ""), channel__slug=request.channel)
+        invite = models.OrganizationInvite.objects.get(invited=user, organization=organization, channel__slug=request.channel)
       except User.DoesNotExist:
         return response.Response({"email": ["This user is not valid."]}, status=400)
     except models.OrganizationInvite.DoesNotExist:
