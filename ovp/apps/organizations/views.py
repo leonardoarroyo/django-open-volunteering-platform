@@ -160,7 +160,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
   @decorators.detail_route(methods=["GET"])
   def members(self, request, *args, **kwargs):
     organization = self.get_object()
-    members = User.objects.filter(pk=organization.owner.pk) | organization.members.all()
+    members = organization.members.all()
     serializer = self.get_serializer(members, many=True)
     return response.Response(serializer.data)
 
