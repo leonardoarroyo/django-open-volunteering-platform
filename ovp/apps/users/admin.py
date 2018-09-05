@@ -14,6 +14,7 @@ from django_extensions.admin import ForeignKeyAutocompleteAdmin
 class UserResource(resources.ModelResource):
   user = Field()
   address = Field()
+  state = Field()
   
   class Meta:
     model = User
@@ -25,6 +26,10 @@ class UserResource(resources.ModelResource):
   def dehydrate_address(self, user):
     if user.profile is not None and user.profile.address is not None:
       return user.profile.address.typed_address
+
+  def dehydrate_state(self, user):
+    if user.profile is not None and user.profile.address is not None:
+      return user.profile.address.city_state.split(',')[-1]
 
 class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocompleteAdmin):
   fields = [
