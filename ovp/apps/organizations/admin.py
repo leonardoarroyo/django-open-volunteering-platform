@@ -23,17 +23,22 @@ from jet.filters import RelatedFieldAjaxListFilter
 
 class OrganizationResource(resources.ModelResource):
   address = Field()
+  state = Field()
   contact_name = Field()
   contact_email = Field()
   contact_phone = Field()
   
   class Meta:
     model = Organization
-    fields = ('id', 'name', 'contact_name', 'contact_email', 'contact_phone', 'address', 'published', 'highlighted', 'closed', 'deleted', 'created_date', 'modified_date')
+    fields = ('id', 'name', 'contact_name', 'contact_email', 'contact_phone', 'address', 'state', 'published', 'highlighted', 'closed', 'deleted', 'created_date', 'modified_date')
 
   def dehydrate_address(self, organization):
     if organization.address is not None and organization.address is not None:
       return organization.address.typed_address
+
+  def dehydrate_state(self, organization):
+    if organization.address is not None and organization.address is not None:
+      return organization.address.city_state.split(',')[-1]
 
   def dehydrate_contact_name(self, organization):
     return organization.owner.name
