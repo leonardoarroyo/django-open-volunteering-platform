@@ -34,22 +34,13 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
   """
   ProjectResourceViewSet resource endpoint
   """
-  queryset = models.Project.objects.all()
+  queryset = models.Project.objects.filter(deleted=False)
   lookup_field = 'slug'
   lookup_value_regex = '[^/]+' # default is [^/.]+ - here we're allowing dots in the url slug field
 
   ##################
   # ViewSet routes #
   ##################
-
-  def retrieve(self, request, *args, **kwargs):
-    instance = self.get_object()
-    if instance.deleted:
-      content = {'detail': 'This project was deleted'}
-      return response.Response(content, status=status.HTTP_404_NOT_FOUND)
-    else:
-      serializer = self.get_serializer(instance)
-      return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
   def create(self, request, *args, **kwargs):
     request.data['owner'] = request.data.get('owner', None) or request.user.pk
