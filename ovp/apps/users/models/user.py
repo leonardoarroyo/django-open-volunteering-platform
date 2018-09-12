@@ -149,6 +149,9 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
     except model.DoesNotExist:
       return None
 
+  def active_organizations(self):
+    return self.organizations_member.filter(deleted=False)
+
 @receiver(post_save, sender=User)
 def update_history(sender, instance, raw=False, **kwargs):
   if raw: # pragma: no cover
