@@ -63,6 +63,7 @@ class UploadedImage(ChannelRelationship):
   created_date = models.DateTimeField(auto_now_add=True)
   modified_date = models.DateTimeField(auto_now=True)
   uuid = models.CharField('UUID', max_length=36, default=None, null=False, blank=True)
+  absolute = models.BooleanField('Absolute', default=False)
 
   category = models.CharField(_('Category'), max_length=24, choices=IMAGE_GALERY_CATEGORIES, default=None, null=True, blank=True)
   name = models.CharField(_('Name'),max_length=64, default=None, null=True, blank=True)

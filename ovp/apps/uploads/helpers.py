@@ -40,4 +40,4 @@ def perform_image_crop(image_obj, crop_rect=None):
   tmp_file = ContentFile(tmp_file.getvalue())
   return uploadedfile.InMemoryUploadedFile(
     tmp_file, None, image_obj.name, image_obj.content_type, tmp_file.tell, None
-    )
+  )

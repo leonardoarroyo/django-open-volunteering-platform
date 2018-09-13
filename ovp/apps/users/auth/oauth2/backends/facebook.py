@@ -14,5 +14,5 @@ class FacebookOAuth2(FacebookOAuth2Base):
     data = super(FacebookOAuth2, self).get_user_details(response)
     return {
       'email': data['email'],
-      'name': data['fullname']
+      'name': data['fullname'],
     }
