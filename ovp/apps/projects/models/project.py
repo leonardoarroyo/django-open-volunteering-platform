@@ -46,6 +46,7 @@ class Project(ChannelRelationship):
   minimum_age = models.IntegerField(_("Minimum Age"), blank=False, null=False, default=0)
   hidden_address = models.BooleanField(_('Hidden address'), default=False)
   crowdfunding = models.BooleanField(_('Crowdfunding'), default=False)
+  skip_address_filter = models.BooleanField(_('Skip address filter'), default=False)
 
   # Date fields
   published_date = models.DateTimeField(_("Published date"), blank=True, null=True)

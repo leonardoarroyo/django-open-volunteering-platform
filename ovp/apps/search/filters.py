@@ -171,7 +171,7 @@ def by_name(queryset, name=None):
 
 def by_address(queryset, address='', project=False):
   """
-  Filter queryset by publish status.
+  Filter queryset by address
 
   If project=True, we also apply a project exclusive filter
   """

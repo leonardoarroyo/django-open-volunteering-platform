@@ -58,7 +58,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
     ('applied_count'),
 
-    ('can_be_done_remotely'),
+    ('can_be_done_remotely', 'skip_address_filter'),
 
     ('published', 'closed', 'deleted'),
     ('published_date', 'closed_date', 'deleted_date'),
