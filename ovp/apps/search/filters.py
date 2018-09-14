@@ -188,6 +188,7 @@ def by_address(queryset, address='', project=False):
           for component_type in component[u'types']:
             type_string = helpers.whoosh_raw(u"{}-{}".format(component[u'long_name'], component_type).strip())
             q_obj.add(SQ(address_components=type_string), SQ.OR)
+            q_obj.add(SQ(skip_address_filter=1), SQ.OR)
 
           q_objs.append(q_obj)
 
