@@ -24,10 +24,22 @@ def import_from_string(val):
 
 def is_email_enabled(channel, email):
   """ Emails are activated by default.
-      Create a template named {email}-disable.txt to disable it.
+      Create a ChannelSetting object with the email name to disable it.
+
+      You can also control enabled emails through OVP_CORE.OVERRIDE_ENABLED_EMAILS,
+      OVP_CORE.OVERRIDE_DISABLED_EMAILS and OVP_CORE.DISABLE_EMAILS_BY_DEFAULT.
   """
   disabled_emails = get_channel_setting(channel, "DISABLE_EMAIL")
+  override_disabled = get_settings().get('OVERRIDE_DISABLED_EMAILS', [])
+  override_enabled = get_settings().get('OVERRIDE_ENABLED_EMAILS', [])
+  disable_by_default = get_settings().get('DISABLE_EMAILS_BY_DEFAULT', False)
 
+  if email in override_disabled:
+    return False
+  if email in override_enabled:
+    return True
+  if disable_by_default:
+    return False
   if email in disabled_emails:
     return False
 
