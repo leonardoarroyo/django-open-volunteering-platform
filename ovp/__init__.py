@@ -1,21 +1,20 @@
 
-def get_core_apps():
+def get_core_apps(disable_external=False):
   """ Get core ovp apps list.
 
   Returns:
     list: A list with all ovp apps to be appended to INSTALLED_APPS on settings.py
   """
-  CORE_APPS = [
-    # External essentials
+  EXTERNAL_APPS = [
     "haystack",
     "vinaigrette",
     "corsheaders",
     "jet",
     "jet.dashboard",
     "martor",
+  ]
 
-
-    # OVP
+  CORE_APPS = [
     "ovp.apps.core",
     "ovp.apps.admin",
     "ovp.apps.uploads",
@@ -29,4 +28,6 @@ def get_core_apps():
     "ovp.apps.items",
   ]
 
-  return CORE_APPS
+  if disable_external:
+    return CORE_APPS
+  return CORE_APPS + EXTERNAL_APPS

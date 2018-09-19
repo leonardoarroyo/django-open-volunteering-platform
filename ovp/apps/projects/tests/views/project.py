@@ -434,7 +434,6 @@ class ProjectResourceUpdateTestCase(TestCase):
     updated_project = {"roles": [{"name": "test", "prerequisites": "test2", "details": "test3", "vacancies": 5}]}
     response = self.client.patch(reverse("project-detail", ["test-project"]), updated_project, format="json")
 
-    print(response.data)
     self.assertTrue(response.status_code == 200)
     self.assertTrue(response.data["roles"] == expected_response)
 
