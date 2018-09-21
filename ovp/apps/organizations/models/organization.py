@@ -38,7 +38,7 @@ class Organization(ChannelRelationship):
   description = models.CharField(_('Short description'), max_length=320, blank=True, null=True)
   hidden_address = models.BooleanField(_('Hidden address'), default=False)
   verified = models.BooleanField(_('Verified'), default=False)
-  document = models.CharField(_('CNPJ'), unique=True, max_length=18, validators=[validate_CNPJ], blank=True, null=True)
+  document = models.CharField(_('CNPJ'), unique=True, max_length=100, validators=[validate_CNPJ], blank=True, null=True)
 
   # Organization contact
   contact_name = models.CharField(_('Responsible name'), max_length=150, blank=True, null=True)
