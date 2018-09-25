@@ -101,7 +101,7 @@ class OrganizationSearchSerializer(ChannelRelationshipSerializer):
     fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'is_bookmarked', 'verified']
 
 class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
-  address = address_serializers[0]()
+  address = address_serializers[1]()
   image = UploadedImageSerializer()
   cover = UploadedImageSerializer()
   causes = CauseSerializer(many=True)
