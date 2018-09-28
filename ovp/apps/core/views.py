@@ -25,6 +25,7 @@ def startup(request):
 @swagger_auto_schema(methods=["POST"], request_body=serializers.ContactFormSeralizer, responses={200: 'Sent', 400: 'Invalid recipients.'})
 @decorators.api_view(["POST"])
 def contact(request):
+  """ Contact message form endpoint. """
   name = request.data.get("name", "")
   message = request.data.get("message", "")
   email = request.data.get("email", "")
@@ -48,6 +49,7 @@ def contact(request):
 @swagger_auto_schema(methods=["POST"], request_body=serializers.LeadSerializer, responses={200: 'OK'})
 @decorators.api_view(["POST"])
 def record_lead(request):
+  """ Subscribe to periodic newsletter. """
   serializer = serializers.LeadSerializer(data=request.data, context={"request": request})
   serializer.is_valid(raise_exception=True)
   serializer.save()
