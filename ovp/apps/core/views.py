@@ -13,19 +13,14 @@ from drf_yasg.utils import swagger_auto_schema
 
 from django.utils import translation
 
+@swagger_auto_schema(methods=["GET"], responses={200: serializers.StartupSerializer})
 @decorators.api_view(["GET"])
 def startup(request):
-  """ This view provides initial data to the client, such as available skills and causes """
+  """ This view provides initial data to the client such as available skill and causes, organization and users count. """
   with translation.override(translation.get_language_from_request(request)):
-    skills = serializers.SkillSerializer(models.Skill.objects.filter(channel__slug=request.channel), many=True)
-    causes = serializers.FullCauseSerializer(models.Cause.objects.filter(channel__slug=request.channel), many=True, context={'request': request})
-
-    return response.Response({
-      "skills": skills.data,
-      "causes": causes.data,
-      "volunteer_count": User.objects.filter(channel__slug=request.channel).count(),
-      "nonprofit_count": Organization.objects.filter(channel__slug=request.channel, published=True).count(),
-    })
+    startup_data = serializers.StartupData(request)
+    startup_serializer = serializers.StartupSerializer(startup_data)
+    return response.Response(startup_serializer.data)
 
 @swagger_auto_schema(methods=["POST"], request_body=serializers.ContactFormSeralizer, responses={200: 'Sent', 400: 'Invalid recipients.'})
 @decorators.api_view(["POST"])
