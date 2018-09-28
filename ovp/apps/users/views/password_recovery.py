@@ -14,23 +14,12 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import filters
 
-
-
-class RecoveryTokenFilter(filters.BaseFilterBackend):
-  def filter_queryset(self, request, queryset, view):
-    return queryset
-
-  def get_fields(self, view):
-    return ['email']
-
-
 @ChannelViewSet
 class RecoveryTokenViewSet(viewsets.GenericViewSet):
   """
   RecoveryToken resource endpoint
   """
   queryset = models.User.objects.all()
-  filter_backends = (RecoveryTokenFilter,)
   serializer_class = serializers.RecoveryTokenSerializer
 
   def create(self, request, *args, **kwargs):
@@ -58,21 +47,12 @@ class RecoveryTokenViewSet(viewsets.GenericViewSet):
     return response.Response({'success': True, 'message': 'Token requested successfully(if user exists).'})
 
 
-class RecoverPasswordFilter(filters.BaseFilterBackend):
-  def filter_queryset(self, request, queryset, view):
-    return queryset
-
-  def get_fields(self, view):
-    return ['email']
-
-
 @ChannelViewSet
 class RecoverPasswordViewSet(viewsets.GenericViewSet):
   """
   RecoverPassword resource endpoint
   """
   queryset = models.PasswordRecoveryToken.objects.all()
-  filter_backends = (RecoverPasswordFilter,)
   serializer_class = serializers.RecoverPasswordSerializer
 
   def create(self, request, *args, **kwargs):

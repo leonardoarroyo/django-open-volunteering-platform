@@ -89,6 +89,7 @@ class PublicUserResourceViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewS
 
   @detail_route(methods=['post'], url_path='send-message')
   def send_message(self, request, slug, pk=None):
+    """ This route is deprecated """
     self.email = self.get_queryset().get(slug=slug)
     context = {
                 'message': request.data.get('message', None),
