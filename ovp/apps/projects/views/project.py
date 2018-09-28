@@ -14,13 +14,13 @@ from ovp.apps.core.helpers.xls import Response as XLSResponse
 from ovp.apps.core.mixins import CommentaryCreateMixin
 from ovp.apps.core.mixins import BookmarkMixin
 from ovp.apps.core.serializers import commentary as comments_serializer
+from ovp.apps.core.serializers import EmptySerializer
 
 from rest_framework import decorators
 from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import response
-from rest_framework import status
 
 from django.utils.translation import ugettext as _
 
@@ -139,7 +139,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     if self.action == 'manageable':
       return serializers.ProjectRetrieveSerializer
     if self.action == 'close':
-      return serializers.ProjectRetrieveSerializer
+      return serializers.EmptySerializer
     if self.action == 'retrieve':
       return serializers.ProjectRetrieveSerializer
     if self.action == 'bookmarked':

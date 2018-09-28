@@ -2,6 +2,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
+from ovp.apps.core.serializers import EmptySerializer
+
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 from ovp.apps.channels.cache import get_channel_setting
 
@@ -97,8 +99,11 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
     if self.action == 'partial_update':
       return serializers.ApplyUpdateSerializer
 
-    if self.action in ['apply', 'unapply']:
+    if self.action == 'apply':
       return serializers.ApplyCreateSerializer
+    
+    if self.action == 'unapply':
+      return EmptySerializer
 
   def get_permissions(self):
     request = self.get_serializer_context()['request']
