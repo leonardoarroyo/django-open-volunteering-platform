@@ -48,15 +48,8 @@ def contact(request):
 @swagger_auto_schema(methods=["POST"], request_body=serializers.LeadSerializer, responses={200: 'OK'})
 @decorators.api_view(["POST"])
 def record_lead(request):
-  models.Lead.objects.create(
-    name=request.data.get('name', None),
-    email=request.data.get('email', None),
-    phone=request.data.get('phone', None),
-    country=request.data.get('country', None),
-    city=request.data.get('city', None),
-    type=request.data.get('type', None),
-    employee_number=request.data.get('employee_number', None),
-    object_channel=request.channel
-  )
+  serializer = serializers.LeadSerializer(data=request.data, context={"request": request})
+  serializer.is_valid(raise_exception=True)
+  serializer.save()
 
-  return response.Response({"success": True})
+  return response.Response({"success": True}, status=status.HTTP_200_OK)
