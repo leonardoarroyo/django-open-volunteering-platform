@@ -9,6 +9,8 @@ from ovp.apps.core import emails
 from ovp.apps.users.models.user import User
 from ovp.apps.organizations.models.organization import Organization
 
+from drf_yasg.utils import swagger_auto_schema
+
 from django.utils import translation
 
 @decorators.api_view(["GET"])
@@ -25,6 +27,7 @@ def startup(request):
       "nonprofit_count": Organization.objects.filter(channel__slug=request.channel, published=True).count(),
     })
 
+@swagger_auto_schema(methods=["POST"], request_body=serializers.ContactFormSeralizer, responses={200: 'Sent', 400: 'Invalid recipients.'})
 @decorators.api_view(["POST"])
 def contact(request):
   name = request.data.get("name", "")
@@ -47,6 +50,7 @@ def contact(request):
 
   return response.Response({"success": True})
 
+@swagger_auto_schema(methods=["POST"], request_body=serializers.LeadSerializer, responses={200: 'OK'})
 @decorators.api_view(["POST"])
 def record_lead(request):
   models.Lead.objects.create(

@@ -5,3 +5,4 @@ from .cause import *
 from .skill import *
 from .lead import *
 from .availability import *
+from .contact import *
