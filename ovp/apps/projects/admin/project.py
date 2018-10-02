@@ -8,6 +8,7 @@ from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
 from ovp.apps.projects.models import Project, VolunteerRole
 from ovp.apps.organizations.models import Organization
+from ovp.apps.core.models import GoogleAddress
 from ovp.apps.organizations.admin import StateListFilter
 from .job import JobInline
 from .work import WorkInline
@@ -148,7 +149,9 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     return self.filter_by_country(request, qs, 'address')
 
   def city_state(self, obj):
-    if obj.address is not None:
+    if isinstance(obj.address, GoogleAddress):
       return obj.address.city_state
+    else:
+      return ""
 
 admin_site.register(Project, ProjectAdmin)
