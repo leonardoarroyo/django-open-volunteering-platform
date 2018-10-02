@@ -5,6 +5,8 @@ from ovp.apps.projects.models import Apply
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.mixins import CountryFilterMixin
+from ovp.apps.core.models import GoogleAddress
+from ovp.apps.core.models import SimpleAddress
 
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
@@ -30,7 +32,11 @@ class ApplyResource(resources.ModelResource):
 
   def dehydrate_address(self, apply):
     if apply.project.address is not None:
-      return apply.project.address.typed_address
+      address = apply.project.address
+      if isinstance(address, GoogleAddress):
+        return address.address_line
+      if isinstance(address, SimpleAddress):
+        return address.street + ', ' + address.number + ' - ' + address.neighbourhood + ' - ' + address.city
 
   def dehydrate_volunteer_name(self, apply):
     if apply.user is not None:

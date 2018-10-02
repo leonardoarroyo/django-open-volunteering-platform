@@ -9,6 +9,7 @@ from ovp.apps.channels.admin import TabularInline
 from ovp.apps.projects.models import Project, VolunteerRole
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress
+from ovp.apps.core.models import SimpleAddress
 from ovp.apps.organizations.admin import StateListFilter
 from .job import JobInline
 from .work import WorkInline
@@ -38,7 +39,10 @@ class ProjectResource(resources.ModelResource):
 
   def dehydrate_address(self, project):
     if project.address is not None:
-      return project.address.typed_address
+      if isinstance(project.address, GoogleAddress):
+        return project.address.address_line
+      if isinstance(project.address, SimpleAddress):
+        return project.address.street + ', ' + project.address.number + ' - ' + project.address.neighbourhood + ' - ' + project.address.city
 
 class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
 
