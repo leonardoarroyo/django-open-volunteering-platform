@@ -11,6 +11,8 @@ from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.mixins import CountryFilterMixin
 from ovp.apps.organizations import validators
+from ovp.apps.core.models import GoogleAddress
+from ovp.apps.core.models import SimpleAddress
 
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
@@ -33,12 +35,18 @@ class OrganizationResource(resources.ModelResource):
     fields = ('id', 'name', 'contact_name', 'contact_email', 'contact_phone', 'address', 'state', 'published', 'highlighted', 'closed', 'deleted', 'created_date', 'modified_date')
 
   def dehydrate_address(self, organization):
-    if organization.address is not None and organization.address is not None:
-      return organization.address.typed_address
+    if organization.address is not None:
+      if isinstance(organization.address, GoogleAddress):
+        return organization.address.address_line
+      if isinstance(organization.address, SimpleAddress):
+        return organization.address.street + ', ' + organization.address.number + ' - ' + organization.address.neighbourhood + ' - ' + organization.address.city
 
   def dehydrate_state(self, organization):
-    if organization.address is not None and organization.address is not None:
-      return organization.address.city_state.split(',')[-1]
+    if organization.address is not None:
+      if isinstance(organization.address, GoogleAddress):
+        return organization.address.city_state
+      if isinstance(organization.address, SimpleAddress):
+        return organization.address.state
 
   def dehydrate_contact_name(self, organization):
     return organization.owner.name

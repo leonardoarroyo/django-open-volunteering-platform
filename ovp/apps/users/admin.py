@@ -4,6 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.users.models import User
+from ovp.apps.core.models import GoogleAddress
+from ovp.apps.core.models import SimpleAddress
 
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
@@ -24,12 +26,22 @@ class UserResource(resources.ModelResource):
     return user.name
 
   def dehydrate_address(self, user):
-    if user.profile is not None and user.profile.address is not None:
-      return user.profile.address.typed_address
+    if user.profile is not none and user.profile.address is not none:
+      address = user.profile.address
+      if address is not none:
+        if isinstance(a, googleaddress):
+          return address.address_line
+        if isinstance(a, simpleaddress):
+          return address.street + ', ' + address.number + ' - ' + address.neighbourhood + ' - ' + address.city
 
   def dehydrate_state(self, user):
-    if user.profile is not None and user.profile.address is not None:
-      return user.profile.address.city_state.split(',')[-1]
+    if user.profile is not none and user.profile.address is not none:
+      address = user.profile.address
+      if address is not none:
+        if isinstance(a, googleaddress):
+          return address.city_state
+        if isinstance(a, simpleaddress):
+          return address.state
 
 class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocompleteAdmin):
   fields = [
