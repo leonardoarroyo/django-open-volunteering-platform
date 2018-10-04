@@ -35,7 +35,8 @@ class ProjectResource(resources.ModelResource):
     fields = ('name', 'applied_count', 'organization', 'address', 'highlighted', 'published', 'closed', 'deleted')
     
   def dehydrate_organization(self, project):
-    return project.organization.name
+    if project.organization:
+      return project.organization.name
 
   def dehydrate_address(self, project):
     if project.address is not None:
