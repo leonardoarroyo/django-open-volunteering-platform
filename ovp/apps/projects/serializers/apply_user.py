@@ -6,6 +6,8 @@ from ovp.apps.core.helpers import get_address_serializers
 from ovp.apps.uploads.serializers import UploadedImageSerializer
 from ovp.apps.organizations.serializers import OrganizationSearchSerializer
 
+from ovp.apps.projects.serializers import role
+
 """ Address serializers """
 address_serializers = get_address_serializers()
 
@@ -28,7 +30,8 @@ class ProjectApplyRetrieveSerializer(ChannelRelationshipSerializer):
 
 class ApplyUserRetrieveSerializer(ChannelRelationshipSerializer):
     project = ProjectApplyRetrieveSerializer()
+    role = role.VolunteerRoleApplySerializer()
 
     class Meta:
         model = models.Apply
-        fields = ['id', 'date', 'canceled', 'canceled_date', 'project']
+        fields = ['id', 'date', 'canceled', 'canceled_date', 'project', 'role']
