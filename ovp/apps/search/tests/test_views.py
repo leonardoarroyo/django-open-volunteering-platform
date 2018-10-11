@@ -658,7 +658,6 @@ class CityCountryTestCase(TestCase):
     client = APIClient()
 
     response = client.get(reverse("available-country-cities", ["Brazil"]), format="json")
-    import pudb;pudb.set_trace()
     self.assertEqual(response.status_code, 200)
     self.assertEqual(len(response.data["projects"]), 1)
     self.assertEqual(len(response.data["organizations"]), 1)
