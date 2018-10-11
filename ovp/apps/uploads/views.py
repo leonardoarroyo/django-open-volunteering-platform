@@ -9,16 +9,20 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework import response
 from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from .helpers import perform_image_crop
 
+image_param = openapi.Parameter('image', openapi.IN_FORM, description="image file", type=openapi.TYPE_FILE)
 
 @ChannelViewSet
 class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
   queryset = UploadedImage.objects.all()
-  serializer_class = UploadedImageSerializer
 
+  @swagger_auto_schema(manual_parameters=[image_param], responses={201: UploadedImageSerializer})
   def create(self, request, *args, **kwargs):
+    """ Upload image. """
     upload_data = {}
 
     if request.data.get('image', None):
@@ -41,7 +45,7 @@ class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
       if is_authenticated:
         upload_data['user'] = request.user.id
 
-      serializer = self.get_serializer(data=upload_data)
+      serializer = UploadedImageSerializer(data=upload_data)
 
       if serializer.is_valid():
         self.object = serializer.save()
@@ -55,6 +59,10 @@ class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 class ImageGalleryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
   queryset = UploadedImage.objects.filter(category__isnull=False)
   serializer_class = ImageGallerySerializer
+  swagger_schema = None
+
+  def list(self, *args, **kwargs):
+    return super(ImageGalleryViewSet, self).list(*args, **kwargs)
 
   def get_queryset(self):
     queryset = self.queryset
@@ -68,6 +76,7 @@ class ImageGalleryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class UploadedDocumentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
   queryset = UploadedDocument.objects.all()
   serializer_class = UploadedDocumentSerializer
+  swagger_schema = None
 
   def create(self, request, *args, **kwargs):
     upload_data = {}

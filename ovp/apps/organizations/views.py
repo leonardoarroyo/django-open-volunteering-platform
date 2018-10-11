@@ -24,6 +24,7 @@ from rest_framework import mixins
 from rest_framework import pagination
 from rest_framework import permissions
 from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
 
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -34,15 +35,19 @@ import json
 @ChannelViewSet
 class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
   """
-  OrganizationResourceViewSet resource endpoint
+  Create, modify, retrieve and manage organizations.
   """
   queryset = models.Organization.objects.filter(deleted=False)
   model = models.Organization
   lookup_field = 'slug'
   lookup_value_regex = '[^/]+' # default is [^/.]+ - here we're allowing dots in the url slug field
 
+  def retrieve(self, *args, **kwargs):
+    """ Retrieve an organization. """
+    return super(OrganizationResourceViewSet, self).retrieve(*args, **kwargs)
+
   def partial_update(self, request, *args, **kwargs):
-    """ We do not include the mixin as we want only PATCH and no PUT """
+    """ Partially update an organization object. """
     instance = self.get_object()
     serializer = self.get_serializer(instance, data=request.data, partial=True)
     serializer.is_valid(raise_exception=True)
@@ -54,8 +59,10 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
     return response.Response(serializer.data)
 
+  @swagger_auto_schema(method="GET", responses={200: 'OK', 400: 'Invalid'})
   @decorators.list_route(methods=["GET"], url_path='check-doc/(?P<doc>[0-9]+)')
   def check_doc(self, request, doc):
+    """ Check if there is an organization with a given document. """
     formatted_doc = format_CNPJ(doc)
     try:
       validate_CNPJ(formatted_doc)
@@ -69,14 +76,17 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
   @decorators.detail_route(methods=["GET"])
   def pending_invites(self, request, *args, **kwargs):
+    """ Retrieve list of pending invites for organization. """
     organization = self.get_object()
     invites = organization.organizationinvite_set.filter(joined_date=None, revoked_date=None)
     serializer = self.get_serializer(invites, many=True)
 
     return response.Response(serializer.data)
 
+  @swagger_auto_schema(method="POST", responses={200: 'OK', 400: 'Invalid invite'})
   @decorators.detail_route(methods=["POST"])
   def invite_user(self, request, *args, **kwargs):
+    """ Invite user to manage organization. The supplied email address must be registered. """
     organization = self.get_object()
 
     serializer = self.get_serializer_class()(data=request.data)
@@ -100,8 +110,10 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
     return response.Response({"detail": "User invited."})
 
+  @swagger_auto_schema(method="POST", responses={200: 'OK', 403: 'Forbidden'})
   @decorators.detail_route(methods=["POST"])
   def join(self, request, *args, **kwargs):
+    """ Join an organization you have been invited to manage. """
     organization = self.get_object()
     organization.members.add(request.user)
 
@@ -113,8 +125,10 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
     return response.Response({"detail": "Joined organization."})
 
+  @swagger_auto_schema(method="POST", responses={200: 'OK', 400: 'Invalid invite'})
   @decorators.detail_route(methods=["POST"])
   def revoke_invite(self, request, *args, **kwargs):
+    """ Revoke an invite made to another user. """
     organization = self.get_object()
 
     try:
@@ -132,8 +146,10 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
     return response.Response({"detail": "Invite has been revoked."})
 
+  @swagger_auto_schema(method="POST", responses={200: 'OK', 403: 'Forbidden'})
   @decorators.detail_route(methods=["POST"])
   def leave(self, request, *args, **kwargs):
+    """ Leave an organization you are member of. """
     organization = self.get_object()
     organization.members.remove(request.user)
 
@@ -141,8 +157,10 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
     return response.Response({"detail": "You've left the organization."})
 
+  @swagger_auto_schema(method="POST", responses={200: 'OK', 400: 'Invalid user', 403: 'Forbidden'})
   @decorators.detail_route(methods=["POST"])
   def remove_member(self, request, *args, **kwargs):
+    """ Remove another user from organization. """
     organization = self.get_object()
     serializer = self.get_serializer_class()
 
@@ -159,6 +177,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
   @decorators.detail_route(methods=["GET"])
   def members(self, request, *args, **kwargs):
+    """ Retrieve list of members in an organization. """
     organization = self.get_object()
     members = organization.members.all()
     serializer = self.get_serializer(members, many=True)
@@ -166,6 +185,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
   @decorators.detail_route(methods=['GET'])
   def projects(self, request, slug, pk=None):
+    """ Retrieve a list of projects an organization manages. """
     organization = self.get_object()
     projects = Project.objects.filter(organization=organization, published=True)
     page = self.paginate_queryset(projects)
@@ -177,6 +197,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     return response.Response(serializer.data)
 
   def create(self, request, *args, **kwargs):
+    """ Create an organization. """
     request.data['owner'] = request.user.id
 
     serializer = self.get_serializer(data=request.data)

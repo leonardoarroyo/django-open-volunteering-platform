@@ -10,6 +10,7 @@ from rest_framework import response
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import detail_route
+from drf_yasg.utils import swagger_auto_schema
 
 @ChannelViewSet
 class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -19,6 +20,10 @@ class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
   queryset = models.User.objects.all()
   lookup_field = 'slug'
   lookup_value_regex = '[^/]+' # default is [^/.]+ - here we're allowing dots in the url slug field
+
+  def create(self, *args, **kwargs):
+    """ Create an user. """
+    return super(UserResourceViewSet, self).create(*args, **kwargs)
 
   def current_user_get(self, request, *args, **kwargs):
     queryset = self.get_object()
@@ -35,6 +40,7 @@ class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
   @decorators.list_route(url_path="current-user", methods=['GET', 'PATCH'])
   def current_user(self, request, *args, **kwargs):
+    """ Retrieve and update current user. """
     if request.method == 'GET':
       return self.current_user_get(request, *args, **kwargs)
     if request.method == 'PATCH':
@@ -84,9 +90,14 @@ class PublicUserResourceViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewS
   email = ''
   locale = ''
 
+  def retrieve(self, *args, **kwargs):
+    """ Retrieve an user profile. """
+    return super(PublicUserResourceViewSet, self).retrieve(*args, **kwargs)
+
   def mailing(self, async_mail=None):
     return emails.UserMail(self, async_mail)
 
+  @swagger_auto_schema(auto_schema=None)
   @detail_route(methods=['post'], url_path='send-message')
   def send_message(self, request, slug, pk=None):
     """ This route is deprecated """

@@ -1,3 +1,4 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics
 from rest_framework import response
 
@@ -10,7 +11,11 @@ from ovp.apps.catalogue.cache import fetch_catalogue
 
 @ChannelViewSet
 class CatalogueView(generics.GenericAPIView):
+  @swagger_auto_schema(responses={200: ProjectSearchSerializer(many=True), 404: 'Not found'})
   def get(self, request, slug):
+    """
+    Retrieve a catalogue by slug.
+    """
     catalogue = get_catalogue(request.channel, slug, request)
     if not catalogue:
       return response.Response({"detail": "This catalog does not exist"}, status=404)

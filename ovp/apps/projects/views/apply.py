@@ -16,6 +16,7 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import response
 from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
 
 @ChannelViewSet
 class ApplyResourceViewSet(viewsets.GenericViewSet):
@@ -27,12 +28,14 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
   # ViewSet routes #
   ##################
   def list(self, request, *arg, **kwargs):
+    """ Retrieve a list of applies for a project. """
     applies = self.get_queryset(**kwargs)
     serializer = self.get_serializer_class()(applies, many=True, context=self.get_serializer_context())
 
     return response.Response(serializer.data)
 
   def partial_update(self, request, *args, **kwargs):
+    """ Update an apply status. """
     instance = self.get_queryset(**kwargs).get(pk=kwargs['pk'])
     serializer = self.get_serializer(instance, data=request.data, partial=True, context=self.get_serializer_context())
     serializer.is_valid(raise_exception=True)
@@ -44,8 +47,10 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
 
     return response.Response(serializer.data)
 
+  @swagger_auto_schema(method="POST", responses={200: 'OK'})
   @decorators.list_route(['POST'])
   def apply(self, request, *args, **kwargs):
+    """ Apply authenticated user for project. """
     data = request.data
     data.pop('user', None)
 
@@ -70,8 +75,10 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
 
     return response.Response({'detail': 'Successfully applied.'}, status=status.HTTP_200_OK)
 
+  @swagger_auto_schema(method="POST", responses={200: 'OK'})
   @decorators.list_route(['POST'])
   def unapply(self, request, *args, **kwargs):
+    """ Unapply authenticated user for project. """
     project = self.get_project_object(**kwargs)
     user = request.user
 
