@@ -19,7 +19,7 @@ def startup(request):
   """ This view provides initial data to the client such as available skill and causes, organization and users count. """
   with translation.override(translation.get_language_from_request(request)):
     startup_data = serializers.StartupData(request)
-    startup_serializer = serializers.StartupSerializer(startup_data)
+    startup_serializer = serializers.StartupSerializer(startup_data, context={'request': request})
     return response.Response(startup_serializer.data)
 
 @swagger_auto_schema(methods=["POST"], request_body=serializers.ContactFormSeralizer, responses={200: 'Sent', 400: 'Invalid recipients.'})
