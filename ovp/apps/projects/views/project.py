@@ -24,6 +24,7 @@ from rest_framework import response
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 
+from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext as _
 
 
@@ -92,7 +93,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
       user = apply.user
       applied_users.append([
         apply.username, apply.email or apply.user.email, apply.phone or apply.user.phone,
-        apply.date.strftime('%d/%m/%Y %T'), apply.status,
+        apply.date.astimezone(get_current_timezone()).strftime('%d/%m/%Y %T %z'), apply.status,
         ])
 
     filename = '{}-applied-users.xls'.format(project.slug)
