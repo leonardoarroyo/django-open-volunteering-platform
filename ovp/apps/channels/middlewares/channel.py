@@ -16,7 +16,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 def get_user_jwt_or_oauth2(request):
   user = get_user(request)
 
-  if user.is_authenticated():
+  if user.is_authenticated:
     return user
 
   # JWT
@@ -156,7 +156,7 @@ class ChannelProcessorMiddleware():
     # https://github.com/GetBlimp/django-rest-framework-jwt/issues/45
     user = get_user_jwt_or_oauth2(request)
 
-    if user.is_authenticated():
+    if user.is_authenticated:
       user_channel = user.channel.slug
       if request.channel != user_channel:
         return False
@@ -165,11 +165,11 @@ class ChannelProcessorMiddleware():
 
   def _check_admin_permissions(self, request):
     # Allow the request to go through if authenticated user is on the correct channel
-    if request.user.is_authenticated() and request.user.channel.slug == request.channel:
+    if request.user.is_authenticated and request.user.channel.slug == request.channel:
       return True
 
     # Allow the request to go through if user is unauthenticated
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
       return True
 
     return False

@@ -52,7 +52,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
     return super(OrganizationSearchResource, self).list(*args, **kwargs)
 
   def get_cache_key(self):
-    if self.request.user.is_anonymous():
+    if self.request.user.is_anonymous:
       return 'organizations-{}-{}'.format(self.request.channel, hash(frozenset(self.request.GET.items())))
     return None
 
@@ -113,7 +113,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     return super(ProjectSearchResource, self).list(*args, **kwargs)
 
   def get_cache_key(self):
-    if self.request.user.is_anonymous():
+    if self.request.user.is_anonymous:
       return 'projects-{}-{}'.format(self.request.channel, hash(frozenset(self.request.GET.items())))
     return None
 

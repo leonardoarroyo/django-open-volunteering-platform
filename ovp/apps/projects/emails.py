@@ -39,7 +39,7 @@ class ApplyMail(BaseMail):
   """
   def __init__(self, apply, async_mail=None, locale=None):
     self.apply = apply
-    self.async = async_mail
+    self.async_mail = async_mail
     locale = locale or (apply.user and apply.user.locale)
     super(ApplyMail, self).__init__(apply.email, channel=apply.channel.slug, async_mail=async_mail, locale=locale)
 
@@ -54,7 +54,7 @@ class ApplyMail(BaseMail):
     """
     Sent to project owner when user applies to a project
     """
-    super(ApplyMail, self).__init__(self.apply.project.owner.email, channel=self.apply.channel.slug, async_mail=self.async, locale=self.apply.project.owner.locale)
+    super(ApplyMail, self).__init__(self.apply.project.owner.email, channel=self.apply.channel.slug, async_mail=self.async_mail, locale=self.apply.project.owner.locale)
     return self.sendEmail('volunteerApplied-ToOwner', 'New volunteer', context)
 
 

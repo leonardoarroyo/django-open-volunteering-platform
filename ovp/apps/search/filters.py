@@ -18,7 +18,7 @@ from datetime import datetime
 
 class UserSkillsCausesFilter:
   def get_skills_and_causes(self, user):
-    if not user.is_authenticated():
+    if not user.is_authenticated:
       raise NotAuthenticated()
 
     output = {"skills": [], "causes": []}

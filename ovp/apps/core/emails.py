@@ -95,7 +95,7 @@ class ContactFormMail(BaseMail):
   def __init__(self, recipients, channel=None, async_mail=None, locale=None):
     self.channel = channel
     self.recipients = recipients
-    self.async = async_mail
+    self.async_mail = async_mail
     self.locale = locale
 
   def sendContact(self, context={}):

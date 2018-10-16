@@ -57,7 +57,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
     project = self.get_project_object(**kwargs)
     data['project'] = project.id
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
       user = request.user
       data['username'] = user.name
       data['email'] = user.email

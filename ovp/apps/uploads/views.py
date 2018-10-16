@@ -29,7 +29,7 @@ class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
       upload_data['image'] = request.data.get('image')
 
     upload_header = request.META.get('HTTP_X_UNAUTHENTICATED_UPLOAD', None)
-    is_authenticated = request.user.is_authenticated()
+    is_authenticated = request.user.is_authenticated
 
     if request.data.get('crop_rect', None):
       crop_rect = request.data.get('crop_rect')
@@ -85,7 +85,7 @@ class UploadedDocumentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
       upload_data['document'] = request.data.get('document')
 
     upload_header = request.META.get('HTTP_X_UNAUTHENTICATED_UPLOAD', None)
-    is_authenticated = request.user.is_authenticated()
+    is_authenticated = request.user.is_authenticated
 
     if is_authenticated or upload_header:
       if upload_header:

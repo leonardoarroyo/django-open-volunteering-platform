@@ -6,7 +6,7 @@ def annotate_bookmark(queryset, request=None):
 
   Used on search viewsets.
   """
-  if request and request.user.is_authenticated():
+  if request and request.user.is_authenticated:
     return queryset.annotate(is_bookmarked=Count(Case(
                    When(bookmarks__user=request.user, then=True),
                    output_field=BooleanField()

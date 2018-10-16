@@ -78,7 +78,7 @@ def fetch_catalogue(catalogue_dict, serializer=None, request=None, context=None,
   """
   # Base queryset
 
-  if catalogue_dict["fetched"] and not request.user.is_authenticated():
+  if catalogue_dict["fetched"] and not request.user.is_authenticated:
     return catalogue_dict
 
   params  = request.GET
@@ -94,7 +94,7 @@ def fetch_catalogue(catalogue_dict, serializer=None, request=None, context=None,
 
   base_queryset = get_project_queryset(request=request).filter(pk__in=result_keys)
 
-  if catalogue_dict["fetched"] and request.user.is_authenticated():
+  if catalogue_dict["fetched"] and request.user.is_authenticated:
     catalogue_dict = fetch_user_relevance_catalogue(catalogue_dict,
       queryset=base_queryset,
       request=request,
@@ -128,7 +128,7 @@ def fetch_catalogue(catalogue_dict, serializer=None, request=None, context=None,
   cache_ttl = 360
   cache.set(key, catalogue_dict, cache_ttl)
 
-  if request.user.is_authenticated():
+  if request.user.is_authenticated:
     catalogue_dict = fetch_user_relevance_catalogue(catalogue_dict,
       queryset=base_queryset,
       request=request,
