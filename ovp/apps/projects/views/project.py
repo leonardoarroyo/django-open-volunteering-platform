@@ -73,7 +73,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     return response.Response(serializer.data)
 
   @swagger_auto_schema(method="POST", responses={200: "OK"})
-  @decorators.detail_route(['POST'])
+  @decorators.action(detail=True, methods=['POST'])
   def close(self, request, *args, **kwargs):
     """ Close a project. """
     project = self.get_object()
@@ -83,7 +83,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     return response.Response(serializer.data)
 
   @swagger_auto_schema(method="GET", responses={200: "OK"})
-  @decorators.detail_route(['GET'])
+  @decorators.action(detail=True, methods=['GET'])
   def export_applied_users(self, request, *args, **kwargs):
     """ Export a list of applied volunteers in xls format. """
     project = self.get_object()
@@ -99,7 +99,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     filename = '{}-applied-users.xls'.format(project.slug)
     return XLSResponse(applied_users, filename, _('Applied Users'))
 
-  @decorators.list_route(['GET'])
+  @decorators.action(methods=['GET'], detail=False)
   def manageable(self, request, *args, **kwargs):
     """ Retrieve a list of projects the authenticated user can manage. """
     projects = self.get_queryset().filter(Q(owner=request.user) | Q(organization__owner=request.user) | Q(organization__members=request.user))

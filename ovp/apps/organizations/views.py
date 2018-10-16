@@ -60,7 +60,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     return response.Response(serializer.data)
 
   @swagger_auto_schema(method="GET", responses={200: 'OK', 400: 'Invalid'})
-  @decorators.list_route(methods=["GET"], url_path='check-doc/(?P<doc>[0-9]+)')
+  @decorators.action(methods=["GET"], detail=False, url_path='check-doc/(?P<doc>[0-9]+)')
   def check_doc(self, request, doc):
     """ Check if there is an organization with a given document. """
     formatted_doc = format_CNPJ(doc)
@@ -74,7 +74,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     taken = models.Organization.objects.filter(document=formatted_doc, channel__slug=request.channel).count() > 0
     return response.Response({ "taken": taken })
 
-  @decorators.detail_route(methods=["GET"])
+  @decorators.action(detail=True, methods=["GET"])
   def pending_invites(self, request, *args, **kwargs):
     """ Retrieve list of pending invites for organization. """
     organization = self.get_object()
@@ -84,7 +84,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     return response.Response(serializer.data)
 
   @swagger_auto_schema(method="POST", responses={200: 'OK', 400: 'Invalid invite'})
-  @decorators.detail_route(methods=["POST"])
+  @decorators.action(detail=True, methods=["POST"])
   def invite_user(self, request, *args, **kwargs):
     """ Invite user to manage organization. The supplied email address must be registered. """
     organization = self.get_object()
@@ -111,7 +111,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     return response.Response({"detail": "User invited."})
 
   @swagger_auto_schema(method="POST", responses={200: 'OK', 403: 'Forbidden'})
-  @decorators.detail_route(methods=["POST"])
+  @decorators.action(detail=True, methods=["POST"])
   def join(self, request, *args, **kwargs):
     """ Join an organization you have been invited to manage. """
     organization = self.get_object()
@@ -126,7 +126,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     return response.Response({"detail": "Joined organization."})
 
   @swagger_auto_schema(method="POST", responses={200: 'OK', 400: 'Invalid invite'})
-  @decorators.detail_route(methods=["POST"])
+  @decorators.action(detail=True, methods=["POST"])
   def revoke_invite(self, request, *args, **kwargs):
     """ Revoke an invite made to another user. """
     organization = self.get_object()
@@ -147,7 +147,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     return response.Response({"detail": "Invite has been revoked."})
 
   @swagger_auto_schema(method="POST", responses={200: 'OK', 403: 'Forbidden'})
-  @decorators.detail_route(methods=["POST"])
+  @decorators.action(detail=True, methods=["POST"])
   def leave(self, request, *args, **kwargs):
     """ Leave an organization you are member of. """
     organization = self.get_object()
@@ -158,7 +158,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     return response.Response({"detail": "You've left the organization."})
 
   @swagger_auto_schema(method="POST", responses={200: 'OK', 400: 'Invalid user', 403: 'Forbidden'})
-  @decorators.detail_route(methods=["POST"])
+  @decorators.action(detail=True, methods=["POST"])
   def remove_member(self, request, *args, **kwargs):
     """ Remove another user from organization. """
     organization = self.get_object()
@@ -175,7 +175,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
 
     return response.Response({"detail": "Member was removed."})
 
-  @decorators.detail_route(methods=["GET"])
+  @decorators.action(detail=True, methods=["GET"])
   def members(self, request, *args, **kwargs):
     """ Retrieve list of members in an organization. """
     organization = self.get_object()
@@ -183,7 +183,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     serializer = self.get_serializer(members, many=True)
     return response.Response(serializer.data)
 
-  @decorators.detail_route(methods=['GET'])
+  @decorators.action(detail=True, methods=['GET'])
   def projects(self, request, slug, pk=None):
     """ Retrieve a list of projects an organization manages. """
     organization = self.get_object()

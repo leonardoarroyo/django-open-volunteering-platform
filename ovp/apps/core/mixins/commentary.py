@@ -1,10 +1,10 @@
 from rest_framework import response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action 
 from drf_yasg.utils import swagger_auto_schema
 
 class CommentaryCreateMixin:
   @swagger_auto_schema(method="POST", responses={200: "OK"})
-  @detail_route(['POST'], url_path='commentary')
+  @action(detail=True, methods=['POST'], url_path='commentary')
   def commentary(self, request, slug, pk=None):
     """ Create an commentary for an object. """
     data = request.data

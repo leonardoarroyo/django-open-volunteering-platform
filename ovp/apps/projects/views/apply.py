@@ -48,7 +48,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
     return response.Response(serializer.data)
 
   @swagger_auto_schema(method="POST", responses={200: 'OK'})
-  @decorators.list_route(['POST'])
+  @decorators.action(methods=['POST'], detail=False)
   def apply(self, request, *args, **kwargs):
     """ Apply authenticated user for project. """
     data = request.data
@@ -76,7 +76,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
     return response.Response({'detail': 'Successfully applied.'}, status=status.HTTP_200_OK)
 
   @swagger_auto_schema(method="POST", responses={200: 'OK'})
-  @decorators.list_route(['POST'])
+  @decorators.action(methods=['POST'], detail=False)
   def unapply(self, request, *args, **kwargs):
     """ Unapply authenticated user for project. """
     project = self.get_project_object(**kwargs)
