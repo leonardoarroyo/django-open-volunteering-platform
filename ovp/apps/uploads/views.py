@@ -45,7 +45,7 @@ class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
       if is_authenticated:
         upload_data['user'] = request.user.id
 
-      serializer = UploadedImageSerializer(data=upload_data)
+      serializer = UploadedImageSerializer(data=upload_data, context=self.get_serializer_context())
 
       if serializer.is_valid():
         self.object = serializer.save()
@@ -94,7 +94,7 @@ class UploadedDocumentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
       if is_authenticated:
         upload_data['user'] = request.user.id
 
-      serializer = self.get_serializer(data=upload_data)
+      serializer = self.get_serializer(data=upload_data, context=self.get_serializer_context())
 
       if serializer.is_valid():
         self.object = serializer.save()
