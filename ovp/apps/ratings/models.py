@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils.translation import ugettext_lazy as _
 import uuid
 
@@ -28,3 +30,8 @@ class RatingRequest(models.Model):
   uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
   requested_user = models.ForeignKey('users.User', related_name='rating_requests')
   rating_parameters = models.ManyToManyField('ratings.RatingParameter')
+
+  # Below the mandatory fields for generic relation
+  content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+  object_id = models.PositiveIntegerField()
+  content_object = GenericForeignKey()
