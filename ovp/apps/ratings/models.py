@@ -11,7 +11,7 @@ class RatingParameter(models.Model):
   type = models.IntegerField(_('Parameter type'), choices=POSSIBLE_TYPES)
 
 class Rating(models.Model):
-  owner = models.ForeignKey('users.User')
+  owner = models.ForeignKey('users.User', related_name='ratings_posted')
   created_date = models.DateTimeField(auto_now_add=True)
   modified_date = models.DateTimeField(auto_now=True)
 

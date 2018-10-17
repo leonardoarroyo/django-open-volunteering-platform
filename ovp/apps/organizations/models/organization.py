@@ -10,6 +10,8 @@ from ovp.apps.organizations.emails import OrganizationMail
 from ovp.apps.organizations.emails import OrganizationAdminMail
 from ovp.apps.organizations.validators import validate_CNPJ, format_CNPJ
 
+from ovp.apps.ratings.mixins import RatedModelMixin
+
 from django.utils.translation import ugettext_lazy as _
 
 ORGANIZATION_TYPES = (
@@ -19,7 +21,7 @@ ORGANIZATION_TYPES = (
   (3, _('Group of volunteers')),
 )
 
-class Organization(ChannelRelationship):
+class Organization(ChannelRelationship, RatedModelMixin):
   # Relationships
   owner = models.ForeignKey('users.User', verbose_name=_('owner'), related_name="organizations")
   address = models.OneToOneField(get_address_model(), blank=True, null=True, verbose_name=_('address'), db_constraint=False)

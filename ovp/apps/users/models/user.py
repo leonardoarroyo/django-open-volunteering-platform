@@ -5,6 +5,8 @@ from ovp.apps.users.models.password_history import PasswordHistory
 from ovp.apps.channels.models import ChannelRelationship
 from ovp.apps.channels.models.manager import ChannelRelationshipManager
 
+from ovp.apps.ratings.mixins import RatedModelMixin
+
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
@@ -46,7 +48,7 @@ class UserManager(ChannelRelationshipManager, BaseUserManager):
   class Meta:
     app_label = 'ovp_user'
 
-class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin):
+class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMixin):
   uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
   email = models.EmailField(_('Email'), max_length=190)
   locale = models.CharField(_('Locale'), max_length=8, null=False, blank=True, default='en')
