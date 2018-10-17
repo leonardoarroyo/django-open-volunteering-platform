@@ -10,6 +10,7 @@ from ovp.apps.core.helpers import generate_slug
 
 from ovp.apps.projects import emails
 from ovp.apps.projects.models.apply import Apply
+from ovp.apps.ratings.mixins import RatedModelMixin
 
 from ovp.apps.channels.models import ChannelRelationship
 
@@ -18,7 +19,7 @@ import urllib.request as request
 import json
 
 
-class Project(ChannelRelationship):
+class Project(ChannelRelationship, RatedModelMixin):
   """
   Project model
   """
