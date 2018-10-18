@@ -34,7 +34,6 @@ class ApplyRetrieveSerializer(ChannelRelationshipSerializer):
   def get_status(self, object):
     return object.get_status_display()
 
-
 class ProjectAppliesSerializer(ChannelRelationshipSerializer):
   user = ShortUserPublicRetrieveSerializer()
   role = role.VolunteerRoleApplySerializer()
@@ -42,3 +41,14 @@ class ProjectAppliesSerializer(ChannelRelationshipSerializer):
   class Meta:
     model = models.Apply
     fields = ['date', 'user', 'role']
+
+class OrganizationAppliesSerializer(ChannelRelationshipSerializer):
+  applied_count = serializers.IntegerField()
+  applies = ApplyRetrieveSerializer(many=True)
+
+  class Meta:
+    model = models.Apply
+    fields = ['applied_count', 'applies']
+
+  def get_applied_count(self, object):
+    return object.applied_count

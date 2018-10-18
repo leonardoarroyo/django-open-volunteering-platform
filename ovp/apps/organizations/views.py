@@ -10,7 +10,8 @@ from ovp.apps.organizations import permissions as organization_permissions
 from ovp.apps.organizations.validators import format_CNPJ, validate_CNPJ
 
 from ovp.apps.projects.serializers.project import ProjectOnOrganizationRetrieveSerializer
-from ovp.apps.projects.models import Project
+from ovp.apps.projects.serializers.apply import OrganizationAppliesSerializer
+from ovp.apps.projects.models import Project, Apply
 
 from ovp.apps.uploads import models as upload_models
 
@@ -176,6 +177,15 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     return response.Response({"detail": "Member was removed."})
 
   @decorators.detail_route(methods=["GET"])
+  def applies(self, request, *args, **kwargs):
+    organization = self.get_object()
+    projects = Project.objects.filter(organization=organization).all()
+    applies = Apply.objects.filter(project__in=projects).all()
+    response_data = {"applied_count": len(applies), "applies": applies[:20]}
+    serializer = self.get_serializer(response_data)
+    return response.Response(serializer.data)
+
+  @decorators.detail_route(methods=["GET"])
   def members(self, request, *args, **kwargs):
     """ Retrieve list of members in an organization. """
     organization = self.get_object()
@@ -235,6 +245,8 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
       return serializers.OrganizationRetrieveSerializer
     if self.action == 'members':
       return serializers.MemberListRetrieveSerializer
+    if self.action == 'applies':
+      return OrganizationAppliesSerializer
     if self.action in ['leave', 'join']: # pragma: no cover
       return EmptySerializer
 

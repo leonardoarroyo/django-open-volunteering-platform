@@ -19,7 +19,6 @@ from rest_framework import permissions
 from rest_framework import fields
 from rest_framework.utils import model_meta
 
-
 """ Address serializers """
 address_serializers = get_address_serializers()
 
