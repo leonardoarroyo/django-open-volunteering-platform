@@ -1,6 +1,8 @@
 from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
+from django.test.client import RequestFactory
+from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.db.models.query import QuerySet
 from django.utils import timezone
@@ -94,16 +96,22 @@ class CatalogueCacheTestCase(TestCase):
       response = self.client.get(reverse("catalogue", ["home"]), format="json")
 
   def test_fetch_queryset_without_serializer(self):
-    # catalogue = get_catalogue("default", "home")
-    # fetched = fetch_catalogue(catalogue)
-    response = self.client.get(reverse("catalogue", ["home"]), format="json")
-    self.assertEqual(response.data["sections"][0]["projects"].__class__, QuerySet)
+    request = self._generate_request()
+    catalogue = get_catalogue("default", "home", request)
+    fetched = fetch_catalogue(catalogue, request=request)
+    self.assertEqual(fetched["sections"][0]["projects"].__class__, QuerySet)
 
   def test_fetch_queryset_with_serializer(self):
-    # catalogue = get_catalogue("default", "home")
-    # fetched = fetch_catalogue(catalogue, serializer=ProjectSearchSerializer)
-    response = self.client.get(reverse("catalogue", ["home"]), format="json")
-    self.assertEqual(response.data["sections"][0]["projects"].__class__, ReturnList)
+    request = self._generate_request()
+    catalogue = get_catalogue("default", "home", request)
+    fetched = fetch_catalogue(catalogue, request=request, serializer=ProjectSearchSerializer)
+    self.assertEqual(fetched["sections"][0]["projects"].__class__, ReturnList)
+
+  def _generate_request(self):
+    request = RequestFactory().get("/")
+    request.user = AnonymousUser()
+    request.session = {}
+    return request
 
 class CatalogueViewTestCase(TestCase):
   def setUp(self):

@@ -9,24 +9,23 @@ from ovp.apps.core import emails
 from ovp.apps.users.models.user import User
 from ovp.apps.organizations.models.organization import Organization
 
+from drf_yasg.utils import swagger_auto_schema
+
 from django.utils import translation
 
+@swagger_auto_schema(methods=["GET"], responses={200: serializers.StartupSerializer})
 @decorators.api_view(["GET"])
 def startup(request):
-  """ This view provides initial data to the client, such as available skills and causes """
+  """ This view provides initial data to the client such as available skill and causes, organization and users count. """
   with translation.override(translation.get_language_from_request(request)):
-    skills = serializers.SkillSerializer(models.Skill.objects.filter(channel__slug=request.channel), many=True)
-    causes = serializers.FullCauseSerializer(models.Cause.objects.filter(channel__slug=request.channel), many=True, context={'request': request})
+    startup_data = serializers.StartupData(request)
+    startup_serializer = serializers.StartupSerializer(startup_data, context={'request': request})
+    return response.Response(startup_serializer.data)
 
-    return response.Response({
-      "skills": skills.data,
-      "causes": causes.data,
-      "volunteer_count": User.objects.filter(channel__slug=request.channel).count(),
-      "nonprofit_count": Organization.objects.filter(channel__slug=request.channel, published=True).count(),
-    })
-
+@swagger_auto_schema(methods=["POST"], request_body=serializers.ContactFormSeralizer, responses={200: 'Sent', 400: 'Invalid recipients.'})
 @decorators.api_view(["POST"])
 def contact(request):
+  """ Contact message form endpoint. """
   name = request.data.get("name", "")
   message = request.data.get("message", "")
   email = request.data.get("email", "")
@@ -47,17 +46,12 @@ def contact(request):
 
   return response.Response({"success": True})
 
+@swagger_auto_schema(methods=["POST"], request_body=serializers.LeadSerializer, responses={200: 'OK'})
 @decorators.api_view(["POST"])
 def record_lead(request):
-  models.Lead.objects.create(
-    name=request.data.get('name', None),
-    email=request.data.get('email', None),
-    phone=request.data.get('phone', None),
-    country=request.data.get('country', None),
-    city=request.data.get('city', None),
-    type=request.data.get('type', None),
-    employee_number=request.data.get('employee_number', None),
-    object_channel=request.channel
-  )
+  """ Subscribe to periodic newsletter. """
+  serializer = serializers.LeadSerializer(data=request.data, context={"request": request})
+  serializer.is_valid(raise_exception=True)
+  serializer.save()
 
-  return response.Response({"success": True})
+  return response.Response({"success": True}, status=status.HTTP_200_OK)

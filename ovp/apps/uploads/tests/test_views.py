@@ -39,7 +39,7 @@ class UploadedImageViewSetTestCase(TestCase):
     client.force_authenticate(user=user)
 
     image = Image.new('RGB', (100, 100))
-    tmp_file = NamedTemporaryFile()
+    tmp_file = NamedTemporaryFile(suffix=".jpg")
     image.save(tmp_file, format="JPEG")
 
     tmp_file.seek(0) # otherwise we start reading at the end
@@ -57,7 +57,7 @@ class UploadedImageViewSetTestCase(TestCase):
     client = APIClient()
 
     image = Image.new('RGB', (100, 100))
-    tmp_file = NamedTemporaryFile()
+    tmp_file = NamedTemporaryFile(suffix=".jpg")
     image.save(tmp_file, format="JPEG")
 
     tmp_file.seek(0) # otherwise we start reading at the end

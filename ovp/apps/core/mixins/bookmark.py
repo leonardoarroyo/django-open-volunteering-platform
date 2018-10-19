@@ -2,6 +2,7 @@ from rest_framework import decorators
 from rest_framework import response
 from rest_framework import status
 from rest_framework import permissions
+from drf_yasg.utils import swagger_auto_schema
 
 class BookmarkMixin():
   """
@@ -36,8 +37,10 @@ class BookmarkMixin():
   super().get_bookmark_permissions() for actions ['bookmark', 'unbookmark', 'bookmarked']
 
   """
+  @swagger_auto_schema(method="POST", responses={200: 'OK', 400: 'Bad Request'})
   @decorators.detail_route(["POST"])
   def bookmark(self, request, *args, **kwargs):
+    """ Bookmark an object. """
     if self.get_bookmark_object():
       return response.Response({"detail": "Can't bookmark an object that has been already bookmarked.", "success": False}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -46,8 +49,10 @@ class BookmarkMixin():
 
     return response.Response({"detail": "Object sucesfully bookmarked.", "success": True})
 
+  @swagger_auto_schema(method="POST", responses={200: 'OK', 400: 'Bad Request'})
   @decorators.detail_route(["POST"])
   def unbookmark(self, request, *args, **kwargs):
+    """ Unbookmark an object. """
     bookmark = self.get_bookmark_object()
     if not bookmark:
       return response.Response({"detail": "Can't unbookmark an object that it not bookmarked.", "success": False}, status=status.HTTP_400_BAD_REQUEST)
@@ -56,8 +61,10 @@ class BookmarkMixin():
 
     return response.Response({"detail": "Object sucesfully unbookmarked.", "success": True})
 
+  @swagger_auto_schema(method="GET", responses={200: 'OK'})
   @decorators.list_route(["GET"])
   def bookmarked(self, request, *args, **kwargs):
+    """ Retrieve a list of bookmarked objects. """
     queryset = self.get_queryset().filter(bookmarks__user=request.user, bookmarks__channel__slug=request.channel).order_by("-bookmarks__pk")
 
     page = self.paginate_queryset(queryset)

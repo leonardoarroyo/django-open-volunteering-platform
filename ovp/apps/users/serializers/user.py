@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
+from django.utils import timezone
 
 from ovp.apps.users import models
 from ovp.apps.users.helpers import get_settings, import_from_string
@@ -13,7 +14,7 @@ from ovp.apps.organizations.serializers import OrganizationSearchSerializer, Org
 
 from ovp.apps.projects.serializers.apply_user import ApplyUserRetrieveSerializer
 from ovp.apps.projects.serializers.bookmark_user import BookmarkUserRetrieveSerializer
-from ovp.apps.projects import models as model_project
+from ovp.apps.projects.models.apply import Apply
 
 from ovp.apps.uploads.serializers import UploadedImageSerializer
 
@@ -152,10 +153,33 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
   profile = get_profile_serializers()[1]()
   applies = ApplyUserRetrieveSerializer(many=True, source="apply_set")
   bookmarked_projects = BookmarkUserRetrieveSerializer(many=True, source="projectbookmark_set")
+  volunteer_hours = serializers.SerializerMethodField()
 
   class Meta:
     model = models.User
-    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects']
+    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects', 'volunteer_hours']
+
+  def get_volunteer_hours(self, obj):
+    volunteer_hours = timezone.timedelta(hours=0)
+    applies = Apply.objects.filter(user=obj).all()
+    for a in applies:
+      if hasattr(a.project, 'job'):
+        jobs = a.project.job.dates
+        for job in jobs.values():
+          volunteer_hours += job['end_date'] - job['start_date']
+      else:
+        if a.project.closed:
+          last_time = a.project.closed_date
+        else:
+          last_time = timezone.now()
+        weeks = (last_time - a.date).days // 7
+        project_hours = a.project.work.weekly_hours if a.project.work.weekly_hours is not None else 0
+        project_hours = project_hours * (weeks+1)
+        volunteer_hours += timezone.timedelta(hours=project_hours)
+
+    resp = (volunteer_hours.days * 24) + (volunteer_hours.seconds // 3600)
+    return resp
+
 
   def to_representation(self, *args, **kwargs):
     ret = super(LongUserPublicRetrieveSerializer, self).to_representation(*args, **kwargs)

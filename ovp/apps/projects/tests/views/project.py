@@ -122,8 +122,7 @@ class ProjectCloseTestCase(TestCase):
     """ Assert that it's possible to close a project """
     response = self.client.post(reverse("project-close", ["test-project"]), format="json")
     self.assertTrue(response.status_code == 200)
-    self.assertTrue(response.data["closed"] == True)
-    self.assertTrue(response.data["closed"])
+    self.assertTrue(Project.objects.get(slug="test-project").closed)
 
 
 class ProjectCommentTestCase(TestCase):
