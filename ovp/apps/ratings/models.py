@@ -31,7 +31,6 @@ class RatingRequest(models.Model):
   requested_user = models.ForeignKey('users.User', related_name='rating_requests')
   rating_parameters = models.ManyToManyField('ratings.RatingParameter')
 
-  # Below the mandatory fields for generic relation
   content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
   object_id = models.PositiveIntegerField()
-  content_object = GenericForeignKey()
+  rated_object = GenericForeignKey()
