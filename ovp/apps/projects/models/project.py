@@ -77,7 +77,7 @@ class Project(ChannelRelationship):
     return self.owner.email
 
   def get_volunteers_numbers(self):
-    return Apply.objects.filter(project=self, canceled=False).count()
+    return Apply.objects.filter(project=self, status__in=["applied", "confirmed-volunteer"]).count()
 
   def is_bookmarked(self, user):
     return self.bookmarks.filter(user=user).count() > 0
