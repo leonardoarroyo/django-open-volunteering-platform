@@ -140,7 +140,7 @@ class Project(ChannelRelationship):
     return obj
 
   def active_apply_set(self):
-    return self.apply_set.filter(canceled=False)
+    return self.apply_set.filter(status__in=["applied", "confirmed-volunteer"])
 
   def __str__(self):
       return  '%s' % (self.name)
