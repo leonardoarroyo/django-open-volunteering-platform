@@ -28,8 +28,8 @@ class JobDate(ChannelRelationship):
 
 class Job(ChannelRelationship):
   project = models.OneToOneField('Project', blank=True, null=True)
-  start_date = models.DateTimeField(_('Start date'), blank=True, null=True, editable=False)
-  end_date = models.DateTimeField(_('End date'), blank=True, null=True, editable=False)
+  start_date = models.DateTimeField(_('Start date'), blank=True, null=True)
+  end_date = models.DateTimeField(_('End date'), blank=True, null=True)
   can_be_done_remotely = models.BooleanField(_('This job can be done remotely'), default=False)
 
   def __str__(self):
