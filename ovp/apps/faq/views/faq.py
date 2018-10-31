@@ -9,12 +9,12 @@ from rest_framework import response
 
 @ChannelViewSet
 class FaqResourceViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-  """
-  FaqResourceViewSet resource endpoint
-  """
   queryset = Faq.objects.all()
 
   def list(self, request):
+    """
+    Retrieve list of frequently asked questions.
+    """
     category = request.data.get('category', None)
     queryset = self.get_queryset()
     if category:

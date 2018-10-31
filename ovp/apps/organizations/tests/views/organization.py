@@ -514,6 +514,7 @@ class OrganizationMemberList(TestCase):
 
     organization = Organization(name="test organization", slug="test-organization", owner=self.user, type=0, published=True)
     organization.save(object_channel="default")
+    organization.members.add(self.user) # Owner is usually added to members by view
     organization.members.add(self.user2)
     self.organization = organization
     self.client = APIClient()

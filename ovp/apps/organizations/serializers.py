@@ -19,7 +19,6 @@ from rest_framework import permissions
 from rest_framework import fields
 from rest_framework.utils import model_meta
 
-
 """ Address serializers """
 address_serializers = get_address_serializers()
 
@@ -101,7 +100,7 @@ class OrganizationSearchSerializer(ChannelRelationshipSerializer):
     fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'is_bookmarked', 'verified']
 
 class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
-  address = address_serializers[0]()
+  address = address_serializers[1]()
   image = UploadedImageSerializer()
   cover = UploadedImageSerializer()
   causes = CauseSerializer(many=True)

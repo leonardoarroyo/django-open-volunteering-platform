@@ -74,8 +74,8 @@ class ItemSerializer(ChannelRelationshipSerializer):
         image_sr = ItemImageSerializer(data=image_data, context=self.context)
         image = image_sr.create(image_data)
       
-    for item in items:
-      if item.image_id not in [image['image_id'] for image in images]: item.delete()
+      for item in items:
+        if item.image_id not in [image['image_id'] for image in images]: item.delete()
 
     # Documents
     items = ItemDocument.objects.filter(item=instance, deleted=False)
@@ -85,9 +85,6 @@ class ItemSerializer(ChannelRelationshipSerializer):
         document_data['item'] = instance
         document_sr = ItemDocumentSerializer(data=document_data, context=self.context)
         document = document_sr.create(document_data)
-
-    for item in items:
-      if item.document_id not in [document['document_id'] for document in documents]: item.delete()   
 
     instance.save()
 

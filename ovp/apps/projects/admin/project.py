@@ -8,6 +8,8 @@ from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
 from ovp.apps.projects.models import Project, VolunteerRole
 from ovp.apps.organizations.models import Organization
+from ovp.apps.core.models import GoogleAddress
+from ovp.apps.core.models import SimpleAddress
 from ovp.apps.organizations.admin import StateListFilter
 from .job import JobInline
 from .work import WorkInline
@@ -33,11 +35,15 @@ class ProjectResource(resources.ModelResource):
     fields = ('name', 'applied_count', 'organization', 'address', 'highlighted', 'published', 'closed', 'deleted')
     
   def dehydrate_organization(self, project):
-    return project.organization.name
+    if project.organization:
+      return project.organization.name
 
   def dehydrate_address(self, project):
     if project.address is not None:
-      return project.address.typed_address
+      if isinstance(project.address, GoogleAddress):
+        return project.address.address_line
+      if isinstance(project.address, SimpleAddress):
+        return project.address.street + ', ' + project.address.number + ' - ' + project.address.neighbourhood + ' - ' + project.address.city
 
 class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
 
@@ -58,7 +64,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
     ('applied_count'),
 
-    ('can_be_done_remotely'),
+    ('can_be_done_remotely', 'skip_address_filter'),
 
     ('published', 'closed', 'deleted'),
     ('published_date', 'closed_date', 'deleted_date'),
@@ -148,7 +154,9 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     return self.filter_by_country(request, qs, 'address')
 
   def city_state(self, obj):
-    if obj.address is not None:
+    if isinstance(obj.address, GoogleAddress):
       return obj.address.city_state
+    else:
+      return ""
 
 admin_site.register(Project, ProjectAdmin)

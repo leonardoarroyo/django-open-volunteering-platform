@@ -14,6 +14,7 @@ from ovp.apps.core.helpers.xls import Response as XLSResponse
 from ovp.apps.core.mixins import CommentaryCreateMixin
 from ovp.apps.core.mixins import BookmarkMixin
 from ovp.apps.core.serializers import commentary as comments_serializer
+from ovp.apps.core.serializers import EmptySerializer
 
 from rest_framework import decorators
 from rest_framework import mixins
@@ -21,7 +22,9 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import response
 from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
 
+from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext as _
 
 
@@ -34,24 +37,19 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
   """
   ProjectResourceViewSet resource endpoint
   """
-  queryset = models.Project.objects.all()
+  queryset = models.Project.objects.filter(deleted=False)
   lookup_field = 'slug'
   lookup_value_regex = '[^/]+' # default is [^/.]+ - here we're allowing dots in the url slug field
 
   ##################
   # ViewSet routes #
   ##################
-
-  def retrieve(self, request, *args, **kwargs):
-    instance = self.get_object()
-    if instance.deleted:
-      content = {'detail': 'This project was deleted'}
-      return response.Response(content, status=status.HTTP_404_NOT_FOUND)
-    else:
-      serializer = self.get_serializer(instance)
-      return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+  def retrieve(self, *args, **kwargs):
+    """ Retrieve a project. """
+    return super(ProjectResourceViewSet, self).retrieve(*args, **kwargs)
 
   def create(self, request, *args, **kwargs):
+    """ Create a project. """
     request.data['owner'] = request.data.get('owner', None) or request.user.pk
 
     serializer = self.get_serializer(data=request.data, context=self.get_serializer_context())
@@ -62,7 +60,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
   def partial_update(self, request, *args, **kwargs):
-    """ We do not include the mixin as we want only PATCH and no PUT """
+    """ Partially update an organization object. """
     instance = self.get_object()
     serializer = self.get_serializer(instance, data=request.data, partial=True, context=self.get_serializer_context())
     serializer.is_valid(raise_exception=True)
@@ -74,16 +72,20 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
 
     return response.Response(serializer.data)
 
+  @swagger_auto_schema(method="POST", responses={200: "OK"})
   @decorators.detail_route(['POST'])
   def close(self, request, *args, **kwargs):
+    """ Close a project. """
     project = self.get_object()
     project.closed = True
     project.save()
     serializer = self.get_serializer_class()(project, context=self.get_serializer_context())
     return response.Response(serializer.data)
 
+  @swagger_auto_schema(method="GET", responses={200: "OK"})
   @decorators.detail_route(['GET'])
   def export_applied_users(self, request, *args, **kwargs):
+    """ Export a list of applied volunteers in xls format. """
     project = self.get_object()
 
     applied_users = [EXPORT_APPLIED_USERS_HEADERS]
@@ -92,7 +94,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
       role = apply.role.name if apply.role is not None else ''
       applied_users.append([
         apply.username, apply.email or apply.user.email, apply.phone or apply.user.phone,
-        apply.date.strftime('%d/%m/%Y %T'), role, apply.status,
+        apply.date.astimezone(get_current_timezone()).strftime('%d/%m/%Y %T %z'), role, apply.status,
         ])
 
     filename = '{}-applied-users.xls'.format(project.slug)
@@ -100,6 +102,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
 
   @decorators.list_route(['GET'])
   def manageable(self, request, *args, **kwargs):
+    """ Retrieve a list of projects the authenticated user can manage. """
     projects = self.get_queryset().filter(Q(owner=request.user) | Q(organization__owner=request.user) | Q(organization__members=request.user))
 
     serializer = self.get_serializer_class()(projects, many=True, context=self.get_serializer_context())
@@ -149,7 +152,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     if self.action == 'manageable':
       return serializers.ProjectRetrieveSerializer
     if self.action == 'close':
-      return serializers.ProjectRetrieveSerializer
+      return EmptySerializer
     if self.action == 'retrieve':
       return serializers.ProjectRetrieveSerializer
     if self.action == 'bookmarked':

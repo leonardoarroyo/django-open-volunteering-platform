@@ -1,13 +1,7 @@
 from rest_framework import serializers
 
-from ovp.apps.core.serializers import GoogleAddressSerializer
-
 from ovp.apps.core.models import Skill
 from ovp.apps.core.models import Cause
-
-def address_validate(address):
-  address_sr = GoogleAddressSerializer(data=address)
-  address_sr.is_valid(raise_exception=True)
 
 def skill_exist(v): # pragma: no cover
   try:

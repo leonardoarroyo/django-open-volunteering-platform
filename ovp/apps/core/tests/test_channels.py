@@ -41,7 +41,7 @@ class ChannelsTestCase(TestCase):
 
   def test_leads_route(self):
     """ Assert leads route creates objects in the correct channel """
-    data = {"name": "Test", "email": "email@email.com", "phone": "1112345678", "country": "Brazil"}
+    data = {"name": "Test", "email": "email@email.com", "phone": "1112345678", "country": "BR"}
 
     client = APIClient()
     response = client.post(reverse("lead"), data=data, format="json", HTTP_X_OVP_CHANNEL="default")

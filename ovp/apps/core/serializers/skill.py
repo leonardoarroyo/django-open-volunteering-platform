@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from ovp.apps.core import models
-from ovp.apps.core import validators
+from ovp.apps.core.validators import skill_exist
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
 
@@ -16,4 +16,4 @@ class SkillAssociationSerializer(ChannelRelationshipSerializer):
   class Meta:
     fields = ['id', 'name']
     model = models.Skill
-    validators = [validators.skill_exist]
+    validators = [skill_exist]

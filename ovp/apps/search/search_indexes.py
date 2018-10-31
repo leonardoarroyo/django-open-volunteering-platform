@@ -85,6 +85,7 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
   published = indexes.BooleanField(model_attr='published')
   deleted = indexes.BooleanField(model_attr='deleted')
   closed = indexes.BooleanField(model_attr='closed')
+  skip_address_filter = indexes.BooleanField(model_attr='skip_address_filter')
   address_components = indexes.MultiValueField(faceted=True)
   channel = indexes.CharField()
 

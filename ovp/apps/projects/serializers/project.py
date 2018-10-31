@@ -67,17 +67,12 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   image_id = serializers.IntegerField(required=False)
   organization = OrganizationRetrieveSerializer(read_only=True)
   organization_id = serializers.IntegerField(required=False)
-  item = ItemSerializer(read_only=True)
+  item_id = serializers.IntegerField(required=False)
 
   class Meta:
     model = models.Project
-    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'item']
+    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'item_id']
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date']
-
-  def validate(self, data):
-    required_organization(self.context["request"], data.get("organization_id", None))
-    project_owner_is_organization_member_or_self(self.context["request"], data.get("organization_id", None))
-    return super(ProjectCreateUpdateSerializer, self).validate(data)
 
   def create(self, validated_data):
     causes = validated_data.pop('causes', [])
@@ -134,15 +129,8 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     roles = validated_data.pop('roles', None)
     disp = validated_data.pop('disponibility', None)
 
-    # Iterate and save fields as drf default
-    info = model_meta.get_field_info(instance)
-    for attr, value in validated_data.items():
-        if attr in info.relations and info.relations[attr].to_many: # pragma: no cover
-            field = getattr(instance, attr)
-            field.set(value)
-        else:
-            setattr(instance, attr, value)
-
+    instance.item_id = validated_data.get('item_id', None)
+    
     # Save related resources
     if address_data:
       address_sr = address_serializers[0](data=address_data, context=self.context)

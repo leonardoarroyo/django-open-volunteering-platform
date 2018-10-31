@@ -15,9 +15,7 @@ class JobInline(TabularInline):
   model = Job
   verbose_name = _('Job')
   verbose_name_plural = _('Job')
-
-  #fields = ('edit_dates_link',)
-  readonly_fields = ['edit_dates_link']
+  readonly_fields = ['start_date', 'end_date', 'edit_dates_link']
 
   def edit_dates_link(self, obj):
     edit_dates_url = reverse("admin:{}_{}_change".format(obj._meta.app_label, obj._meta.model_name), args=(obj.id,))
@@ -28,6 +26,7 @@ class JobInline(TabularInline):
 
 class JobAdmin(ChannelModelAdmin):
   list_display = ['id', 'project', 'start_date', 'end_date']
+  readonly_fields = ['start_date', 'end_date']
   search_fields = ['id', 'project__name', 'project__nonprofit__name']
   exclude = ['channel']
 
