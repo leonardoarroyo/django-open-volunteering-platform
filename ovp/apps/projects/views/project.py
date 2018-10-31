@@ -26,7 +26,7 @@ from django.utils.translation import ugettext as _
 
 
 EXPORT_APPLIED_USERS_HEADERS = [
-  _('User Name'), _('User Email'), _('User Phone'), _('Applied At'), _('Status')
+  _('User Name'), _('User Email'), _('User Phone'), _('Applied At'), _('Role'), _('Status')
 ]
 
 @ChannelViewSet
@@ -89,9 +89,10 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     applied_users = [EXPORT_APPLIED_USERS_HEADERS]
     for apply in project.apply_set.all():
       user = apply.user
+      role = apply.role.name if apply.role is not None else ''
       applied_users.append([
         apply.username, apply.email or apply.user.email, apply.phone or apply.user.phone,
-        apply.date.strftime('%d/%m/%Y %T'), apply.status,
+        apply.date.strftime('%d/%m/%Y %T'), role, apply.status,
         ])
 
     filename = '{}-applied-users.xls'.format(project.slug)
