@@ -77,7 +77,7 @@ class Project(ChannelRelationship):
     return self.owner.email
 
   def get_volunteers_numbers(self):
-    return Apply.objects.filter(project=self, canceled=False).count()
+    return Apply.objects.filter(project=self, status__in=["applied", "confirmed-volunteer"]).count()
 
   def is_bookmarked(self, user):
     return self.bookmarks.filter(user=user).count() > 0
@@ -140,7 +140,7 @@ class Project(ChannelRelationship):
     return obj
 
   def active_apply_set(self):
-    return self.apply_set.filter(canceled=False)
+    return self.apply_set.filter(status__in=["applied", "confirmed-volunteer"])
 
   def __str__(self):
       return  '%s' % (self.name)
