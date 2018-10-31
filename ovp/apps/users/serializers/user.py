@@ -167,7 +167,7 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
         jobs = a.project.job.dates
         for job in jobs.values():
           volunteer_hours += job['end_date'] - job['start_date']
-      else:
+      elif hasattr(a.project, 'work'):
         if a.project.closed:
           last_time = a.project.closed_date
         else:
