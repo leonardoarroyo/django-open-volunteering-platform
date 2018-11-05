@@ -10,6 +10,7 @@ import ovp.apps.search.urls
 import ovp.apps.faq.urls
 import ovp.apps.catalogue.urls
 import ovp.apps.items.urls
+import ovp.apps.ratings.urls
 
 urlpatterns = [
   # Admin
@@ -44,6 +45,9 @@ urlpatterns = [
 
   # Items
   url(r'^', include(ovp.apps.items.urls)),
+
+  # Ratings
+  url(r'^', include(ovp.apps.ratings.urls)),
 
 ]
 
