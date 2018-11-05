@@ -87,6 +87,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+    }
+}
+
+if '--keepdb' in sys.argv:
+    DATABASES['default']['NAME'] = '/tmp/ovp.test.db.sqlite3'
+
 gettext = lambda s: s
 
 settings.configure(
@@ -99,11 +110,7 @@ settings.configure(
     INSTALLED_APPS=ALWAYS_INSTALLED_APPS + CUSTOM_INSTALLED_APPS,
     MIDDLEWARE=ALWAYS_MIDDLEWARE_CLASSES,
     ROOT_URLCONF='test.urls',
-    DATABASES={
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-        }
-    },
+    DATABASES=DATABASES,
     LANGUAGES = (
       ('en-us', gettext('English')),
       ('pt-br', gettext('Portuguese')),

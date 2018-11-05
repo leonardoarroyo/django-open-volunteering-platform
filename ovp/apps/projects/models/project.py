@@ -18,7 +18,10 @@ import urllib.request as request
 
 import json
 
-
+types = (
+  (1, 'Normal'),
+  (2, 'Donation')
+)
 class Project(ChannelRelationship, RatedModelMixin):
   """
   Project model
@@ -48,6 +51,7 @@ class Project(ChannelRelationship, RatedModelMixin):
   hidden_address = models.BooleanField(_('Hidden address'), default=False)
   crowdfunding = models.BooleanField(_('Crowdfunding'), default=False)
   skip_address_filter = models.BooleanField(_('Skip address filter'), default=False)
+  type = models.CharField(_('Project Type'), choices=types, default=1, max_length=10)
 
   # Date fields
   published_date = models.DateTimeField(_("Published date"), blank=True, null=True)
