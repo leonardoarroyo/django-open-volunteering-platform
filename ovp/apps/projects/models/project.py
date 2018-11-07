@@ -11,6 +11,9 @@ from ovp.apps.core.helpers import generate_slug
 from ovp.apps.projects import emails
 from ovp.apps.projects.models.apply import Apply
 from ovp.apps.ratings.mixins import RatedModelMixin
+from ovp.apps.ratings.models import RatingRequest
+from django.contrib.contenttypes.fields import GenericRelation
+
 
 from ovp.apps.channels.models import ChannelRelationship
 
@@ -37,6 +40,8 @@ class Project(ChannelRelationship, RatedModelMixin):
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
   organization = models.ForeignKey('organizations.Organization', blank=False, null=True, verbose_name=_('organization'))
   item = models.ForeignKey('items.Item', blank=True, null=True, verbose_name=_('item'))
+  rating_requests = GenericRelation(RatingRequest, related_query_name='rated_object_project')
+
 
   # Fields
   name = models.CharField(_('Project name'), max_length=100)

@@ -18,6 +18,9 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 
+from ovp.apps.ratings.models import RatingRequest
+from django.contrib.contenttypes.fields import GenericRelation
+
 from django.utils.translation import ugettext_lazy as _
 
 import uuid
@@ -52,6 +55,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
   uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
   email = models.EmailField(_('Email'), max_length=190)
   locale = models.CharField(_('Locale'), max_length=8, null=False, blank=True, default='en')
+  rating_requests = GenericRelation(RatingRequest, related_query_name='rated_object_user')
 
   # User information
   name = models.CharField(_('Name'), max_length=200, null=False, blank=False)
