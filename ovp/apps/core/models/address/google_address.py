@@ -43,6 +43,13 @@ class GoogleAddress(ChannelRelationship):
   def autocomplete_search_fields():
     return 'typed_address',
 
+  def get_state(self):
+    state = self.address_components.filter(types__name='administrative_area_level_1')
+
+    if state.count():
+      return state[0].short_name
+    return ""
+
   def get_city_state(self):
     state = self.address_components.filter(types__name='administrative_area_level_1')
     county = self.address_components.filter(types__name='administrative_area_level_2')

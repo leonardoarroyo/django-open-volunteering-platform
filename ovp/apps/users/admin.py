@@ -39,7 +39,7 @@ class UserResource(resources.ModelResource):
       address = user.profile.address
       if address is not None:
         if isinstance(address, GoogleAddress):
-          return address.city_state
+          return address.get_state()
         if isinstance(address, SimpleAddress):
           return address.state
 
