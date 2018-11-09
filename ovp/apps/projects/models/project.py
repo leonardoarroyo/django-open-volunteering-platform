@@ -10,6 +10,10 @@ from ovp.apps.core.helpers import generate_slug
 
 from ovp.apps.projects import emails
 from ovp.apps.projects.models.apply import Apply
+from ovp.apps.ratings.mixins import RatedModelMixin
+from ovp.apps.ratings.models import RatingRequest
+from django.contrib.contenttypes.fields import GenericRelation
+
 
 from ovp.apps.channels.models import ChannelRelationship
 
@@ -17,8 +21,11 @@ import urllib.request as request
 
 import json
 
-
-class Project(ChannelRelationship):
+types = (
+  (1, 'Normal'),
+  (2, 'Donation')
+)
+class Project(ChannelRelationship, RatedModelMixin):
   """
   Project model
   """
@@ -33,6 +40,8 @@ class Project(ChannelRelationship):
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
   organization = models.ForeignKey('organizations.Organization', blank=False, null=True, verbose_name=_('organization'))
   item = models.ForeignKey('items.Item', blank=True, null=True, verbose_name=_('item'))
+  rating_requests = GenericRelation(RatingRequest, related_query_name='rated_object_project')
+
 
   # Fields
   name = models.CharField(_('Project name'), max_length=100)
@@ -47,6 +56,7 @@ class Project(ChannelRelationship):
   hidden_address = models.BooleanField(_('Hidden address'), default=False)
   crowdfunding = models.BooleanField(_('Crowdfunding'), default=False)
   skip_address_filter = models.BooleanField(_('Skip address filter'), default=False)
+  type = models.FloatField(_('Project Type'), choices=types, default=1, max_length=10)
 
   # Date fields
   published_date = models.DateTimeField(_("Published date"), blank=True, null=True)

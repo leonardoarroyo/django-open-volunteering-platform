@@ -21,6 +21,8 @@ from ovp.apps.uploads.serializers import UploadedImageSerializer
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 from ovp.apps.channels.cache import get_channel_setting
 
+from ovp.apps.ratings.serializers import RatingRequestRetrieveSerializer
+
 from rest_framework import serializers
 from rest_framework import permissions
 from rest_framework import fields
@@ -132,10 +134,14 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
   organizations = OrganizationOwnerRetrieveSerializer(many=True, source='active_organizations')
+  rating_requests_count = serializers.SerializerMethodField()
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'is_subscribed_to_newsletter']
+    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_count', 'is_subscribed_to_newsletter']
+
+  def get_rating_requests_count(self, obj):
+    return obj.rating_requests.count()
 
   @expired_password
   def to_representation(self, *args, **kwargs):

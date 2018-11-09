@@ -26,21 +26,21 @@ class UserResource(resources.ModelResource):
     return user.name
 
   def dehydrate_address(self, user):
-    if user.profile is not none and user.profile.address is not none:
+    if user.profile is not None and user.profile.address is not None:
       address = user.profile.address
-      if address is not none:
-        if isinstance(a, googleaddress):
+      if address is not None:
+        if isinstance(address, GoogleAddress):
           return address.address_line
-        if isinstance(a, simpleaddress):
+        if isinstance(address, SimpleAddress):
           return address.street + ', ' + address.number + ' - ' + address.neighbourhood + ' - ' + address.city
 
   def dehydrate_state(self, user):
-    if user.profile is not none and user.profile.address is not none:
+    if user.profile is not None and user.profile.address is not None:
       address = user.profile.address
-      if address is not none:
-        if isinstance(a, googleaddress):
-          return address.city_state
-        if isinstance(a, simpleaddress):
+      if address is not None:
+        if isinstance(address, GoogleAddress):
+          return address.get_state()
+        if isinstance(address, SimpleAddress):
           return address.state
 
 class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocompleteAdmin):

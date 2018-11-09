@@ -44,7 +44,7 @@ class OrganizationResource(resources.ModelResource):
   def dehydrate_state(self, organization):
     if organization.address is not None:
       if isinstance(organization.address, GoogleAddress):
-        return organization.address.city_state
+        return organization.address.get_state()
       if isinstance(organization.address, SimpleAddress):
         return organization.address.state
 
