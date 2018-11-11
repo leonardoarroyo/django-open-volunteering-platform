@@ -90,6 +90,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     'contact_name',
     'contact_phone',
     'contact_email',
+    'categories',
 
     'facebook_page', 'website',
 

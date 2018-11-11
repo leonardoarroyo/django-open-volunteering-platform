@@ -31,6 +31,7 @@ class Organization(ChannelRelationship, RatedModelMixin):
   members = models.ManyToManyField('users.User', verbose_name=_('members'), related_name="organizations_member", blank=True)
 
   # Fields
+  categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)
   slug = models.SlugField(_('Slug'), max_length=100, unique=True, blank=True, null=True)
   name = models.CharField(_('Name'), max_length=150)
   website = models.URLField(_('Website'), blank=True, null=True, default=None)
