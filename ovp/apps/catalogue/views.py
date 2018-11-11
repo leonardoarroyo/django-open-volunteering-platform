@@ -21,7 +21,7 @@ class CatalogueView(generics.GenericAPIView):
       return response.Response({"detail": "This catalog does not exist"}, status=404)
 
     fetched = fetch_catalogue(catalogue,
-        serializer=ProjectSearchSerializer,
+        serializer=True,
         request=self.request,
         context=self.get_serializer_context(),
         channel=request.channel,

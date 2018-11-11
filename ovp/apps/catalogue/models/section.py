@@ -17,8 +17,8 @@ FILTER_TYPES = (
 )
 
 SECTION_TYPES = (
-  ('Projects', _("Projects")),
-  ('Organizations', _("Organizations")),
+  ('projects', _("Projects")),
+  ('organizations', _("Organizations")),
 )
 
 class Section(ChannelRelationship):

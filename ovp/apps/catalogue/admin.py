@@ -57,7 +57,7 @@ class CatalogueAdmin(ChannelModelAdmin):
   inlines = [SectionInline]
 
 class SectionAdmin(ChannelModelAdmin):
-  fields = ["name", "slug", "catalogue", "amount"]
+  fields = ["name", "slug", "catalogue", "amount", "type"]
   list_display = ["name", "slug", "catalogue"]
   search_fields = ["id", "name", "slug", "catalogue__name", "catalogue__slug"]
   inlines = [SectionFilterInline]
