@@ -19,7 +19,6 @@ class Apply(ChannelRelationship):
   status = models.CharField(_('status'), max_length=30, choices=apply_status_choices, default="applied")
   role = models.ForeignKey('projects.VolunteerRole', verbose_name=_('role'), blank=False, null=True)
   date = models.DateTimeField(_('created date'), auto_now_add=True, blank=True)
-  canceled = models.BooleanField(_("canceled"), default=False)
   canceled_date = models.DateTimeField(_("canceled date"), blank=True, null=True)
 
   username = models.CharField(_('name'), max_length=200, blank=True, null=True)
@@ -29,7 +28,6 @@ class Apply(ChannelRelationship):
   def __init__(self, *args, **kwargs):
     super(Apply, self).__init__(*args, **kwargs)
     self.__original_status = self.status
-    self.__original_canceled = self.canceled
 
   def mailing(self, async_mail=None):
     return emails.ApplyMail(self, async_mail)
@@ -42,21 +40,10 @@ class Apply(ChannelRelationship):
       creating = True
     else:
       # Object being updated
-      if self.__original_canceled != self.canceled:
-        # self.canceled was modified
-        if self.canceled == True:
-          self.status = "unapplied"
-        if self.canceled == False:
-          self.status = "applied"
-
-      # Status can be set without modifying .canceled directly
-      # Therefore we reset values checked on the previous ifs
       if self.__original_status != self.status:
         if self.status == "unapplied":
-          self.canceled = True
           self.canceled_date = timezone.now()
         else:
-          self.canceled = False
           self.canceled_date = None
 
     return_data = super(Apply, self).save(*args, **kwargs)
@@ -72,7 +59,6 @@ class Apply(ChannelRelationship):
 
     # Update original values
     self.__original_status = self.status
-    self.__original_canceled = self.canceled
 
     if self.role:
       if self.status == 'applied' or self.status == 'confirmed-volunteer':

@@ -22,7 +22,7 @@ class ApplyResource(resources.ModelResource):
   
   class Meta:
     model = Apply
-    fields = ('name', 'volunteer_name', 'volunteer_phone', 'volunteer_email', 'status', 'project', 'organization', 'date', 'canceled')
+    fields = ('name', 'volunteer_name', 'volunteer_phone', 'volunteer_email', 'status', 'project', 'organization', 'date')
     
   def dehydrate_organization(self, apply):
     return apply.project.organization.name
@@ -62,18 +62,18 @@ class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
   fields = [
     ('id', 'project__name', 'status'),
     'user', 'project', 'project__organization__name',
-    ('canceled', 'canceled_date', 'date'),
+    ('canceled_date', 'date'),
     'email'
     ]
 
   list_display = [
     'id', 'date', 'user__name', 'user__email', 'user__phone', 'project__name',
-    'project__organization__name', 'project__address', 'status', 'canceled'
+    'project__organization__name', 'project__address', 'status'
     ]
 
-  list_filter = ['date', 'canceled',]
+  list_filter = ['date', 'status',]
 
-  list_editable = ['canceled',]
+  list_editable = []
 
   search_fields = [
     'user__name', 'user__email', 'project__name',

@@ -74,6 +74,11 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'type', 'item_id']
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date', 'type']
 
+  def validate(self, data):
+    required_organization(self.context["request"], data.get("organization_id", None))
+    project_owner_is_organization_member_or_self(self.context["request"], data.get("organization_id", None))
+    return super(ProjectCreateUpdateSerializer, self).validate(data)
+
   def create(self, validated_data):
     causes = validated_data.pop('causes', [])
     skills = validated_data.pop('skills', [])
@@ -174,9 +179,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
         s = core_models.Skill.objects.get(pk=skill['id'])
         instance.skills.add(s)
 
-    instance.save()
-
-    return instance
+    return super(ProjectCreateUpdateSerializer, self).update(instance, validated_data)
 
   @add_disponibility_representation
   def to_representation(self, instance):

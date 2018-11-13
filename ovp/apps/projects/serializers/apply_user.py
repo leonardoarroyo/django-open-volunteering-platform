@@ -37,4 +37,4 @@ class ApplyUserRetrieveSerializer(ChannelRelationshipSerializer):
 
     class Meta:
         model = models.Apply
-        fields = ['id', 'date', 'canceled', 'canceled_date', 'project', 'role']
+        fields = ['id', 'date', 'canceled_date', 'project', 'role']

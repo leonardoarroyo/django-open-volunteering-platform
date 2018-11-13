@@ -57,14 +57,16 @@ class ApplyAndUnapplyTestCase(TestCase):
     self.assertTrue(response.status_code == 200)
 
     project = Project.objects.get(slug="test-project")
+    a = Apply.objects.last()
     self.assertTrue(project.applied_count == 1)
+    self.assertTrue(a.status == "applied")
 
     # Unapply
     response = client.post(reverse("project-applies-unapply", ["test-project"]), format="json")
     self.assertTrue(response.data["detail"] == "Successfully unapplied.")
 
     a = Apply.objects.last()
-    self.assertTrue(a.canceled == True)
+    self.assertTrue(a.status == "unapplied")
     self.assertTrue(a.canceled_date)
 
     project = Project.objects.get(slug="test-project")
@@ -79,7 +81,7 @@ class ApplyAndUnapplyTestCase(TestCase):
     self.assertTrue(project.applied_count == 1)
 
     a = Apply.objects.last()
-    self.assertTrue(a.canceled == False)
+    self.assertTrue(a.status == "applied")
     self.assertTrue(a.canceled_date == None)
 
   def test_cant_unapply_if_not_apply_or_unauthenticated(self):
@@ -154,7 +156,6 @@ class ProjectAppliesRetrievingTestCase(TestCase):
   def _assert_apply_response_data(self, response):
     self.assertTrue("email" in response.data[0])
     self.assertTrue("date" in response.data[0])
-    self.assertTrue("canceled" in response.data[0])
     self.assertTrue("canceled_date" in response.data[0])
     self.assertTrue("status" in response.data[0])
     self.assertTrue("name" in response.data[0]["user"])
