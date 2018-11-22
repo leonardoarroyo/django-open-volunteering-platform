@@ -12,6 +12,8 @@ from ovp.apps.organizations import models
 from ovp.apps.organizations import validators
 from ovp.apps.organizations.decorators import hide_address
 
+from ovp.apps.projects.models import Project
+
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
 from rest_framework import serializers
@@ -106,16 +108,26 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   causes = CauseSerializer(many=True)
   owner = UserOrganizationRetrieveSerializer()
   is_bookmarked = serializers.SerializerMethodField()
+  projects_count = serializers.SerializerMethodField()
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified']
+    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
     if user.is_authenticated():
       return instance.is_bookmarked(user)
     return False
+
+  def get_projects_count(self, instance):
+    total = 0
+    try:
+      total = Project.objects.get(organization=instance, published=True).count()
+    except:
+      pass
+
+    return total 
 
   @hide_address
   def to_representation(self, instance):
