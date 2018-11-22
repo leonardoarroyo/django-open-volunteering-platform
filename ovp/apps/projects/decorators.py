@@ -52,7 +52,7 @@ def add_current_user_is_applied_representation(func):
     applied = False
     if not user.is_anonymous():
       try:
-        applied = models.Apply.objects.filter(user=user, project=instance, canceled=False).count() > 0
+        applied = models.Apply.objects.exclude(status="unapplied").filter(user=user, project=instance).count() > 0
       except:
         pass
 

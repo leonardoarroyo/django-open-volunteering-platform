@@ -65,8 +65,8 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
       data['user'] = user.id
 
     try:
-      existing_apply = self.get_queryset(**kwargs).get(email=data['email'], canceled=True)
-      existing_apply.canceled = False
+      existing_apply = self.get_queryset(**kwargs).get(email=data['email'], status='unapplied')
+      existing_apply.status = "applied"
       existing_apply.save()
     except ObjectDoesNotExist:
       apply_sr = self.get_serializer_class()(data=data, context=self.get_serializer_context())
@@ -83,8 +83,8 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
     user = request.user
 
     try:
-      existing_apply = self.get_queryset(**kwargs).get(email=user.email, canceled=False)
-      existing_apply.canceled = True
+      existing_apply = self.get_queryset(**kwargs).exclude(status="unapplied").get(email=user.email)
+      existing_apply.status = "unapplied"
       existing_apply.save()
     except ObjectDoesNotExist:
       return response.Response({'detail': 'This is user is not applied to this project.'}, status=status.HTTP_400_BAD_REQUEST)

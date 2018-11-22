@@ -29,7 +29,7 @@ class ApplyRetrieveSerializer(ChannelRelationshipSerializer):
   
   class Meta:
     model = models.Apply
-    fields = ['id', 'email', 'username', 'phone', 'date', 'canceled', 'canceled_date', 'status', 'user', 'role']
+    fields = ['id', 'email', 'username', 'phone', 'date', 'canceled_date', 'status', 'user', 'role']
 
   def get_status(self, object):
     return object.get_status_display()

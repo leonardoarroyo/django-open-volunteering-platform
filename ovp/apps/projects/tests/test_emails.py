@@ -84,7 +84,7 @@ class TestEmailTriggers(TestCase):
     mail.outbox = [] # Mails sent before applying don't matter
     apply = Apply(project=project, user=volunteer, email=volunteer.email)
     apply.save(object_channel="default")
-    apply.canceled = True
+    apply.status = "unapplied"
     apply.save()
 
     recipients = [x.to[0] for x in mail.outbox]

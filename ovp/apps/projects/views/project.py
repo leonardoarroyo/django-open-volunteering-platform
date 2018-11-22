@@ -105,6 +105,9 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     """ Retrieve a list of projects the authenticated user can manage. """
     projects = self.get_queryset().filter(Q(owner=request.user) | Q(organization__owner=request.user) | Q(organization__members=request.user))
 
+    if request.query_params.get('no_organization', None):
+      projects = projects.filter(organization=None)
+
     serializer = self.get_serializer_class()(projects, many=True, context=self.get_serializer_context())
     return response.Response(serializer.data)
 
