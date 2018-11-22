@@ -123,7 +123,7 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   def get_projects_count(self, instance):
     total = 0
     try:
-      total = Project.objects.get(organization=instance, published=True).count()
+      total = Project.objects.filter(organization=instance, published=True).count()
     except:
       pass
 
