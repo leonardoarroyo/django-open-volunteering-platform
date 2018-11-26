@@ -62,7 +62,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     ('organization', 'owner'),
     ('owner__name', 'owner__email', 'owner__phone'),
 
-    ('applied_count'),
+    ('applied_count', 'benefited_people'),
 
     ('can_be_done_remotely', 'skip_address_filter'),
 
@@ -101,8 +101,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   readonly_fields = [
     'id', 'created_date', 'modified_date', 'published_date', 'closed_date', 'deleted_date', 'applied_count', 'max_applies_from_roles',
-    'owner__name', 'owner__email', 'owner__phone',
-    'can_be_done_remotely'
+    'owner__name', 'owner__email', 'owner__phone', 'benefited_people', 'can_be_done_remotely'
   ]
 
   raw_id_fields = []
