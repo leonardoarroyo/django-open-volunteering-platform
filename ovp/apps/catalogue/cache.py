@@ -94,7 +94,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
   address = params.get('address', None)
 
   queryset = SearchQuerySet().models(Project)
-  queryset = filters.by_published(queryset, 'false')
+  queryset = filters.by_published(queryset, 'true')
   queryset = filters.by_closed(queryset, 'false')
   queryset = filters.by_address(queryset, address, project=True)
   queryset = queryset.filter(channel=channel)
