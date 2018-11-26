@@ -66,7 +66,7 @@ def fetch_user_relevance_catalogue(catalogue, queryset, request, context=None, s
               order_by("-relevance")[:4]
 
   if serializer:
-    result = serializer(queryset, many=True, context=context).data
+    result = ProjectSearchSerializer(queryset, many=True, context=context).data
   else:
     result = queryset
   
@@ -94,7 +94,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
   address = params.get('address', None)
 
   queryset = SearchQuerySet().models(Project)
-  queryset = filters.by_published(queryset, 'true')
+  queryset = filters.by_published(queryset, 'false')
   queryset = filters.by_closed(queryset, 'false')
   queryset = filters.by_address(queryset, address, project=True)
   queryset = queryset.filter(channel=channel)
@@ -115,7 +115,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
 
   if catalogue_dict["fetched"] and request.user.is_authenticated():
     catalogue_dict = fetch_user_relevance_catalogue(catalogue_dict,
-      queryset=base_queryset,
+      queryset=project_base_queryset,
       request=request,
       context=context,
       serializer=serializer)
@@ -155,7 +155,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
 
   if request.user.is_authenticated():
     catalogue_dict = fetch_user_relevance_catalogue(catalogue_dict,
-      queryset=base_queryset,
+      queryset=project_base_queryset,
       request=request,
       context=context,
       serializer=serializer)
