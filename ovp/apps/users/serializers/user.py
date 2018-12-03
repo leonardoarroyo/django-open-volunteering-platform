@@ -178,10 +178,14 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
           last_time = a.project.closed_date
         else:
           last_time = timezone.now()
-        weeks = (last_time - a.date).days // 7
-        project_hours = a.project.work.weekly_hours if a.project.work.weekly_hours is not None else 0
-        project_hours = project_hours * (weeks+1)
-        volunteer_hours += timezone.timedelta(hours=project_hours)
+
+        try:
+          weeks = (last_time - a.date).days // 7
+          project_hours = a.project.work.weekly_hours if a.project.work.weekly_hours is not None else 0
+          project_hours = project_hours * (weeks+1)
+          volunteer_hours += timezone.timedelta(hours=project_hours)
+        except:
+          pass
 
     resp = (volunteer_hours.days * 24) + (volunteer_hours.seconds // 3600)
     return resp
