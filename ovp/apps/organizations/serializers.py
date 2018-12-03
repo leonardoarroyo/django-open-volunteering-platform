@@ -99,7 +99,7 @@ class OrganizationSearchSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'is_bookmarked', 'verified']
+    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'is_bookmarked', 'verified', 'rating']
 
 class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   address = address_serializers[1]()
@@ -112,7 +112,7 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count']
+    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count', 'rating']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
@@ -127,7 +127,7 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
     except:
       pass
 
-    return total 
+    return total
 
   @hide_address
   def to_representation(self, instance):
@@ -170,7 +170,7 @@ class OrganizationOwnerRetrieveSerializer(ChannelRelationshipSerializer):
   image = UploadedImageSerializer()
   causes = CauseSerializer(many=True)
   address = address_serializers[1]()
-  
+
   class Meta:
     model = models.Organization
     fields = ['slug', 'name', 'description', 'image', 'id', 'causes', 'address']

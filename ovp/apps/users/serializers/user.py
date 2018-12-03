@@ -163,7 +163,7 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.User
-    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects', 'volunteer_hours']
+    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects', 'volunteer_hours', 'rating']
 
   def get_volunteer_hours(self, obj):
     volunteer_hours = timezone.timedelta(hours=0)
