@@ -37,6 +37,10 @@ class RatingRequest(ChannelRelationship):
   deleted_date = models.DateTimeField(blank=True, null=True, default=None)
   created_date = models.DateTimeField(auto_now_add=True)
 
-  content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+  content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name="rating_requests_as_rated")
   object_id = models.PositiveIntegerField()
-  rated_object = GenericForeignKey()
+  rated_object = GenericForeignKey('content_type', 'object_id')
+
+  initiator_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name="rating_requests_as_initiator")
+  initiator_id = models.PositiveIntegerField()
+  initiator_object = GenericForeignKey('initiator_type', 'initiator_id')

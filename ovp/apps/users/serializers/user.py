@@ -134,14 +134,22 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
   organizations = OrganizationOwnerRetrieveSerializer(many=True, source='active_organizations')
-  rating_requests_count = serializers.SerializerMethodField()
+  rating_requests_user_count = serializers.SerializerMethodField()
+  rating_requests_project_count = serializers.SerializerMethodField()
+  rating_requests_projects_with_unrated_users = serializers.SerializerMethodField()
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_count', 'is_subscribed_to_newsletter']
+    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_user_count', 'rating_requests_project_count', 'rating_requests_projects_with_unrated_users', 'is_subscribed_to_newsletter']
 
-  def get_rating_requests_count(self, obj):
-    return obj.rating_requests.filter(deleted_date=None, rating=None).count()
+  def get_rating_requests_user_count(self, obj):
+    return obj.rating_requests.filter(deleted_date=None, rating=None, content_type__model="user").count()
+
+  def get_rating_requests_project_count(self, obj):
+    return obj.rating_requests.filter(deleted_date=None, rating=None, content_type__model="project").count()
+
+  def get_rating_requests_projects_with_unrated_users(self, obj):
+    return len(obj.rating_requests.filter(deleted_date=None, rating=None, content_type__model="user", initiator_type__model="project").values_list("initiator_id", flat=True).distinct())
 
   @expired_password
   def to_representation(self, *args, **kwargs):

@@ -1,6 +1,7 @@
 from ovp.apps.core import pagination
 from django.utils import timezone
 
+from ovp.apps.projects.models import Project
 from ovp.apps.ratings import models
 from ovp.apps.ratings import serializers
 from ovp.apps.ratings.permissions import UserCanRateRequest
@@ -48,6 +49,11 @@ class RatingRequestResourceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMi
     content_type = self.request.GET.get("object_type", None)
     if content_type in ["user", "project", "organization"]:
       qs = qs.filter(content_type__model=content_type)
+
+    initiator_slug = self.request.GET.get("initiator_project_slug", None)
+    if initiator_slug:
+      pks = Project.objects.filter(slug=initiator_slug).values_list("pk", flat=True)
+      qs = qs.filter(initiator_type__model="project", initiator_id__in=pks)
 
     return qs
 
