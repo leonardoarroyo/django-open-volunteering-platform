@@ -225,6 +225,18 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   def to_representation(self, instance):
     return super(ProjectRetrieveSerializer, self).to_representation(instance)
 
+class ProjectManageableRetrieveSerializer(ProjectRetrieveSerializer):
+  unrated_users_count = serializers.SerializerMethodField()
+
+  def get_unrated_users_count(self, obj):
+    if obj.owner:
+      return obj.owner.rating_requests.filter(deleted_date=None, rating=None, content_type__model="user", initiator_type__model="project", initiator_id=obj.pk).count()
+    return 0
+
+  class Meta:
+    model = models.Project
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'unrated_users_count']
+
 
 class CompactOrganizationSerializer(serializers.ModelSerializer):
   address = address_serializers[2]()

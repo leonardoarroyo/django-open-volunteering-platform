@@ -153,7 +153,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     if self.action in ['create', 'partial_update']:
       return serializers.ProjectCreateUpdateSerializer
     if self.action == 'manageable':
-      return serializers.ProjectRetrieveSerializer
+      return serializers.ProjectManageableRetrieveSerializer
     if self.action == 'close':
       return EmptySerializer
     if self.action == 'retrieve':
