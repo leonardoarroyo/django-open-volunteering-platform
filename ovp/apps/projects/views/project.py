@@ -156,11 +156,14 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
       return serializers.ProjectManageableRetrieveSerializer
     if self.action == 'close':
       return EmptySerializer
-    if self.action == 'retrieve':
-      return serializers.ProjectRetrieveSerializer
     if self.action == 'bookmarked':
       return serializers.ProjectRetrieveSerializer
     if self.action == 'commentary':
       return comments_serializer.CommentaryCreateSerializer
+    if self.action == 'retrieve':
+      if ProjectRetrieveOwnsOrIsOrganizationMember().has_object_permission(self.request, None, self.get_object()):
+        return serializers.ProjectManageableRetrieveSerializer
+      else:
+        return serializers.ProjectRetrieveSerializer
 
     return serializers.ProjectRetrieveSerializer
