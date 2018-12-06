@@ -1,4 +1,5 @@
 from ovp.apps.core import pagination
+from django.utils import timezone
 
 from ovp.apps.ratings import models
 from ovp.apps.ratings import serializers
@@ -17,6 +18,14 @@ class RatingRequestResourceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMi
   lookup_field = 'uuid'
   pagination_class = pagination.NoPagination
 
+  @decorators.action(methods=["DELETE"], detail=True)
+  def delete(self, request, *args, **kwargs):
+    ctx = self.get_serializer_context()
+    obj = self.get_object()
+    obj.deleted_date = timezone.now()
+    obj.save()
+    return response.Response({"success": True}, status=200)
+
   @decorators.action(methods=["POST"], detail=True)
   def rate(self, request, *args, **kwargs):
     ctx = self.get_serializer_context()
@@ -34,7 +43,7 @@ class RatingRequestResourceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMi
     return response.Response({"success": True}, status=200)
 
   def get_queryset(self, *args, **kwargs):
-    return models.RatingRequest.objects.filter(requested_user = self.request.user)
+    return models.RatingRequest.objects.filter(requested_user = self.request.user, deleted_date=None, rating=None)
 
   def get_serializer_class(self, *args, **kwargs):
     if self.action == 'rate':
@@ -50,6 +59,9 @@ class RatingRequestResourceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMi
       self.permission_classes = (permissions.IsAuthenticated, )
 
     if self.action == 'rate':
+      self.permission_classes = (permissions.IsAuthenticated, UserCanRateRequest)
+
+    if self.action == 'delete':
       self.permission_classes = (permissions.IsAuthenticated, UserCanRateRequest)
 
     return super(RatingRequestResourceViewSet, self).get_permissions()

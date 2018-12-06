@@ -141,7 +141,7 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
     fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_count', 'is_subscribed_to_newsletter']
 
   def get_rating_requests_count(self, obj):
-    return obj.rating_requests.count()
+    return obj.rating_requests.filter(deleted_date=None, rating=None).count()
 
   @expired_password
   def to_representation(self, *args, **kwargs):

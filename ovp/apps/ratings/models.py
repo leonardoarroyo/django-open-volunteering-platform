@@ -34,6 +34,7 @@ class RatingRequest(ChannelRelationship):
   uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
   requested_user = models.ForeignKey('users.User', related_name='rating_requests')
   rating_parameters = models.ManyToManyField('ratings.RatingParameter')
+  deleted_date = models.DateTimeField(blank=True, null=True, default=None)
   created_date = models.DateTimeField(auto_now_add=True)
 
   content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
