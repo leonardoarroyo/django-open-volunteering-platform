@@ -43,7 +43,13 @@ class RatingRequestResourceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMi
     return response.Response({"success": True}, status=200)
 
   def get_queryset(self, *args, **kwargs):
-    return models.RatingRequest.objects.filter(requested_user = self.request.user, deleted_date=None, rating=None)
+    qs = models.RatingRequest.objects.filter(requested_user = self.request.user, deleted_date=None, rating=None)
+
+    content_type = self.request.GET.get("object_type", None)
+    if content_type in ["user", "project", "organization"]:
+      qs = qs.filter(content_type__model=content_type)
+
+    return qs
 
   def get_serializer_class(self, *args, **kwargs):
     if self.action == 'rate':
