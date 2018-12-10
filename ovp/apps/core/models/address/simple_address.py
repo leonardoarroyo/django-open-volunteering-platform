@@ -16,4 +16,4 @@ class SimpleAddress(ChannelRelationship):
     return 'street', 'city',
 
   def __str__(self):
-    return self.street + ', ' + self.number + ' - ' + self.neighbourhood + ' - ' + self.city
+    return "{}, {} - {} - {}".format(self.street, self.number, self.neighbourhood, self.city)

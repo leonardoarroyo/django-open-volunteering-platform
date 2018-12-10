@@ -13,6 +13,7 @@ from ovp.apps.core.mixins import CountryFilterMixin
 from ovp.apps.organizations import validators
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
+from ovp.apps.core.helpers import get_address_model
 
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
@@ -29,7 +30,7 @@ class OrganizationResource(resources.ModelResource):
   contact_name = Field()
   contact_email = Field()
   contact_phone = Field()
-  
+
   class Meta:
     model = Organization
     fields = ('id', 'name', 'contact_name', 'contact_email', 'contact_phone', 'address', 'state', 'published', 'highlighted', 'closed', 'deleted', 'created_date', 'modified_date')
@@ -62,13 +63,54 @@ class StateListFilter(admin.SimpleListFilter):
     parameter_name = 'state'
 
     def lookups(self, request, model_admin):
-      states = AddressComponent.objects.filter(channel__slug=request.channel, types__name="administrative_area_level_1").values_list('short_name', flat=True).distinct()
+      address_model = get_address_model()
+
+      if address_model == GoogleAddress:
+        states = AddressComponent.objects.filter(channel__slug=request.channel, types__name="administrative_area_level_1").values_list('short_name', flat=True).distinct()
+
+      if address_model == SimpleAddress:
+        states = SimpleAddress.objects.filter(channel__slug=request.channel).values_list('state', flat=True).distinct()
+
       return [('', 'No state')] + [(x, x) for x in states]
 
     def queryset(self, request, queryset):
+      address_model = get_address_model()
       state = request.GET.get('state', None)
+
       if state:
-        return queryset.filter(address__address_components__short_name=state, address__address_components__types__name="administrative_area_level_1")
+        if address_model == GoogleAddress:
+          return queryset.filter(address__address_components__short_name=state, address__address_components__types__name="administrative_area_level_1")
+
+        if address_model == SimpleAddress:
+          return queryset.filter(address__state = state)
+      return queryset
+
+
+class CityListFilter(admin.SimpleListFilter):
+    title = 'city'
+    parameter_name = 'city'
+
+    def lookups(self, request, model_admin):
+      address_model = get_address_model()
+
+      if address_model == GoogleAddress:
+        states = AddressComponent.objects.filter(channel__slug=request.channel, types__name="administrative_area_level_2").values_list('long_name', flat=True).distinct()
+
+      if address_model == SimpleAddress:
+        states = SimpleAddress.objects.filter(channel__slug=request.channel).values_list('city', flat=True).distinct()
+
+      return [('', 'No city')] + [(x, x) for x in states]
+
+    def queryset(self, request, queryset):
+      address_model = get_address_model()
+      city = request.GET.get('city', None)
+
+      if city:
+        if address_model == GoogleAddress:
+          return queryset.filter(address__address_components__long_name=city, address__address_components__types__name="administrative_area_level_2")
+
+        if address_model == SimpleAddress:
+          return queryset.filter(address__city = city)
       return queryset
 
 class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
@@ -107,7 +149,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   ]
 
   list_filter = [
-    'created_date', 'modified_date', 'highlighted', 'published', 'deleted', StateListFilter
+    'created_date', 'modified_date', 'highlighted', 'published', 'deleted', StateListFilter, CityListFilter
   ]
 
   list_editable = [

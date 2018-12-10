@@ -1,12 +1,17 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from jet.filters import DateRangeFilter
 
+from ovp.apps.admin.filters import SingleTextInputFilter
+from ovp.apps.organizations.admin import StateListFilter as BaseStateListFilter
+from ovp.apps.organizations.admin import CityListFilter as BaseCityListFilter
 from ovp.apps.projects.models import Apply
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.mixins import CountryFilterMixin
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
+from ovp.apps.core.helpers import get_address_model
 
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
@@ -19,11 +24,16 @@ class ApplyResource(resources.ModelResource):
   volunteer_email = Field()
   volunteer_phone = Field()
   project = Field()
-  
+  project_end_date = Field()
+
   class Meta:
     model = Apply
-    fields = ('name', 'volunteer_name', 'volunteer_phone', 'volunteer_email', 'status', 'project', 'organization', 'date')
-    
+    fields = ('name', 'volunteer_name', 'volunteer_phone', 'volunteer_email', 'status', 'date', 'organization', 'project', 'project_end_date')
+
+  def dehydrate_project_end_date(self, apply):
+    if hasattr(apply.project, "job"):
+      return apply.project.job.end_date
+
   def dehydrate_organization(self, apply):
     return apply.project.organization.name
 
@@ -56,6 +66,34 @@ class ApplyResource(resources.ModelResource):
 
     return apply.phone
 
+
+class StateListFilter(BaseStateListFilter):
+    def queryset(self, request, queryset):
+      address_model = get_address_model()
+      state = request.GET.get('state', None)
+
+      if state:
+        if address_model == GoogleAddress:
+          return queryset.filter(project__address__address_components__short_name=state, project__address__address_components__types__name="administrative_area_level_1")
+
+        if address_model == SimpleAddress:
+          return queryset.filter(project__address__state = state)
+      return queryset
+
+
+class CityListFilter(BaseCityListFilter):
+    def queryset(self, request, queryset):
+      address_model = get_address_model()
+      city = request.GET.get('city', None)
+
+      if city:
+        if address_model == GoogleAddress:
+          return queryset.filter(project__address__address_components__long_name=city, project__address__address_components__types__name="administrative_area_level_2")
+
+        if address_model == SimpleAddress:
+          return queryset.filter(project__address__city = city)
+      return queryset
+
 class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
   resource_class = ApplyResource
 
@@ -63,26 +101,28 @@ class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
     ('id', 'project__name', 'status'),
     'user', 'project', 'project__organization__name',
     ('canceled_date', 'date'),
-    'email'
-    ]
+    'email',
+    'phone',
+    'username'
+  ]
 
   list_display = [
     'id', 'date', 'user__name', 'user__email', 'user__phone', 'project__name',
-    'project__organization__name', 'project__address', 'status'
-    ]
+    'project__organization__name', 'project__address', 'username', 'phone', 'email', 'status'
+  ]
 
-  list_filter = ['date', 'status',]
+  list_filter = [('date', DateRangeFilter), ('project__job__end_date', DateRangeFilter), 'status', StateListFilter, CityListFilter]
 
   list_editable = []
 
   search_fields = [
-    'user__name', 'user__email', 'project__name',
+    'user__name', 'user__email', 'project__pk', 'project__name',
     'project__organization__name'
-    ]
+  ]
 
   readonly_fields = [
     'id', 'project__name', 'user', 'project__organization__name', 'canceled_date', 'date'
-    ]
+  ]
 
   raw_id_fields = []
 

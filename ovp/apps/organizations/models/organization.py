@@ -33,7 +33,7 @@ class Organization(ChannelRelationship, RatedModelMixin):
   # Fields
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)
   slug = models.SlugField(_('Slug'), max_length=100, unique=True, blank=True, null=True)
-  name = models.CharField(_('Name'), max_length=150)
+  name = models.CharField(_('Name'), max_length=300)
   website = models.URLField(_('Website'), blank=True, null=True, default=None)
   facebook_page = models.CharField(_('Facebook'), max_length=255, blank=True, null=True, default=None)
   type = models.PositiveSmallIntegerField(_('Type'), choices=ORGANIZATION_TYPES, default=0)
@@ -128,4 +128,4 @@ class Organization(ChannelRelationship, RatedModelMixin):
     verbose_name_plural = _('organizations')
     unique_together = (('slug', 'channel'), )
 
-  
+

@@ -11,6 +11,7 @@ from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
 from ovp.apps.organizations.admin import StateListFilter
+from ovp.apps.organizations.admin import CityListFilter
 from .job import JobInline
 from .work import WorkInline
 
@@ -29,11 +30,11 @@ class VolunteerRoleInline(TabularInline):
 class ProjectResource(resources.ModelResource):
   organization = Field()
   address = Field()
-  
+
   class Meta:
     model = Project
     fields = ('name', 'applied_count', 'organization', 'address', 'highlighted', 'published', 'closed', 'deleted')
-    
+
   def dehydrate_organization(self, project):
     if project.organization:
       return project.organization.name
@@ -79,7 +80,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     'skills', 'causes',
     ]
 
-  resource_class = ProjectResource 
+  resource_class = ProjectResource
 
   list_display = [
     'id', 'created_date', 'name', 'highlighted', 'published', 'closed', 'organization__name', 'city_state', 'applied_count', # fix: CIDADE, PONTUAL OU RECORRENTE
@@ -88,7 +89,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   list_filter = [
     'created_date', # fix: PONTUAL OU RECORRENTE
-    'highlighted', 'published', 'closed', 'deleted', StateListFilter
+    'highlighted', 'published', 'closed', 'deleted', StateListFilter, CityListFilter
   ]
 
   list_editable = [
@@ -114,7 +115,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
   ]
 
   #def Resource(model, **kwargs):
-    
+
 
   def can_be_done_remotely(self, obj):
     if obj.hasattr('job') and obj.job:

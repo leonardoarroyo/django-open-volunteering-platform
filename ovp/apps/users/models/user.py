@@ -22,6 +22,7 @@ from ovp.apps.ratings.models import RatingRequest
 from django.contrib.contenttypes.fields import GenericRelation
 
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
 
 import uuid
 from shortuuid.main import encode as encode_uuid
@@ -80,10 +81,6 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
   USERNAME_FIELD = 'email'
   LOGIN = False
 
-  @staticmethod
-  def autocomplete_search_fields():
-    return 'name', 'email',
-
   class Meta:
     app_label = 'users'
     verbose_name = _('user')
@@ -94,9 +91,6 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
     super(User, self).__init__(*args, **kwargs)
     self.__original_password = self.password
     self.__original_email = self.email
-
-  def __str__(self):
-    return self.name
 
   def mailing(self, async_mail=None):
     return emails.UserMail(self, async_mail)
@@ -157,6 +151,28 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
 
   def active_organizations(self):
     return self.organizations_member.filter(deleted=False)
+
+  @staticmethod
+  def autocomplete_search_fields(qs):
+    return 'name',
+
+  @staticmethod
+  def autocomplete_search_queryset(qs, cleaned_data):
+    try:
+      from gpa.models import GPAUserProfile
+
+      profile_pks = list(GPAUserProfile.objects.filter(collaborator_code__icontains = cleaned_data.get('q')).values_list(flat=True))
+
+      qs = qs.filter(Q(name__icontains = cleaned_data.get('q')) | Q(users_userprofile_profile__pk__in = profile_pks))
+    except ImportError:
+      pass
+    return qs
+
+  def __str__(self):
+    if hasattr(self, 'profile') and hasattr(self.profile, 'collaborator_code'): #TODO: Move this outside OVP, need to reimplement user model checking everywhere
+      return "#{} - {}".format(self.profile.collaborator_code, self.name)
+    return self.name
+
 
 @receiver(post_save, sender=User)
 def update_history(sender, instance, raw=False, **kwargs):
