@@ -221,7 +221,7 @@ class UserApplyRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'slug', 'avatar', 'phone', 'phone2', 'email', 'profile']
+    fields = ['uuid', 'name', 'slug', 'avatar', 'phone', 'phone2', 'email', 'profile', 'rating']
 
 class UserSearchSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
