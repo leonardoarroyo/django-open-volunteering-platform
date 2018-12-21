@@ -18,21 +18,25 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
 class ApplyResource(resources.ModelResource):
-  organization = Field()
-  address = Field()
-  volunteer_name = Field()
-  volunteer_email = Field()
-  volunteer_phone = Field()
-  project = Field()
-  project_end_date = Field()
+  project = Field(column_name="Projeto")
+  organization = Field(column_name="ONG")
+  volunteer_name = Field(column_name="Nome do Voluntario")
+  volunteer_email = Field(column_name="Email do Voluntario")
+  volunteer_phone = Field(column_name="Telefone do Voluntario")
+  address = Field(column_name="Endereco do projeto")
 
   class Meta:
     model = Apply
-    fields = ('name', 'volunteer_name', 'volunteer_phone', 'volunteer_email', 'status', 'date', 'organization', 'project', 'project_end_date')
-
-  def dehydrate_project_end_date(self, apply):
-    if hasattr(apply.project, "job"):
-      return apply.project.job.end_date
+    fields = (
+      'name',
+      'volunteer_name',
+      'volunteer_phone',
+      'volunteer_email',
+      'status',
+      'date',
+      'organization',
+      'project'
+    )
 
   def dehydrate_organization(self, apply):
     return apply.project.organization.name
