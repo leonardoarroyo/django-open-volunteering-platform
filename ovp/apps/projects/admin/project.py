@@ -1,3 +1,5 @@
+import os
+
 from django import forms
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -6,7 +8,7 @@ from martor.widgets import AdminMartorWidget
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
-from ovp.apps.projects.models import Project, VolunteerRole
+from ovp.apps.projects.models import Project, VolunteerRole, Job
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
@@ -28,16 +30,71 @@ class VolunteerRoleInline(TabularInline):
   exclude = ['channel']
 
 class ProjectResource(resources.ModelResource):
-  organization = Field()
-  address = Field()
-
+  name = Field(attribute='name', column_name='Nome do Projeto')
+  description = Field(attribute='description', column_name='Descricao')
+  organization = Field(column_name='ONG')
+  address = Field(column_name='Endereço')
+  owner_name = Field(column_name='Nome Responsavel')
+  owner_email = Field(column_name='Email Responsavel')
+  owner_phone = Field(column_name='Telefone Responsavel')
+  image = Field(column_name='Imagem')
+  start_date = Field(column_name='Data de início')
+  end_date = Field(column_name='Data de Encerramento')
+  
   class Meta:
     model = Project
-    fields = ('name', 'applied_count', 'organization', 'address', 'highlighted', 'published', 'closed', 'deleted')
+    fields = (
+      'id',
+      'name',
+      'applied_count',
+      'owner_name',
+      'owner_email',
+      'owner_phone',
+      'organization', 
+      'address',
+      'image',
+      'description',
+      'start_date',
+      'end_date',
+      'highlighted',
+      'published',
+      'closed',
+      'deleted'
+    )
 
   def dehydrate_organization(self, project):
     if project.organization:
       return project.organization.name
+
+  def dehydrate_owner_name(self, project):
+    if project.owner:
+      return project.owner.name
+
+  def dehydrate_owner_email(self, project):
+    if project.owner:
+      return project.owner.email
+
+  def dehydrate_owner_phone(self, project):
+    if project.owner:
+      return project.owner.phone
+
+  def dehydrate_image(self, project):
+    if project.image:
+      return os.environ.get('API_URL', None)+project.image.image_large.url if os.environ.get('API_URL', None) is not None else project.image.image_large.url
+
+  def dehydrate_start_date(self, project):
+    try:
+      job = Job.objects.filter(project=project)
+      return job.start_date
+    except:
+      return "recorrente"
+
+  def dehydrate_end_date(self, project):
+    try:
+      job = Job.objects.filter(project=project)
+      return job.end_date
+    except:
+      return "recorrente"
 
   def dehydrate_address(self, project):
     if project.address is not None:
