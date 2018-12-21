@@ -88,14 +88,14 @@ class ProjectResource(resources.ModelResource):
   def dehydrate_start_date(self, project):
     try:
       job = Job.objects.filter(project=project)
-      return job[0].start_date
+      return job[0].start_date.strftime("%d/%m/%Y %H:%M:%S")
     except:
       return "recorrente"
 
   def dehydrate_end_date(self, project):
     try:
       job = Job.objects.filter(project=project)
-      return job[0].end_date
+      return job[0].end_date.strftime("%d/%m/%Y %H:%M:%S")
     except:
       return "recorrente"
 
