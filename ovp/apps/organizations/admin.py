@@ -33,6 +33,7 @@ class OrganizationResource(resources.ModelResource):
   owner_email = Field(column_name='Email Responsavel')
   owner_phone = Field(column_name='Telefone Responsavel')
   address = Field(column_name='Endereço')
+  causes = Field(column_name='Causas')
   image = Field(column_name='Imagem')
   website = Field(attribute='website', column_name='Site')
   facebook_page = Field(attribute='facebook_page', column_name='Facebook')
