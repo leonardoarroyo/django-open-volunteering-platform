@@ -30,6 +30,7 @@ class VolunteerRoleInline(TabularInline):
   exclude = ['channel']
 
 class ProjectResource(resources.ModelResource):
+  id = Field(attribute='id', column_name='ID')
   name = Field(attribute='name', column_name='Nome do Projeto')
   description = Field(attribute='description', column_name='Descricao')
   organization = Field(column_name='ONG')
@@ -79,8 +80,10 @@ class ProjectResource(resources.ModelResource):
       return project.owner.phone
 
   def dehydrate_image(self, project):
+    api_url = os.environ.get('API_URL', None) 
     if project.image:
-      return os.environ.get('API_URL', None)+project.image.image_large.url if os.environ.get('API_URL', None) is not None else project.image.image_large.url
+      return api_url+project.image.image_large.url if api_url is not None \
+        else project.image.image_large.url
 
   def dehydrate_start_date(self, project):
     try:

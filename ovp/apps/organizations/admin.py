@@ -25,15 +25,36 @@ from jet.filters import RelatedFieldAjaxListFilter
 # class is not covered by the test suite
 
 class OrganizationResource(resources.ModelResource):
-  address = Field()
-  state = Field()
-  contact_name = Field()
-  contact_email = Field()
-  contact_phone = Field()
+  id = Field(attribute='id', column_name='ID')
+  name = Field(attribute='name', column_name='Nome do Projeto')
+  description = Field(attribute='description', column_name='Descricao')
+  document = Field(attribute='document', column_name='CNPJ')
+  owner_name = Field(column_name='Nome Responsavel')
+  owner_email = Field(column_name='Email Responsavel')
+  owner_phone = Field(column_name='Telefone Responsavel')
+  address = Field(column_name='Endereço')
+  image = Field(column_name='Imagem')
+  website = Field(attribute='website', column_name='Site')
+  facebook_page = Field(attribute='facebook_page', column_name='Facebook')
 
   class Meta:
     model = Organization
-    fields = ('id', 'name', 'contact_name', 'contact_email', 'contact_phone', 'address', 'state', 'published', 'highlighted', 'closed', 'deleted', 'created_date', 'modified_date')
+    fields = (
+      'id',
+      'name',
+      'owner_name',
+      'owner_email', 
+      'owner_phone',
+      'address',
+      'image',
+      'facebook_page',
+      'website',
+      'document',
+      'causes',
+      'published',
+      'deleted',
+      'created_date'
+    )
 
   def dehydrate_address(self, organization):
     if organization.address is not None:
@@ -42,21 +63,19 @@ class OrganizationResource(resources.ModelResource):
       if isinstance(organization.address, SimpleAddress):
         return organization.address.street + ', ' + organization.address.number + ' - ' + organization.address.neighbourhood + ' - ' + organization.address.city
 
-  def dehydrate_state(self, organization):
-    if organization.address is not None:
-      if isinstance(organization.address, GoogleAddress):
-        return organization.address.get_state()
-      if isinstance(organization.address, SimpleAddress):
-        return organization.address.state
-
-  def dehydrate_contact_name(self, organization):
+  def dehydrate_owner_name(self, organization):
     return organization.owner.name
 
-  def dehydrate_contact_email(self, organization):
+  def dehydrate_owner_email(self, organization):
     return organization.owner.email
 
-  def dehydrate_contact_phone(self, organization):
+  def dehydrate_owner_phone(self, organization):
     return organization.owner.phone
+
+  def dehydrate_causes(self, organization):
+    if organization.causes:
+      return ", ".join([c.name for c in organization.causes.all()])
+
 
 class StateListFilter(admin.SimpleListFilter):
     title = 'state'
