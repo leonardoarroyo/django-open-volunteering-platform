@@ -75,7 +75,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
     queryset = filters.by_published(queryset, published)
     queryset = filters.by_address(queryset, address) if address else queryset
     queryset = filters.by_causes(queryset, cause) if cause else queryset
-    queryset = queryset.filter(channel=self.request.channel)
+    queryset = filters.by_channels(queryset, self.request.channel)
 
     result_keys = [q.pk for q in queryset]
     result = querysets.get_organization_queryset(request=self.request).filter(pk__in=result_keys)
