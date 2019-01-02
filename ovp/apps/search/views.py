@@ -147,7 +147,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = filters.by_categories(queryset, category)
     queryset = filters.by_disponibility(queryset, disponibility)
     queryset = filters.by_date(queryset, date)
-    queryset = queryset.filter(channel=self.request.channel)
+    queryset = filters.by_channels(queryset, self.request.channel)
 
     result_keys = [q.pk for q in queryset]
 
