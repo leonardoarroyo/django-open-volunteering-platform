@@ -7,7 +7,7 @@ from rest_framework.exceptions import NotAuthenticated
 from django.db.models import When, F, IntegerField, Count, Case
 
 from ovp.apps.channels.cache import get_channel_setting
-from ovp.apps.channels.models.channel import Channel
+from ovp.apps.channels.helpers import get_subchannels_list
 
 import json
 
@@ -82,10 +82,7 @@ def get_operator_and_items(string=''):
 
 def by_channels(queryset, channel_string=None):
   """ Filter queryset by a comma delimeted skill list """
-  channel = Channel.objects.get(slug=channel_string)
-  channel_list = [c.slug for c in channel.subchannels.all()]
-  channel_list.append(channel_string)
-
+  channel_list = get_subchannels_list(channel_string)
   queryset = queryset.filter(channel__in=channel_list)
 
   return queryset
