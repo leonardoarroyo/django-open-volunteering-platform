@@ -81,9 +81,16 @@ def get_operator_and_items(string=''):
   return SQ.OR, items
 
 def by_channels(queryset, channel_string=None):
-  """ Filter queryset by a comma delimeted skill list """
+  """ Filter queryset by a comma delimeted channels list """
   channel_list = get_subchannels_list(channel_string)
   queryset = queryset.filter(channel__in=channel_list)
+
+  return queryset
+
+def by_organizations(queryset, organization=None):
+  """ Filter queryset by a comma delimeted organizations list """
+  if organization:
+    queryset = queryset.filter(organization__in=organization)
 
   return queryset
 

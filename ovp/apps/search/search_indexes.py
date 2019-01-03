@@ -14,6 +14,10 @@ class ChannelMixin:
   def prepare_channel(self, obj):
     return obj.channel.slug
 
+class OrganizationMixin:
+  def prepare_organization(self, obj):
+      return obj.organization.id if obj.organization else 0
+
 class CausesMixin:
   def prepare_causes(self, obj):
     return [cause.id for cause in obj.causes.all()]
@@ -70,7 +74,7 @@ class AddressComponentsMixin:
 """
 Indexes
 """
-class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, CategoriesMixin, AddressComponentsMixin, DateMixin, ChannelMixin):
+class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, CategoriesMixin, AddressComponentsMixin, DateMixin, ChannelMixin, OrganizationMixin):
   name = indexes.EdgeNgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   categories = indexes.MultiValueField(faceted=True)
@@ -88,6 +92,7 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
   skip_address_filter = indexes.BooleanField(model_attr='skip_address_filter')
   address_components = indexes.MultiValueField(faceted=True)
   channel = indexes.CharField()
+  organization = indexes.IntegerField()
 
   def prepare_job(self, obj):
     job = False
