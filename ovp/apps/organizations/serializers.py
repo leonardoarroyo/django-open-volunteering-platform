@@ -14,7 +14,7 @@ from ovp.apps.organizations.decorators import hide_address
 
 from ovp.apps.projects.models import Project
 
-from ovp.apps.channels.serializers import ChannelRelationshipSerializer
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer, ChannelRetrieveSerializer
 
 from rest_framework import serializers
 from rest_framework import permissions
@@ -96,10 +96,11 @@ class OrganizationSearchSerializer(ChannelRelationshipSerializer):
   address = address_serializers[1]()
   image = UploadedImageSerializer()
   is_bookmarked = serializers.BooleanField()
+  channel = ChannelRetrieveSerializer()
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'is_bookmarked', 'verified', 'rating']
+    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'is_bookmarked', 'verified', 'rating', 'channel']
 
 class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   address = address_serializers[1]()
@@ -109,10 +110,11 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   owner = UserOrganizationRetrieveSerializer()
   is_bookmarked = serializers.SerializerMethodField()
   projects_count = serializers.SerializerMethodField()
+  channel = ChannelRetrieveSerializer()
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count', 'rating']
+    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count', 'rating', 'channel']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
