@@ -123,9 +123,10 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
       self.mailing().sendUpdateEmail(context)
       self.email = context['email']
 
+    no_email = kwargs.pop("no_email", False)
     obj = super(User, self).save(*args, **kwargs)
 
-    if creating:
+    if creating and not no_email:
       self.mailing().sendWelcome()
 
     return obj
