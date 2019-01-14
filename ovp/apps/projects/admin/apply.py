@@ -18,8 +18,10 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
 class ApplyResource(resources.ModelResource):
+  project_id = Field(column_name="ID Projeto")
   project = Field(column_name="Projeto")
   organization = Field(column_name="ONG")
+  volunteer_id = Field(column_name="ID do Voluntario")
   volunteer_name = Field(column_name="Nome do Voluntario")
   volunteer_email = Field(column_name="Email do Voluntario")
   volunteer_phone = Field(column_name="Telefone do Voluntario")
@@ -29,12 +31,14 @@ class ApplyResource(resources.ModelResource):
     model = Apply
     fields = (
       'name',
+      'volunteer_id',
       'volunteer_name',
       'volunteer_phone',
       'volunteer_email',
       'status',
       'date',
       'organization',
+      'project_id',
       'project'
     )
 
@@ -43,6 +47,9 @@ class ApplyResource(resources.ModelResource):
 
   def dehydrate_project(self, apply):
     return apply.project.name
+
+  def dehydrate_project_id(self, apply):
+    return apply.project.id
 
   def dehydrate_address(self, apply):
     if apply.project.address is not None:
@@ -57,6 +64,12 @@ class ApplyResource(resources.ModelResource):
       return apply.user.name
 
     return apply.username
+
+  def dehydrate_volunteer_id(self, apply):
+    if apply.user is not None:
+      return apply.user.id
+
+    return 0
 
   def dehydrate_volunteer_email(self, apply):
     if apply.user is not None:
