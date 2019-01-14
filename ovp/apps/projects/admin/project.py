@@ -8,7 +8,7 @@ from martor.widgets import AdminMartorWidget
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
-from ovp.apps.projects.models import Project, VolunteerRole, Job
+from ovp.apps.projects.models import Project, VolunteerRole, Job, Work
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
@@ -33,14 +33,18 @@ class ProjectResource(resources.ModelResource):
   id = Field(attribute='id', column_name='ID')
   name = Field(attribute='name', column_name='Nome do Projeto')
   description = Field(attribute='description', column_name='Descricao')
+  causes = Field(column_name='Causas')
+  organization_id = Field(column_name='ID ONG')
   organization = Field(column_name='ONG')
   address = Field(column_name='Endereço')
+  owner_id = Field(column_name='ID Responsavel')
   owner_name = Field(column_name='Nome Responsavel')
   owner_email = Field(column_name='Email Responsavel')
   owner_phone = Field(column_name='Telefone Responsavel')
   image = Field(column_name='Imagem')
   start_date = Field(column_name='Data de início')
   end_date = Field(column_name='Data de Encerramento')
+  disponibility = Field(column_name='Presencial ou a distancia')
   
   class Meta:
     model = Project
@@ -48,24 +52,38 @@ class ProjectResource(resources.ModelResource):
       'id',
       'name',
       'applied_count',
+      'owner_id',
       'owner_name',
       'owner_email',
       'owner_phone',
+      'organization_id',
       'organization', 
       'address',
       'image',
       'description',
+      'disponibility',
+      'causes',
       'start_date',
       'end_date',
-      'highlighted',
       'published',
       'closed',
-      'deleted'
     )
 
   def dehydrate_organization(self, project):
     if project.organization:
       return project.organization.name
+
+  def dehydrate_organization_id(self, project):
+    if project.organization:
+      return project.organization.id
+
+  def dehydrate_causes(self, project):
+    if project.causes:
+      return ", ".join([c.name for c in project.causes.all()])
+
+  def dehydrate_owner_id(self, project):
+    if project.owner:
+      return project.owner.id
 
   def dehydrate_owner_name(self, project):
     if project.owner:
@@ -105,6 +123,12 @@ class ProjectResource(resources.ModelResource):
         return project.address.address_line
       if isinstance(project.address, SimpleAddress):
         return project.address.street + ', ' + project.address.number + ' - ' + project.address.neighbourhood + ' - ' + project.address.city
+
+  def dehydrate_disponibility(self, project):
+    try:
+      return "A distância" if project.job.can_be_done_remotely else "Presencial"
+    except:
+      return "A distância" if project.work.can_be_done_remotely else "Presencial"
 
 class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
 
