@@ -128,7 +128,14 @@ class ProjectResource(resources.ModelResource):
     try:
       return "A distância" if project.job.can_be_done_remotely else "Presencial"
     except:
+      pass
+
+    try:
       return "A distância" if project.work.can_be_done_remotely else "Presencial"
+    except:
+      pass
+
+    return None
 
 class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
 
