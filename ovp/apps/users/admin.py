@@ -13,15 +13,35 @@ from import_export.fields import Field
 
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
-class UserResource(resources.ModelResource):  
+class UserResource(resources.ModelResource):
+  id = Field(attribute='id', column_name='ID')
+  name = Field(attribute='name', column_name='Nome')
+  email = Field(attribute='email', column_name='Email')
+  phone = Field(attribute='phone', column_name='Telefone')
+  address = Field(column_name='Endereço')
+  causes = Field(column_name='Causas')
+
   class Meta:
     model = User
     fields = (
       'id',
       'name',
       'email',
-      'phone', 
+      'phone',
+      'address',
+      'causes',
     )
+
+  def dehydrate_causes(self, user):
+    if user.profile:
+      return ", ".join([c.name for c in user.profile.causes.all()])
+
+  def dehydrate_address(self, user):
+    if user.profile is not None:
+      if isinstance(user.profile.address, GoogleAddress):
+        return user.profile.address.address_line
+      if isinstance(user.profile.address, SimpleAddress):
+        return user.profile.address.street + ', ' + user.profile.address.number + ' - ' + user.profile.address.neighbourhood + ' - ' + user.profile.address.city
 
 
 class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocompleteAdmin):
