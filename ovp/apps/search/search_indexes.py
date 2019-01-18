@@ -6,6 +6,18 @@ from ovp.apps.core.models import GoogleAddress, SimpleAddress
 from ovp.apps.users.models import User
 from ovp.apps.users.models.profile import get_profile_model
 from datetime import datetime
+from haystack.fields import EdgeNgramField
+
+"""
+Custom search field
+"""
+class ConfigurableFieldMixin(object):
+    def __init__(self, **kwargs):
+        self.analyzer = kwargs.pop('analyzer', None)
+        super(ConfigurableFieldMixin, self).__init__(**kwargs)
+
+class CustomCharField(ConfigurableFieldMixin, EdgeNgramField):
+    pass
 
 """
 Mixins(used by multiple indexes)
@@ -71,7 +83,7 @@ class AddressComponentsMixin:
 Indexes
 """
 class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, CategoriesMixin, AddressComponentsMixin, DateMixin, ChannelMixin):
-  name = indexes.EdgeNgramField(model_attr='name')
+  name = CustomCharField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   categories = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
@@ -144,7 +156,7 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
 
 
 class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin, ChannelMixin):
-  name = indexes.EdgeNgramField(model_attr='name')
+  name = CustomCharField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
   highlighted = indexes.BooleanField(model_attr='highlighted')
@@ -161,7 +173,7 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
 
 
 class UserIndex(indexes.SearchIndex, indexes.Indexable, AddressComponentsMixin, ChannelMixin):
-  name = indexes.EdgeNgramField(model_attr='name')
+  name = CustomCharField(model_attr='name')
   text = indexes.CharField(document=True)
   causes = indexes.MultiValueField(faceted=True)
   skills = indexes.MultiValueField(faceted=True)
