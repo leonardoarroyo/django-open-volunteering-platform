@@ -41,6 +41,7 @@ class OrganizationResource(resources.ModelResource):
   website = Field(attribute='website', column_name='Site')
   facebook_page = Field(attribute='facebook_page', column_name='Facebook')
   created_project = Field(column_name='Ong já criou ação?')
+  rating = Field(attribute='rating', column_name='Avaliação')
 
   class Meta:
     model = Organization
@@ -61,6 +62,7 @@ class OrganizationResource(resources.ModelResource):
       'deleted',
       'created_date',
       'created_project',
+      'rating',
     )
 
   def dehydrate_address(self, organization):
@@ -165,7 +167,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
 
     ('published', 'deleted', 'verified'),
     ('published_date', 'deleted_date'),
-
+    'rating',
     'address',
     'image',
     'document',
@@ -185,7 +187,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   resource_class = OrganizationResource
 
   list_display = [
-    'id', 'created_date', 'name', 'published', 'highlighted', 'owner__email', 'owner__phone', 'city_state', 'address', 'modified_date', 'deleted'
+    'id', 'created_date', 'name', 'published', 'highlighted', 'owner__email', 'owner__phone', 'city_state', 'address', 'rating', 'modified_date', 'deleted'
   ]
 
   list_filter = [
@@ -200,7 +202,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     'name', 'owner__email', 'address__typed_address', 'description'
   ]
 
-  readonly_fields = ['id', 'created_date', 'modified_date', 'published_date', 'deleted_date']
+  readonly_fields = ['id', 'created_date', 'modified_date', 'published_date', 'deleted_date', 'rating']
 
 
   filter_horizontal = ('causes', 'members')
