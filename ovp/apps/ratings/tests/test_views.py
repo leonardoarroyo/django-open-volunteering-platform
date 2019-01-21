@@ -21,9 +21,9 @@ class RatingViewsTest(TestCase):
     rp2 = RatingParameter.objects.create(slug="project-how-was-it", type=1, object_channel="default")
     rp3 = RatingParameter.objects.create(slug="user-has-shown", type=3, object_channel="default")
 
-    r1 = RatingRequest.objects.create(requested_user=self.user, rated_object=self.user, object_channel="default")
-    r2 = RatingRequest.objects.create(requested_user=self.user, rated_object=self.organization, object_channel="default")
-    r3 = RatingRequest.objects.create(requested_user=self.user, rated_object=self.project, object_channel="default")
+    r1 = RatingRequest.objects.create(requested_user=self.user, rated_object=self.user, initiator_object=self.user, object_channel="default")
+    r2 = RatingRequest.objects.create(requested_user=self.user, rated_object=self.organization, initiator_object=self,user, object_channel="default")
+    r3 = RatingRequest.objects.create(requested_user=self.user, rated_object=self.project, initiator_object=self.user, object_channel="default")
 
     r1.rating_parameters.add(rp3)
     r3.rating_parameters.add(rp1)
