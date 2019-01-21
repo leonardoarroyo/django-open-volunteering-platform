@@ -41,6 +41,7 @@ class OrganizationResource(resources.ModelResource):
   website = Field(attribute='website', column_name='Site')
   facebook_page = Field(attribute='facebook_page', column_name='Facebook')
   created_project = Field(column_name='Ong já criou ação?')
+  benefited_people = Field(attribute='benefited_people', column_name='Pessoas beneficiadas')
   rating = Field(attribute='rating', column_name='Avaliação')
 
   class Meta:
@@ -62,6 +63,7 @@ class OrganizationResource(resources.ModelResource):
       'deleted',
       'created_date',
       'created_project',
+      'benefited_people',
       'rating',
     )
 
@@ -168,6 +170,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     ('published', 'deleted', 'verified'),
     ('published_date', 'deleted_date'),
     'rating',
+    'benefited_people',
     'address',
     'image',
     'document',

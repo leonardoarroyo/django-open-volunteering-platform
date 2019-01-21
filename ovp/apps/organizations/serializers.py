@@ -35,7 +35,7 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'image_id', 'cover', 'hidden_address', 'causes', 'contact_name', 'contact_email', 'contact_phone']
+    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'image_id', 'cover', 'hidden_address', 'causes', 'contact_name', 'contact_email', 'contact_phone', 'benefited_people']
 
   def create(self, validated_data):
     causes = validated_data.pop('causes', [])
@@ -112,7 +112,7 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count', 'rating']
+    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count', 'rating', 'benefited_people']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user

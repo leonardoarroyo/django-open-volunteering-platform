@@ -44,6 +44,7 @@ class ProjectResource(resources.ModelResource):
   image = Field(column_name='Imagem')
   start_date = Field(column_name='Data de início')
   end_date = Field(column_name='Data de Encerramento')
+  benefited_people = Field(attribute='benefited_people', column_name='Pessoas beneficiadas')
   disponibility = Field(column_name='Presencial ou a distancia')
   
   class Meta:
@@ -65,6 +66,7 @@ class ProjectResource(resources.ModelResource):
       'causes',
       'start_date',
       'end_date',
+      'benefited_people',
       'published',
       'closed',
     )
@@ -193,7 +195,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   readonly_fields = [
     'id', 'created_date', 'modified_date', 'published_date', 'closed_date', 'deleted_date', 'applied_count', 'max_applies_from_roles',
-    'owner__name', 'owner__email', 'owner__phone', 'benefited_people', 'can_be_done_remotely'
+    'owner__name', 'owner__email', 'owner__phone', 'can_be_done_remotely'
   ]
 
   raw_id_fields = []
