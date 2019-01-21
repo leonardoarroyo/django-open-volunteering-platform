@@ -7,6 +7,8 @@ from django.utils.translation import ugettext_lazy as _
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import AddressComponent
 
+from ovp.apps.projects.models import Project
+
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.mixins import CountryFilterMixin
@@ -33,10 +35,12 @@ class OrganizationResource(resources.ModelResource):
   owner_email = Field(column_name='Email Responsavel')
   owner_phone = Field(column_name='Telefone Responsavel')
   address = Field(column_name='Endereço')
+  city_state = Field(column_name='Cidade/Estado')
   causes = Field(column_name='Causas')
   image = Field(column_name='Imagem')
   website = Field(attribute='website', column_name='Site')
   facebook_page = Field(attribute='facebook_page', column_name='Facebook')
+  created_project = Field(column_name='Ong já criou ação?')
 
   class Meta:
     model = Organization
@@ -47,6 +51,7 @@ class OrganizationResource(resources.ModelResource):
       'owner_email', 
       'owner_phone',
       'address',
+      'city_state',
       'image',
       'facebook_page',
       'website',
@@ -54,7 +59,8 @@ class OrganizationResource(resources.ModelResource):
       'causes',
       'published',
       'deleted',
-      'created_date'
+      'created_date',
+      'created_project',
     )
 
   def dehydrate_address(self, organization):
@@ -76,6 +82,20 @@ class OrganizationResource(resources.ModelResource):
   def dehydrate_causes(self, organization):
     if organization.causes:
       return ", ".join([c.name for c in organization.causes.all()])
+
+  def dehydrate_created_project(self, organization):
+    projects = Project.objects.filter(organization=organization)
+    if len(projects) > 0:
+      return "Sim"
+
+    return "Não"
+
+  def dehydrate_city_state(self, organization):
+    if organization.address is not None:
+      if isinstance(organization.address, GoogleAddress):
+        return organization.address.city_state
+      if isinstance(organization.address, SimpleAddress):
+        return organization.address.city
 
 
 class StateListFilter(admin.SimpleListFilter):
