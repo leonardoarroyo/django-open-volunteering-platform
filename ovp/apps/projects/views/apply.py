@@ -57,6 +57,8 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
     project = self.get_project_object(**kwargs)
     data['project'] = project.id
 
+    role = data['role'] if 'role' in data else 0
+
     if request.user.is_authenticated():
       user = request.user
       data['username'] = user.name
@@ -67,6 +69,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
     try:
       existing_apply = self.get_queryset(**kwargs).get(email=data['email'], status='unapplied')
       existing_apply.status = "applied"
+      existing_apply.role_id = role
       existing_apply.save()
     except ObjectDoesNotExist:
       apply_sr = self.get_serializer_class()(data=data, context=self.get_serializer_context())
