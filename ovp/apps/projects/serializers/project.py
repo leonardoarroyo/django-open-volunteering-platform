@@ -145,8 +145,14 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     if roles:
       instance.roles.clear()
       for role_data in roles:
+        identifier = role_data.pop("id") if "id" in role_data else None
         role_sr = VolunteerRoleSerializer(data=role_data, context=self.context)
-        role = role_sr.create(role_data)
+        try:
+          role_instance = models.VolunteerRole.objects.get(pk=identifier)
+          role = role_sr.update(role_instance, role_data)
+        except:
+          role = role_sr.create(role_data)
+
         instance.roles.add(role)
 
     if disp:
