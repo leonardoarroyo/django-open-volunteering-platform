@@ -5,6 +5,7 @@ from martor.widgets import AdminMartorWidget
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.organizations.models import Organization
+from ovp.apps.projects.models import Project
 from ovp.apps.core.models import AddressComponent
 
 from ovp.apps.channels.admin import admin_site
@@ -35,6 +36,7 @@ class OrganizationResource(resources.ModelResource):
   address = Field(column_name='Endereço')
   causes = Field(column_name='Causas')
   image = Field(column_name='Imagem')
+  volunteers = Field(column_name='Número de Voluntários')
   website = Field(attribute='website', column_name='Site')
   facebook_page = Field(attribute='facebook_page', column_name='Facebook')
 
@@ -77,6 +79,13 @@ class OrganizationResource(resources.ModelResource):
     if organization.causes:
       return ", ".join([c.name for c in organization.causes.all()])
 
+  def dehydrate_volunteers(self, organization):
+    project = Project.objects.filter(organization=organization)
+    total = 0
+    for p in project:
+      total += p.applied_count
+
+    return total
 
 class StateListFilter(admin.SimpleListFilter):
     title = 'state'
