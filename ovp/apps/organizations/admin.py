@@ -8,6 +8,8 @@ from ovp.apps.organizations.models import Organization
 from ovp.apps.projects.models import Project
 from ovp.apps.core.models import AddressComponent
 
+from ovp.apps.projects.models import Project
+
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.mixins import CountryFilterMixin
@@ -34,11 +36,15 @@ class OrganizationResource(resources.ModelResource):
   owner_email = Field(column_name='Email Responsavel')
   owner_phone = Field(column_name='Telefone Responsavel')
   address = Field(column_name='Endereço')
+  city_state = Field(column_name='Cidade/Estado')
   causes = Field(column_name='Causas')
   image = Field(column_name='Imagem')
   volunteers = Field(column_name='Número de Voluntários')
   website = Field(attribute='website', column_name='Site')
   facebook_page = Field(attribute='facebook_page', column_name='Facebook')
+  created_project = Field(column_name='Ong já criou ação?')
+  benefited_people = Field(attribute='benefited_people', column_name='Pessoas beneficiadas')
+  rating = Field(attribute='rating', column_name='Avaliação')
 
   class Meta:
     model = Organization
@@ -49,6 +55,7 @@ class OrganizationResource(resources.ModelResource):
       'owner_email', 
       'owner_phone',
       'address',
+      'city_state',
       'image',
       'facebook_page',
       'website',
@@ -56,7 +63,10 @@ class OrganizationResource(resources.ModelResource):
       'causes',
       'published',
       'deleted',
-      'created_date'
+      'created_date',
+      'created_project',
+      'benefited_people',
+      'rating',
     )
 
   def dehydrate_address(self, organization):
@@ -86,6 +96,20 @@ class OrganizationResource(resources.ModelResource):
       total += p.applied_count
 
     return total
+
+  def dehydrate_created_project(self, organization):
+    projects = Project.objects.filter(organization=organization)
+    if len(projects) > 0:
+      return "Sim"
+
+    return "Não"
+
+  def dehydrate_city_state(self, organization):
+    if organization.address is not None:
+      if isinstance(organization.address, GoogleAddress):
+        return organization.address.city_state
+      if isinstance(organization.address, SimpleAddress):
+        return organization.address.city
 
 class StateListFilter(admin.SimpleListFilter):
     title = 'state'
@@ -154,7 +178,8 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
 
     ('published', 'deleted', 'verified'),
     ('published_date', 'deleted_date'),
-
+    'rating',
+    'benefited_people',
     'address',
     'image',
     'document',
@@ -174,7 +199,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   resource_class = OrganizationResource
 
   list_display = [
-    'id', 'created_date', 'name', 'published', 'highlighted', 'owner__email', 'owner__phone', 'city_state', 'address', 'modified_date', 'deleted'
+    'id', 'created_date', 'name', 'published', 'highlighted', 'owner__email', 'owner__phone', 'city_state', 'address', 'rating', 'modified_date', 'deleted'
   ]
 
   list_filter = [
@@ -189,7 +214,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     'name', 'owner__email', 'address__typed_address', 'description'
   ]
 
-  readonly_fields = ['id', 'created_date', 'modified_date', 'published_date', 'deleted_date']
+  readonly_fields = ['id', 'created_date', 'modified_date', 'published_date', 'deleted_date', 'rating']
 
 
   filter_horizontal = ('causes', 'members')

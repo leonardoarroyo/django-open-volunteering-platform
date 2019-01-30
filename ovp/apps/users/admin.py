@@ -19,7 +19,9 @@ class UserResource(resources.ModelResource):
   email = Field(attribute='email', column_name='Email')
   phone = Field(attribute='phone', column_name='Telefone')
   address = Field(column_name='Endereço')
+  city_state = Field(column_name='Cidade/Estado')
   causes = Field(column_name='Causas')
+  joined_date = Field(attribute='joined_date', column_name='Data do cadastro')
 
   class Meta:
     model = User
@@ -29,7 +31,9 @@ class UserResource(resources.ModelResource):
       'email',
       'phone',
       'address',
+      'city_state',
       'causes',
+      'joined_date',
     )
 
   def dehydrate_causes(self, user):
@@ -42,6 +46,13 @@ class UserResource(resources.ModelResource):
         return user.profile.address.address_line
       if isinstance(user.profile.address, SimpleAddress):
         return user.profile.address.street + ', ' + user.profile.address.number + ' - ' + user.profile.address.neighbourhood + ' - ' + user.profile.address.city
+
+  def dehydrate_city_state(self, user):
+    if user.profile is not None:
+      if isinstance(user.profile.address, GoogleAddress):
+        return user.profile.address.city_state
+      if isinstance(user.profile.address, SimpleAddress):
+        return user.profile.address.city
 
 
 class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocompleteAdmin):

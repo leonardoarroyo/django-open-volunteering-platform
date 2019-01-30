@@ -62,10 +62,10 @@ class Apply(ChannelRelationship):
 
     if self.role:
       if self.status == 'applied' or self.status == 'confirmed-volunteer':
-        self.role.applied_count = self.role.applied_count + 1
+        self.role.applied_count += 1
         self.role.save()
       else:
-        self.role.applied_count = self.role.applied_count - 1
+        self.role.applied_count -= 1 if self.role.applied_count > 0 else 0
         self.role.save()
 
     # Updating project applied_count

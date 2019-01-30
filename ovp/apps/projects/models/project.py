@@ -72,6 +72,14 @@ class Project(ChannelRelationship, RatedModelMixin):
   details = models.TextField(_('Details'), max_length=3000)
   description = models.TextField(_('Short description'), max_length=160, blank=True, null=True)
 
+  """
+  Set this property to use in haystack template
+  """
+  @property
+  def roles_title(self):
+    return [role.name for role in self.roles.all()]
+
+
   def mailing(self, async_mail=None):
     return emails.ProjectMail(self, async_mail)
 
