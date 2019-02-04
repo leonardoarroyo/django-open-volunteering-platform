@@ -100,7 +100,6 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     # Roles
     for role_data in roles:
-      identifier = role_data.pop("id") if "id" in role_data else None
       role_sr = VolunteerRoleSerializer(data=role_data, context=self.context)
       role = role_sr.create(role_data)
       project.roles.add(role)
@@ -191,7 +190,6 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     if categories:
       instance.categories.clear()
       for category in categories:
-        print(category)
         c = models.Category.objects.get(pk=category['id'])
         instance.categories.add(c)
 
