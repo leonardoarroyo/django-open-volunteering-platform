@@ -199,7 +199,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   resource_class = OrganizationResource
 
   list_display = [
-    'id', 'created_date', 'name', 'published', 'highlighted', 'owner__email', 'owner__phone', 'city_state', 'address', 'rating', 'modified_date', 'deleted'
+    'id', 'created_date', 'name', 'published', 'highlighted', 'owner__email', 'owner__phone', 'city_state', 'volunteers', 'address', 'rating', 'modified_date', 'deleted'
   ]
 
   list_filter = [
@@ -246,6 +246,14 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
       return _('None')
   owner__phone.short_description = _("Owner's Phone")
   owner__phone.admin_order_field = 'owner__phone'
+
+  def volunteers(self, obj):
+    project = Project.objects.filter(organization=obj)
+    total = 0
+    for p in project:
+      total += p.applied_count
+
+    return total
 
   def city_state(self, obj):
     if obj.address is not None:
