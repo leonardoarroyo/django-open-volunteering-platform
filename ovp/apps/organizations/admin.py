@@ -23,6 +23,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
 from jet.filters import RelatedFieldAjaxListFilter
+from jet.filters import DateRangeFilter
 
 # This file contains some "pragma: no cover" because the admin
 # class is not covered by the test suite
@@ -203,7 +204,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   ]
 
   list_filter = [
-    'created_date', 'modified_date', 'highlighted', 'published', 'deleted', StateListFilter, CityListFilter
+    ('created_date', DateRangeFilter), ('modified_date', DateRangeFilter), 'highlighted', 'published', 'deleted', StateListFilter, CityListFilter
   ]
 
   list_editable = [
