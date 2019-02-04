@@ -7,7 +7,7 @@ from ovp.apps.projects.serializers.job import JobSerializer
 from ovp.apps.projects.serializers.work import WorkSerializer
 from ovp.apps.projects.serializers.role import VolunteerRoleSerializer
 from ovp.apps.projects.serializers.apply import ProjectAppliesSerializer
-from ovp.apps.projects.serializers.category import CategoryRetrieveSerializer
+from ovp.apps.projects.serializers.category import CategoryRetrieveSerializer, CategoryAssociationSerializer
 from ovp.apps.core.serializers.commentary import CommentaryRetrieveSerializer
 
 from ovp.apps.core import models as core_models
@@ -63,6 +63,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   roles = VolunteerRoleSerializer(many=True, required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
   skills = SkillAssociationSerializer(many=True, required=False)
+  categories = CategoryAssociationSerializer(many=True, required=False)
   image = UploadedImageSerializer(read_only=True)
   image_id = serializers.IntegerField(required=False)
   organization = OrganizationRetrieveSerializer(read_only=True)
@@ -71,7 +72,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'type', 'item_id', 'benefited_people', 'partnership']
+    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'type', 'item_id', 'benefited_people', 'partnership', 'categories']
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date']
 
   def validate(self, data):
@@ -81,6 +82,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
   def create(self, validated_data):
     causes = validated_data.pop('causes', [])
+    categories = validated_data.pop('categories', [])
     skills = validated_data.pop('skills', [])
 
     # Address
@@ -98,6 +100,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     # Roles
     for role_data in roles:
+      identifier = role_data.pop("id") if "id" in role_data else None
       role_sr = VolunteerRoleSerializer(data=role_data, context=self.context)
       role = role_sr.create(role_data)
       project.roles.add(role)
@@ -120,6 +123,11 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
       c = core_models.Cause.objects.get(pk=cause['id'])
       project.causes.add(c)
 
+    # Associate categories
+    for category in categories:
+      c = models.Category.objects.get(pk=category['id'])
+      project.categories.add(c)
+
     # Associate skills
     for skill in skills:
       s = core_models.Skill.objects.get(pk=skill['id'])
@@ -130,6 +138,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   def update(self, instance, validated_data):
     causes = validated_data.pop('causes', [])
     skills = validated_data.pop('skills', [])
+    categories = validated_data.pop('categories', [])
     address_data = validated_data.pop('address', None)
     roles = validated_data.pop('roles', None)
     disp = validated_data.pop('disponibility', None)
@@ -177,6 +186,14 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
       for cause in causes:
         c = core_models.Cause.objects.get(pk=cause['id'])
         instance.causes.add(c)
+
+    # Associate categories
+    if categories:
+      instance.categories.clear()
+      for category in categories:
+        print(category)
+        c = models.Category.objects.get(pk=category['id'])
+        instance.categories.add(c)
 
     # Associate skills
     if skills:
