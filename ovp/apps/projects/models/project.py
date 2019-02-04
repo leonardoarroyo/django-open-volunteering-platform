@@ -57,7 +57,7 @@ class Project(ChannelRelationship, RatedModelMixin):
   crowdfunding = models.BooleanField(_('Crowdfunding'), default=False)
   skip_address_filter = models.BooleanField(_('Skip address filter'), default=False)
   type = models.FloatField(_('Project Type'), choices=types, default=1, max_length=10)
-  benefited_people = models.IntegerField(blank=False, null=False, default=0)
+  benefited_people = models.IntegerField(blank=True, null=True, default=0)
   partnership = models.BooleanField(_('Partnership'), default=False)
 
   # Date fields
