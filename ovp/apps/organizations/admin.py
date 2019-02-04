@@ -212,7 +212,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   ]
 
   search_fields = [
-    'name', 'owner__email', 'address__typed_address', 'description'
+    'name', 'owner__email', 'description'
   ]
 
   readonly_fields = ['id', 'created_date', 'modified_date', 'published_date', 'deleted_date', 'rating']
@@ -258,7 +258,10 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
 
   def city_state(self, obj):
     if obj.address is not None:
-      return obj.address.city_state
+      if isinstance(obj.address, GoogleAddress):
+        return obj.address.city_state
+      if isinstance(obj.address, SimpleAddress):
+        return obj.address.city
 
   def get_queryset(self, request): #pragma: no cover
     qs = super(OrganizationAdmin, self).get_queryset(request)
