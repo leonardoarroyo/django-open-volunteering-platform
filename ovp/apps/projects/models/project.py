@@ -34,6 +34,7 @@ class Project(ChannelRelationship, RatedModelMixin):
   skills = models.ManyToManyField('core.Skill', verbose_name=_('skills'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'))
   commentaries = models.ManyToManyField('core.Commentary', verbose_name=_('commentaries'))
+  galleries = models.ManyToManyField('gallery.Gallery', verbose_name=_('galleries'))
 
   # Relationships
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)

@@ -10,6 +10,7 @@ import ovp.apps.search.urls
 import ovp.apps.faq.urls
 import ovp.apps.catalogue.urls
 import ovp.apps.ratings.urls
+import ovp.apps.gallery.urls
 
 urlpatterns = [
   # Admin
@@ -43,6 +44,9 @@ urlpatterns = [
 
   # Catalogue
   url(r'^', include(ovp.apps.ratings.urls)),
+
+  # Gallery
+  url(r'^', include(ovp.apps.gallery.urls)),
 ]
 
 # Test urls
