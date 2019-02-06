@@ -155,3 +155,7 @@ class RatingCreateSerializer(ChannelRelationshipSerializer):
     for answer in data["answers"]:
       if answer["parameter_slug"] not in request_parameter_slugs:
         raise ValidationError("Invalid parameter '{}' for request.".format(answer["parameter_slug"]))
+
+
+class MultipleRatingCreateSerializer(Serializer):
+  ratings = RatingCreateSerializer(many=True)

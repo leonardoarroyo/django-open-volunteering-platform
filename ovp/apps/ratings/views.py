@@ -51,6 +51,22 @@ class RatingRequestResourceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMi
     serializer.save()
     return response.Response({"success": True}, status=200)
 
+  @decorators.action(methods=["POST"], detail=False)
+  def rate_multiple(self, request, *args, **kwargs):
+    ctx = self.get_serializer_context()
+    ctx['rating_request'] = self.get_object()
+
+    # Owner
+    request.data['owner'] = request.user.pk
+
+    # Request
+    request.data['request'] = ctx['rating_request'].pk
+
+    serializer = self.get_serializer_class()(data=request.data, context=ctx)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return response.Response({"success": True}, status=200)
+
   def get_queryset(self, *args, **kwargs):
     qs = models.RatingRequest.objects.filter(channel__slug=self.request.channel, requested_user = self.request.user, deleted_date=None, rating=None)
 
@@ -68,6 +84,9 @@ class RatingRequestResourceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMi
   def get_serializer_class(self, *args, **kwargs):
     if self.action == 'rate':
       return serializers.RatingCreateSerializer
+
+    if self.action == 'rate_multiple':
+      return serializers.MultipleRatingCreateSerializer
 
     if self.action == 'projects_with_unrated_users':
       return ProjectManageableRetrieveSerializer

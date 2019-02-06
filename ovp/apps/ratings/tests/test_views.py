@@ -22,7 +22,7 @@ class RatingViewsTest(TestCase):
     rp3 = RatingParameter.objects.create(slug="user-has-shown", type=3, object_channel="default")
 
     r1 = RatingRequest.objects.create(requested_user=self.user, rated_object=self.user, initiator_object=self.user, object_channel="default")
-    r2 = RatingRequest.objects.create(requested_user=self.user, rated_object=self.organization, initiator_object=self,user, object_channel="default")
+    r2 = RatingRequest.objects.create(requested_user=self.user, rated_object=self.organization, initiator_object=self.user, object_channel="default")
     r3 = RatingRequest.objects.create(requested_user=self.user, rated_object=self.project, initiator_object=self.user, object_channel="default")
 
     r1.rating_parameters.add(rp3)
@@ -34,11 +34,13 @@ class RatingViewsTest(TestCase):
 
   def test_current_user_returns_rating_requests(self):
     response = self.client.get(reverse("user-current-user"), {}, format="json")
-    self.assertEqual(response.data["rating_requests_count"], 3)
+    self.assertEqual(response.data["rating_requests_user_count"], 1)
+    self.assertEqual(response.data["rating_requests_project_count"], 1)
 
     self.client.force_authenticate(self.user2)
     response = self.client.get(reverse("user-current-user"), {}, format="json")
-    self.assertEqual(response.data["rating_requests_count"], 0)
+    self.assertEqual(response.data["rating_requests_user_count"], 0)
+    self.assertEqual(response.data["rating_requests_project_count"], 0)
 
   def test_retrieve_rating_requests(self):
     response = APIClient().get(reverse("rating-request-list"), {}, format="json")
@@ -52,7 +54,8 @@ class RatingViewsTest(TestCase):
 
     self.client.force_authenticate(self.user2)
     response = self.client.get(reverse("user-current-user"), {}, format="json")
-    self.assertEqual(response.data["rating_requests_count"], 0)
+    self.assertEqual(response.data["rating_requests_user_count"], 0)
+    self.assertEqual(response.data["rating_requests_project_count"], 0)
 
   def test_retrieve_rating_request_parameters(self):
     response = self.client.get(reverse("rating-request-list"), {}, format="json")
@@ -137,13 +140,50 @@ class RatingViewsTest(TestCase):
     self.assertEqual(Rating.objects.first().answers.last().parameter.slug, "project-how-was-it")
     self.assertEqual(Rating.objects.first().answers.last().value_qualitative, "Minha resposta :-)")
 
+  def test_can_rate_multiple(self):
+    data = {
+      "ratings": [
+        {
+          "uuid": "",
+          "rating": {
+            "answers": [
+              {
+                "parameter_slug": "project-score",
+                "value_quantitative": 1
+              },
+              {
+                "parameter_slug": "project-how-was-it",
+                "value_qualitative": "Minha resposta :-)"
+              }
+            ]
+          }
+        },
+        {
+          "uuid": "",
+          "rating": {
+            "answers": [
+              {
+                "parameter_slug": "project-score",
+                "value_quantitative": 1
+              },
+              {
+                "parameter_slug": "project-how-was-it",
+                "value_qualitative": "Minha resposta :-)"
+              }
+            ]
+          }
+        },
+      ]
+    }
+    response = self.client.post(reverse("rating-request-rate-multiple"), data, format="json")
+    self.assertEqual(response.status_code, 200)
+
   def test_cant_re_rate(self):
     self.test_can_rate()
     data = {"answers": [{"parameter_slug": "project-score", "value_quantitative": 1}, {"parameter_slug": "project-how-was-it", "value_qualitative": "Minha resposta :-)"}]}
     uuid = str(RatingRequest.objects.last().uuid)
     response = self.client.post(reverse("rating-request-rate", [uuid]), data, format="json")
-    self.assertEqual(response.status_code, 400)
-    self.assertEqual(response.json()["non_field_errors"][0], "This request has already been rated.")
+    self.assertEqual(response.status_code, 404)
 
   def test_quantitative(self):
     data = {
