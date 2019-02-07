@@ -12,6 +12,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
+from jet.filters import DateRangeFilter
 
 class UserResource(resources.ModelResource):
   id = Field(attribute='id', column_name='ID')
@@ -69,7 +70,7 @@ class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocomplet
   ]
 
   list_filter = [
-    'is_active', 'is_staff', 'last_login', 'joined_date'
+    'is_active', 'is_staff', ('joined_date', DateRangeFilter)
   ]
 
   list_editable = [

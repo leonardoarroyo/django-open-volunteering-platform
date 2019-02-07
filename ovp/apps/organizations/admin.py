@@ -5,6 +5,7 @@ from martor.widgets import AdminMartorWidget
 from django.utils.translation import ugettext_lazy as _
 
 from ovp.apps.organizations.models import Organization
+from ovp.apps.projects.models import Project
 from ovp.apps.core.models import AddressComponent
 
 from ovp.apps.projects.models import Project
@@ -22,6 +23,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
 from jet.filters import RelatedFieldAjaxListFilter
+from jet.filters import DateRangeFilter
 
 # This file contains some "pragma: no cover" because the admin
 # class is not covered by the test suite
@@ -38,6 +40,7 @@ class OrganizationResource(resources.ModelResource):
   city_state = Field(column_name='Cidade/Estado')
   causes = Field(column_name='Causas')
   image = Field(column_name='Imagem')
+  volunteers = Field(column_name='Número de Voluntários')
   website = Field(attribute='website', column_name='Site')
   facebook_page = Field(attribute='facebook_page', column_name='Facebook')
   created_project = Field(column_name='Ong já criou ação?')
@@ -87,6 +90,14 @@ class OrganizationResource(resources.ModelResource):
     if organization.causes:
       return ", ".join([c.name for c in organization.causes.all()])
 
+  def dehydrate_volunteers(self, organization):
+    project = Project.objects.filter(organization=organization)
+    total = 0
+    for p in project:
+      total += p.applied_count
+
+    return total
+
   def dehydrate_created_project(self, organization):
     projects = Project.objects.filter(organization=organization)
     if len(projects) > 0:
@@ -100,7 +111,6 @@ class OrganizationResource(resources.ModelResource):
         return organization.address.city_state
       if isinstance(organization.address, SimpleAddress):
         return organization.address.city
-
 
 class StateListFilter(admin.SimpleListFilter):
     title = 'state'
@@ -190,11 +200,11 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   resource_class = OrganizationResource
 
   list_display = [
-    'id', 'created_date', 'name', 'published', 'highlighted', 'owner__email', 'owner__phone', 'city_state', 'address', 'rating', 'modified_date', 'deleted'
+    'id', 'created_date', 'name', 'published', 'highlighted', 'owner__email', 'owner__phone', 'city_state', 'volunteers', 'address', 'rating', 'modified_date', 'deleted'
   ]
 
   list_filter = [
-    'created_date', 'modified_date', 'highlighted', 'published', 'deleted', StateListFilter, CityListFilter
+    ('created_date', DateRangeFilter), ('modified_date', DateRangeFilter), 'highlighted', 'published', 'deleted', StateListFilter, CityListFilter
   ]
 
   list_editable = [
@@ -202,7 +212,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   ]
 
   search_fields = [
-    'name', 'owner__email', 'address__typed_address', 'description'
+    'name', 'owner__email', 'description'
   ]
 
   readonly_fields = ['id', 'created_date', 'modified_date', 'published_date', 'deleted_date', 'rating']
@@ -238,9 +248,20 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   owner__phone.short_description = _("Owner's Phone")
   owner__phone.admin_order_field = 'owner__phone'
 
+  def volunteers(self, obj):
+    project = Project.objects.filter(organization=obj)
+    total = 0
+    for p in project:
+      total += p.applied_count
+
+    return total
+
   def city_state(self, obj):
     if obj.address is not None:
-      return obj.address.city_state
+      if isinstance(obj.address, GoogleAddress):
+        return obj.address.city_state
+      if isinstance(obj.address, SimpleAddress):
+        return obj.address.city
 
   def get_queryset(self, request): #pragma: no cover
     qs = super(OrganizationAdmin, self).get_queryset(request)

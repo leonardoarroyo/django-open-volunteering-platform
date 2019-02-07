@@ -24,6 +24,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
 from jet.filters import RelatedFieldAjaxListFilter
+from jet.filters import DateRangeFilter
 
 class VolunteerRoleInline(TabularInline):
   model = VolunteerRole
@@ -181,7 +182,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     ]
 
   list_filter = [
-    'created_date', # fix: PONTUAL OU RECORRENTE
+    ('created_date', DateRangeFilter), # fix: PONTUAL OU RECORRENTE
     'highlighted', 'published', 'closed', 'deleted', StateListFilter, CityListFilter
   ]
 
