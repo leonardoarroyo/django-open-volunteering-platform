@@ -74,6 +74,6 @@ class DateDeltaFilter(Filter):
     return  "{} {} days, {} weeks, {} months, {} years".format(self.get_operator_display(), self.days, self.weeks, self.months, self.years)
 
   def get_filter_kwargs(self):
-    k = "job__start_date__{}".format(self.operator)
+    k = "published_date__{}".format(self.operator)
     v = timezone.now() + relativedelta(days=self.days, weeks=self.weeks, months=self.months, years=self.years)
     return {k: v}
