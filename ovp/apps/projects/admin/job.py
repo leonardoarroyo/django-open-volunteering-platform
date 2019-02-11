@@ -9,6 +9,7 @@ from ovp.apps.projects.models import Job, JobDate
 
 from .jobdate import JobDateAdmin, JobDateInline
 
+from ovp.apps.core.mixins import CountryFilterMixin
 
 class JobInline(TabularInline):
   exclude = ['title', 'channel']
@@ -24,7 +25,7 @@ class JobInline(TabularInline):
   edit_dates_link.allow_tags = True
 
 
-class JobAdmin(ChannelModelAdmin):
+class JobAdmin(ChannelModelAdmin, CountryFilterMixin):
   list_display = ['id', 'project', 'start_date', 'end_date']
   readonly_fields = ['start_date', 'end_date']
   search_fields = ['id', 'project__name', 'project__nonprofit__name']
@@ -33,5 +34,9 @@ class JobAdmin(ChannelModelAdmin):
   inlines = (
     JobDateInline,
   )
+
+  def get_queryset(self, request):
+    qs = super(JobAdmin, self).get_queryset(request)
+    return self.filter_by_country(request, qs, 'project__address')
 
 admin_site.register(Job, JobAdmin)

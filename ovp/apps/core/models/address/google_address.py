@@ -107,8 +107,10 @@ class GoogleAddress(ChannelRelationship):
   def __str__(self):
     if self.address_line:
       return self.address_line
+    elif self.typed_address:
+      return self.typed_address
 
-    return self.typed_address
+    return ""
 
   class Meta:
     app_label = 'core'
