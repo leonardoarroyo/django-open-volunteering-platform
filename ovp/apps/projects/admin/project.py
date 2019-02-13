@@ -189,7 +189,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   list_filter = [
     ('created_date', DateRangeFilter), # fix: PONTUAL OU RECORRENTE
-    'highlighted', 'published', 'closed', 'deleted', StateListFilter, CityListFilter
+    'highlighted', 'published', 'closed', 'deleted', StateListFilter, CityListFilter, 'categories'
   ]
 
   list_editable = [
