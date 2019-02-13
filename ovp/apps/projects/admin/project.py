@@ -47,6 +47,7 @@ class ProjectResource(resources.ModelResource):
   end_date = Field(column_name='Data de Encerramento')
   benefited_people = Field(attribute='benefited_people', column_name='Pessoas beneficiadas')
   disponibility = Field(column_name='Presencial ou a distancia')
+  bookmark = Field(column_name='Número de curtidas')
   
   class Meta:
     model = Project
@@ -70,6 +71,7 @@ class ProjectResource(resources.ModelResource):
       'benefited_people',
       'published',
       'closed',
+      'bookmark',
     )
 
   def dehydrate_organization(self, project):
@@ -139,6 +141,10 @@ class ProjectResource(resources.ModelResource):
       pass
 
     return None
+
+  def dehydrate_bookmark(self, project):
+    return project.bookmark_count()
+
 
 class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
 
