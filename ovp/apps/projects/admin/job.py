@@ -27,7 +27,6 @@ class JobInline(TabularInline):
 
 class JobAdmin(ChannelModelAdmin, CountryFilterMixin):
   list_display = ['id', 'project', 'start_date', 'end_date']
-  readonly_fields = ['start_date', 'end_date']
   search_fields = ['id', 'project__name', 'project__nonprofit__name']
   exclude = ['channel']
 
