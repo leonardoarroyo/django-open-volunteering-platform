@@ -120,7 +120,8 @@ class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
     ('canceled_date', 'date'),
     'email',
     'phone',
-    'username'
+    'username',
+    'document'
   ]
 
   list_display = [
