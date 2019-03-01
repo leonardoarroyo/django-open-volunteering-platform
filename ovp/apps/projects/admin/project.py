@@ -165,7 +165,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
     ('applied_count', 'benefited_people'),
 
-    ('can_be_done_remotely', 'skip_address_filter'),
+    ('can_be_done_remotely', 'skip_address_filter', 'chat_enabled'),
 
     ('published', 'closed', 'deleted'),
     ('published_date', 'closed_date', 'deleted_date'),
