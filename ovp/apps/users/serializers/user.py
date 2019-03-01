@@ -137,10 +137,15 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
   rating_requests_user_count = serializers.SerializerMethodField()
   rating_requests_project_count = serializers.SerializerMethodField()
   rating_requests_projects_with_unrated_users = serializers.SerializerMethodField()
+  chat_enabled = serializers.SerializerMethodField()
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_user_count', 'rating_requests_project_count', 'rating_requests_projects_with_unrated_users', 'is_subscribed_to_newsletter']
+    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_user_count', 'rating_requests_project_count', 'rating_requests_projects_with_unrated_users', 'is_subscribed_to_newsletter', 'chat_enabled']
+
+  def get_chat_enabled(self, obj):
+    applies = Apply.objects.filter(project__published=True, project__chat_enabled=True, user=obj)
+    return applies.count() > 0
 
   def get_rating_requests_user_count(self, obj):
     return obj.rating_requests.filter(deleted_date=None, rating=None, content_type__model="user").count()
