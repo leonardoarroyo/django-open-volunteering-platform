@@ -59,6 +59,7 @@ class Project(ChannelRelationship, RatedModelMixin):
   type = models.FloatField(_('Project Type'), choices=types, default=1, max_length=10)
   benefited_people = models.IntegerField(blank=True, null=True, default=0)
   partnership = models.BooleanField(_('Partnership'), default=False)
+  chat_enabled = models.BooleanField(_('Chat Enabled'), default=False)
 
   # Date fields
   published_date = models.DateTimeField(_("Published date"), blank=True, null=True)
