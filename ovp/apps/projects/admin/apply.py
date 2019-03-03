@@ -120,7 +120,8 @@ class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
     ('canceled_date', 'date'),
     'email',
     'phone',
-    'username'
+    'username',
+    'document'
   ]
 
   list_display = [
@@ -147,7 +148,7 @@ class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
     if obj.user:
       return obj.user.name
     else:
-      return _('None')
+      return obj.username
 
   user__name.short_description = _('Name')
   user__name.admin_order_field = 'user__name'
@@ -156,7 +157,7 @@ class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
     if obj.user:
       return obj.user.email
     else:
-      return _('None')
+      return obj.email
   user__email.short_description = _('E-mail')
   user__email.admin_order_field = 'user__email'
 
@@ -164,7 +165,7 @@ class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
     if obj.user:
       return obj.user.phone
     else:
-      return _('None')
+      return obj.phone
   user__phone.short_description = _('Phone')
   user__phone.admin_order_field = 'user__phone'
 

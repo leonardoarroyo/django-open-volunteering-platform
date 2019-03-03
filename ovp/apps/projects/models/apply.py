@@ -24,6 +24,7 @@ class Apply(ChannelRelationship):
   username = models.CharField(_('name'), max_length=200, blank=True, null=True)
   email = models.CharField(_('email'), max_length=190, blank=True, null=True)
   phone = models.CharField(_('phone'), max_length=30, blank=True, null=True)
+  document = models.CharField(_('Documento'), max_length=100, blank=True, null=True)
 
   def __init__(self, *args, **kwargs):
     super(Apply, self).__init__(*args, **kwargs)
@@ -34,7 +35,6 @@ class Apply(ChannelRelationship):
 
   def save(self, *args, **kwargs):
     creating = False
-
     if self.pk == None:
       # Object being created
       creating = True
@@ -49,11 +49,11 @@ class Apply(ChannelRelationship):
     return_data = super(Apply, self).save(*args, **kwargs)
 
     # Emails
-    if creating:
+    if creating and self.project.closed == False:
       self.mailing().sendAppliedToVolunteer({'apply': self})
       self.mailing().sendAppliedToOwner({'apply': self})
     else:
-      if self.__original_status != self.status and self.status == "unapplied":
+      if self.__original_status != self.status and self.status == "unapplied" and self.project.closed == False:
         self.mailing().sendUnappliedToVolunteer({'apply': self})
         self.mailing().sendUnappliedToOwner({'apply': self})
 
