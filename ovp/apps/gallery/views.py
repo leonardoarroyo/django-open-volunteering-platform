@@ -1,7 +1,8 @@
 from django.utils import timezone
 
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
-from ovp.apps.gallery.serializers import GallerySerializer
+from ovp.apps.gallery.serializers import (GalleryRetrieveSerializer,
+                                          GalleryCreateUpdateSerializer)
 from ovp.apps.gallery.models import Gallery
 from ovp.apps.gallery.permissions import GalleryEditAllowed
 
@@ -19,7 +20,12 @@ class GalleryResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
     return Gallery.objects.filter(deleted=False)
 
   def get_serializer_class(self, *args, **kwargs):
-    return GallerySerializer
+    if self.action == "retrieve":
+      return GalleryRetrieveSerializer
+    if self.action == "create":
+      return GalleryCreateUpdateSerializer
+
+    return GalleryRetrieveSerializer
 
   def get_permissions(self):
     if self.action == 'create':
