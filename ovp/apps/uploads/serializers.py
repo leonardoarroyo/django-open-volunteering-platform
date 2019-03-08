@@ -43,7 +43,8 @@ class UploadedImageAssociationSerializer(ChannelRelationshipSerializer):
   id = serializers.IntegerField()
 
   class Meta:
-    fields = ['id']
+    fields = ['id', 'image_small', 'image_medium', 'image_large']
+    read_only_fields = ('image_small', 'image_medium', 'image_large')
     model = UploadedImage
 
 

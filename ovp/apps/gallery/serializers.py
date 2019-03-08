@@ -37,6 +37,18 @@ class GalleryCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     return gallery
 
+  def update(self, instance, validated_data):
+    images = validated_data.pop('images', [])
+
+    # Associate images
+    if images:
+      instance.images.clear()
+      for image in images:
+        i = UploadedImage.objects.get(pk=image['id'])
+        instance.images.add(i)
+
+    return super(GalleryCreateUpdateSerializer, self).update(instance, validated_data)
+
 
 class AssociateWithModel(serializers.Serializer):
   model_label = serializers.CharField()

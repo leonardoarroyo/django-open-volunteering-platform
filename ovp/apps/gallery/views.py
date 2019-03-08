@@ -24,6 +24,8 @@ class GalleryResourceViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
       return GalleryRetrieveSerializer
     if self.action == "create":
       return GalleryCreateUpdateSerializer
+    if self.action == 'partial_update':
+      return GalleryCreateUpdateSerializer
 
     return GalleryRetrieveSerializer
 
