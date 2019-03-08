@@ -14,6 +14,7 @@ class Gallery(ChannelRelationship):
   name = models.CharField(max_length=100)
   description = models.TextField(max_length=3000)
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
+  images = models.ManyToManyField('uploads.UploadedImage')
 
   # Meta
   deleted = models.BooleanField(_("Deleted"), default=False)
