@@ -24,7 +24,8 @@ from ovp.apps.organizations.models import Organization
 from ovp.apps.uploads.serializers import UploadedImageSerializer
 
 from ovp.apps.gallery.models import Gallery
-from ovp.apps.gallery.serializers import GalleryAssociationSerializer
+from ovp.apps.gallery.serializers import (GalleryAssociationSerializer,
+                                          GalleryRetrieveSerializer)
 
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 from ovp.apps.channels.cache import get_channel_setting
@@ -207,6 +208,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   applies = ProjectAppliesSerializer(many=True, source="active_apply_set")
   causes = FullCauseSerializer(many=True)
   skills = SkillSerializer(many=True)
+  galleries = GalleryRetrieveSerializer(many=True)
   categories = CategoryRetrieveSerializer(many=True)
   commentaries = CommentaryRetrieveSerializer(many=True)
   is_bookmarked = serializers.SerializerMethodField()
@@ -215,7 +217,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'galleries']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
