@@ -23,6 +23,9 @@ from ovp.apps.organizations.models import Organization
 
 from ovp.apps.uploads.serializers import UploadedImageSerializer
 
+from ovp.apps.gallery.models import Gallery
+from ovp.apps.gallery.serializers import GalleryAssociationSerializer
+
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 from ovp.apps.channels.cache import get_channel_setting
 
@@ -63,6 +66,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   roles = VolunteerRoleSerializer(many=True, required=False)
   causes = CauseAssociationSerializer(many=True, required=False)
   skills = SkillAssociationSerializer(many=True, required=False)
+  galleries = GalleryAssociationSerializer(many=True, required=False)
   image = UploadedImageSerializer(read_only=True)
   image_id = serializers.IntegerField(required=False)
   organization = OrganizationRetrieveSerializer(read_only=True)
@@ -71,7 +75,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'type', 'item_id', 'benefited_people']
+    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'type', 'item_id', 'benefited_people', 'galleries']
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date']
 
   def validate(self, data):
@@ -130,6 +134,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   def update(self, instance, validated_data):
     causes = validated_data.pop('causes', [])
     skills = validated_data.pop('skills', [])
+    galleries = validated_data.pop('galleries', [])
     address_data = validated_data.pop('address', None)
     roles = validated_data.pop('roles', None)
     disp = validated_data.pop('disponibility', None)
@@ -178,6 +183,13 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
       for skill in skills:
         s = core_models.Skill.objects.get(pk=skill['id'])
         instance.skills.add(s)
+
+    # Associate galleries
+    if galleries:
+      instance.galleries.clear()
+      for gallery in galleries:
+        g = Gallery.objects.get(pk=gallery['id'])
+        instance.galleries.add(g)
 
     return super(ProjectCreateUpdateSerializer, self).update(instance, validated_data)
 

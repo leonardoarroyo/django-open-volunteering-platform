@@ -12,7 +12,7 @@ class GalleryRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = Gallery
-    fields = ('uuid', 'owner', 'name', 'description', 'images')
+    fields = ('id', 'uuid', 'owner', 'name', 'description', 'images')
     read_only_fields = ('uuid', )
     extra_kwargs = {'owner': {'write_only': True}}
 
@@ -22,7 +22,7 @@ class GalleryCreateUpdateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = Gallery
-    fields = ('uuid', 'owner', 'name', 'description', 'images')
+    fields = ('id', 'uuid', 'owner', 'name', 'description', 'images')
     read_only_fields = ('uuid', )
     extra_kwargs = {'owner': {'write_only': True}}
 
@@ -48,6 +48,16 @@ class GalleryCreateUpdateSerializer(ChannelRelationshipSerializer):
         instance.images.add(i)
 
     return super(GalleryCreateUpdateSerializer, self).update(instance, validated_data)
+
+
+class GalleryAssociationSerializer(ChannelRelationshipSerializer):
+  id = serializers.IntegerField()
+  images = UploadedImageAssociationSerializer(many=True)
+
+  class Meta:
+    model = Gallery
+    fields = ('id', 'uuid', 'name', 'description', 'images')
+    read_only_fields = ('uuid', )
 
 
 class AssociateWithModel(serializers.Serializer):
