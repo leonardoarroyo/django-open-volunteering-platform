@@ -35,6 +35,7 @@ class Project(ChannelRelationship, RatedModelMixin):
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'))
   commentaries = models.ManyToManyField('core.Commentary', verbose_name=_('commentaries'))
   galleries = models.ManyToManyField('gallery.Gallery', verbose_name=_('galleries'))
+  documents = models.ManyToManyField('uploads.UploadedDocument', verbose_name=_('documents'))
 
   # Relationships
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)
