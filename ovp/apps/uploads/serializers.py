@@ -73,6 +73,6 @@ class UploadedDocumentAssociationSerializer(ChannelRelationshipSerializer):
   id = serializers.IntegerField()
 
   class Meta:
-    fields = ('id', 'document', 'document_url')
-    read_only_fields = ('document', 'document_url')
-    model = UploadedImage
+    fields = ('id', 'document')
+    read_only_fields = ('document', )
+    model = UploadedDocument
