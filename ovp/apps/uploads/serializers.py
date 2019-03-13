@@ -67,3 +67,12 @@ class UploadedDocumentSerializer(ChannelRelationshipSerializer):
 
   def get_document_url(self, obj):
     return helpers.build_absolute_uri(self.context['request'], obj.document) if obj.document else ""
+
+
+class UploadedDocumentAssociationSerializer(ChannelRelationshipSerializer):
+  id = serializers.IntegerField()
+
+  class Meta:
+    fields = ('id', 'document', 'document_url')
+    read_only_fields = ('document', 'document_url')
+    model = UploadedImage

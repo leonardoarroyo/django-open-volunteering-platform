@@ -21,11 +21,14 @@ from ovp.apps.organizations.serializers import OrganizationSearchSerializer
 from ovp.apps.organizations.serializers import OrganizationRetrieveSerializer
 from ovp.apps.organizations.models import Organization
 
-from ovp.apps.uploads.serializers import UploadedImageSerializer
+from ovp.apps.uploads.serializers import (UploadedImageSerializer,
+                                          UploadedDocumentAssociationSerializer)
 
 from ovp.apps.gallery.models import Gallery
 from ovp.apps.gallery.serializers import (GalleryAssociationSerializer,
                                           GalleryRetrieveSerializer)
+
+from ovp.apps.uploads.models import UploadedDocument
 
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 from ovp.apps.channels.cache import get_channel_setting
@@ -68,6 +71,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   causes = CauseAssociationSerializer(many=True, required=False)
   skills = SkillAssociationSerializer(many=True, required=False)
   galleries = GalleryAssociationSerializer(many=True, required=False)
+  documents = UploadedDocumentAssociationSerializer(many=True, required=False)
   image = UploadedImageSerializer(read_only=True)
   image_id = serializers.IntegerField(required=False)
   organization = OrganizationRetrieveSerializer(read_only=True)
@@ -87,6 +91,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   def create(self, validated_data):
     causes = validated_data.pop('causes', [])
     skills = validated_data.pop('skills', [])
+    documents = validated_data.pop('documents', [])
 
     # Address
     address_data = validated_data.pop('address', {})
@@ -130,11 +135,17 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
       s = core_models.Skill.objects.get(pk=skill['id'])
       project.skills.add(s)
 
+    # Associate documents
+    for document in documents:
+      d = UploadedDocument.objects.get(pk=document['id'])
+      project.documents.add(d)
+
     return project
 
   def update(self, instance, validated_data):
     causes = validated_data.pop('causes', [])
     skills = validated_data.pop('skills', [])
+    documents = validated_data.pop('documents', [])
     galleries = validated_data.pop('galleries', [])
     address_data = validated_data.pop('address', None)
     roles = validated_data.pop('roles', None)
@@ -191,6 +202,13 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
       for gallery in galleries:
         g = Gallery.objects.get(pk=gallery['id'])
         instance.galleries.add(g)
+
+    # Associate documents
+    if documents:
+      instance.documents.clear()
+      for document in documents:
+        d = UploadedDocument.objects.get(pk=document['id'])
+        instance.documents.add(d)
 
     return super(ProjectCreateUpdateSerializer, self).update(instance, validated_data)
 
