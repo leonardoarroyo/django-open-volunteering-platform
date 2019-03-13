@@ -60,6 +60,7 @@ class Project(ChannelRelationship, RatedModelMixin):
   skip_address_filter = models.BooleanField(_('Skip address filter'), default=False)
   type = models.FloatField(_('Project Type'), choices=types, default=1, max_length=10)
   benefited_people = models.IntegerField(blank=False, null=False, default=0)
+  testimony = models.TextField(_('testimony'), max_length=3000, blank=True, null=True)
 
   # Date fields
   published_date = models.DateTimeField(_("Published date"), blank=True, null=True)
