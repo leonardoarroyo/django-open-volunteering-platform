@@ -11,8 +11,8 @@ from ovp.apps.channels.models.abstract import ChannelRelationship
 
 class Gallery(ChannelRelationship):
   uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-  name = models.CharField(max_length=100)
-  description = models.TextField(max_length=3000)
+  name = models.CharField(max_length=100, blank=True, null=True)
+  description = models.TextField(max_length=3000, blank=True, null=True)
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
   images = models.ManyToManyField('uploads.UploadedImage')
 
