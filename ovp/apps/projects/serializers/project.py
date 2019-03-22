@@ -224,7 +224,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'benefited_people', 'chat_enabled']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'benefited_people', 'chat_enabled', 'canceled']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
@@ -299,7 +299,7 @@ class ProjectSearchSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'disponibility', 'highlighted', 'published_date', 'address', 'organization', 'owner', 'applied_count', 'max_applies', 'hidden_address', 'categories', 'is_bookmarked', 'published', 'closed', 'causes', 'skills', 'rating', 'chat_enabled']
+    fields = ['slug', 'image', 'name', 'description', 'disponibility', 'highlighted', 'published_date', 'address', 'organization', 'owner', 'applied_count', 'max_applies', 'hidden_address', 'categories', 'is_bookmarked', 'published', 'closed', 'causes', 'skills', 'rating', 'chat_enabled', 'canceled']
 
   @hide_address
   @add_disponibility_representation

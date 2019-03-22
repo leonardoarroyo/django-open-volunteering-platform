@@ -133,6 +133,9 @@ class Project(ChannelRelationship, RatedModelMixin):
           self.mailing().sendProjectClosed({'project': self})
         except:
           pass
+      
+      if not orig.canceled and self.canceled:
+        self.closed_date = timezone.now()
 
       if not orig.deleted and self.deleted:
         self.deleted_date = timezone.now()
