@@ -60,11 +60,13 @@ class Project(ChannelRelationship, RatedModelMixin):
   benefited_people = models.IntegerField(blank=True, null=True, default=0)
   partnership = models.BooleanField(_('Partnership'), default=False)
   chat_enabled = models.BooleanField(_('Chat Enabled'), default=False)
+  canceled = models.BooleanField(_("Canceled"), default=False)
 
   # Date fields
   published_date = models.DateTimeField(_("Published date"), blank=True, null=True)
   closed = models.BooleanField(_("Closed"), default=False)
   closed_date = models.DateTimeField(_("Closed date"), blank=True, null=True)
+  canceled_date = models.DateTimeField(_("Closed date"), blank=True, null=True)
   deleted = models.BooleanField(_("Deleted"), default=False)
   deleted_date = models.DateTimeField(_("Deleted date"), blank=True, null=True)
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
