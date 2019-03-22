@@ -34,6 +34,8 @@ class Project(ChannelRelationship, RatedModelMixin):
   skills = models.ManyToManyField('core.Skill', verbose_name=_('skills'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'))
   commentaries = models.ManyToManyField('core.Commentary', verbose_name=_('commentaries'))
+  galleries = models.ManyToManyField('gallery.Gallery', verbose_name=_('galleries'))
+  documents = models.ManyToManyField('uploads.UploadedDocument', verbose_name=_('documents'))
 
   # Relationships
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)
@@ -57,10 +59,13 @@ class Project(ChannelRelationship, RatedModelMixin):
   crowdfunding = models.BooleanField(_('Crowdfunding'), default=False)
   skip_address_filter = models.BooleanField(_('Skip address filter'), default=False)
   type = models.FloatField(_('Project Type'), choices=types, default=1, max_length=10)
+
   benefited_people = models.IntegerField(blank=True, null=True, default=0)
   partnership = models.BooleanField(_('Partnership'), default=False)
   chat_enabled = models.BooleanField(_('Chat Enabled'), default=False)
   canceled = models.BooleanField(_("Canceled"), default=False)
+  testimony = models.TextField(_('testimony'), max_length=3000, blank=True, null=True)
+  
 
   # Date fields
   published_date = models.DateTimeField(_("Published date"), blank=True, null=True)

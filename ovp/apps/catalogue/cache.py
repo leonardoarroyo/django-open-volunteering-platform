@@ -101,7 +101,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
 
   result_keys = [q.pk for q in queryset]
 
-  project_base_queryset = get_project_queryset(request=request).filter(pk__in=result_keys)
+  project_base_queryset = get_project_queryset(request=request).filter(pk__in=result_keys).order_by("-created_date")
 
 
   queryset = SearchQuerySet().models(Organization)

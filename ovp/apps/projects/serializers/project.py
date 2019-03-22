@@ -21,7 +21,14 @@ from ovp.apps.organizations.serializers import OrganizationSearchSerializer
 from ovp.apps.organizations.serializers import OrganizationRetrieveSerializer
 from ovp.apps.organizations.models import Organization
 
-from ovp.apps.uploads.serializers import UploadedImageSerializer
+from ovp.apps.uploads.serializers import (UploadedImageSerializer,
+                                          UploadedDocumentAssociationSerializer)
+
+from ovp.apps.gallery.models import Gallery
+from ovp.apps.gallery.serializers import (GalleryAssociationSerializer,
+                                          GalleryRetrieveSerializer)
+
+from ovp.apps.uploads.models import UploadedDocument
 
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 from ovp.apps.channels.cache import get_channel_setting
@@ -64,6 +71,8 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
   causes = CauseAssociationSerializer(many=True, required=False)
   skills = SkillAssociationSerializer(many=True, required=False)
   categories = CategoryAssociationSerializer(many=True, required=False)
+  galleries = GalleryAssociationSerializer(many=True, required=False)
+  documents = UploadedDocumentAssociationSerializer(many=True, required=False)
   image = UploadedImageSerializer(read_only=True)
   image_id = serializers.IntegerField(required=False)
   organization = OrganizationRetrieveSerializer(read_only=True)
@@ -72,7 +81,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'type', 'item_id', 'benefited_people', 'partnership', 'categories']
+    fields = ['id', 'image', 'image_id', 'name', 'slug', 'owner', 'details', 'description', 'highlighted', 'published', 'published_date', 'created_date', 'address', 'organization', 'organization_id', 'disponibility', 'roles', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'type', 'item_id', 'benefited_people', 'galleries', 'testimony', 'documents', 'categories']
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date']
 
   def validate(self, data):
@@ -84,6 +93,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     causes = validated_data.pop('causes', [])
     categories = validated_data.pop('categories', [])
     skills = validated_data.pop('skills', [])
+    documents = validated_data.pop('documents', [])
 
     # Address
     address_data = validated_data.pop('address', {})
@@ -132,12 +142,19 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
       s = core_models.Skill.objects.get(pk=skill['id'])
       project.skills.add(s)
 
+    # Associate documents
+    for document in documents:
+      d = UploadedDocument.objects.get(pk=document['id'])
+      project.documents.add(d)
+
     return project
 
   def update(self, instance, validated_data):
     causes = validated_data.pop('causes', [])
     skills = validated_data.pop('skills', [])
     categories = validated_data.pop('categories', [])
+    documents = validated_data.pop('documents', [])
+    galleries = validated_data.pop('galleries', [])
     address_data = validated_data.pop('address', None)
     roles = validated_data.pop('roles', None)
     disp = validated_data.pop('disponibility', None)
@@ -200,6 +217,20 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
         s = core_models.Skill.objects.get(pk=skill['id'])
         instance.skills.add(s)
 
+    # Associate galleries
+    if galleries:
+      instance.galleries.clear()
+      for gallery in galleries:
+        g = Gallery.objects.get(pk=gallery['id'])
+        instance.galleries.add(g)
+
+    # Associate documents
+    if documents:
+      instance.documents.clear()
+      for document in documents:
+        d = UploadedDocument.objects.get(pk=document['id'])
+        instance.documents.add(d)
+
     return super(ProjectCreateUpdateSerializer, self).update(instance, validated_data)
 
   @add_disponibility_representation
@@ -216,6 +247,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   applies = ProjectAppliesSerializer(many=True, source="active_apply_set")
   causes = FullCauseSerializer(many=True)
   skills = SkillSerializer(many=True)
+  galleries = GalleryRetrieveSerializer(many=True)
   categories = CategoryRetrieveSerializer(many=True)
   commentaries = CommentaryRetrieveSerializer(many=True)
   is_bookmarked = serializers.SerializerMethodField()
@@ -224,7 +256,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'benefited_people', 'chat_enabled', 'canceled']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'galleries', 'testimony', 'benefited_people', 'chat_enabled', 'canceled']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user

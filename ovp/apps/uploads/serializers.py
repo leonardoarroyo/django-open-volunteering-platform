@@ -38,6 +38,16 @@ class UploadedImageSerializer(ChannelRelationshipSerializer):
       return obj.image_large.name if obj.image_large else ""
     return helpers.build_absolute_uri(self.context['request'], obj.image_large) if obj.image_large else ""
 
+
+class UploadedImageAssociationSerializer(ChannelRelationshipSerializer):
+  id = serializers.IntegerField()
+
+  class Meta:
+    fields = ['id', 'image_small', 'image_medium', 'image_large']
+    read_only_fields = ('image_small', 'image_medium', 'image_large')
+    model = UploadedImage
+
+
 class ImageGallerySerializer(UploadedImageSerializer):
   name = serializers.CharField(read_only=True)
   category = serializers.CharField(read_only=True)
@@ -57,3 +67,12 @@ class UploadedDocumentSerializer(ChannelRelationshipSerializer):
 
   def get_document_url(self, obj):
     return helpers.build_absolute_uri(self.context['request'], obj.document) if obj.document else ""
+
+
+class UploadedDocumentAssociationSerializer(ChannelRelationshipSerializer):
+  id = serializers.IntegerField()
+
+  class Meta:
+    fields = ('id', 'document')
+    read_only_fields = ('document', )
+    model = UploadedDocument
