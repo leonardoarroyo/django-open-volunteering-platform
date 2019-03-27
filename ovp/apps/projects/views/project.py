@@ -8,8 +8,6 @@ from ovp.apps.projects.permissions import ProjectRetrieveOwnsOrIsOrganizationMem
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 from ovp.apps.channels.cache import get_channel_setting
 
-
-
 from ovp.apps.core.helpers.xls import Response as XLSResponse
 from ovp.apps.core.mixins import CommentaryCreateMixin
 from ovp.apps.core.mixins import BookmarkMixin

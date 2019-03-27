@@ -30,7 +30,7 @@ from ovp.apps.gallery.serializers import (GalleryAssociationSerializer,
 
 from ovp.apps.uploads.models import UploadedDocument
 
-from ovp.apps.channels.serializers import ChannelRelationshipSerializer
+from ovp.apps.channels.serializers import ChannelRelationshipSerializer, ChannelRetrieveSerializer
 from ovp.apps.channels.cache import get_channel_setting
 
 from ovp.apps.users.serializers import ShortUserPublicRetrieveSerializer, UserProjectRetrieveSerializer
@@ -253,10 +253,11 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   is_bookmarked = serializers.SerializerMethodField()
   bookmark_count = serializers.SerializerMethodField()
   item = ItemSerializer()
+  channel = ChannelRetrieveSerializer()
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'galleries', 'testimony', 'benefited_people', 'chat_enabled', 'canceled']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'galleries', 'testimony', 'benefited_people', 'chat_enabled', 'canceled', 'channel']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
@@ -328,10 +329,11 @@ class ProjectSearchSerializer(ChannelRelationshipSerializer):
   is_bookmarked = serializers.BooleanField()
   causes = FullCauseSerializer(many=True)
   skills = SkillSerializer(many=True)
+  channel = ChannelRetrieveSerializer()
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'disponibility', 'highlighted', 'published_date', 'address', 'organization', 'owner', 'applied_count', 'max_applies', 'hidden_address', 'categories', 'is_bookmarked', 'published', 'closed', 'causes', 'skills', 'rating', 'chat_enabled', 'canceled']
+    fields = ['slug', 'image', 'name', 'description', 'disponibility', 'highlighted', 'published_date', 'address', 'organization', 'owner', 'applied_count', 'max_applies', 'hidden_address', 'categories', 'is_bookmarked', 'published', 'closed', 'causes', 'skills', 'rating', 'chat_enabled', 'canceled', 'channel']
 
   @hide_address
   @add_disponibility_representation
