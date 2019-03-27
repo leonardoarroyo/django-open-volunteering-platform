@@ -6,6 +6,7 @@ from ovp.apps.core.serializers import EmptySerializer
 
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 from ovp.apps.channels.cache import get_channel_setting
+from ovp.apps.channels.helpers import get_subchannels_list
 
 from ovp.apps.projects.serializers import apply as serializers
 from ovp.apps.projects import models
@@ -136,4 +137,4 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
   def get_project_object(self, *args, **kwargs):
     slug=kwargs.get('project_slug')
 
-    return get_object_or_404(models.Project, slug=slug, channel__slug=self.request.channel)
+    return get_object_or_404(models.Project, slug=slug, channel__slug__in=get_subchannels_list(self.request.channel))

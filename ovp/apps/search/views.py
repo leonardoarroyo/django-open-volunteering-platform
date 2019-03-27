@@ -75,7 +75,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
     queryset = filters.by_published(queryset, published)
     queryset = filters.by_address(queryset, address) if address else queryset
     queryset = filters.by_causes(queryset, cause) if cause else queryset
-    queryset = queryset.filter(channel=self.request.channel)
+    queryset = filters.by_channels(queryset, self.request.channel)
 
     result_keys = [q.pk for q in queryset]
     result = querysets.get_organization_queryset(request=self.request).filter(pk__in=result_keys)
@@ -131,7 +131,6 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     published = params.get('published', 'true')
     closed = params.get('closed', 'false')
     organization = params.get('organization', None)
-    not_organization = params.get('not_organization', None)
     disponibility = params.get('disponibility', None)
     date = params.get('date', None)
 
@@ -147,19 +146,12 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = filters.by_categories(queryset, category)
     queryset = filters.by_disponibility(queryset, disponibility)
     queryset = filters.by_date(queryset, date)
-    queryset = queryset.filter(channel=self.request.channel)
+    queryset = filters.by_organizations(queryset, organization)
+    queryset = filters.by_channels(queryset, self.request.channel)
 
     result_keys = [q.pk for q in queryset]
 
     result = querysets.get_project_queryset(request=self.request).filter(pk__in=result_keys)
-
-    if not_organization:
-      org = [o for o in not_organization.split(',')]
-      result = result.exclude(organization__in=org)
-    elif organization:
-      org = [o for o in organization.split(',')]
-      result = result.filter(organization__in=org)
-
     result = filters.filter_out(result, "FILTER_OUT_PROJECTS", self.request.channel)
 
     return result

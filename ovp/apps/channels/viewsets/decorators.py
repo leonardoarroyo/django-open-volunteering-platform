@@ -1,6 +1,7 @@
 from ovp.apps.channels.signals import before_channel_request
 from ovp.apps.channels.signals import after_channel_request
 from ovp.apps.channels.exceptions import InterceptRequest
+from ovp.apps.channels.helpers import get_subchannels_list
 
 def ChannelViewSet(cls):
   """
@@ -10,11 +11,12 @@ def ChannelViewSet(cls):
   to override the view behavior.
 
   Use for viewsets that handle a Channel resource.
-  """ # Patch get queryset
+  """ # Patch get queryset  
   get_queryset = getattr(cls, "get_queryset", None)
   if get_queryset:
     def patched_get_queryset(self, *args, **kwargs):
-      return get_queryset(self, *args, **kwargs).filter(channel__slug = self.request.channel)
+      channel_list = get_subchannels_list(self.request.channel)
+      return get_queryset(self, *args, **kwargs).filter(channel__slug__in = channel_list)
     cls.get_queryset = patched_get_queryset
 
   # We also patch the queryset
@@ -22,7 +24,8 @@ def ChannelViewSet(cls):
   if queryset is not None:
     @property
     def patched_queryset(self):
-      return queryset.filter(channel__slug = self.request.channel)
+      channel_list = get_subchannels_list(self.request.channel)
+      return queryset.filter(channel__slug__in = channel_list)
     cls.queryset = patched_queryset
 
   # If get_queryset calls self.queryset, there's no problem filtering twice
