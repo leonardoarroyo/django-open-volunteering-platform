@@ -50,6 +50,10 @@ class UploadedImage(ChannelRelationship):
   def __str__(self):
     return self.uuid
 
+  @staticmethod
+  def autocomplete_search_fields():
+    return 'name',
+
   class Meta:
     app_label = 'uploads'
     verbose_name = _('uploaded image')

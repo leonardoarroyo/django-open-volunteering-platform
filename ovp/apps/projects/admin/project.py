@@ -152,6 +152,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     ('organization', RelatedFieldAjaxListFilter),
     ('owner', RelatedFieldAjaxListFilter),
     ('address', RelatedFieldAjaxListFilter),
+    ('image', RelatedFieldAjaxListFilter),
   )
 
   formfield_overrides = {
