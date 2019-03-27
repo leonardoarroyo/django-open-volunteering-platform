@@ -13,16 +13,10 @@ from ovp.apps.core.mixins import CountryFilterMixin
 
 class JobInline(TabularInline):
   exclude = ['title', 'channel']
+  fields = ['start_date', 'end_date']
   model = Job
   verbose_name = _('Job')
   verbose_name_plural = _('Job')
-  readonly_fields = ['start_date', 'end_date', 'edit_dates_link']
-
-  def edit_dates_link(self, obj):
-    edit_dates_url = reverse("admin:{}_{}_change".format(obj._meta.app_label, obj._meta.model_name), args=(obj.id,))
-    return '<a href="{}" target="_blank">{}</a>'.format(edit_dates_url, _('edit'))
-  edit_dates_link.short_escription = _('Edit dates')
-  edit_dates_link.allow_tags = True
 
 
 class JobAdmin(ChannelModelAdmin, CountryFilterMixin):
