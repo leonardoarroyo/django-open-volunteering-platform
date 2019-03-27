@@ -154,7 +154,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
     return self.organizations_member.filter(deleted=False)
 
   @staticmethod
-  def autocomplete_search_fields(qs):
+  def autocomplete_search_fields():
     return 'name',
 
   @staticmethod
