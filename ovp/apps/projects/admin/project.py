@@ -167,8 +167,8 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
     ('can_be_done_remotely', 'skip_address_filter', 'chat_enabled'),
 
-    ('published', 'closed', 'deleted'),
-    ('published_date', 'closed_date', 'deleted_date'),
+    ('published', 'closed', 'deleted', 'canceled'),
+    ('published_date', 'closed_date', 'deleted_date', 'canceled_date'),
 
     'address',
     'image',
@@ -201,7 +201,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
   ]
 
   readonly_fields = [
-    'id', 'created_date', 'modified_date', 'published_date', 'closed_date', 'deleted_date', 'applied_count', 'max_applies_from_roles',
+    'id', 'created_date', 'modified_date', 'published_date', 'closed_date', 'deleted_date', 'canceled_date', 'applied_count', 'max_applies_from_roles',
     'owner__name', 'owner__email', 'owner__phone', 'can_be_done_remotely'
   ]
 
