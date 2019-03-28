@@ -146,12 +146,17 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = filters.by_categories(queryset, category)
     queryset = filters.by_disponibility(queryset, disponibility)
     queryset = filters.by_date(queryset, date)
-    queryset = filters.by_organizations(queryset, organization)
+    # queryset = filters.by_organizations(queryset, organization)
     queryset = filters.by_channels(queryset, self.request.channel)
 
     result_keys = [q.pk for q in queryset]
 
     result = querysets.get_project_queryset(request=self.request).filter(pk__in=result_keys)
+
+    if organization:
+      org = [o for o in organization.split(',')]
+      result = result.filter(organization__in=org)
+
     result = filters.filter_out(result, "FILTER_OUT_PROJECTS", self.request.channel)
 
     return result
