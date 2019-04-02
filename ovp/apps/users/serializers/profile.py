@@ -23,7 +23,7 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = get_profile_model()
-    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address', 'birthday_date']
+    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address', 'birthday_date', 'company', 'department']
 
   def create(self, validated_data):
     skills = validated_data.pop('skills', [])
