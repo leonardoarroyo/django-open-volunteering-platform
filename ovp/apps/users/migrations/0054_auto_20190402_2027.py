@@ -14,11 +14,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='userprofile',
-            name='company',
-            field=models.CharField(blank=True, max_length=300, null=True, verbose_name='Company'),
-        ),
-        migrations.AddField(
-            model_name='userprofile',
             name='department',
             field=models.CharField(blank=True, max_length=300, null=True, verbose_name='Department'),
         ),
