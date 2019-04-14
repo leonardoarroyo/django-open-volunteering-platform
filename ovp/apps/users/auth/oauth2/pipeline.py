@@ -8,13 +8,8 @@ def get_avatar(backend, details, response, user=None, *args, **kwargs):
   if backend.name == "facebook":
     url = "http://graph.facebook.com/{}/picture?type=large".format(response["id"])
   if backend.name == "google-oauth2":
-    try:
-      if not response["image"]["isDefault"]:
-        url = "{}&sz=400".format(response["image"].get("url"))
-    except:
-      import json
-      with open("/tmp/oauth_error.txt", "a") as f:
-        f.write("{}\n\n".format(json.dumps(response)))
+    if response.get("picture", None):
+      url = response["picture"]
   if url:
     if not user.avatar:
       avatar = UploadedImage.objects.create(absolute=True, object_channel=kwargs["strategy"].request.channel)
