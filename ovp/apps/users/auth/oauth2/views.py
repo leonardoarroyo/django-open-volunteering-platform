@@ -9,8 +9,6 @@ from ovp.apps.users.auth.oauth2 import serializers
 from .validators import OAuth2Validator
 from .oauthlib_core import KeepRequestChannel
 
-from ovp.apps.core.helpers.debug import debug_dump_request
-
 class TokenView(BaseTokenView):
   validator_class = OAuth2Validator
   oauthlib_backend_class = KeepRequestChannel
@@ -28,7 +26,6 @@ class RevokeTokenView(BaseRevokeTokenView):
 
 class ConvertTokenView(BaseConvertTokenView):
   @swagger_auto_schema(request_body=serializers.RequestConvertTokenViewSerializer, responses={200: serializers.ResponseConvertTokenViewSerializer, 401: 'Unauthorized'})
-  @debug_dump_request
   def post(self, *args, **kwargs):
     """ Exchange social oauth token(Facebook or Google) for a local authentication token. """
     return super(ConvertTokenView, self).post(*args, **kwargs)
