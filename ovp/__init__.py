@@ -28,6 +28,7 @@ def get_core_apps(disable_external=False):
     "ovp.apps.items",
     "ovp.apps.ratings",
     "ovp.apps.gallery",
+    "ovp.apps.donations",
   ]
 
   if disable_external:
