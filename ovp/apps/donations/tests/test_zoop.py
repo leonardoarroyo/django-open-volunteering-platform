@@ -12,4 +12,18 @@ class TestZoopBackend(TestCase):
     self.backend = ZoopBackend()
 
   def test_generate_card_token(self):
-    self.backend.generate_card_token(holder_name="Test", expiration_month="03", expiration_year="2018", security_code="123", card_number="5201561050024014")
+    response = self.backend.generate_card_token(holder_name="Test", expiration_month="03", expiration_year="2018", security_code="123", card_number="5201561050024014")
+    self.assertEqual(response.status_code, 201)
+    self.assertTrue(response.json()["id"])
+
+  def test_charge_card(self):
+    token = self.backend.generate_card_token(holder_name="Test", expiration_month="03", expiration_year="2018", security_code="123", card_number="5201561050024014")
+    token_id = token.json()["id"]
+    response = self.backend.charge(token_id)
+    self.assertEqual(response.status_code, 201)
+    self.assertEqual(response.json()["status"], "succeeded")
+
+class TestSettinglessZoopBackend(TestCase):
+  def test_require_settings(self):
+    with self.assertRaises(AssertionError):
+      backend = ZoopBackend()
