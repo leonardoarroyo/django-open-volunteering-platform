@@ -12,6 +12,7 @@ import ovp.apps.catalogue.urls
 import ovp.apps.items.urls
 import ovp.apps.ratings.urls
 import ovp.apps.gallery.urls
+import ovp.apps.donations.urls
 
 urlpatterns = [
   # Admin
@@ -52,6 +53,9 @@ urlpatterns = [
 
   # Gallery
   url(r'^', include(ovp.apps.gallery.urls)),
+
+  # Donations
+  url(r'^', include(ovp.apps.donations.urls)),
 
 ]
 
