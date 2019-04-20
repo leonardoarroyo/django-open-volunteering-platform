@@ -43,6 +43,7 @@ class Organization(ChannelRelationship, RatedModelMixin):
   verified = models.BooleanField(_('Verified'), default=False)
   document = models.CharField(_('CNPJ'), unique=True, max_length=100, validators=[validate_CNPJ], blank=True, null=True)
   benefited_people = models.IntegerField(blank=True, null=True, default=0)
+  allow_donations = models.BooleanField(_('Allow donations'), default=False)
 
   # Organization contact
   contact_name = models.CharField(_('Responsible name'), max_length=150, blank=True, null=True)
