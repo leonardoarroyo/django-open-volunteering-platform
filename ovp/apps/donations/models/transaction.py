@@ -1,4 +1,14 @@
 from django.db import models
 
 class Transaction(models.Model):
-  pass
+  user = models.ForeignKey('users.user', on_delete=models.CASCADE)
+  organization = models.ForeignKey('organizations.Organization', on_delete=models.CASCADE)
+  amount = models.IntegerField(blank=False, null=False)
+  status = models.CharField(max_length=80)
+  message = models.TextField()
+  used_token = models.CharField(max_length=30)
+  backend_transaction_id = models.CharField(max_length=30, blank=True, null=True)
+  backend_transaction_number = models.CharField(max_length=30, blank=True, null=True)
+
+  date_created = models.DateTimeField(auto_now_add=True)
+  date_modified = models.DateTimeField(auto_now=True)

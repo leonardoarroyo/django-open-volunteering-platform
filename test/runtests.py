@@ -160,7 +160,11 @@ settings.configure(
     HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor',
     SILENCED_SYSTEM_CHECKS=["auth.E003", "auth.W004"],
     AUTHENTICATION_BACKENDS = ['ovp.apps.users.auth.oauth2.backends.facebook.FacebookOAuth2', 'ovp.apps.users.auth.oauth2.backends.google.GoogleOAuth2', 'rest_framework_social_oauth2.backends.DjangoOAuth2', 'ovp.apps.users.auth.backends.ChannelBasedAuthentication'],
-    TEST_CHANNELS=["test-channel", "channel1"]
+    TEST_CHANNELS=["test-channel", "channel1"],
+    ZOOP_MARKETPLACE_ID=os.environ.get('ZOOP_MARKETPLACE_ID', None),
+    ZOOP_PUB_KEY=os.environ.get('ZOOP_PUB_KEY', None),
+    ZOOP_SELLER_ID=os.environ.get('ZOOP_SELLER_ID', None),
+    ZOOP_STATEMENT_DESCRIPTOR='Test OVP donation'
 )
 
 django.setup()

@@ -3,10 +3,8 @@ import os
 from django.test import TestCase
 from django.test.utils import override_settings
 from ovp.apps.donations.backends.zoop import ZoopBackend
+from ovp.apps.donations.tests.helpers import card_token
 
-
-@override_settings(ZOOP_MARKETPLACE_ID=os.environ.get('ZOOP_MARKETPLACE_ID', None),
-                   ZOOP_PUB_KEY=os.environ.get('ZOOP_PUB_KEY', None))
 class TestZoopBackend(TestCase):
   def setUp(self):
     self.backend = ZoopBackend()
@@ -17,13 +15,44 @@ class TestZoopBackend(TestCase):
     self.assertTrue(response.json()["id"])
 
   def test_charge_card(self):
-    token = self.backend.generate_card_token(holder_name="Test", expiration_month="03", expiration_year="2018", security_code="123", card_number="5201561050024014")
-    token_id = token.json()["id"]
-    response = self.backend.charge(token_id)
-    self.assertEqual(response.status_code, 201)
-    self.assertEqual(response.json()["status"], "succeeded")
+    token_id = card_token("5201561050024014")
+    response = self.backend.charge(token_id, 100)
+    self.assertEqual(response[0], 201)
+    self.assertEqual(response[1], {"status": "succeeded", "message": "Transaction was authorized."})
 
-class TestSettinglessZoopBackend(TestCase):
-  def test_require_settings(self):
-    with self.assertRaises(AssertionError):
-      backend = ZoopBackend()
+  def test_cant_charge_token_twice(self):
+    token_id = card_token("5201561050024014")
+    response = self.backend.charge(token_id, 100)
+    self.assertEqual(response[0], 201)
+    self.assertEqual(response[1], {"status": "succeeded", "message": "Transaction was authorized."})
+
+    response = self.backend.charge(token_id, 100)
+    self.assertEqual(response[0], 404)
+    self.assertEqual(response[1], {"status": "failed", "message": "Sorry, the token (id: {}) you are trying to use does not exist or has been deleted.".format(token_id), "category": "resource_not_found"})
+
+  def test_invalid_card_number(self):
+    token_id = card_token("6011457819940087")
+    response = self.backend.charge(token_id, 100)
+    self.assertEqual(response[0], 402)
+    self.assertEqual(response[1], {"status": "failed", "message": "Your card was declined. For information about why your credit card was declined or rejected, please contact your bank or credit card vendor.", "category": "card_declined"})
+
+  def test_expired_card(self):
+    token_id = card_token("4929710426637678")
+    response = self.backend.charge(token_id, 100)
+    self.assertEqual(response[0], 402)
+    self.assertEqual(response[1], {"status": "failed", "message": "Your card was declined. For information about why your credit card was declined or rejected, please contact your bank or credit card vendor.", "category": "card_declined"})
+
+  def test_service_request_timeout(self):
+    token_id = card_token("4710426743216178")
+    response = self.backend.charge(token_id, 100)
+    self.assertEqual(response[0], 408)
+    self.assertEqual(response[1], {"status": "timeout", "message": "Credit card process is temporarily unavailable at the specified location. Please try again later. If the problem persists, please contact Technical Support (support@pagzoop.com).", "category": "service_request_timeout"})
+
+  # Zoop is broken on this route
+  # Card: 4556629972668582 should return "card declined"
+  # Transaction succeeding instead
+  #def test_card_declined(self):
+  #  token_id = card_token("4556629972668582")
+  #  response = self.backend.charge(token_id)
+  #  self.assertEqual(response[0], 402)
+  #  self.assertEqual(response[1], {"status": "failed", "message": "xxxx"})
