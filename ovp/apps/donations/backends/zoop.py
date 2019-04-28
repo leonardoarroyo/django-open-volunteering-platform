@@ -1,4 +1,5 @@
 import requests
+from django.utils import timezone
 from django.conf import settings
 from ovp.apps.donations.backends.base import BaseBackend
 
@@ -26,24 +27,6 @@ class ZoopBackend(BaseBackend):
     url = self._build_url(resource)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     return call_method(url, json=data, auth=(self.pub_key, ''), headers=headers)
-
-  def generate_card_token(self,
-                          holder_name=None,
-                          expiration_month=None,
-                          expiration_year=None,
-                          security_code=None,
-                          card_number=None):
-    """"
-      This method is not used on test only, not on production. This API call should be done from the front-end and the token passed to subsequent calls.
-    """ 
-    data = {
-      "holder_name": holder_name,
-      "expiration_month": expiration_month,
-      "expiration_year": expiration_year,
-      "security_code": security_code,
-      "card_number": card_number
-    }
-    return self.call(POST, "v1/marketplaces/{mpid}/cards/tokens", data)
 
   def charge(self, token, amount):
     data = {
@@ -80,3 +63,69 @@ class ZoopBackend(BaseBackend):
       return (500, {"status": "error", "message": "Internal error occurred. This issue is being investigated."}, response)
 
     return (500, {"status": "error", "message": "An unexpected error occurred. This issue is being investigated."}, response)
+
+  def create_plan(self, amount, interval=1):
+    data = {
+      "frequency": "monthly",
+      "interval": interval,
+      "payment_methods": ["credit"],
+      "name": "Plano mensal ({})".format(amount),
+      "setup_amount": 0,
+      "currency": "BRL",
+      "amount": amount
+    }
+    response = self.call(POST, "v2/marketplaces/{mpid}/plans", data)
+    return (response.status_code, response)
+
+  def subscribe_to_plan(self, plan, customer):
+    data = {
+      "currency": "BRL",
+      "on_behalf_of": self.seller_id,
+      "customer": customer,
+      "plan": plan,
+      "due_date": timezone.now().strftime("%Y-%m-%d")
+    }
+    response = self.call(POST, "v2/marketplaces/{mpid}/subscriptions", data)
+    return (response.status_code, response)
+
+
+  def attach_token_to_customer(self, token, customer):
+    data = {
+      "token": token,
+      "customer": customer
+    }
+    response = self.call(POST, "v1/marketplaces/{mpid}/cards", data)
+    return (response.status_code, response)
+
+
+  """"
+    The following methods are not used in production. They are only used in the test suite to 
+    These routes should be called from the front-end.
+  """ 
+  def generate_card_token(self,
+                          holder_name=None,
+                          expiration_month=None,
+                          expiration_year=None,
+                          security_code=None,
+                          card_number=None):
+    data = {
+      "holder_name": holder_name,
+      "expiration_month": expiration_month,
+      "expiration_year": expiration_year,
+      "security_code": security_code,
+      "card_number": card_number
+    }
+    return self.call(POST, "v1/marketplaces/{mpid}/cards/tokens", data)
+
+  def create_customer(self,
+                      first_name=None,
+                      last_name=None,
+                      description=None,
+                      email=None):
+    data = {
+      "first_name": first_name,
+      "last_name": last_name,
+      "description": description,
+      "email": email
+    }
+    return self.call(POST, "v1/marketplaces/{mpid}/buyers", data)
