@@ -1,5 +1,7 @@
 import os
 
+from collections import OrderedDict
+
 from django.test import TestCase
 from django.test.utils import override_settings
 
@@ -19,6 +21,7 @@ class TestDonationsViewSet(TestCase):
     self.client = APIClient()
     self.user = User.objects.create_user(name="a", email="testmail-projects@test.com", password="test_returned", object_channel="default")
     self.donator = User.objects.create_user(name="a", email="donator@test.com", password="test_returned", object_channel="default")
+    self.non_donator = User.objects.create_user(name="a", email="non_donator@test.com", password="test_returned", object_channel="default")
     self.organization = Organization.objects.create(name="test org", owner=self.user, object_channel="default", allow_donations=True)
 
     self.data = {
@@ -81,6 +84,59 @@ class TestDonationsViewSet(TestCase):
     response = self.client.post(reverse("donation-donate"), data=self.data, format="json")
     self.assertEqual(response.status_code, 408)
     self.assertEqual(response.data, {"status": "timeout", "message": "Credit card process is temporarily unavailable at the specified location. Please try again later. If the problem persists, please contact Technical Support (support@pagzoop.com).", "category": "service_request_timeout"})
+
+  def test_can_retrieve_transactions(self):
+    response = self.client.get(reverse("donation-transactions"), format="json")
+    self.assertEqual(response.status_code, 401)
+
+    self.client.force_authenticate(user=self.donator)
+    response = self.client.get(reverse("donation-transactions"), format="json")
+    self.assertEqual(response.data["count"], 0)
+    self.test_can_donate()
+    response = self.client.get(reverse("donation-transactions"), format="json")
+    self.assertEqual(response.data["count"], 1)
+    self.assertTrue(response.data["results"][0]["uuid"])
+    self.assertEqual(response.data["results"][0]["amount"], 100)
+    self.assertEqual(response.data["results"][0]["status"], "succeeded")
+    self.assertTrue(isinstance(response.data["results"][0]["organization"], OrderedDict))
+
+    self.client.force_authenticate(user=self.non_donator)
+    response = self.client.get(reverse("donation-transactions"), format="json")
+    self.assertEqual(response.data["count"], 0)
+
+  def test_can_refund_transaction(self):
+    self.test_can_donate()
+    data = { "uuid": Transaction.objects.last().uuid }
+
+    response = self.client.post(reverse("donation-refund-transaction"), data=data, format="json")
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(Transaction.objects.last().status, "canceled")
+
+  def test_cant_refund_unauthenticated(self):
+    self.test_can_donate()
+    data = { "uuid": Transaction.objects.last().uuid }
+
+    response = APIClient().post(reverse("donation-refund-transaction"), data=data, format="json")
+    self.assertEqual(response.status_code, 401)
+
+  def test_cant_refund_if_not_succeeded(self):
+    self.test_can_donate()
+    transaction = Transaction.objects.last()
+    transaction.status = "failed"
+    transaction.save()
+    data = { "uuid": transaction.uuid }
+
+    response = self.client.post(reverse("donation-refund-transaction"), data=data, format="json")
+    self.assertEqual(response.status_code, 404)
+
+  def test_cant_refund_if_not_owner(self):
+    self.test_can_donate()
+    data = { "uuid": Transaction.objects.last().uuid }
+    self.client.force_authenticate(user=self.non_donator)
+
+    response = self.client.post(reverse("donation-refund-transaction"), data=data, format="json")
+    self.assertEqual(response.status_code, 404)
+
 
   # Zoop broken for this operation
   #def test_cant_donate_card_declined(self):

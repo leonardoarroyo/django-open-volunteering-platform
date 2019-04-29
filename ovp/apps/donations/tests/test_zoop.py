@@ -76,6 +76,14 @@ class TestZoopBackend(TestCase):
     self.assertEqual(response[0], 201)
     self.assertTrue(response[1].json()["status"], "active")
 
+  def test_refund_transaction(self):
+    token_id = card_token("5201561050024014")
+    response = self.backend.charge(token_id, 100)
+    transaction_id = response[2].json()["id"]
+    response = self.backend.refund_transaction(transaction_id, 100)
+    self.assertEqual(response[0], 200)
+    self.assertTrue(response[1].json()["status"], "canceled")
+
   """
   Not used in production
   """

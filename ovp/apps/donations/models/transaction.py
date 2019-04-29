@@ -1,6 +1,8 @@
+import uuid
 from django.db import models
 
 class Transaction(models.Model):
+  uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
   user = models.ForeignKey('users.user', on_delete=models.CASCADE)
   organization = models.ForeignKey('organizations.Organization', on_delete=models.CASCADE)
   amount = models.IntegerField(blank=False, null=False)

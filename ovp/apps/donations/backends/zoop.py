@@ -64,6 +64,14 @@ class ZoopBackend(BaseBackend):
 
     return (500, {"status": "error", "message": "An unexpected error occurred. This issue is being investigated."}, response)
 
+  def refund_transaction(self, transaction_id, amount):
+    data = {
+      "amount": amount,
+      "on_behalf_of": self.seller_id,
+    }
+    response = self.call(POST, "v1/marketplaces/{mpid}/transactions/{transaction_id}/void".format(mpid="{mpid}", transaction_id=transaction_id), data)
+    return (response.status_code, response)
+
   def create_plan(self, amount, interval=1):
     data = {
       "frequency": "monthly",
