@@ -3,11 +3,13 @@ from django.shortcuts import get_object_or_404
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 from ovp.apps.donations.backends.zoop import ZoopBackend
 from ovp.apps.donations.models import Transaction
+from ovp.apps.donations.models import Subscription
 from ovp.apps.organizations.models import Organization
 
 from ovp.apps.donations.serializers import DonateSerializer
 from ovp.apps.donations.serializers import TransactionRetrieveSerializer
 from ovp.apps.donations.serializers import RefundTransactionSerializer
+from ovp.apps.donations.serializers import SubscribeSerializer
 
 from rest_framework import viewsets
 from rest_framework import decorators
@@ -36,6 +38,8 @@ class DonationViewSet(viewsets.GenericViewSet):
       return TransactionRetrieveSerializer
     if self.action == "refund_transaction":
       return RefundTransactionSerializer
+    if self.action == "subscribe":
+      return SubscribeSerializer
 
   def get_permissions(self):
     if self.action == "donate":
@@ -43,6 +47,8 @@ class DonationViewSet(viewsets.GenericViewSet):
     if self.action == "transactions":
       self.permission_classes = (permissions.IsAuthenticated,)
     if self.action == "refund_transaction":
+      self.permission_classes = (permissions.IsAuthenticated,)
+    if self.action == "subscribe":
       self.permission_classes = (permissions.IsAuthenticated,)
     return super(DonationViewSet, self).get_permissions()
 
@@ -61,7 +67,6 @@ class DonationViewSet(viewsets.GenericViewSet):
       user=self.request.user,
       organization=Organization.objects.get(pk=data["organization_id"]),
       amount=data["amount"],
-      used_token=data["token"],
       status=charge_data[1]["status"],
       message=charge_data[1]["message"],
       backend_transaction_id=backend_response_data.get("id", None),
@@ -100,9 +105,31 @@ class DonationViewSet(viewsets.GenericViewSet):
     return response.Response({"success": True, "status": "canceled"})
 
   @decorators.action(methods=["POST"], detail=False)
-  def subscribe():
-    pass
+  def subscribe(self, request):
+    serializer = self.get_serializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    data = serializer.validated_data
 
-  @decorators.action(methods=["GET", "DELETE"], detail=False)
+    plan = self.backend.create_plan(amount=data["amount"], interval=data["interval"])[1].json()["id"]
+    self.backend.attach_token_to_customer(token=data["token"], customer=data["customer"])
+    status, subscribe_response = self.backend.subscribe_to_plan(plan=plan, customer=data["customer"])
+    response_data = subscribe_response.json()
+
+    if status == 201 and response_data["status"] == "active":
+      Subscription.objects.create(
+        user = request.user,
+        organization = Organization.objects.get(pk=data["organization_id"]),
+        amount = data["amount"],
+        status = response_data["status"],
+        backend_subscription_id = response_data["id"],
+        backend_plan_id = plan,
+        object_channel = request.channel
+      )
+
+    return response.Response(response_data, status=status)
+
+   # TODO: finish, check for errors
+
+  @decorators.action(methods=["GET"], detail=False)
   def subscriptions():
     pass

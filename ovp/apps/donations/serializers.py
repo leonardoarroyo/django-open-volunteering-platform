@@ -2,10 +2,11 @@ from rest_framework import serializers
 from ovp.apps.donations.validators import organization_accepts_donations
 from ovp.apps.donations.models import Transaction
 from ovp.apps.organizations.serializers import OrganizationRetrieveSerializer
+from django.core.validators import MinValueValidator
 
 class DonateSerializer(serializers.Serializer):
   token = serializers.CharField(required=True)
-  amount = serializers.IntegerField(required=True)
+  amount = serializers.IntegerField(required=True, validators=[MinValueValidator(1)])
   organization_id = serializers.IntegerField(required=True)
 
   def validate(self, data):
@@ -22,3 +23,16 @@ class TransactionRetrieveSerializer(serializers.ModelSerializer):
 
 class RefundTransactionSerializer(serializers.Serializer):
   uuid = serializers.UUIDField(required=True)
+
+
+class SubscribeSerializer(serializers.Serializer):
+  token = serializers.CharField(required=True)
+  amount = serializers.IntegerField(required=True, validators=[MinValueValidator(1)])
+  interval = serializers.IntegerField(required=True, validators=[MinValueValidator(1)])
+  customer = serializers.CharField(required=True)
+  organization_id = serializers.IntegerField(required=True)
+
+  def validate(self, data):
+    pre_validation = super(SubscribeSerializer, self).validate(data)
+    organization_accepts_donations(data.get("organization_id", None))
+    return pre_validation

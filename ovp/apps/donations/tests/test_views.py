@@ -11,6 +11,7 @@ from rest_framework.test import APIClient
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
 from ovp.apps.donations.models import Transaction
+from ovp.apps.donations.models import Subscription
 from ovp.apps.donations.backends.zoop import ZoopBackend
 from ovp.apps.donations.tests.helpers import card_token
 
@@ -60,9 +61,17 @@ class TestDonationsViewSet(TestCase):
     self.assertEqual(transaction.amount, self.data["amount"])
     self.assertEqual(transaction.status, "succeeded")
     self.assertEqual(transaction.message, "Transaction was authorized.")
-    self.assertEqual(transaction.used_token, self.data["token"])
     self.assertTrue(transaction.backend_transaction_id)
     self.assertTrue(transaction.backend_transaction_number)
+
+  def test_cant_donate_negative(self):
+    self.client.force_authenticate(user=self.donator)
+    self.data["token"] = card_token("5201561050024014")
+    self.data["amount"] = -100
+
+    response = self.client.post(reverse("donation-donate"), data=self.data, format="json")
+    self.assertEqual(response.status_code, 400)
+    self.assertEqual(response.json(), {'amount': ['Ensure this value is greater than or equal to 1.']} )
 
   def test_cant_donate_invalid_card(self):
     self.client.force_authenticate(user=self.donator)
@@ -146,3 +155,65 @@ class TestDonationsViewSet(TestCase):
   #  response = self.client.post(reverse("donation-donate"), data=self.data, format="json")
   #  self.assertEqual(response.status_code, 402)
   #  self.assertEqual(response.data, {"status": "failed", "message": "xxxxx", "category": "card_declined"})
+
+
+class TestSubscriptionViewSet(TestCase):
+  def setUp(self):
+    self.backend = ZoopBackend()
+    self.client = APIClient()
+    self.user = User.objects.create_user(name="a", email="testmail-projects@test.com", password="test_returned", object_channel="default")
+    self.donator = User.objects.create_user(name="a", email="donator@test.com", password="test_returned", object_channel="default")
+    self.non_donator = User.objects.create_user(name="a", email="non_donator@test.com", password="test_returned", object_channel="default")
+    self.organization = Organization.objects.create(name="test org", owner=self.user, object_channel="default", allow_donations=True)
+
+    self.data = {
+      "organization_id": self.organization.id,
+      "amount": 100,
+      "token": "invalid",
+      "customer": "invalid",
+      "interval": 1
+    }
+
+  def test_cant_subscribe_unauthenticated(self):
+    response = self.client.post(reverse("donation-subscribe"), format="json")
+    self.assertEqual(response.status_code, 401)
+
+  def test_cant_subscribe_if_organization_not_flagged(self):
+    self.organization.allow_donations = False
+    self.organization.save()
+    self.client.force_authenticate(user=self.donator)
+
+    response = self.client.post(reverse("donation-subscribe"), data=self.data, format="json")
+    self.assertEqual(response.status_code, 400)
+    self.assertEqual(response.json(), {'organization_id': ["Organization with 'id' 1 and 'allow_donations' True does not exist."]})
+
+  def test_can_subscribe(self):
+    self.client.force_authenticate(user=self.donator)
+    self.data["token"] = card_token("5201561050024014")
+    self.data["customer"] = self.backend.create_customer(first_name="Abraham", last_name="Lincoln", description="Third sector donator", email="abrahamlincoln@usa.gov").json()["id"]
+
+    self.assertEqual(Subscription.objects.all().count(), 0)
+
+    response = self.client.post(reverse("donation-subscribe"), data=self.data, format="json")
+    self.assertEqual(response.status_code, 201)
+    self.assertEqual(Subscription.objects.all().count(), 1)
+
+    subscription = Subscription.objects.last()
+    self.assertEqual(subscription.amount, self.data["amount"])
+    self.assertEqual(subscription.organization, self.organization)
+    self.assertEqual(subscription.user, self.donator)
+    self.assertEqual(subscription.status, "active")
+
+  # Zoop returns valid subscription
+  # TODO: check
+  #def test_cant_subscribe_invalid_card(self):
+  #  self.client.force_authenticate(user=self.donator)
+  #  self.data["token"] = card_token("6011457819940087")
+  #  self.data["customer"] = self.backend.create_customer(first_name="Abraham", last_name="Lincoln", description="Third sector donator", email="abrahamlincoln@usa.gov").json()["id"]
+
+  #  self.assertEqual(Subscription.objects.all().count(), 0)
+
+  #  response = self.client.post(reverse("donation-subscribe"), data=self.data, format="json")
+  #  import pudb;pudb.set_trace()
+  #  self.assertEqual(response.status_code, 201)
+  #  self.assertEqual(Subscription.objects.all().count(), 1)
