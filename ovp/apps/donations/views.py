@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 
+from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 from ovp.apps.donations.backends.zoop import ZoopBackend
 from ovp.apps.donations.models import Transaction
 from ovp.apps.organizations.models import Organization
@@ -13,6 +14,7 @@ from rest_framework import decorators
 from rest_framework import response
 from rest_framework import permissions
 
+@ChannelViewSet
 class DonationViewSet(viewsets.GenericViewSet):
   # POST /subscribe/
   # GET /subscriptions/
@@ -64,6 +66,7 @@ class DonationViewSet(viewsets.GenericViewSet):
       message=charge_data[1]["message"],
       backend_transaction_id=backend_response_data.get("id", None),
       backend_transaction_number=backend_response_data.get("transaction_number", None),
+      object_channel=request.channel
     )
 
     return response.Response(charge_data[1], status=charge_data[0])
