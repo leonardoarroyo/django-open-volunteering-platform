@@ -38,6 +38,7 @@ class ProjectResource(resources.ModelResource):
   organization_id = Field(column_name='ID ONG')
   organization = Field(column_name='ONG')
   address = Field(column_name='Endereço')
+  link = Field(column_name='link')
   owner_id = Field(column_name='ID Responsavel')
   owner_name = Field(column_name='Nome Responsavel')
   owner_email = Field(column_name='Email Responsavel')
@@ -64,6 +65,7 @@ class ProjectResource(resources.ModelResource):
       'address',
       'image',
       'description',
+      'link',
       'disponibility',
       'causes',
       'start_date',
@@ -144,6 +146,13 @@ class ProjectResource(resources.ModelResource):
 
   def dehydrate_bookmark(self, project):
     return project.bookmark_count()
+
+  def dehydrate_link(self, project):
+    site_url = os.environ.get('SITE_URL', None)
+    if site_url:
+      return site_url + project.slug
+
+    return project.slug
 
 
 class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
