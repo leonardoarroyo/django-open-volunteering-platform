@@ -204,6 +204,56 @@ class TestSubscriptionViewSet(TestCase):
     self.assertEqual(subscription.user, self.donator)
     self.assertEqual(subscription.status, "active")
 
+  def test_can_retrieve_subscriptions(self):
+    self.client.force_authenticate(user=self.donator)
+    response = self.client.get(reverse("donation-subscriptions"))
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.json()["count"], 0)
+
+    self.test_can_subscribe()
+    response = self.client.get(reverse("donation-subscriptions"))
+    self.assertEqual(response.json()["count"], 1)
+    self.assertEqual(len(response.json()["results"]), 1)
+
+  def test_cant_retrieve_not_your_subscriptions(self):
+    response = self.client.get(reverse("donation-subscriptions"))
+    self.assertEqual(response.status_code, 401)
+
+    self.test_can_subscribe()
+    self.client.force_authenticate(user=self.user)
+    response = self.client.get(reverse("donation-subscriptions"))
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.json()["count"], 0)
+
+  def test_can_cancel_subscription(self):
+    self.assertEqual(Subscription.objects.count(), 0)
+    self.test_can_subscribe()
+    subscription = Subscription.objects.last()
+
+    data = {
+      "uuid": subscription.uuid
+    }
+    response = self.client.post(reverse("donation-cancel-subscription"), data=data, format="json")
+    self.assertTrue(response.status_code, 200)
+    self.assertTrue(response.json(), {"success": True, "status": "canceled"})
+
+    response = self.client.post(reverse("donation-cancel-subscription"), data=data, format="json")
+    self.assertTrue(response.status_code, 404)
+
+  def test_cant_cancel_not_your_subscription(self):
+    self.assertEqual(Subscription.objects.count(), 0)
+    self.test_can_subscribe()
+    subscription = Subscription.objects.last()
+
+    data = {
+      "uuid": subscription.uuid
+    }
+    response = APIClient().post(reverse("donation-cancel-subscription"), data=data, format="json")
+    self.assertTrue(response.status_code, 401)
+    self.client.force_authenticate(user=self.non_donator)
+    response = APIClient().post(reverse("donation-cancel-subscription"), data=data, format="json")
+    self.assertTrue(response.status_code, 404)
+
   # Zoop returns valid subscription
   # TODO: check
   #def test_cant_subscribe_invalid_card(self):

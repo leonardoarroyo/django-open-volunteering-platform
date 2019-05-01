@@ -10,6 +10,8 @@ from ovp.apps.donations.serializers import DonateSerializer
 from ovp.apps.donations.serializers import TransactionRetrieveSerializer
 from ovp.apps.donations.serializers import RefundTransactionSerializer
 from ovp.apps.donations.serializers import SubscribeSerializer
+from ovp.apps.donations.serializers import SubscriptionRetrieveSerializer
+from ovp.apps.donations.serializers import CancelSubscriptionSerializer
 
 from rest_framework import viewsets
 from rest_framework import decorators
@@ -29,6 +31,8 @@ class DonationViewSet(viewsets.GenericViewSet):
   def get_queryset(self, *args, **kwargs):
     if self.action in ["transactions", "refund_transaction"]:
       return Transaction.objects.filter(user=self.request.user).order_by("-pk")
+    if self.action in ["subscribe", "subscriptions", "cancel_subscription"]:
+      return Subscription.objects.filter(user=self.request.user).order_by("-pk")
     return None
 
   def get_serializer_class(self, *args, **kwargs):
@@ -40,6 +44,10 @@ class DonationViewSet(viewsets.GenericViewSet):
       return RefundTransactionSerializer
     if self.action == "subscribe":
       return SubscribeSerializer
+    if self.action == "subscriptions":
+      return SubscriptionRetrieveSerializer
+    if self.action == "cancel_subscription":
+      return SubscriptionRetrieveSerializer
 
   def get_permissions(self):
     if self.action == "donate":
@@ -49,6 +57,10 @@ class DonationViewSet(viewsets.GenericViewSet):
     if self.action == "refund_transaction":
       self.permission_classes = (permissions.IsAuthenticated,)
     if self.action == "subscribe":
+      self.permission_classes = (permissions.IsAuthenticated,)
+    if self.action == "subscriptions":
+      self.permission_classes = (permissions.IsAuthenticated,)
+    if self.action == "cancel_subscription":
       self.permission_classes = (permissions.IsAuthenticated,)
     return super(DonationViewSet, self).get_permissions()
 
@@ -131,5 +143,31 @@ class DonationViewSet(viewsets.GenericViewSet):
    # TODO: finish, check for errors
 
   @decorators.action(methods=["GET"], detail=False)
-  def subscriptions():
-    pass
+  def subscriptions(self, request):
+    queryset = self.filter_queryset(self.get_queryset())
+
+    page = self.paginate_queryset(queryset)
+    if page is not None:
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    serializer = self.get_serializer(queryset, many=True)
+    return response.Response(serializer.data)
+
+
+  @decorators.action(methods=["POST"], detail=False)
+  def cancel_subscription(self, request):
+    serializer = self.get_serializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    queryset = self.filter_queryset(self.get_queryset())
+    obj = get_object_or_404(queryset, uuid=serializer.data["uuid"], status="active")
+
+    # TODO: Implement backend
+    #status, backend_response = self.backend.refund_transaction(obj.backend_transaction_id, obj.amount)
+    #if status != 200:
+    #  return response.Response({"success": False, "message": "Internal error ocurred."}, status=500)
+
+    obj.status = "canceled"
+    obj.save()
+
+    return response.Response({"success": True, "status": "canceled"})
