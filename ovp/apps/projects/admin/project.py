@@ -3,6 +3,7 @@ import os
 from django import forms
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import format_html
 from martor.widgets import AdminMartorWidget
 
 from ovp.apps.channels.admin import admin_site
@@ -174,7 +175,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     ('owner__name', 'owner__email', 'owner__phone'),
 
     ('applied_count', 'benefited_people'),
-
+    ('volunteers__list'),
     ('can_be_done_remotely', 'skip_address_filter', 'chat_enabled'),
 
     ('published', 'closed', 'deleted', 'canceled'),
@@ -212,7 +213,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   readonly_fields = [
     'id', 'created_date', 'modified_date', 'published_date', 'closed_date', 'deleted_date', 'canceled_date', 'applied_count', 'max_applies_from_roles',
-    'owner__name', 'owner__email', 'owner__phone', 'can_be_done_remotely'
+    'owner__name', 'owner__email', 'owner__phone', 'can_be_done_remotely', 'volunteers__list'
   ]
 
   raw_id_fields = []
@@ -268,5 +269,12 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
       return obj.address.city_state
     else:
       return ""
+  
+  def volunteers__list(self, obj):
+    site_url = os.environ.get('ADMIN_URL', None)
+    if site_url:
+      return format_html("<a href='" + site_url + "admin/projects/apply/?q=" + obj.name + "' target='__blank'>Lista de Voluntários</a>")
+
+    return ""
 
 admin_site.register(Project, ProjectAdmin)
