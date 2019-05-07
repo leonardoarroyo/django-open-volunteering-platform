@@ -6,6 +6,8 @@ from django.conf import settings
 from django.utils import translation
 from ovp.apps.core.helpers import is_email_enabled, get_email_subject
 from ovp.apps.channels.cache import get_channel_setting
+import os
+import json
 
 import threading, sys
 
@@ -29,6 +31,7 @@ class BaseMail:
     self.email_address = email_address
     self.async_mail = async_mail
     self.locale = locale or getattr(settings, "LANGUAGE_CODE", "en-us")
+    self.all_emails = json.loads(os.environ.get("EMAIL_FROM_POSSIBILITIES", "{}"))
 
   def sendEmail(self, template_name, subject, context={}):
     if not is_email_enabled(self.channel, template_name):
@@ -46,6 +49,7 @@ class BaseMail:
     text_content, html_content = self.__render(template_name, ctx)
     self.__resetLocale()
 
+    self.from_email = self.all_emails.get(self.channel, self.from_email)
     msg = EmailMultiAlternatives(subject, text_content, self.from_email, [self.email_address])
     msg.attach_alternative(html_content, "text/html")
 
