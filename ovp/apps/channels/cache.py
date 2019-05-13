@@ -32,9 +32,6 @@ def get_channel(slug):
 def get_channel_setting(slug, key):
   channel = get_channel(slug)
 
-  if os.environ.get("ALLOW_NO_ORG"):
-    return ['1']
-
   if key in channel["settings"]:
     return channel["settings"][key]
   else:
