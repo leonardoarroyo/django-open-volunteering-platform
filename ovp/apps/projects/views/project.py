@@ -24,7 +24,6 @@ from drf_yasg.utils import swagger_auto_schema
 
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext as _
-import os
 
 
 EXPORT_APPLIED_USERS_HEADERS = [
@@ -52,8 +51,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     request.data['owner'] = request.data.get('owner', None) or request.user.pk
 
     serializer = self.get_serializer(data=request.data, context=self.get_serializer_context())
-    if not os.environ.get("ALLOW_NO_ORG"):
-      serializer.is_valid(raise_exception=True)
+    serializer.is_valid(raise_exception=True)
     serializer.save()
 
     headers = self.get_success_headers(serializer.data)
