@@ -40,7 +40,6 @@ from rest_framework import serializers
 from rest_framework import fields
 from rest_framework import exceptions
 from rest_framework.utils import model_meta
-import os
 
 """ Address serializers """
 address_serializers = get_address_serializers()
@@ -49,7 +48,7 @@ address_serializers = get_address_serializers()
 def required_organization(request, pk):
   allow_no_org = int(get_channel_setting(request.channel, "CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION")[0])
 
-  if not allow_no_org and not pk and not os.environ.get("ALLOW_NO_ORG"):
+  if not allow_no_org and not pk:
     raise exceptions.ValidationError({'organization': 'This field is required.'})
 
 def project_owner_is_organization_member_or_self(request, organization_pk):
