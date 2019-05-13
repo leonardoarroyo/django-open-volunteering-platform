@@ -40,7 +40,7 @@ class Project(ChannelRelationship, RatedModelMixin):
   # Relationships
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
-  organization = models.ForeignKey('organizations.Organization', blank=False, null=True, verbose_name=_('organization'))
+  organization = models.ForeignKey('organizations.Organization', blank=True, null=True, verbose_name=_('organization'))
   item = models.ForeignKey('items.Item', blank=True, null=True, verbose_name=_('item'))
   rating_requests = GenericRelation(RatingRequest, related_query_name='rated_object_project')
 
