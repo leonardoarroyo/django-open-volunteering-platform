@@ -85,7 +85,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     read_only_fields = ['slug', 'highlighted', 'published', 'published_date', 'created_date']
 
   def validate(self, data):
-    #required_organization(self.context["request"], data.get("organization_id", None))
+    required_organization(self.context["request"], data.get("organization_id", None))
     project_owner_is_organization_member_or_self(self.context["request"], data.get("organization_id", None))
     return super(ProjectCreateUpdateSerializer, self).validate(data)
 
