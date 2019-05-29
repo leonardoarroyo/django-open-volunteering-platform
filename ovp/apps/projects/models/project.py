@@ -65,13 +65,13 @@ class Project(ChannelRelationship, RatedModelMixin):
   chat_enabled = models.BooleanField(_('Chat Enabled'), default=False)
   canceled = models.BooleanField(_("Canceled"), default=False)
   testimony = models.TextField(_('testimony'), max_length=3000, blank=True, null=True)
-  
+
 
   # Date fields
   published_date = models.DateTimeField(_("Published date"), blank=True, null=True)
   closed = models.BooleanField(_("Closed"), default=False)
   closed_date = models.DateTimeField(_("Closed date"), blank=True, null=True)
-  canceled_date = models.DateTimeField(_("Closed date"), blank=True, null=True)
+  canceled_date = models.DateTimeField(_("Canceled date"), blank=True, null=True)
   deleted = models.BooleanField(_("Deleted"), default=False)
   deleted_date = models.DateTimeField(_("Deleted date"), blank=True, null=True)
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
@@ -138,7 +138,7 @@ class Project(ChannelRelationship, RatedModelMixin):
           self.mailing().sendProjectClosed({'project': self})
         except:
           pass
-      
+
       if not orig.canceled and self.canceled:
         self.closed_date = timezone.now()
 
@@ -174,7 +174,7 @@ class Project(ChannelRelationship, RatedModelMixin):
 
   def __str__(self):
       return  '%s' % (self.name)
-  
+
   class Meta:
     app_label = 'projects'
     verbose_name = _('project')
