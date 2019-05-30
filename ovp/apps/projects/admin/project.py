@@ -50,7 +50,7 @@ class ProjectResource(resources.ModelResource):
   benefited_people = Field(attribute='benefited_people', column_name='Pessoas beneficiadas')
   disponibility = Field(column_name='Presencial ou a distancia')
   bookmark = Field(column_name='Número de curtidas')
-  
+
   class Meta:
     model = Project
     fields = (
@@ -62,7 +62,7 @@ class ProjectResource(resources.ModelResource):
       'owner_email',
       'owner_phone',
       'organization_id',
-      'organization', 
+      'organization',
       'address',
       'image',
       'description',
@@ -106,7 +106,7 @@ class ProjectResource(resources.ModelResource):
       return project.owner.phone
 
   def dehydrate_image(self, project):
-    api_url = os.environ.get('API_URL', None) 
+    api_url = os.environ.get('API_URL', None)
     if project.image:
       return api_url+project.image.image_large.url if api_url is not None \
         else project.image.image_large.url
@@ -199,6 +199,8 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     ]
 
   list_filter = [
+    ('closed_date', DateRangeFilter),
+    ('canceled_date', DateRangeFilter),
     ('created_date', DateRangeFilter), # fix: PONTUAL OU RECORRENTE
     'highlighted', 'published', 'closed', 'deleted', StateListFilter, CityListFilter, 'categories'
   ]
@@ -269,7 +271,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
       return obj.address.city_state
     else:
       return ""
-  
+
   def volunteers__list(self, obj):
     site_url = os.environ.get('ADMIN_URL', None)
     if site_url:
