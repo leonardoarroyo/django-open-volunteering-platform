@@ -32,7 +32,11 @@ class BaseMail:
     self.async_mail = async_mail
     self.locale = locale or getattr(settings, "LANGUAGE_CODE", "en-us")
     self.all_emails = json.loads(os.environ.get("EMAIL_FROM_POSSIBILITIES", "{}"))
-
+    self.all_passwords = json.loads(os.environ.get("PASSWORD_POSSIBILITIES", "{}"))
+    self.all_users = json.loads(os.environ.get("EMAIL_USER_POSSIBILITIES", "{}"))
+    settings.EMAIL_HOST_PASSWORD=self.all_passwords.get(channel, settings.EMAIL_HOST_PASSWORD)
+    
+    settings.EMAIL_HOST_USER=self.all_users.get(channel, settings.EMAIL_HOST_USER)
   def sendEmail(self, template_name, subject, context={}):
     if not is_email_enabled(self.channel, template_name):
       return False
