@@ -24,7 +24,9 @@ class BoticarioOAuth2(BaseOAuth2):
         }
 
     def user_data(self, access_token, *args, **kwargs):
-        url = "https://auth.grupoboticario.com.br/adfs/userinfo?" + urlencode({
-            'access_token': access_token
-        })
-        return self.get_json(url)
+        return self.get_json(
+            "https://auth.grupoboticario.com.br/adfs/userinfo",
+            headers={
+                'Authorization': 'Bearer {}'.format(access_token),
+            },
+)
