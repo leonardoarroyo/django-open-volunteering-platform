@@ -48,6 +48,7 @@ class ProjectResource(resources.ModelResource):
   start_date = Field(column_name='Data de início')
   end_date = Field(column_name='Data de Encerramento')
   benefited_people = Field(attribute='benefited_people', column_name='Pessoas beneficiadas')
+  applied_count = Field(column_name='Número de inscritos')
   disponibility = Field(column_name='Presencial ou a distancia')
   bookmark = Field(column_name='Número de curtidas')
 
@@ -71,6 +72,7 @@ class ProjectResource(resources.ModelResource):
       'causes',
       'start_date',
       'end_date',
+      'applied_count',
       'benefited_people',
       'published',
       'closed',
