@@ -12,7 +12,10 @@ def verify_and_decode_token(token):
   cert_obj = load_pem_x509_certificate(certificate.encode('ascii'), default_backend())
   public_key = cert_obj.public_key()
   try:
-    return jwt.decode(token, public_key, algorithms=['RS256'], audience=aud)
+    decoded = jwt.decode(token, public_key, algorithms=['RS256'], audience=aud)
+    decoded['email'] = 'testotheruser@grupoboticario.com.br'
+    decoded['unique_name'] = 'testy'
+    return decoded
   except jwt.exceptions.InvalidSignatureError:
     return None
 
@@ -35,9 +38,12 @@ class BoticarioOAuth2(BaseOAuth2):
 
   def get_user_details(self, response):
     return {
-      'email': response.get('email', ''),
-      'name': response.get('unique_name', ''),
+      'email': response.get('email'),
+      'name': response.get('unique_name'),
     }
+
+  def get_user_id(self, details, response):
+    return details['email']
 
   def user_data(self, access_token, *args, **kwargs):
     self.token_data = verify_and_decode_token(access_token)
