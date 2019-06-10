@@ -13,8 +13,6 @@ def verify_and_decode_token(token):
   public_key = cert_obj.public_key()
   try:
     decoded = jwt.decode(token, public_key, algorithms=['RS256'], audience=aud)
-    decoded['email'] = 'testotheruser@grupoboticario.com.br'
-    decoded['unique_name'] = 'testy'
     return decoded
   except jwt.exceptions.InvalidSignatureError:
     return None
