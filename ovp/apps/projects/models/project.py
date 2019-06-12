@@ -146,7 +146,7 @@ class Project(ChannelRelationship, RatedModelMixin):
         self.deleted_date = timezone.now()
     else:
       # Project being created
-      self.slug = generate_slug(Project, self.name, kwargs.get("object_channel", None))
+      self.slug = generate_slug(Project, self.name)
       creating = True
 
     # If there is no description, take 100 chars from the details
