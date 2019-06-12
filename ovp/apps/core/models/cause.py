@@ -21,13 +21,14 @@ class Cause(ChannelRelationship):
   class Meta:
     app_label = 'core'
     verbose_name = _('cause')
+    unique_together = (('slug', 'channel'), )
 
   def __str__(self):
     return self.name
 
   def save(self, *args, **kwargs):
     if not self.pk:
-      self.slug = generate_slug(kwargs.get("object_channel", None), Cause, self.name)
+      self.slug = generate_slug(Cause, self.name, kwargs.get("object_channel", None))
     super(Cause, self).save(*args, **kwargs)
 
 @receiver(post_save, sender=Channel)

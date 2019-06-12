@@ -97,7 +97,7 @@ class Organization(ChannelRelationship, RatedModelMixin):
         self.deleted_date = timezone.now()
     else:
       # Organization being created
-      self.slug = generate_slug(kwargs.get("object_channel", None), Organization, self.name)
+      self.slug = generate_slug(Organization, self.name)
       creating = True
 
     self.document = format_CNPJ(self.document)
@@ -127,6 +127,5 @@ class Organization(ChannelRelationship, RatedModelMixin):
     app_label = 'organizations'
     verbose_name = _('organization')
     verbose_name_plural = _('organizations')
-    unique_together = (('slug', 'channel'), )
 
 

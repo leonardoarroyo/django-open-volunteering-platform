@@ -17,9 +17,9 @@ class Category(ChannelRelationship):
 
   def save(self, *args, **kwargs):
     if not self.pk:
-      self.slug = generate_slug(kwargs.get("object_channel", None), Category, self.name)
+      self.slug = generate_slug(Category, self.name, kwargs.get("object_channel", None))
     else:
-      self.slug = generate_slug(self.channel.slug, Category, self.name)
+      self.slug = generate_slug(Category, self.name, self.channel.slug)
     return super(Category, self).save(*args, **kwargs)
 
   class Meta:
