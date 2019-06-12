@@ -20,7 +20,7 @@ class Skill(ChannelRelationship):
   class Meta:
     app_label = 'core'
     verbose_name = _('skill')
-    unique_together = ('cause')
+    unique_together = (('slug', 'channel'),)
 
   def __str__(self):
     return self.name
