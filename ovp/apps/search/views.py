@@ -75,7 +75,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
     queryset = filters.by_published(queryset, published)
     queryset = filters.by_address(queryset, address) if address else queryset
     queryset = filters.by_causes(queryset, cause) if cause else queryset
-    queryset = filters.by_channels(queryset, self.request.channel)
+    queryset = filters.by_channel_content_flow(queryset, self.request.channel)
 
     result_keys = [q.pk for q in queryset]
     result = querysets.get_organization_queryset(request=self.request).filter(pk__in=result_keys)
@@ -147,7 +147,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = filters.by_disponibility(queryset, disponibility)
     queryset = filters.by_date(queryset, date)
     # queryset = filters.by_organizations(queryset, organization)
-    queryset = filters.by_channels(queryset, self.request.channel)
+    queryset = filters.by_channel_content_flow(queryset, self.request.channel)
 
     result_keys = [q.pk for q in queryset]
 

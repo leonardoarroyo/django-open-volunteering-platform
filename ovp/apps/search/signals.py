@@ -17,15 +17,15 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
     for projects and organizations.
 
   """
-  attach_to = [
-    (Project, 'handle_save', 'handle_delete'),
-    (Organization, 'handle_save', 'handle_delete'),
-    (User, 'handle_save', 'handle_delete'),
-    (get_profile_model(), 'handle_profile_save', 'handle_profile_delete'),
-    (GoogleAddress, 'handle_address_save', 'handle_address_delete'),
-    (Job, 'handle_job_and_work_save', 'handle_job_and_work_delete'),
-    (Work, 'handle_job_and_work_save', 'handle_job_and_work_delete'),
-  ]
+  attach_to = {
+    Project: ('handle_project_save', 'handle_project_delete'),
+    Organization: ('handle_save', 'handle_delete'),
+    User: ('handle_save', 'handle_delete'),
+    get_profile_model(): ('handle_profile_save', 'handle_profile_delete'),
+    GoogleAddress: ('handle_address_save', 'handle_address_delete'),
+    Job: ('handle_job_and_work_save', 'handle_job_and_work_delete'),
+    Work: ('handle_job_and_work_save', 'handle_job_and_work_delete'),
+  }
   m2m = [
     Project.causes.through,
     Project.categories.through,
@@ -39,9 +39,9 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
   ]
 
   def setup(self):
-    for item in self.attach_to:
-      models.signals.post_save.connect(getattr(self, item[1]), sender=item[0])
-      models.signals.post_delete.connect(getattr(self, item[2]), sender=item[0])
+    for model, functions in self.attach_to.items():
+      models.signals.post_save.connect(getattr(self, functions[0]), sender=model)
+      models.signals.post_delete.connect(getattr(self, functions[1]), sender=model)
 
     for item in self.m2m:
       models.signals.m2m_changed.connect(self.handle_m2m, sender=item)
@@ -60,6 +60,21 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
 
     for item in self.m2m_user:
       models.signals.m2m_changed.disconnect(self.handle_m2m_user, sender=item)
+
+  def handle_project_save(self, sender, instance, **kwargs):
+    """ Custom handler for project save """
+    # We reindex organization, as it index information about projects(projects categories)
+    if instance.organization:
+      self.handle_save(instance.organization.__class__, instance.organization)
+
+    self.handle_save(instance.__class__, instance)
+
+  def handle_project_delete(self, sender, instance, **kwargs):
+    """ Custom handler for project delete """
+    self.handle_delete(instance.__class__, instance)
+
+    if instance.organization:
+      self.handle_save(instance.organization.__class__, instance.organization)
 
   def handle_address_save(self, sender, instance, **kwargs):
     """ Custom handler for address save """
@@ -98,7 +113,10 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
 
   def handle_m2m(self, sender, instance, **kwargs):
     """ Handle many to many relationships """
-    self.handle_save(instance.__class__, instance)
+    if self.attach_to.get(instance.__class__, None):
+      getattr(self, self.attach_to[instance.__class__][0])(instance.__class__, instance)
+    else:
+      self.handle_save(instance.__class__, instance)
 
   def handle_m2m_user(self, sender, instance, **kwargs):
     """ Handle many to many relationships for user field """
