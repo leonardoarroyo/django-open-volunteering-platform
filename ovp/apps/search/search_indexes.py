@@ -169,6 +169,10 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
   published = indexes.BooleanField(model_attr='published')
   deleted = indexes.BooleanField(model_attr='deleted')
   channel = indexes.CharField()
+  projects_categories = indexes.MultiValueField(faceted=True)
+
+  def prepare_projects_categories(self, obj):
+    return list(obj.project_set.all().values_list('categories__pk', flat=True).distinct())
 
   def get_model(self):
     return Organization

@@ -69,7 +69,7 @@ def fetch_user_relevance_catalogue(catalogue, queryset, request, context=None, s
     result = ProjectSearchSerializer(queryset, many=True, context=context).data
   else:
     result = queryset
-  
+
   section_dict["projects"] = result
   catalogue["sections"].insert(0, section_dict)
 
@@ -97,7 +97,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
   queryset = filters.by_published(queryset, 'true')
   queryset = filters.by_closed(queryset, 'false')
   queryset = filters.by_address(queryset, address, project=True)
-  queryset = queryset.filter(channel=channel)
+  queryset = filters.by_channel_content_flow(queryset, channel)
 
   result_keys = [q.pk for q in queryset]
 
@@ -107,7 +107,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
   queryset = SearchQuerySet().models(Organization)
   queryset = filters.by_published(queryset, 'true')
   queryset = filters.by_address(queryset, address, project=True)
-  queryset = queryset.filter(channel=channel)
+  queryset = filters.by_channel_content_flow(queryset, channel)
 
   result_keys = [q.pk for q in queryset]
 
@@ -127,7 +127,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
       qs = organization_base_queryset
     else:
       qs = project_base_queryset
-    
+
     # Filter queryset
     for kwargs in section["filters"]:
       qs = qs.filter(**kwargs)
