@@ -19,5 +19,6 @@ class FacebookOAuth2(FacebookOAuth2Base):
     }
 
   def get_key_and_secret(self):
-    url = self.strategy.request.get_host()
+    url = self.strategy.request.get_host
+    os.environ['teste_url'] = url
     return self.setting('KEY'), self.setting('SECRET')
