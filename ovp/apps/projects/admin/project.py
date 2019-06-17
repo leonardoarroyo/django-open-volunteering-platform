@@ -170,10 +170,10 @@ class ProjectResource(resources.ModelResource):
       if isinstance(project.address, SimpleAddress):
         return project.address.city
 
-  def dehydrate_roles(self, project):
+  def dehydrate_roles_count(self, project):
     return project.roles.count()
 
-  def dehydrate_roles_count(self, project):
+  def dehydrate_roles(self, project):
     return ", ".join([r.name for r in project.roles.all()])
 
 
