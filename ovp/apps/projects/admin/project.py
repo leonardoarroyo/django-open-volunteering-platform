@@ -39,11 +39,14 @@ class ProjectResource(resources.ModelResource):
   organization_id = Field(column_name='ID ONG')
   organization = Field(column_name='ONG')
   address = Field(column_name='Endereço')
+  city_state = Field(column_name='Cidade/Estado')
   link = Field(column_name='link')
   owner_id = Field(column_name='ID Responsavel')
   owner_name = Field(column_name='Nome Responsavel')
   owner_email = Field(column_name='Email Responsavel')
   owner_phone = Field(column_name='Telefone Responsavel')
+  roles_count = Field(column_name='Número de funções')
+  roles = Field(column_name='Funções')
   image = Field(column_name='Imagem')
   start_date = Field(column_name='Data de início')
   end_date = Field(column_name='Data de Encerramento')
@@ -65,8 +68,11 @@ class ProjectResource(resources.ModelResource):
       'organization_id',
       'organization',
       'address',
+      'city_state',
       'image',
       'description',
+      'roles',
+      'roles_count',
       'link',
       'disponibility',
       'causes',
@@ -156,6 +162,19 @@ class ProjectResource(resources.ModelResource):
       return site_url + project.slug
 
     return project.slug
+
+  def dehydrate_city_state(self, project):
+    if project.address is not None:
+      if isinstance(organization.address, GoogleAddress):
+        return organization.address.city_state
+      if isinstance(organization.address, SimpleAddress):
+        return organization.address.city
+
+  def dehydrate_roles(self, project):
+    return project.roles.count()
+
+  def dehydrate_roles_count(self, project):
+    return ", ".join([r.name for r in project.roles.all()])
 
 
 class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
