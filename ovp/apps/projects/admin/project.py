@@ -165,10 +165,10 @@ class ProjectResource(resources.ModelResource):
 
   def dehydrate_city_state(self, project):
     if project.address is not None:
-      if isinstance(organization.address, GoogleAddress):
-        return organization.address.city_state
-      if isinstance(organization.address, SimpleAddress):
-        return organization.address.city
+      if isinstance(project.address, GoogleAddress):
+        return project.address.city_state
+      if isinstance(project.address, SimpleAddress):
+        return project.address.city
 
   def dehydrate_roles(self, project):
     return project.roles.count()
