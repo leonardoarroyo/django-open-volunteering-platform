@@ -21,7 +21,6 @@ class FacebookOAuth2(FacebookOAuth2Base):
 
   def get_key_and_secret(self):
     url = self.strategy.request.build_absolute_uri()
-    return url
     face_keys = json.loads(os.environ.get('FACEBOOK_KEYS', {}))
     for channel in face_keys:
       if channel in url:
