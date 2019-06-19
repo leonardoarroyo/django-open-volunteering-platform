@@ -21,9 +21,6 @@ class FacebookOAuth2(FacebookOAuth2Base):
 
   def get_key_and_secret(self):
     url = self.strategy.request.META['HTTP_HOST']
-    print(url)
-    with open('/home/ubuntu/teste.txt', 'w') as test:
-      test.write(url)
     face_keys = json.loads(os.environ.get('FACEBOOK_KEYS', {}))
     for channel in face_keys:
       if channel in url:
