@@ -1,6 +1,7 @@
 from social_core.backends.facebook import FacebookOAuth2 as FacebookOAuth2Base
 from rest_framework.exceptions import AuthenticationFailed
 import os
+import json
 
 class FacebookOAuth2(FacebookOAuth2Base):
   def auth_allowed(self, response, details):
@@ -19,9 +20,9 @@ class FacebookOAuth2(FacebookOAuth2Base):
     }
 
   def get_key_and_secret(self):
-    url = self.strategy.request.get_host()
-    if 'tgs' in url:
-      return os.environ.get('FACE_ID_TGS'), os.environ.get('FACE_SECRET_TGS')
-    if 'fortaleza' in url:
-      return os.environ.get('FACE_ID_FORTALEZA'), os.environ.get('FACE_SECRET_FORTALEZA')
+    url = self.strategy.request.META['HTTP_HOST']
+    face_keys = json.loads(os.environ.get('FACEBOOK_KEYS', {}))
+    for channel in face_keys:
+      if channel in url:
+        return tuple(face_keys[channel])
     return self.setting('KEY'), self.setting('SECRET')
