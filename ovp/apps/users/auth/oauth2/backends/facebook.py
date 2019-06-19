@@ -20,9 +20,4 @@ class FacebookOAuth2(FacebookOAuth2Base):
     }
 
   def get_key_and_secret(self):
-    url = self.strategy.request.META['HTTP_HOST']
-    face_keys = json.loads(os.environ.get('FACEBOOK_KEYS', {}))
-    for channel in face_keys:
-      if channel in url:
-        return tuple(face_keys[channel])
-    return self.setting('KEY'), self.setting('SECRET')
+    return os.environ['FACE_ID_TGS'], os.environ['FACE_SECRET_TGS']
