@@ -54,7 +54,7 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
         errors['email'] = "An user with this email is already registered."
 
     s = get_settings()
-    validation_functions = s.get('USER_REGISTER_VALIDATION_FUNCTIONS')
+    validation_functions = s.get('USER_REGISTER_VALIDATION_FUNCTIONS', [])
     for func_string in validation_functions:
       func = import_from_string(func_string)
       out = func(data, self.context)
