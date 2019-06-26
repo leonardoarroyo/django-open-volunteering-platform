@@ -291,6 +291,10 @@ class ProjectManageableRetrieveSerializer(ProjectRetrieveSerializer):
     model = models.Project
     fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'unrated_users_count']
 
+class ProjectManageableSerializer(ProjectRetrieveSerializer):
+  class Meta:
+    model = models.Project
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'item', 'type']
 
 class CompactOrganizationSerializer(serializers.ModelSerializer):
   address = address_serializers[2]()
