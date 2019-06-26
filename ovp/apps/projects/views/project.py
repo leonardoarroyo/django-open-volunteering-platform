@@ -13,6 +13,7 @@ from ovp.apps.core.mixins import CommentaryCreateMixin
 from ovp.apps.core.mixins import BookmarkMixin
 from ovp.apps.core.serializers import commentary as comments_serializer
 from ovp.apps.core.serializers import EmptySerializer
+from ovp.apps.core.pagination import StandardResultsSetPagination
 
 from rest_framework import decorators
 from rest_framework import mixins
@@ -101,11 +102,17 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
   @decorators.list_route(['GET'])
   def manageable(self, request, *args, **kwargs):
     """ Retrieve a list of projects the authenticated user can manage. """
+    paginator = StandardResultsSetPagination()
     projects = self.get_queryset().filter(Q(owner=request.user) | Q(organization__owner=request.user) | Q(organization__members=request.user))
 
     if request.query_params.get('no_organization', None):
       projects = projects.filter(organization=None)
 
+    page = paginator.paginate_queryset(projects)
+    if page is not None:
+      serializer = self.get_serializer_class()(page, many=True, context=self.get_serializer_context())
+      return paginator.get_paginated_response(serializer.data)
+      
     serializer = self.get_serializer_class()(projects, many=True, context=self.get_serializer_context())
     return response.Response(serializer.data)
 
