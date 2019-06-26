@@ -8,7 +8,7 @@ from ovp.apps.projects.serializers.work import WorkSerializer
 from ovp.apps.projects.serializers.role import VolunteerRoleSerializer
 from ovp.apps.projects.serializers.apply import ProjectAppliesSerializer
 from ovp.apps.projects.serializers.category import CategoryRetrieveSerializer, CategoryAssociationSerializer
-from ovp.apps.core.serializers.commentary import CommentaryRetrieveSerializer
+from ovp.apps.core.serializers.post import PostRetrieveSerializer
 
 from ovp.apps.core import models as core_models
 from ovp.apps.core.helpers import get_address_serializers
@@ -249,7 +249,8 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   skills = SkillSerializer(many=True)
   galleries = GalleryRetrieveSerializer(many=True)
   categories = CategoryRetrieveSerializer(many=True)
-  commentaries = CommentaryRetrieveSerializer(many=True)
+  posts = PostRetrieveSerializer(many=True)
+  posts = serializers.SerializerMethodField('get_posts_list')
   is_bookmarked = serializers.SerializerMethodField()
   bookmark_count = serializers.SerializerMethodField()
   item = ItemSerializer()
@@ -257,7 +258,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'galleries', 'testimony', 'benefited_people', 'chat_enabled', 'canceled', 'channel']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'posts', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'galleries', 'testimony', 'benefited_people', 'chat_enabled', 'canceled', 'channel']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
@@ -272,6 +273,10 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
       return instance.bookmark_count()
 
     return None
+
+  def get_posts_list(self, instance):
+    posts = instance.posts.order_by("-pk")
+    return PostRetrieveSerializer(posts, many=True, context=self.context).data
 
   @add_current_user_is_applied_representation
   @hide_address
@@ -289,7 +294,7 @@ class ProjectManageableRetrieveSerializer(ProjectRetrieveSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'unrated_users_count']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes',  'posts', 'skills', 'categories', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'unrated_users_count']
 
 class ProjectManageableSerializer(ProjectRetrieveSerializer):
   class Meta:
