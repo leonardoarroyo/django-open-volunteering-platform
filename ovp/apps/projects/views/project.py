@@ -124,7 +124,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin, mixins.CreateModelM
     if page is not None:
       serializer = self.get_serializer_class()(page, many=True, context=self.get_serializer_context())
       return paginator.get_paginated_response(serializer.data)
-      
+
     serializer = self.get_serializer_class()(projects, many=True, context=self.get_serializer_context())
     return response.Response(serializer.data)
 
@@ -167,6 +167,9 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin, mixins.CreateModelM
     if self.action == 'post':
       self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
 
+    if self.action == 'post_patch':
+      self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
+
     return super(ProjectResourceViewSet, self).get_permissions()
 
   def get_serializer_class(self):
@@ -180,6 +183,8 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin, mixins.CreateModelM
       return serializers.ProjectRetrieveSerializer
     if self.action == 'post':
       return post_serializers.PostCreateSerializer
+    if self.action == 'post_patch':
+      return post_serializers.PostUpdateSerializer
     if self.action == 'retrieve':
       if ProjectRetrieveOwnsOrIsOrganizationMember().has_object_permission(self.request, None, self.get_object()):
         return serializers.ProjectManageableRetrieveSerializer

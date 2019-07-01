@@ -10,6 +10,7 @@ from ovp.apps.projects.models import Project
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
 from ovp.apps.gallery.models import Gallery
+from ovp.apps.core.models import Post
 
 from ovp.apps.channels.models.channel_setting import ChannelSetting
 
@@ -186,6 +187,16 @@ class ProjectPostTestCase(TestCase):
     response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
     self.assertEqual(response.data['posts'][0]['gallery']['id'], Gallery.objects.last().pk)
 
+  def test_unpublished_posts(self, content="test content"):
+    """ Assert that unpublished posts come flagged """
+    post = {
+      "content": content,
+    }
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    Post.objects.all().update(published=False)
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data['posts'][0]['published'], False)
+
   def test_retrieve_posts(self):
     self.test_user_can_post_in_project(content="a")
     self.test_user_can_post_in_project(content="b")
@@ -196,6 +207,62 @@ class ProjectPostTestCase(TestCase):
     self.assertEqual(response.data['posts'][0]['content'], "c")
     self.assertEqual(response.data['posts'][1]['content'], "b")
     self.assertEqual(response.data['posts'][2]['content'], "a")
+
+  def test_update_posts(self):
+    data = {
+        "content": "updated",
+        "gallery": Gallery.objects.last().pk,
+    }
+    self.test_user_can_post_in_project()
+    post_pk = Post.objects.last().pk
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data['posts'][0]['content'], "test content")
+    self.assertEqual(response.data['posts'][0]['gallery'], None)
+
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk+1]), data, format="json")
+    self.assertEqual(response.status_code, 404)
+
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), data, format="json")
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data['posts'][0]['content'], "updated")
+    self.assertEqual(response.data['posts'][0]['gallery']['id'], Gallery.objects.last().pk)
+
+  def test_only_owner_or_organization_member_can_update_post(self):
+    self.test_user_can_post_in_project()
+    self.client = APIClient()
+    post_pk = Post.objects.last().pk
+
+    data = {
+        "content": "updated",
+        "gallery": Gallery.objects.last().pk,
+    }
+
+    # Unauthenticated
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), data, format="json")
+    self.assertEqual(response.status_code, 401)
+
+    # Not part of organization
+    testuser = User.objects.create_user(email="test_comment1@gmail.com", password="testcomment", object_channel="default")
+    self.client.force_authenticate(user=testuser)
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), data, format="json")
+    self.assertEqual(response.status_code, 403)
+
+    # As organization owner
+    organization = Organization.objects.create(name="test", owner=testuser, object_channel="default")
+    Project.objects.filter(slug="test-project").update(organization=organization)
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), data, format="json")
+    self.assertEqual(response.status_code, 200)
+
+    # As organization member
+    testuser2 = User.objects.create_user(email="test_comment2@gmail.com", password="testcomment", object_channel="default")
+    self.client.force_authenticate(user=testuser2)
+    organization.members.add(testuser2)
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), data, format="json")
+    self.assertEqual(response.status_code, 200)
+
 
 # This tests should run if declaring the following setings on runtests.py
 # They can't work without rerunning migrations as django expects the default GoogleAddress related model
