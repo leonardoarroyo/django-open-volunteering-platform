@@ -108,7 +108,7 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     if request.query_params.get('no_organization', None):
       projects = projects.filter(organization=None)
 
-    page = paginator.paginate_queryset(projects)
+    page = paginator.paginate_queryset(projects, request)
     if page is not None:
       serializer = self.get_serializer_class()(page, many=True, context=self.get_serializer_context())
       return paginator.get_paginated_response(serializer.data)
