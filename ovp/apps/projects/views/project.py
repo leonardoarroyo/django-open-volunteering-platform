@@ -104,9 +104,21 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     """ Retrieve a list of projects the authenticated user can manage. """
     paginator = StandardResultsSetPagination()
     projects = self.get_queryset().filter(Q(owner=request.user) | Q(organization__owner=request.user) | Q(organization__members=request.user))
+    projects = projects.order_by('created_date')
 
-    if request.query_params.get('no_organization', None):
+    params = request.query_params
+    if params.get('no_organization') == 'true':
       projects = projects.filter(organization=None)
+    if params.get('published'):
+      published = params.get('published') == 'true'
+      projects = projects.filter(published=published)
+    if params.get('closed'):
+      closed = params.get('closed') == 'true'
+      projects = projects.filter(closed=closed)
+    if params.get('query'):
+      query = params.get('query')
+      projects = projects.filter(content=query)
+
 
     page = paginator.paginate_queryset(projects, request)
     if page is not None:
