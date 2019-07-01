@@ -338,8 +338,7 @@ class ManageableProjectsRouteTestCase(TestCase):
     self.organization2.save(object_channel="default")
     self.organization2.members.add(self.user)
 
-    p = Project.obj():
-ects.create(name="test project 1", owner=self.user, object_channel="default")
+    p = Project.objects.create(name="test project 1", owner=self.user, object_channel="default")
     p = Project.objects.create(name="test project 2", owner=self.user, organization=self.organization, object_channel="default")
     p = Project.objects.create(name="test project 3", owner=self.user2, organization=self.organization2, object_channel="default")
 
