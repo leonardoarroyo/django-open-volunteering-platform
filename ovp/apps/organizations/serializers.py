@@ -164,6 +164,8 @@ class MemberRemoveSerializer(serializers.Serializer):
     fields = ['email']
 
 class MemberListRetrieveSerializer(ChannelRelationshipSerializer):
+  avatar = UploadedImageSerializer()
+
   class Meta:
     model = User
     fields = ['id', 'uuid', 'name', 'email', 'avatar', 'slug']
