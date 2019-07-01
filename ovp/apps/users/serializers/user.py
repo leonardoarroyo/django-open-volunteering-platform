@@ -42,10 +42,10 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
 
     if data.get('password'):
       password = data.get('password', '')
-      # try:
-      #   validate_password(password=password)
-      # except ValidationError as e:
-      #   errors['password'] = list(e.messages)
+      try:
+        validate_password(password=password)
+      except ValidationError as e:
+        errors['password'] = list(e.messages)
 
     if data.get('email'):
       email = data.get('email', '')
