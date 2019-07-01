@@ -26,11 +26,6 @@ image_small = ImageName("-small")
 image_medium = ImageName("-medium")
 image_large = ImageName("-large")
 
-IMAGE_GALERY_CATEGORIES = (
-  ('organization', _("Organization")),
-  ('project', _("Project")),
-)
-
 class UploadedImage(ChannelRelationship):
   def save(self, *args, **kwargs):
     if not self.pk:
@@ -69,7 +64,6 @@ class UploadedImage(ChannelRelationship):
   uuid = models.CharField('UUID', max_length=36, default=None, null=False, blank=True)
   absolute = models.BooleanField('Absolute', default=False)
 
-  category = models.CharField(_('Category'), max_length=24, choices=IMAGE_GALERY_CATEGORIES, default=None, null=True, blank=True)
   name = models.CharField(_('Name'),max_length=64, default=None, null=True, blank=True)
 
 
@@ -77,7 +71,7 @@ class UploadedImage(ChannelRelationship):
 class DocumentName(object):
   def __init__(self, sub_path=""):
     self.path = sub_path
-  
+
   def __call__(self, instance, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (instance.uuid, ext)
@@ -94,7 +88,7 @@ class UploadedDocument(ChannelRelationship):
     if not self.document._committed:
       self.extension = self.document.name.split('.')[-1]
       self.size = self.document.size
-      
+
     self.modified_date = timezone.now()
     return super(UploadedDocument, self).save(*args, **kwargs)
 
