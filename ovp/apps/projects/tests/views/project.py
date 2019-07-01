@@ -184,8 +184,7 @@ class ProjectPostTestCase(TestCase):
     self.assertEqual(response.data["gallery"], Gallery.objects.last().pk)
 
     response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
-    import pudb;pudb.set_trace()
-    self.assertEqual(response.data['posts'][0], 11)
+    self.assertEqual(response.data['posts'][0]['gallery']['id'], Gallery.objects.last().pk)
 
   def test_retrieve_posts(self):
     self.test_user_can_post_in_project(content="a")
@@ -436,6 +435,15 @@ class ProjectResourceUpdateTestCase(TestCase):
 
     response = self.client.patch(reverse("project-detail", ["test-project"]), {}, format="json")
     self.assertTrue(response.status_code == 403)
+
+  def test_update_fields_without_organization(self):
+    """Test patch request update fields without organization field"""
+    ChannelSetting.objects.all().delete()
+    cache.clear()
+
+    updated_project = {"name": "test update", "details": "update", "description": "update", "causes": [{"id": 3}], "skills": [{"id": 1}, {"id": 2}, {"id": 3}]}
+    response = self.client.patch(reverse("project-detail", ["test-project"]), updated_project, format="json")
+    self.assertTrue(response.status_code == 200)
 
   def test_update_fields(self):
     """Test patch request update fields"""
