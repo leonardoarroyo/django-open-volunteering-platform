@@ -9,6 +9,7 @@ from rest_framework.test import APIClient
 from ovp.apps.projects.models import Project
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
+from ovp.apps.gallery.models import Gallery
 
 from ovp.apps.channels.models.channel_setting import ChannelSetting
 
@@ -125,30 +126,80 @@ class ProjectCloseTestCase(TestCase):
     self.assertTrue(Project.objects.get(slug="test-project").closed)
 
 
-class ProjectCommentTestCase(TestCase):
+class ProjectPostTestCase(TestCase):
   def setUp(self):
     user = User.objects.create_user(email="test_comment@gmail.com", password="testcomment", object_channel="default")
+    self.gallery = Gallery.objects.create(owner=user, object_channel="default")
     self.client = APIClient()
     self.client.force_authenticate(user=user)
-
-    data = copy.copy(base_project)
-    self.project = self.client.post(reverse("project-list"), data, format="json")
 
     ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
     cache.clear()
 
-  def test_user_can_comment_in_project(self):
-    """ Assert that user can comment in project """
-    comment = {
-      "content": "test comment",
+    data = copy.copy(base_project)
+    self.project = self.client.post(reverse("project-list"), data, format="json")
+
+  def test_only_owner_or_organization_member_can_post(self):
+    post = {"content": "test"}
+    self.client = APIClient()
+
+    # Unauthenticated
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    self.assertEqual(response.status_code, 401)
+
+    # Not part of organization
+    testuser = User.objects.create_user(email="test_comment1@gmail.com", password="testcomment", object_channel="default")
+    self.client.force_authenticate(user=testuser)
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    self.assertEqual(response.status_code, 403)
+
+    # As organization owner
+    organization = Organization.objects.create(name="test", owner=testuser, object_channel="default")
+    Project.objects.filter(slug="test-project").update(organization=organization)
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    self.assertEqual(response.status_code, 200)
+
+    # As organization member
+    testuser2 = User.objects.create_user(email="test_comment2@gmail.com", password="testcomment", object_channel="default")
+    self.client.force_authenticate(user=testuser2)
+    organization.members.add(testuser2)
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    self.assertEqual(response.status_code, 200)
+
+  def test_user_can_post_in_project(self, content="test content"):
+    """ Assert that user can post in project """
+    post = {
+      "content": content,
     }
-    response = self.client.post(reverse("project-commentary", ["test-project"]), comment, format="json")
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
     self.assertTrue(response.status_code == 200)
 
+  def test_post_with_gallery_and_documents(self):
+    post = {
+      "content": "test",
+      "gallery": Gallery.objects.last().pk
+    }
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    self.assertTrue(response.status_code == 200)
+    self.assertEqual(response.data["gallery"], Gallery.objects.last().pk)
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data['posts'][0]['gallery']['id'], Gallery.objects.last().pk)
+
+  def test_retrieve_posts(self):
+    self.test_user_can_post_in_project(content="a")
+    self.test_user_can_post_in_project(content="b")
+    self.test_user_can_post_in_project(content="c")
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+
+    self.assertEqual(len(response.data['posts']), 3)
+    self.assertEqual(response.data['posts'][0]['content'], "c")
+    self.assertEqual(response.data['posts'][1]['content'], "b")
+    self.assertEqual(response.data['posts'][2]['content'], "a")
 
 # This tests should run if declaring the following setings on runtests.py
 # They can't work without rerunning migrations as django expects the default GoogleAddress related model
-# 
+#
 # @override_settings(OVP_CORE={"ADDRESS_MODEL": "ovp.apps.core.models.SimpleAddress", "ADDRESS_SERIALIZER_TUPLE": ("ovp.apps.core.serializers.SimpleAddressSerializer", "ovp.apps.core.serializers.SimpleAddressSerializer", "ovp.apps.core.serializers.SimpleAddressSerializer")})
 # class ProjectWithSimpleAddressTestCase(TestCase):
 #  def setUp(self):
@@ -300,7 +351,7 @@ class ProjectWithOrganizationTestCase(TestCase):
     """Assert that it's possible to create a project with another owner"""
     ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
     cache.clear()
-    
+
     client = APIClient()
     client.force_authenticate(user=self.user)
 
@@ -319,7 +370,7 @@ class ProjectWithOrganizationTestCase(TestCase):
     response = client.post(reverse("project-list"), data, format="json")
     self.assertTrue(response.status_code == 400)
     self.assertTrue(response.data["owner"][0] == "User is a not a member of the organization.")
-    
+
     # Part of the organization
     organization.members.add(self.second_user)
     response = client.post(reverse("project-list"), data, format="json")
@@ -384,6 +435,15 @@ class ProjectResourceUpdateTestCase(TestCase):
 
     response = self.client.patch(reverse("project-detail", ["test-project"]), {}, format="json")
     self.assertTrue(response.status_code == 403)
+
+  def test_update_fields_without_organization(self):
+    """Test patch request update fields without organization field"""
+    ChannelSetting.objects.all().delete()
+    cache.clear()
+
+    updated_project = {"name": "test update", "details": "update", "description": "update", "causes": [{"id": 3}], "skills": [{"id": 1}, {"id": 2}, {"id": 3}]}
+    response = self.client.patch(reverse("project-detail", ["test-project"]), updated_project, format="json")
+    self.assertTrue(response.status_code == 200)
 
   def test_update_fields(self):
     """Test patch request update fields"""

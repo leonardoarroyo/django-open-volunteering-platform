@@ -33,8 +33,8 @@ class Project(ChannelRelationship, RatedModelMixin):
   address = models.ForeignKey(get_address_model(), blank=True, null=True, verbose_name=_('address'), db_constraint=False)
   skills = models.ManyToManyField('core.Skill', verbose_name=_('skills'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'))
-  commentaries = models.ManyToManyField('core.Commentary', verbose_name=_('commentaries'))
   galleries = models.ManyToManyField('gallery.Gallery', verbose_name=_('galleries'))
+  posts = models.ManyToManyField('core.Post', verbose_name=_('galleries'))
   documents = models.ManyToManyField('uploads.UploadedDocument', verbose_name=_('documents'))
 
   # Relationships

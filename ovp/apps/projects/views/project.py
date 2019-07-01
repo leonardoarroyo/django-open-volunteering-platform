@@ -9,9 +9,9 @@ from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 from ovp.apps.channels.cache import get_channel_setting
 
 from ovp.apps.core.helpers.xls import Response as XLSResponse
-from ovp.apps.core.mixins import CommentaryCreateMixin
+from ovp.apps.core.mixins import PostCreateMixin
 from ovp.apps.core.mixins import BookmarkMixin
-from ovp.apps.core.serializers import commentary as comments_serializer
+from ovp.apps.core.serializers import post as post_serializers
 from ovp.apps.core.serializers import EmptySerializer
 from ovp.apps.core.pagination import StandardResultsSetPagination
 
@@ -32,7 +32,7 @@ EXPORT_APPLIED_USERS_HEADERS = [
 ]
 
 @ChannelViewSet
-class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
   """
   ProjectResourceViewSet resource endpoint
   """
@@ -164,6 +164,9 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     if self.action == 'export_applied_users':
       self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
 
+    if self.action == 'post':
+      self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
+
     return super(ProjectResourceViewSet, self).get_permissions()
 
   def get_serializer_class(self):
@@ -175,8 +178,8 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
       return EmptySerializer
     if self.action == 'bookmarked':
       return serializers.ProjectRetrieveSerializer
-    if self.action == 'commentary':
-      return comments_serializer.CommentaryCreateSerializer
+    if self.action == 'post':
+      return post_serializers.PostCreateSerializer
     if self.action == 'retrieve':
       if ProjectRetrieveOwnsOrIsOrganizationMember().has_object_permission(self.request, None, self.get_object()):
         return serializers.ProjectManageableRetrieveSerializer

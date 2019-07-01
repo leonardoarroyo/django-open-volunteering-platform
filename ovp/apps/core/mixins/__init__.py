@@ -1,3 +1,3 @@
 from .country_filter import *
-from .commentary import *
+from .post import *
 from .bookmark import *
