@@ -9,6 +9,7 @@ from rest_framework.test import APIClient
 from ovp.apps.projects.models import Project
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
+from ovp.apps.gallery.models import Gallery
 
 from ovp.apps.channels.models.channel_setting import ChannelSetting
 
@@ -128,6 +129,7 @@ class ProjectCloseTestCase(TestCase):
 class ProjectPostTestCase(TestCase):
   def setUp(self):
     user = User.objects.create_user(email="test_comment@gmail.com", password="testcomment", object_channel="default")
+    self.gallery = Gallery.objects.create(owner=user, object_channel="default")
     self.client = APIClient()
     self.client.force_authenticate(user=user)
 
@@ -173,7 +175,17 @@ class ProjectPostTestCase(TestCase):
     self.assertTrue(response.status_code == 200)
 
   def test_post_with_gallery_and_documents(self):
-    pass
+    post = {
+      "content": "test",
+      "gallery": Gallery.objects.last().pk
+    }
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    self.assertTrue(response.status_code == 200)
+    self.assertEqual(response.data["gallery"], Gallery.objects.last().pk)
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    import pudb;pudb.set_trace()
+    self.assertEqual(response.data['posts'][0], 11)
 
   def test_retrieve_posts(self):
     self.test_user_can_post_in_project(content="a")
