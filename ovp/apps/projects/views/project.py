@@ -167,7 +167,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin, mixins.CreateModelM
     if self.action == 'post':
       self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
 
-    if self.action == 'post_patch':
+    if self.action == 'post_patch_delete':
       self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
 
     return super(ProjectResourceViewSet, self).get_permissions()
@@ -183,7 +183,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin, mixins.CreateModelM
       return serializers.ProjectRetrieveSerializer
     if self.action == 'post':
       return post_serializers.PostCreateSerializer
-    if self.action == 'post_patch':
+    if self.action == 'post_patch_delete':
       return post_serializers.PostUpdateSerializer
     if self.action == 'retrieve':
       if ProjectRetrieveOwnsOrIsOrganizationMember().has_object_permission(self.request, None, self.get_object()):

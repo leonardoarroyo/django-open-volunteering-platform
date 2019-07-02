@@ -276,7 +276,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
     return None
 
   def get_posts_list(self, instance):
-    posts = instance.posts.order_by("-pk")
+    posts = instance.posts.filter(deleted=False).order_by("-pk")
     return PostRetrieveSerializer(posts, many=True, context=self.context).data
 
   @add_current_user_is_applied_representation

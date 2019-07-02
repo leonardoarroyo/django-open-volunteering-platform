@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
@@ -9,8 +10,10 @@ class Post(ChannelRelationship):
   user = models.ForeignKey('users.User', verbose_name=_('user'))
   reply_to = models.ForeignKey('Post', verbose_name=_('reply'), blank=True, null=True)
   published = models.BooleanField('Published', default=True)
+  deleted = models.BooleanField('Deleted', default=False)
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
   modified_date = models.DateTimeField(_('Modified date'), auto_now=True)
+  deleted_date = models.DateTimeField(_('Deleted date'), editable=False, null=True)
   gallery = models.ForeignKey('gallery.Gallery', verbose_name=_('gallery'), blank=True, null=True)
 
   def save(self, *args, **kwargs):
@@ -18,3 +21,19 @@ class Post(ChannelRelationship):
 
   def __str__(self):
     return "Post #{} - by {}".format(self.pk, self.user.name)
+
+  def save(self, *args, **kwargs):
+    creating = False
+
+    if self.pk is not None:
+      orig = Post.objects.get(pk=self.pk)
+
+      if not orig.deleted and self.deleted:
+        self.deleted_date = timezone.now()
+
+    super(Post, self).save(*args, **kwargs)
+
+  def delete(self, *args, **kwargs):
+    self.deleted = True
+    self.deleted_date = timezone.now()
+    self.save()

@@ -267,6 +267,30 @@ class ProjectPostTestCase(TestCase):
     response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), data, format="json")
     self.assertEqual(response.status_code, 200)
 
+  def test_delete_post(self):
+    self.test_user_can_post_in_project()
+    self.client = APIClient()
+    post_pk = Post.objects.last().pk
+
+    # Unauthenticated
+    response = self.client.delete(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), format="json")
+    self.assertEqual(response.status_code, 401)
+
+    # Not part of organization
+    testuser = User.objects.create_user(email="test_comment1@gmail.com", password="testcomment", object_channel="default")
+    self.client.force_authenticate(user=testuser)
+    response = self.client.delete(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), format="json")
+    self.assertEqual(response.status_code, 403)
+
+    # As organization owner
+    organization = Organization.objects.create(name="test", owner=testuser, object_channel="default")
+    Project.objects.filter(slug="test-project").update(organization=organization)
+    response = self.client.delete(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), format="json")
+    self.assertEqual(response.status_code, 204)
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(len(response.data['posts']), 0)
+
 
 # This tests should run if declaring the following setings on runtests.py
 # They can't work without rerunning migrations as django expects the default GoogleAddress related model

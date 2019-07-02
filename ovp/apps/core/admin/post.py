@@ -11,9 +11,9 @@ from martor.widgets import AdminMartorWidget
 
 
 class PostAdmin(ChannelModelAdmin):
-  fields = ['id', 'user', 'gallery', 'published', 'content', 'created_date', 'modified_date']
+  fields = ['id', 'user', 'gallery', ('published',  'deleted'), 'content', ('created_date', 'modified_date', 'deleted_date')]
 
-  list_display = ['id', 'post', 'published']
+  list_display = ['id', 'post', 'title', 'published', 'deleted']
 
   list_filter = []
 
@@ -21,7 +21,7 @@ class PostAdmin(ChannelModelAdmin):
 
   search_fields = ['id', 'content']
 
-  readonly_fields = ['id', 'created_date', 'modified_date']
+  readonly_fields = ['id', 'created_date', 'modified_date', 'deleted_date']
 
   raw_id_fields = []
 
