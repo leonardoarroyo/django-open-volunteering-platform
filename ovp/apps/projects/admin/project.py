@@ -206,6 +206,8 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     'image',
     'categories',
     'posts',
+    'documents',
+    'galleries',
 
     ('created_date', 'modified_date'),
 
