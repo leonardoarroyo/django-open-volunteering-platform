@@ -9,14 +9,14 @@ class PostRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Post
-    fields = ['id', 'content', 'reply_to', 'gallery', 'published', 'created_date', 'modified_date']
+    fields = ['id', 'title', 'content', 'reply_to', 'gallery', 'published', 'created_date', 'modified_date']
 
 class PostCreateSerializer(ChannelRelationshipSerializer):
   class Meta:
     model = models.Post
-    fields = ['content', 'reply_to', 'user', 'gallery']
+    fields = ['content', 'title', 'reply_to', 'user', 'gallery']
 
 class PostUpdateSerializer(ChannelRelationshipSerializer):
   class Meta:
     model = models.Post
-    fields = ['content', 'gallery']
+    fields = ['title', 'content', 'gallery']

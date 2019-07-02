@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
 class Post(ChannelRelationship):
+  title = models.CharField(_('title'), max_length=300, blank=True, null=True)
   content = models.TextField(_('content'), max_length=3000)
   user = models.ForeignKey('users.User', verbose_name=_('user'))
   reply_to = models.ForeignKey('Post', verbose_name=_('reply'), blank=True, null=True)

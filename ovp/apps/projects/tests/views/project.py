@@ -170,6 +170,7 @@ class ProjectPostTestCase(TestCase):
   def test_user_can_post_in_project(self, content="test content"):
     """ Assert that user can post in project """
     post = {
+      "title": "title",
       "content": content,
     }
     response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
@@ -210,6 +211,7 @@ class ProjectPostTestCase(TestCase):
 
   def test_update_posts(self):
     data = {
+        "title": "updated",
         "content": "updated",
         "gallery": Gallery.objects.last().pk,
     }
@@ -218,6 +220,7 @@ class ProjectPostTestCase(TestCase):
 
     response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
     self.assertEqual(response.data['posts'][0]['content'], "test content")
+    self.assertEqual(response.data['posts'][0]['title'], "title")
     self.assertEqual(response.data['posts'][0]['gallery'], None)
 
     response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk+1]), data, format="json")
@@ -236,6 +239,7 @@ class ProjectPostTestCase(TestCase):
     post_pk = Post.objects.last().pk
 
     data = {
+        "title": "updated",
         "content": "updated",
         "gallery": Gallery.objects.last().pk,
     }
