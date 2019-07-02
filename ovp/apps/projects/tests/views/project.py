@@ -474,11 +474,11 @@ class ManageableProjectsRouteTestCase(TestCase):
     """Test hitting route authenticated returns projects"""
     response = self.client.get(reverse("project-manageable"), {}, format="json")
     self.assertTrue(response.status_code == 200)
-    self.assertTrue(len(response.data) == 3)
+    self.assertTrue(len(response.data["results"]) == 3)
 
   def test_number_of_queries(self):
-    """Test project manageable does only 33 queries"""
-    with self.assertNumQueries(33):
+    """Test project manageable does only 30 queries"""
+    with self.assertNumQueries(30):
       response = self.client.get(reverse("project-manageable"), {}, format="json")
 
 class ProjectResourceUpdateTestCase(TestCase):

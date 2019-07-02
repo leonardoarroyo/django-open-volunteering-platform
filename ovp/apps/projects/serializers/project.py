@@ -22,6 +22,7 @@ from ovp.apps.organizations.serializers import OrganizationRetrieveSerializer
 from ovp.apps.organizations.models import Organization
 
 from ovp.apps.uploads.serializers import (UploadedImageSerializer,
+                                          UploadedDocumentSerializer,
                                           UploadedDocumentAssociationSerializer)
 
 from ovp.apps.gallery.models import Gallery
@@ -248,8 +249,8 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   causes = FullCauseSerializer(many=True)
   skills = SkillSerializer(many=True)
   galleries = GalleryRetrieveSerializer(many=True)
+  documents = UploadedDocumentSerializer(many=True)
   categories = CategoryRetrieveSerializer(many=True)
-  posts = PostRetrieveSerializer(many=True)
   posts = serializers.SerializerMethodField('get_posts_list')
   is_bookmarked = serializers.SerializerMethodField()
   bookmark_count = serializers.SerializerMethodField()
@@ -258,7 +259,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'posts', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'galleries', 'testimony', 'benefited_people', 'chat_enabled', 'canceled', 'channel']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'posts', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'benefited_people', 'chat_enabled', 'canceled', 'channel', 'galleries', 'documents']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
@@ -294,12 +295,12 @@ class ProjectManageableRetrieveSerializer(ProjectRetrieveSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes',  'posts', 'skills', 'categories', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'unrated_users_count']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes',  'posts', 'skills', 'categories', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'unrated_users_count', 'benefited_people', 'chat_enabled', 'canceled', 'channel', 'galleries', 'documents']
 
 class ProjectManageableSerializer(ProjectRetrieveSerializer):
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'commentaries', 'item', 'type']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'item', 'rating', 'type', 'canceled']
 
 class CompactOrganizationSerializer(serializers.ModelSerializer):
   address = address_serializers[2]()
