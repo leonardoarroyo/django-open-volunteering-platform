@@ -215,7 +215,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
   resource_class = ProjectResource
 
   list_display = [
-    'id', 'created_date', 'name', 'highlighted', 'published', 'closed', 'organization__name', 'city_state', 'applied_count', # fix: CIDADE, PONTUAL OU RECORRENTE
+    'id', 'created_date', 'name', 'highlighted', 'published', 'closed', 'organization__name', 'city_state', 'applied_count', 'opportunities' # fix: CIDADE, PONTUAL OU RECORRENTE
     'deleted', #fix: EMAIL STATUS
     ]
 

@@ -81,6 +81,10 @@ class Project(ChannelRelationship, RatedModelMixin):
   details = models.TextField(_('Details'), max_length=3000)
   description = models.TextField(_('Short description'), max_length=160, blank=True, null=True)
 
+  @property
+  def opportunities(self):
+    return sum(role.vacancies for role in self.roles.all())
+  
   """
   Set this property to use in haystack template
   """
