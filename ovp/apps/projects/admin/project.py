@@ -254,7 +254,10 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
   #def Resource(model, **kwargs):
 
   def total_opportunities(self, obj):
-    return sum(role.vacancies + role.applied_count for role in obj.roles.all())
+    roles = obj.roles.all()
+    if roles:
+      return sum((role.vacancies or 0) + (role.applied_count or 0) for role in roles)
+    return 0
   total_opportunities.short_description = _('Opportunities')
 
   def can_be_done_remotely(self, obj):
