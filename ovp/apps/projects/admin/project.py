@@ -218,7 +218,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
   resource_class = ProjectResource
 
   list_display = [
-    'id', 'created_date', 'name', 'highlighted', 'published', 'closed', 'organization__name', 'city_state', 'applied_count', 'opportunities', # fix: CIDADE, PONTUAL OU RECORRENTE
+    'id', 'created_date', 'name', 'highlighted', 'published', 'closed', 'organization__name', 'city_state', 'applied_count', 'total_opportunities', # fix: CIDADE, PONTUAL OU RECORRENTE
     'deleted', #fix: EMAIL STATUS
     ]
 
@@ -253,6 +253,9 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   #def Resource(model, **kwargs):
 
+  def total_opportunities(self, obj):
+    return sum(role.vacancies + role.applied_count for role in obj.roles.all())
+  total_opportunities.short_description = _('Opportunities')
 
   def can_be_done_remotely(self, obj):
     if obj.hasattr('job') and obj.job:

@@ -352,3 +352,7 @@ msgstr "Status"
 #: django-ovp-projects/ovp.apps.projects/views/project.py:81
 msgid "Applied Users"
 msgstr "Usuários cadastrados"
+
+#: django-ovp-projects/ovp.apps.projects/admin/project.py:258
+msgid "Opportunities"
+msgstr "Oportunidades"
