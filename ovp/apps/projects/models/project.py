@@ -83,7 +83,7 @@ class Project(ChannelRelationship, RatedModelMixin):
 
   @property
   def opportunities(self):
-    return sum(role.vacancies for role in self.roles.all())
+    return sum(role.vacancies + role.applied_count for role in self.roles.all())
   
   """
   Set this property to use in haystack template
