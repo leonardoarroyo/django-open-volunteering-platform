@@ -31,6 +31,7 @@ from rest_framework import decorators
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from django.db.models import Q
 from haystack.query import SearchQuerySet, SQ
 
 
@@ -133,6 +134,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     organization = params.get('organization', None)
     disponibility = params.get('disponibility', None)
     date = params.get('date', None)
+    manageable = params.get('manageable', None)
 
     queryset = SearchQuerySet().models(Project)
     queryset = queryset.filter(highlighted=1) if highlighted else queryset
@@ -152,6 +154,9 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     result_keys = [q.pk for q in queryset]
 
     result = querysets.get_project_queryset(request=self.request).filter(pk__in=result_keys)
+
+    if manageable == 'true' and self.request.user.is_authenticated:
+      result = result.filter(Q(organization__members=self.request.user) | Q(organization__owner=self.request.user) | Q(owner=self.request.user))
 
     if organization:
       org = [o for o in organization.split(',')]

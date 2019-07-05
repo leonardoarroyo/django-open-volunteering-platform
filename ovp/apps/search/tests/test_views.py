@@ -349,6 +349,28 @@ class ProjectSearchTestCase(TestCase):
     response = self.client.get(reverse("search-projects-list") + "?query=project4", format="json")
     self.assertEqual(len(response.data["results"]), 0)
 
+  def test_manageable_filter(self):
+    """
+    Test searching with manageable filter returns only manageable projects
+    """
+    user = User.objects.create(email="testmanageable@gmail.com", password="123456", object_channel="default")
+    user2 = User.objects.create(email="testmanageable2@gmail.com", password="123456", object_channel="default")
+    organization = Organization.objects.create(name="manageable", details="abc", owner=user, published=True, type=0, object_channel="default")
+    organization.members.add(user2)
+    project = Project.objects.create(name="test manageable", slug="test-slug5", details="abc", description="abc", owner=user, organization=organization, published=True, closed=True, object_channel="default")
+
+    self.client.force_authenticate(user=User.objects.first())
+    response = self.client.get(reverse("search-projects-list") + "?manageable=true&published=both&closed=both", format="json")
+    self.assertEqual(len(response.data["results"]), 5)
+
+    self.client.force_authenticate(user=user)
+    response = self.client.get(reverse("search-projects-list") + "?manageable=true&published=both&closed=both", format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+
+    self.client.force_authenticate(user=user2)
+    response = self.client.get(reverse("search-projects-list") + "?manageable=true&published=both&closed=both", format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+
 
 class OrganizationSearchTestCase(TestCase):
   def setUp(self):
