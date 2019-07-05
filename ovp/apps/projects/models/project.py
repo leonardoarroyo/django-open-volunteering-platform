@@ -80,7 +80,7 @@ class Project(ChannelRelationship, RatedModelMixin):
   # About
   details = models.TextField(_('Details'), max_length=3000)
   description = models.TextField(_('Short description'), max_length=160, blank=True, null=True)
-  
+
   """
   Set this property to use in haystack template
   """
@@ -200,6 +200,9 @@ class VolunteerRole(ChannelRelationship):
 
   def __str__(self):
     return  '%s - %s - %s (%s vacancies)' % (self.name, self.details, self.prerequisites, self.vacancies)
+
+  def get_volunteers_numbers(self):
+    return Apply.objects.filter(role=self, project=self.project, status__in=["applied", "confirmed-volunteer"]).count()
 
 
 
