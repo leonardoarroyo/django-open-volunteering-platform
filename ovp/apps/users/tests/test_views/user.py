@@ -34,6 +34,14 @@ class UserResourceViewSetTestCase(TestCase):
     self.assertTrue(len(response.data['password']) > 0)
     self.assertTrue(isinstance(response.data['password'], list))
 
+  def test_can_create_user_with_valid_passwords(self):
+    """Assert that it's possible to create an user with a series of valid passwords"""
+    passwords = ['thisisapassword', 'password with spaces', '83721904', '837 283', '!!#$*&()+=', '  thisisapassword  ']
+    for i, password in enumerate(passwords):
+      response = create_user('testvalidpassword{}@test.com'.format(i), password)
+      self.assertTrue(response.data['uuid'])
+      self.assertTrue("password" not in response.data)
+
   def test_doesnt_return_password_on_user_creation(self):
     """Assert that the serializer does not return user hashed password """
     response = create_user()
