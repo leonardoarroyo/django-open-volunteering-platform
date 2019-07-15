@@ -115,9 +115,12 @@ class ProjectResource(CleanModelResource):
 
   def dehydrate_image(self, project):
     api_url = os.environ.get('API_URL', None)
-    if project.image:
-      return api_url+project.image.image_large.url if api_url is not None \
-        else project.image.image_large.url
+    try:
+      if project.image:
+        return api_url+project.image.image_large.url if api_url is not None \
+          else project.image.image_large.url
+    except ValueError:
+      pass
 
   def dehydrate_start_date(self, project):
     try:
@@ -174,7 +177,10 @@ class ProjectResource(CleanModelResource):
     return project.roles.count()
 
   def dehydrate_roles(self, project):
-    return ", ".join([r.name for r in project.roles.all()])
+    roles = project.roles.all()
+    if len(roles):
+      return ", ".join([str(r.name) for r in roles])
+    return ""
 
 
 class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
