@@ -5,11 +5,11 @@ from django.utils.translation import ugettext_lazy as _
 import csv
 from django.http import HttpResponse
 
+from ovp.apps.admin.resources import CleanModelResource
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.models import Lead
 
-from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
@@ -26,11 +26,11 @@ def export_all_as_csv(model_admin, request, queryset):
 
   return response
 
-class LeadResource(resources.ModelResource):
+class LeadResource(CleanModelResource):
   class Meta:
     model = Lead
     fields = ('name', 'email', 'phone', 'city', 'type', 'employee_number')
-    
+
 class LeadAdmin(ImportExportModelAdmin, ChannelModelAdmin):
   fields = ['id', 'name', 'email', 'phone', 'type', 'employee_number']
   list_display = ['id', 'name', 'email', 'phone', 'type']

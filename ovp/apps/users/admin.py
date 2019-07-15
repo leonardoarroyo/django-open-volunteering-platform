@@ -1,20 +1,20 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from ovp.apps.admin.resources import CleanModelResource
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.users.models import User
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
 
-from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from jet.filters import DateRangeFilter
 
-class UserResource(resources.ModelResource):
+class UserResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
   name = Field(attribute='name', column_name='Nome')
   email = Field(attribute='email', column_name='Email')

@@ -2,6 +2,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from jet.filters import DateRangeFilter
 
+from ovp.apps.admin.resources import CleanModelResource
 from ovp.apps.admin.filters import SingleTextInputFilter
 from ovp.apps.organizations.admin import StateListFilter as BaseStateListFilter
 from ovp.apps.organizations.admin import CityListFilter as BaseCityListFilter
@@ -13,11 +14,10 @@ from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
 from ovp.apps.core.helpers import get_address_model
 
-from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
-class ApplyResource(resources.ModelResource):
+class ApplyResource(CleanModelResource):
   project_id = Field(column_name="ID Projeto")
   project = Field(column_name="Projeto")
   organization = Field(column_name="ONG")

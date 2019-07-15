@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html
 from martor.widgets import AdminMartorWidget
 
+from ovp.apps.admin.resources import CleanModelResource
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
@@ -20,7 +21,6 @@ from .work import WorkInline
 
 from ovp.apps.core.mixins import CountryFilterMixin
 
-from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
@@ -31,7 +31,7 @@ class VolunteerRoleInline(TabularInline):
   model = VolunteerRole
   exclude = ['channel']
 
-class ProjectResource(resources.ModelResource):
+class ProjectResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
   name = Field(attribute='name', column_name='Nome do Projeto')
   description = Field(attribute='description', column_name='Descricao')

@@ -10,6 +10,7 @@ from ovp.apps.core.models import AddressComponent
 
 from ovp.apps.projects.models import Project
 
+from ovp.apps.admin.resources import CleanModelResource
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.mixins import CountryFilterMixin
@@ -18,7 +19,6 @@ from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
 from ovp.apps.core.helpers import get_address_model
 
-from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
@@ -28,7 +28,7 @@ from jet.filters import DateRangeFilter
 # This file contains some "pragma: no cover" because the admin
 # class is not covered by the test suite
 
-class OrganizationResource(resources.ModelResource):
+class OrganizationResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
   name = Field(attribute='name', column_name='Nome do Projeto')
   description = Field(attribute='description', column_name='Descricao')
@@ -53,7 +53,7 @@ class OrganizationResource(resources.ModelResource):
       'id',
       'name',
       'owner_name',
-      'owner_email', 
+      'owner_email',
       'owner_phone',
       'address',
       'city_state',
@@ -69,6 +69,7 @@ class OrganizationResource(resources.ModelResource):
       'benefited_people',
       'rating',
     )
+
 
   def dehydrate_address(self, organization):
     if organization.address is not None:
