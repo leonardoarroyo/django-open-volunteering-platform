@@ -9,4 +9,3 @@ mock
 sphinx
 sphinx_rtd_theme
 drf-yasg==1.11.0
-openpyxl==2.6.2
