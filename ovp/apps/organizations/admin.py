@@ -33,9 +33,12 @@ class OrganizationResource(CleanModelResource):
   name = Field(attribute='name', column_name='Nome do Projeto')
   description = Field(attribute='description', column_name='Descricao')
   document = Field(attribute='document', column_name='CNPJ')
-  owner_name = Field(column_name='Nome Responsavel')
-  owner_email = Field(column_name='Email Responsavel')
-  owner_phone = Field(column_name='Telefone Responsavel')
+  owner_name = Field(column_name='Responsavel: nome')
+  owner_email = Field(column_name='Responsavel: email')
+  owner_phone = Field(column_name='Responsavel: telefone')
+  contact_name = Field(column_name='Contato: nome')
+  contact_email = Field(column_name='Contato: email')
+  contact_phone = Field(column_name='Contato: telefone')
   address = Field(column_name='Endereço')
   city_state = Field(column_name='Cidade/Estado')
   causes = Field(column_name='Causas')
@@ -55,6 +58,9 @@ class OrganizationResource(CleanModelResource):
       'owner_name',
       'owner_email',
       'owner_phone',
+      'contact_name',
+      'contact_email',
+      'contact_phone',
       'address',
       'city_state',
       'image',
