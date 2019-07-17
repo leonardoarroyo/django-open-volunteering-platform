@@ -29,6 +29,7 @@ class Organization(ChannelRelationship, RatedModelMixin):
   cover = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, related_name="+", verbose_name=_('cover'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'), blank=True)
   members = models.ManyToManyField('users.User', verbose_name=_('members'), related_name="organizations_member", blank=True)
+  galleries = models.ManyToManyField('gallery.Gallery', verbose_name=_('galleries'), related_name="galleries", blank=True)
 
   # Fields
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)

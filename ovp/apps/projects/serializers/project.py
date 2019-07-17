@@ -95,6 +95,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     categories = validated_data.pop('categories', [])
     skills = validated_data.pop('skills', [])
     documents = validated_data.pop('documents', [])
+    galleries = validated_data.pop('galleries', [])
 
     # Address
     address_data = validated_data.pop('address', {})
@@ -137,6 +138,11 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     for category in categories:
       c = models.Category.objects.get(pk=category['id'])
       project.categories.add(c)
+
+    # Associate galleries
+    for gallery in galleries:
+      c = Gallery.objects.get(pk=gallery['id'])
+      project.galleries.add(c)
 
     # Associate skills
     for skill in skills:
@@ -199,35 +205,35 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     # Associate causes
     if causes:
-      instance.causes.clear()
+      instance.causes.remove(*core_models.Cause.objects.filter(channel__slug=self.context["request"].channel))
       for cause in causes:
         c = core_models.Cause.objects.get(pk=cause['id'])
         instance.causes.add(c)
 
     # Associate categories
     if categories:
-      instance.categories.clear()
+      instance.categories.remove(*core_models.Category.objects.filter(channel__slug=self.context["request"].channel))
       for category in categories:
         c = models.Category.objects.get(pk=category['id'])
         instance.categories.add(c)
 
     # Associate skills
     if skills:
-      instance.skills.clear()
+      instance.skills.remove(*core_models.Skill.objects.filter(channel__slug=self.context["request"].channel))
       for skill in skills:
         s = core_models.Skill.objects.get(pk=skill['id'])
         instance.skills.add(s)
 
     # Associate galleries
     if galleries:
-      instance.galleries.clear()
+      instance.galleries.remove(*Gallery.objects.filter(channel__slug=self.context["request"].channel))
       for gallery in galleries:
         g = Gallery.objects.get(pk=gallery['id'])
         instance.galleries.add(g)
 
     # Associate documents
     if documents:
-      instance.documents.clear()
+      instance.documents.remove(*UploadedDocument.objects.filter(channel__slug=self.context["request"].channel))
       for document in documents:
         d = UploadedDocument.objects.get(pk=document['id'])
         instance.documents.add(d)

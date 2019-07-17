@@ -7,10 +7,15 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from ovp.apps.projects.models import Project
+from ovp.apps.projects.models import Category
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
 from ovp.apps.gallery.models import Gallery
 from ovp.apps.core.models import Post
+from ovp.apps.core.models import Cause
+from ovp.apps.core.models import Skill
+from ovp.apps.channels.models import Channel
+from ovp.apps.uploads.models import UploadedDocument
 
 from ovp.apps.channels.models.channel_setting import ChannelSetting
 
@@ -38,7 +43,7 @@ class ProjectResourceViewSetTestCase(TestCase):
     """Assert that it's possible to create a project while authenticated"""
     user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
 
-    data = copy.copy(base_project)
+    data = copy.deepcopy(base_project)
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -67,7 +72,7 @@ class ProjectResourceViewSetTestCase(TestCase):
     client = APIClient()
     client.force_authenticate(user=user)
 
-    data = copy.copy(base_project)
+    data = copy.deepcopy(base_project)
     data["name"] = ""
 
     response = client.post(reverse("project-list"), data, format="json")
@@ -81,7 +86,7 @@ class ProjectResourceViewSetTestCase(TestCase):
     client = APIClient()
     client.force_authenticate(user=user)
 
-    data = copy.copy(base_project)
+    data = copy.deepcopy(base_project)
     response = client.post(reverse("project-list"), data, format="json")
 
     response = client.get(reverse("project-detail", ["test-project"]), format="json")
@@ -109,7 +114,7 @@ class ProjectCloseTestCase(TestCase):
     self.client = APIClient()
     self.client.force_authenticate(user=user)
 
-    data = copy.copy(base_project)
+    data = copy.deepcopy(base_project)
     self.project = self.client.post(reverse("project-list"), data, format="json")
 
   def test_cant_close_project_if_not_owner_or_organization_member(self):
@@ -137,7 +142,7 @@ class ProjectPostTestCase(TestCase):
     ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
     cache.clear()
 
-    data = copy.copy(base_project)
+    data = copy.deepcopy(base_project)
     self.project = self.client.post(reverse("project-list"), data, format="json")
 
   def test_only_owner_or_organization_member_can_post(self):
@@ -303,7 +308,7 @@ class ProjectPostTestCase(TestCase):
 #    self.client = APIClient()
 #    self.client.force_authenticate(user=self.user)
 
-#    self.data = copy.copy(base_project)
+#    self.data = copy.deepcopy(base_project)
 #    self.data["organization_id"] = self.organization.pk
 #    self.data["address"] = {
 #      "street": "Av. Paulista",
@@ -355,7 +360,7 @@ class ProjectWithOrganizationTestCase(TestCase):
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
     self.second_user = User.objects.create_user(email="test_second_user@test.com", password="testcancreate", object_channel="default")
     self.third_user = User.objects.create_user(email="test_third_user@test.com", password="testcancreate", object_channel="default")
-    self.data = copy.copy(base_project)
+    self.data = copy.deepcopy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
 
@@ -450,7 +455,7 @@ class ProjectWithOrganizationTestCase(TestCase):
     client = APIClient()
     client.force_authenticate(user=self.user)
 
-    data = copy.copy(base_project)
+    data = copy.deepcopy(base_project)
     data["owner"] = self.second_user.pk
 
     # Without organization
@@ -515,9 +520,21 @@ class ProjectResourceUpdateTestCase(TestCase):
     cache.clear()
 
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
-    self.data = copy.copy(base_project)
+    self.data = copy.deepcopy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
+
+    Channel.objects.create(slug="test-channel")
+    c = Cause.objects.create(name="other-channel", object_channel="test-channel")
+    s = Skill.objects.create(name="other-channel", object_channel="test-channel")
+    g = Gallery.objects.create(name="other-channel", owner=self.user, object_channel="test-channel")
+    ct = Category.objects.create(name="other-channel", object_channel="test-channel")
+    u = UploadedDocument.objects.create(name="other-channel", object_channel="test-channel")
+    self.data["causes"].append({"id": c.id})
+    self.data["skills"].append({"id": s.id})
+    self.data["galleries"] = [{"id": g.id}]
+    self.data["documents"] = [{"id": u.id}]
+    self.data["categories"] = [{"id": ct.id}]
 
     response = self.client.post(reverse("project-list"), self.data, format="json")
     self.assertTrue(response.status_code == 201)
@@ -542,14 +559,21 @@ class ProjectResourceUpdateTestCase(TestCase):
 
   def test_update_fields(self):
     """Test patch request update fields"""
-    updated_project = {"name": "test update", "details": "update", "description": "update", "causes": [{"id": 3}], "skills": [{"id": 1}, {"id": 2}, {"id": 3}]}
+    updated_project = {"name": "test update", "details": "update", "description": "update", "causes": [{"id": 3}], "skills": [{"id": 1}, {"id": 2}, {"id": 3}], "galleries": [], "documents": [], "categories": []}
     response = self.client.patch(reverse("project-detail", ["test-project"]), updated_project, format="json")
     self.assertTrue(response.status_code == 200)
     self.assertTrue(response.data["name"] == "test update")
     self.assertTrue(response.data["details"] == "update")
     self.assertTrue(response.data["description"] == "update")
-    self.assertTrue(len(response.data["causes"]) == 1)
-    self.assertTrue(len(response.data["skills"]) == 3)
+
+    # Don't erase associations with other channel objects
+    self.assertTrue(len(response.data["causes"]) == 2)
+    self.assertTrue(len(response.data["skills"]) == 4)
+    self.assertEqual(response.data["causes"][-1]["name"], "other-channel")
+    self.assertEqual(response.data["skills"][-1]["name"], "other-channel")
+    self.assertTrue(len(response.data["galleries"]) == 1)
+    self.assertTrue(len(response.data["documents"]) == 1)
+    self.assertTrue(len(response.data["categories"]) == 1)
 
     user = User.objects.create_user(email="another@user.com", password="testcancreate", object_channel="default")
     organization = Organization(name="test", type=0, owner=self.user)
@@ -602,7 +626,7 @@ class DisponibilityTestCase(TestCase):
     cache.clear()
 
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
-    self.data = copy.copy(base_project)
+    self.data = copy.deepcopy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
 
@@ -705,7 +729,7 @@ class VolunteerRoleTestCase(TestCase):
     cache.clear()
 
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
-    self.data = copy.copy(base_project)
+    self.data = copy.deepcopy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
 
