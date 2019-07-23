@@ -14,6 +14,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.apps import apps
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.exceptions import ValidationError
 
 from django.db import models
 from django.utils import timezone
@@ -177,6 +178,12 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
     if hasattr(self, 'profile') and hasattr(self.profile, 'collaborator_code'): #TODO: Move this outside OVP, need to reimplement user model checking everywhere
       return "#{} - {}".format(self.profile.collaborator_code, self.name)
     return self.name
+
+  def clean(self):
+    if self.pk:
+      if User.objects.filter(email__iexact=self.email, channel=self.channel).exclude(pk=self.pk).count():
+        raise ValidationError("There's already an user with email {}.".format(self.email))
+    return super(User, self).clean()
 
 
 @receiver(post_save, sender=User)
