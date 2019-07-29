@@ -45,7 +45,7 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
       try:
         validate_password(password=password)
       except ValidationError as e:
-        errors['password'] = list(e.messages)
+        errors['password'] = list(map(lambda x: [x.code, x.message], e.error_list))
 
     if data.get('email'):
       email = data.get('email', '')
@@ -102,7 +102,7 @@ class UserUpdateSerializer(UserCreateSerializer):
       try:
         validate_password(password=password)
       except ValidationError as e:
-        errors['password'] = list(e.messages)
+        errors['password'] = list(map(lambda x: [x.code, x.message], e.error_list))
 
       if not authenticate(email=self.context['request'].user.email, password=current_password, channel=self.context["request"].channel):
         errors['current_password'] = ["Invalid password."]
