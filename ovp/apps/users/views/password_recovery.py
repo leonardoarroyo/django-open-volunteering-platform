@@ -78,7 +78,8 @@ class RecoverPasswordViewSet(viewsets.GenericViewSet):
     try:
       validate_password(new_password, user=rt.user)
     except ValidationError as e:
-      return response.Response({'message': 'Invalid password.', 'errors': e}, status=status.HTTP_400_BAD_REQUEST)
+      errors = list(map(lambda x: [x.code, x.message], e.error_list))
+      return response.Response({'message': 'Invalid password.', 'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
 
     serializers.RecoverPasswordSerializer(data=request.data, context=self.get_serializer_context()).is_valid(raise_exception=True)
 
