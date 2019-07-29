@@ -161,7 +161,7 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
 
 
 class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin, ChannelMixin):
-  id = indexes.IntegerField(model_attr='id')
+  org_id = indexes.IntegerField(model_attr='id')
   name = CustomCharField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
