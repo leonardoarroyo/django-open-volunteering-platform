@@ -1,8 +1,10 @@
 from ovp.apps.users.models import User
+from dateutil.relativedelta import relativedelta
 
 from ovp.apps.core.serializers import EmptySerializer
 from ovp.apps.core.mixins import BookmarkMixin
 
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 from ovp.apps.organizations import serializers
 from ovp.apps.organizations import models
@@ -98,12 +100,16 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     if organization.members.filter(pk=invited.pk).count():
       return response.Response({"email": ["This user is already part of this organization."]}, status=400)
 
-    try:
-      models.OrganizationInvite.objects.get(organization=organization, invited=invited, joined_date=None, revoked_date=None, channel__slug=request.channel)
-      return response.Response({"email": ["This user is already invited to this organization."]}, status=400)
-    except models.OrganizationInvite.DoesNotExist:
-      pass
+    # Check if user was already invited recently
+    t = timezone.now() - relativedelta(hours=1)
+    invites = models.OrganizationInvite.objects.filter(created_date__gte=t, organization=organization, invited=invited, joined_date=None, revoked_date=None, channel__slug=request.channel)
+    if invites.count():
+      return response.Response({"email": ["This user was already invited to this organization in the last 60 minutes."]}, status=400)
 
+    # Revoke old invites
+    models.OrganizationInvite.objects.filter(organization=organization, invited=invited, joined_date=None, revoked_date=None, channel__slug=request.channel).update(revoked_date=timezone.now())
+
+    # Create invite
     invite = models.OrganizationInvite(invitator=request.user, invited=invited, organization=organization)
     invite.save(object_channel=request.channel)
 

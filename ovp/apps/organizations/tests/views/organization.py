@@ -2,6 +2,9 @@ from django.test import TestCase
 from django.core import mail
 from django.utils import timezone
 
+from dateutil.relativedelta import relativedelta
+from django.utils import timezone
+
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
@@ -221,7 +224,15 @@ class OrganizationInviteTestCase(TestCase):
     self.test_can_invite_user()
     response = self.client.post(reverse("organization-invite-user", ["test-organization"]), {"email": "valid@user.com"}, format="json")
     self.assertTrue(response.status_code == 400)
-    self.assertTrue(response.data["email"] == ["This user is already invited to this organization."])
+    self.assertTrue(response.data["email"] == ["This user was already invited to this organization in the last 60 minutes."])
+
+    i = OrganizationInvite.objects.first()
+    i.created_date = timezone.now() - relativedelta(hours=2)
+    i.save()
+
+    response = self.client.post(reverse("organization-invite-user", ["test-organization"]), {"email": "valid@user.com"}, format="json")
+    self.assertTrue(response.status_code == 200)
+    self.assertTrue(OrganizationInvite.objects.get(pk=i.pk).revoked_date != None)
 
   def test_can_invite_user(self):
     """ Test it's possible to invite user """
