@@ -11,6 +11,7 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 
+from django.apps import apps
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -28,6 +29,7 @@ import uuid
 from shortuuid.main import encode as encode_uuid
 
 from random import randint
+
 
 
 class UserManager(ChannelRelationshipManager, BaseUserManager):
@@ -151,7 +153,9 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
       return None
 
   def active_organizations(self):
-    return self.organizations_member.filter(deleted=False)
+    Organization = apps.get_model('organizations', 'Organization')
+    qs = self.organizations_member.filter(deleted=False) | Organization.objects.filter(deleted=False, owner=self)
+    return qs.distinct('pk')
 
   @staticmethod
   def autocomplete_search_fields():
