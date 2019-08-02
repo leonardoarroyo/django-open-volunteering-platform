@@ -122,6 +122,7 @@ class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
     'phone',
     'username',
     'document'
+    'message'
   ]
 
   list_display = [

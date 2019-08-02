@@ -25,6 +25,7 @@ class Apply(ChannelRelationship):
   email = models.CharField(_('email'), max_length=190, blank=True, null=True)
   phone = models.CharField(_('phone'), max_length=30, blank=True, null=True)
   document = models.CharField(_('Documento'), max_length=100, blank=True, null=True)
+  message = models.TextField(_('message'), max_length=3000, blank=True, null=True)
 
   def __init__(self, *args, **kwargs):
     super(Apply, self).__init__(*args, **kwargs)
