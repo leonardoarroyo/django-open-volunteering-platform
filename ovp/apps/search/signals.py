@@ -110,6 +110,8 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
       self.handle_save(instance.user.__class__, instance.user) # we call save just as well
     except (get_profile_model().DoesNotExist):
       pass # just returns, instance already deleted from database
+    except User.DoesNotExist:
+      pass # just returns, instance already deleted from database
 
   def handle_m2m(self, sender, instance, **kwargs):
     """ Handle many to many relationships """
