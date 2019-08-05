@@ -115,11 +115,6 @@ class Project(ChannelRelationship, RatedModelMixin):
   '''
   Model operation methods
   '''
-  def delete(self, *args, **kwargs):
-    self.deleted = True
-    self.published = False
-    self.save()
-
   def save(self, *args, **kwargs):
     creating = False
 
