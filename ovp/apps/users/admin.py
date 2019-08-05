@@ -60,7 +60,7 @@ class UserResource(CleanModelResource):
 
 class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocompleteAdmin):
   fields = [
-    ('id', 'name', 'email'), 'slug', 'phone', 'password',
+    ('id', 'name', 'email'), 'slug', 'phone', 'password', 'document',
     ('is_staff','is_superuser','is_active','is_email_verified','public',),
     'groups'
   ]
