@@ -121,7 +121,7 @@ class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
     'email',
     'phone',
     'username',
-    'document'
+    'document',
     'message'
   ]
 
