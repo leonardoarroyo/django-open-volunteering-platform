@@ -22,5 +22,6 @@ class FacebookOAuth2(FacebookOAuth2Base):
   def get_key_and_secret(self):
     url = self.strategy.request.META['HTTP_HOST']
     keys = json.loads(os.environ.get('FACEBOOK_KEYS', "{}"))
-    print(keys)
-    return keys.get(self.strategy.request.channel, (self.setting('KEY'), self.setting('SECRET')))
+    key_tuple = tuple(keys.get(self.strategy.request.channel, (self.setting('KEY'), self.setting('SECRET'))))
+    print(key_tuple)
+    return key_tuple
