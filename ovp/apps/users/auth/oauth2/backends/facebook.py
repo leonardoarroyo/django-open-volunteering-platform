@@ -23,5 +23,5 @@ class FacebookOAuth2(FacebookOAuth2Base):
     url = self.strategy.request.META['HTTP_HOST']
     keys = json.loads(os.environ.get('FACEBOOK_KEYS', "{}"))
     key_tuple = tuple(keys.get(self.strategy.request.channel, (self.setting('KEY'), self.setting('SECRET'))))
-    print(key_tuple)
+    raise Exception(key_tuple)
     return key_tuple
