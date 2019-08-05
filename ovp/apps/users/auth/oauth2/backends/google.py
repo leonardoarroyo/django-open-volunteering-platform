@@ -33,4 +33,4 @@ class GoogleOAuth2(GoogleOAuth2Base):
   def get_key_and_secret(self):
     url = self.strategy.request.META['HTTP_HOST']
     keys = json.loads(os.environ.get('GOOGLE_KEYS', "{}"))
-    return keys.get(self.strategy.request.channel, (self.settings('KEY'), self.settings('SECRET')))
+    return keys.get(self.strategy.request.channel, (self.setting('KEY'), self.setting('SECRET')))
