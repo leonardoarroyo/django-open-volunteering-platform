@@ -34,7 +34,7 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'email', 'password', 'phone', 'phone2', 'avatar', 'locale', 'profile', 'public', 'slug', 'is_subscribed_to_newsletter']
+    fields = ['uuid', 'name', 'email', 'password', 'phone', 'phone2', 'avatar', 'locale', 'profile', 'public', 'slug', 'is_subscribed_to_newsletter', 'document']
     extra_kwargs = {'password': {'write_only': True}}
 
   def validate(self, data):
@@ -88,7 +88,7 @@ class UserUpdateSerializer(UserCreateSerializer):
   class Meta:
     model = models.User
     permission_classes = (permissions.IsAuthenticated,)
-    fields = ['name', 'phone', 'phone2', 'password', 'avatar', 'current_password', 'locale', 'profile', 'public', 'is_subscribed_to_newsletter']
+    fields = ['name', 'phone', 'phone2', 'password', 'avatar', 'current_password', 'locale', 'profile', 'public', 'is_subscribed_to_newsletter', 'document']
     extra_kwargs = {'password': {'write_only': True}}
 
 
@@ -150,7 +150,7 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_user_count', 'rating_requests_project_count', 'rating_requests_projects_with_unrated_users', 'is_subscribed_to_newsletter', 'chat_enabled']
+    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_user_count', 'rating_requests_project_count', 'rating_requests_projects_with_unrated_users', 'is_subscribed_to_newsletter', 'chat_enabled', 'document']
 
   def get_chat_enabled(self, obj):
     applies = Apply.objects.filter(project__published=True, project__chat_enabled=True, user=obj)

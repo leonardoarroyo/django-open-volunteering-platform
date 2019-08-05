@@ -23,6 +23,7 @@ class UserResource(CleanModelResource):
   city_state = Field(column_name='Cidade/Estado')
   causes = Field(column_name='Causas')
   joined_date = Field(attribute='joined_date', column_name='Data do cadastro')
+  document = Field(attribute='document', column_name='Documento')
 
   class Meta:
     model = User
@@ -31,6 +32,7 @@ class UserResource(CleanModelResource):
       'name',
       'email',
       'phone',
+      'document',
       'address',
       'city_state',
       'causes',

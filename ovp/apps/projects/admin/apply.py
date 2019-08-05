@@ -25,6 +25,7 @@ class ApplyResource(CleanModelResource):
   volunteer_name = Field(column_name="Nome do Voluntario")
   volunteer_email = Field(column_name="Email do Voluntario")
   volunteer_phone = Field(column_name="Telefone do Voluntario")
+  volunteer_document = Field(column_name="Documento")
   address = Field(column_name="Endereco do projeto")
 
   class Meta:
@@ -35,6 +36,7 @@ class ApplyResource(CleanModelResource):
       'volunteer_name',
       'volunteer_phone',
       'volunteer_email',
+      'volunteer_document'
       'status',
       'date',
       'organization',
@@ -83,6 +85,10 @@ class ApplyResource(CleanModelResource):
 
     return apply.phone
 
+  def dehydrate_volunteer_document(self, apply):
+    if apply.user is not None:
+      return apply.user.document
+    return apply.document
 
 class StateListFilter(BaseStateListFilter):
     def queryset(self, request, queryset):
