@@ -30,6 +30,7 @@ class Section(ChannelRelationship):
   slug = models.SlugField(_("Slug"), max_length=100)
   amount = models.IntegerField(_("Amount"), default=20)
   type = models.CharField(_("Section type"), max_length=30, choices=SECTION_TYPES, default='projects')
+  order = models.IntegerField(_("Order"), default=0)
 
   def __str__(self):
     return self.name

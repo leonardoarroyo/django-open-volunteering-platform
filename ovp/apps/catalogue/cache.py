@@ -38,7 +38,7 @@ def get_catalogue(channel, slug, request):
         "sections": [],
       }
 
-      for section in catalogue.sections.all():
+      for section in catalogue.sections.all().order_by('-order'):
         section_dict = {
           "name": section.name,
           "slug": section.slug,

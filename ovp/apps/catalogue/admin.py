@@ -38,7 +38,7 @@ class FilterObjectMixin():
 ##################################
 class SectionInline(CompactInline):
   model = Section
-  fields = ["name", "slug", "amount"]
+  fields = ["name", "slug", "amount", "order"]
   show_change_link = True
 
 class SectionFilterInline(FilterObjectMixin, CompactInline):
@@ -58,7 +58,7 @@ class CatalogueAdmin(ChannelModelAdmin):
   inlines = [SectionInline]
 
 class SectionAdmin(ChannelModelAdmin):
-  fields = ["name", "slug", "catalogue", "amount", "type"]
+  fields = ["name", "slug", "catalogue", "amount", "type", "order"]
   list_display = ["name", "slug", "catalogue"]
   search_fields = ["id", "name", "slug", "catalogue__name", "catalogue__slug"]
   inlines = [SectionFilterInline]
