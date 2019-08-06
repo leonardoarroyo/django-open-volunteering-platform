@@ -88,8 +88,8 @@ HIGHLIGHTED_OPTIONS = (
   (0, _("False")),
 )
 
-class DateDeltaFilter(Filter):
-  highlighted = models.IntegerField(_("Highlighted"), choices=HIGHLIGHTED_OPTIONS, default=1, max_length=30)
+class HighlightedFilter(Filter):
+  highlighted = models.IntegerField(_("Highlighted"), choices=HIGHLIGHTED_OPTIONS, default=1)
 
   def __str__(self):
     return _("Highlighted Filter")

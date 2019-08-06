@@ -7,13 +7,16 @@ from ovp.apps.channels.models.abstract import ChannelRelationship
 
 from ovp.apps.catalogue.models.filter import CategoryFilter
 from ovp.apps.catalogue.models.filter import DateDeltaFilter
+from ovp.apps.catalogue.models.filter import HighlightedFilter
 
 CATEGORY = "CATEGORY"
 DATEDELTA = "DATEDELTA"
+HIGHLIGHTED = "HIGHLIGHTED"
 
 FILTER_TYPES = (
   (CATEGORY, _("Category")),
   (DATEDELTA, _("Date delta")),
+  (HIGHLIGHTED, _("Highlighted")),
 )
 
 SECTION_TYPES = (
