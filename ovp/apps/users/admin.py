@@ -24,6 +24,7 @@ class UserResource(CleanModelResource):
   causes = Field(column_name='Causas')
   joined_date = Field(attribute='joined_date', column_name='Data do cadastro')
   document = Field(attribute='document', column_name='Documento')
+  has_done_volunteer_work_before = Field(attribute='has_done_volunteer_work_before')
 
   class Meta:
     model = User
@@ -57,12 +58,18 @@ class UserResource(CleanModelResource):
       if isinstance(user.profile.address, SimpleAddress):
         return user.profile.address.city
 
+  def dehydrate_has_done_volunteer_work_before(self, user):
+    if user.profile is not None:
+      return user.profile.has_done_volunteer_work_before
+    return None
+
 
 class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocompleteAdmin):
   fields = [
     ('id', 'name', 'email'), 'slug', 'phone', 'password', 'document',
     ('is_staff','is_superuser','is_active','is_email_verified','public',),
-    'groups'
+    'groups',
+    'has_done_volunteer_work_before'
   ]
 
   resource_class = UserResource
@@ -83,7 +90,13 @@ class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocomplet
     'email', 'name'
   ]
 
-  readonly_fields = ['id']
+  readonly_fields = ['id', 'has_done_volunteer_work_before']
   raw_id_fields = []
+
+  def has_done_volunteer_work_before(self, user):
+    v = None
+    if user.profile is not None:
+      v = user.profile.has_done_volunteer_work_before
+    return v if v else "Undefined"
 
 admin_site.register(User, UserAdmin)

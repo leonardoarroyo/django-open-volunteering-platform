@@ -21,6 +21,7 @@ class UserProfile(ChannelRelationship, models.Model):
   address = models.OneToOneField('core.GoogleAddress', blank=True, null=True, verbose_name=_('address'), db_constraint=False)
   hidden_address = models.BooleanField(_('Hidden address'), default=False)
   birthday_date = models.DateField(blank=True, null=True)
+  has_done_volunteer_work_before = models.NullBooleanField(_('Has done volunteer work before'), default=None)
 
 def get_profile_model():
   s = get_settings()
