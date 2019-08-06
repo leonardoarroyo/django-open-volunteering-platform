@@ -11,6 +11,7 @@ from ovp.apps.catalogue.models import SectionFilter
 
 from ovp.apps.catalogue.models import CategoryFilter
 from ovp.apps.catalogue.models import DateDeltaFilter
+from ovp.apps.catalogue.models import HighlightedFilter
 
 
 ##################################
@@ -89,5 +90,12 @@ class DateDeltaFilterAdmin(ChannelModelAdmin):
   def get_model_perms(self, request):
     return {'change': False, 'add': False, 'delete': False}
 
+class HighlightedFilterAdmin(ChannelModelAdmin):
+  fields = ["highlighted" ]
+
+  def get_model_perms(self, request):
+    return {'change': False, 'add': False, 'delete': False}
+
 admin_site.register(CategoryFilter, CategoryFilterAdmin)
 admin_site.register(DateDeltaFilter, DateDeltaFilterAdmin)
+admin_site.register(HighlightedFilter, HighlightedFilterAdmin)
