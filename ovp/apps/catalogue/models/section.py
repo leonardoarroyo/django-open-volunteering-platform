@@ -72,3 +72,5 @@ class SectionFilter(ChannelRelationship):
       self.filter = CategoryFilter.objects.create(object_channel=kwargs.get("object_channel"))
     if self.type == DATEDELTA:
       self.filter = DateDeltaFilter.objects.create(object_channel=kwargs.get("object_channel"))
+    if self.type == HIGHLIGHTED:
+      self.filter = HighlightedFilter.objects.create(object_channel=kwargs.get("object_channel"))
