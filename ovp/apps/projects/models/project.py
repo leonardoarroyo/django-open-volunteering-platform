@@ -9,7 +9,6 @@ from ovp.apps.core.helpers import get_address_model
 from ovp.apps.core.helpers import generate_slug
 
 from ovp.apps.projects import emails
-from ovp.apps.projects.models.project import Project
 from ovp.apps.projects.models.apply import Apply
 from ovp.apps.ratings.mixins import RatedModelMixin
 from ovp.apps.ratings.models import RatingRequest
