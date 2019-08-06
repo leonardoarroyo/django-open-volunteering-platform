@@ -9,6 +9,7 @@ from ovp.apps.core.helpers import get_address_model
 from ovp.apps.core.helpers import generate_slug
 
 from ovp.apps.projects import emails
+from ovp.apps.projects.models.project import Project
 from ovp.apps.projects.models.apply import Apply
 from ovp.apps.ratings.mixins import RatedModelMixin
 from ovp.apps.ratings.models import RatingRequest
@@ -205,11 +206,13 @@ class VolunteerRole(ChannelRelationship):
 @receiver(post_delete, sender=VolunteerRole)
 def update_max_applies_from_roles(sender, **kwargs):
   if not kwargs.get('raw', False):
-    project = kwargs['instance'].project
+    try:
+      project = kwargs['instance'].project
+    except Project.DoesNotExist:
+      return False
 
     if project:
       queryset = VolunteerRole.objects.filter(project=project)
       vacancies = queryset.aggregate(Sum('vacancies')).get('vacancies__sum')
       project.max_applies_from_roles = vacancies if vacancies else 0
       project.save()
-
