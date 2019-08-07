@@ -43,6 +43,7 @@ class Project(ChannelRelationship, RatedModelMixin):
   organization = models.ForeignKey('organizations.Organization', blank=True, null=True, verbose_name=_('organization'))
   item = models.ForeignKey('items.Item', blank=True, null=True, verbose_name=_('item'))
   rating_requests = GenericRelation(RatingRequest, related_query_name='rated_object_project')
+  flairs = models.ManyToManyField('core.Flair', verbose_name=_('flairs'), related_name="projects", blank=True)
 
 
   # Fields

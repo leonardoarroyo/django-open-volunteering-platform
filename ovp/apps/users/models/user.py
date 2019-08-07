@@ -60,6 +60,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
   email = models.EmailField(_('Email'), max_length=190)
   locale = models.CharField(_('Locale'), max_length=8, null=False, blank=True, default='en')
   rating_requests = GenericRelation(RatingRequest, related_query_name='rated_object_user')
+  flairs = models.ManyToManyField('core.Flair', verbose_name=_('flairs'), related_name="users", blank=True)
 
   # User information
   name = models.CharField(_('Name'), max_length=200, null=False, blank=False)

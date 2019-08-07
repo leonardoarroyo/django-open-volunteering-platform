@@ -6,3 +6,4 @@ from .availability import Availability
 from .contact import ChannelContact
 from .post import Post
 from .bookmark import AbstractBookmark
+from .flair import Flair

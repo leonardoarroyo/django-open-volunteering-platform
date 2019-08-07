@@ -8,3 +8,4 @@ from .lead import *
 from .availability import *
 from .contact import *
 from .post import *
+from .flair import *

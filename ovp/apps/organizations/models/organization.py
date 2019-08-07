@@ -30,6 +30,7 @@ class Organization(ChannelRelationship, RatedModelMixin):
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'), blank=True)
   members = models.ManyToManyField('users.User', verbose_name=_('members'), related_name="organizations_member", blank=True)
   galleries = models.ManyToManyField('gallery.Gallery', verbose_name=_('galleries'), related_name="galleries", blank=True)
+  flairs = models.ManyToManyField('core.Flair', verbose_name=_('flairs'), related_name="organizations", blank=True)
 
   # Fields
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)

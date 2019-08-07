@@ -197,6 +197,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     'contact_phone',
     'contact_email',
     'categories',
+    'flairs',
 
     'facebook_page', 'website', 'instagram_user',
 

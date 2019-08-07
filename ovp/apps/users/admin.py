@@ -69,6 +69,7 @@ class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocomplet
     ('id', 'name', 'email'), 'slug', 'phone', 'password', 'document',
     ('is_staff','is_superuser','is_active','is_email_verified','public',),
     'groups',
+    'flairs',
     'has_done_volunteer_work_before'
   ]
 

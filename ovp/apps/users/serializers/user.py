@@ -3,6 +3,8 @@ from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from django.utils import timezone
 
+from ovp.apps.core.serializers.flair import FlairSerializer
+
 from ovp.apps.users import models
 from ovp.apps.users.helpers import get_settings, import_from_string
 from ovp.apps.users.models.profile import get_profile_model
@@ -180,12 +182,13 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
   applies = ApplyUserRetrieveSerializer(many=True, source="apply_set")
+  flairs = FlairSerializer(many=True)
   bookmarked_projects = BookmarkUserRetrieveSerializer(many=True, source="projectbookmark_set")
   volunteer_hours = serializers.SerializerMethodField()
 
   class Meta:
     model = models.User
-    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects', 'volunteer_hours', 'rating']
+    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects', 'volunteer_hours', 'rating', 'flairs']
 
   def get_volunteer_hours(self, obj):
     volunteer_hours = timezone.timedelta(hours=0)
@@ -224,6 +227,7 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
 
 class UserProjectRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
+  flairs = FlairSerializer(many=True)
 
   class Meta:
     model = models.User
@@ -232,10 +236,11 @@ class UserProjectRetrieveSerializer(ChannelRelationshipSerializer):
 class UserApplyRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
+  flairs = FlairSerializer(many=True)
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'slug', 'avatar', 'phone', 'phone2', 'email', 'profile', 'rating']
+    fields = ['uuid', 'name', 'slug', 'avatar', 'phone', 'phone2', 'email', 'profile', 'rating', 'flairs']
 
 class UserSearchSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()

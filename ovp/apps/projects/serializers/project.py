@@ -9,6 +9,7 @@ from ovp.apps.projects.serializers.role import VolunteerRoleSerializer
 from ovp.apps.projects.serializers.apply import ProjectAppliesSerializer
 from ovp.apps.projects.serializers.category import CategoryRetrieveSerializer, CategoryAssociationSerializer
 from ovp.apps.core.serializers.post import PostRetrieveSerializer
+from ovp.apps.core.serializers.flair import FlairSerializer
 
 from ovp.apps.core import models as core_models
 from ovp.apps.core.helpers import get_address_serializers
@@ -253,6 +254,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
   owner = UserProjectRetrieveSerializer()
   applies = ProjectAppliesSerializer(many=True, source="active_apply_set")
   causes = FullCauseSerializer(many=True)
+  flairs = FlairSerializer(many=True)
   skills = SkillSerializer(many=True)
   galleries = GalleryRetrieveSerializer(many=True)
   documents = UploadedDocumentSerializer(many=True)
@@ -265,7 +267,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'posts', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'benefited_people', 'chat_enabled', 'canceled', 'channel', 'galleries', 'documents']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'flairs', 'categories', 'posts', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'benefited_people', 'chat_enabled', 'canceled', 'channel', 'galleries', 'documents']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
@@ -301,12 +303,12 @@ class ProjectManageableRetrieveSerializer(ProjectRetrieveSerializer):
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes',  'posts', 'skills', 'categories', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'unrated_users_count', 'benefited_people', 'chat_enabled', 'canceled', 'channel', 'galleries', 'documents']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'applies', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'flairs', 'posts', 'skills', 'categories', 'is_bookmarked', 'bookmark_count', 'item', 'type', 'rating', 'unrated_users_count', 'benefited_people', 'chat_enabled', 'canceled', 'channel', 'galleries', 'documents']
 
 class ProjectManageableSerializer(ProjectRetrieveSerializer):
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'categories', 'item', 'rating', 'type', 'canceled']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'organization', 'disponibility', 'roles', 'owner', 'minimum_age', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'flairs', 'categories', 'item', 'rating', 'type', 'canceled']
 
 class CompactOrganizationSerializer(serializers.ModelSerializer):
   address = address_serializers[2]()
@@ -321,13 +323,14 @@ class ProjectOnOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   address = address_serializers[1]()
   disponibility = DisponibilitySerializer()
   causes = CauseSerializer(many=True)
+  flairs = FlairSerializer(many=True)
   skills = SkillSerializer(many=True)
   owner = UserProjectRetrieveSerializer()
   organization = CompactOrganizationSerializer()
 
   class Meta:
     model = models.Project
-    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'disponibility', 'minimum_age', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'owner', 'organization', 'rating']
+    fields = ['slug', 'image', 'name', 'description', 'highlighted', 'published_date', 'address', 'details', 'created_date', 'disponibility', 'minimum_age', 'applied_count', 'max_applies', 'max_applies_from_roles', 'closed', 'closed_date', 'published', 'hidden_address', 'crowdfunding', 'public_project', 'causes', 'skills', 'flairs', 'owner', 'organization', 'rating']
 
   @hide_address
   @add_disponibility_representation
