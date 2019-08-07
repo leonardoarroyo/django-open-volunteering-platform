@@ -37,6 +37,7 @@ class Organization(ChannelRelationship, RatedModelMixin):
   name = models.CharField(_('Name'), max_length=300)
   website = models.URLField(_('Website'), blank=True, null=True, default=None)
   facebook_page = models.CharField(_('Facebook'), max_length=255, blank=True, null=True, default=None)
+  instagram_user = models.CharField(_('Instagram'), max_length=255, blank=True, null=True, default=None)
   type = models.PositiveSmallIntegerField(_('Type'), choices=ORGANIZATION_TYPES, default=0)
   details = models.TextField(_('Details'), max_length=3000, blank=True, null=True, default=None)
   description = models.CharField(_('Short description'), max_length=320, blank=True, null=True)

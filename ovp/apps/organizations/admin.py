@@ -46,6 +46,7 @@ class OrganizationResource(CleanModelResource):
   volunteers = Field(column_name='Número de Voluntários')
   website = Field(attribute='website', column_name='Site')
   facebook_page = Field(attribute='facebook_page', column_name='Facebook')
+  instagram_user = Field(attribute='instagram_user', column_name='Instagram')
   created_project = Field(column_name='Ong já criou ação?')
   benefited_people = Field(attribute='benefited_people', column_name='Pessoas beneficiadas')
   rating = Field(attribute='rating', column_name='Avaliação')
@@ -65,6 +66,7 @@ class OrganizationResource(CleanModelResource):
       'city_state',
       'image',
       'facebook_page',
+      'instagram_user',
       'website',
       'document',
       'causes',
@@ -196,7 +198,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     'contact_email',
     'categories',
 
-    'facebook_page', 'website',
+    'facebook_page', 'website', 'instagram_user',
 
     'description', 'details',
     'causes',
