@@ -44,8 +44,14 @@ class ApplyResource(CleanModelResource):
       'project'
     )
 
+  def before_export(self, qs, *args, **kwargs):
+    return qs \
+      .select_related('project__organization', 'user', 'project__address')
+
   def dehydrate_organization(self, apply):
-    return apply.project.organization.name
+    if hasattr(apply, 'project') and hasattr(apply.project, 'organization') and apply.project.organization != None:
+      return apply.project.organization.name
+    return ""
 
   def dehydrate_project(self, apply):
     return apply.project.name
