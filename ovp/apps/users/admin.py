@@ -36,31 +36,39 @@ class UserResource(CleanModelResource):
       'document',
       'address',
       'city_state',
+      'has_done_volunteer_work_before'
       'causes',
       'joined_date',
     )
 
+  def before_export(self, queryset, *args, **kwargs):
+    return queryset \
+            .prefetch_related('users_userprofile_profile__causes') \
+            .select_related('users_userprofile_profile', 'users_userprofile_profile__address')
+
   def dehydrate_causes(self, user):
-    if user.profile:
-      return ", ".join([c.name for c in user.profile.causes.all()])
+    if hasattr(user, 'users_userprofile_profile'):
+      return ", ".join([c.name for c in user.users_userprofile_profile.causes.all()])
 
   def dehydrate_address(self, user):
-    if user.profile is not None:
-      if isinstance(user.profile.address, GoogleAddress):
-        return user.profile.address.address_line
-      if isinstance(user.profile.address, SimpleAddress):
-        return user.profile.address.street + ', ' + user.profile.address.number + ' - ' + user.profile.address.neighbourhood + ' - ' + user.profile.address.city
+    if hasattr(user, 'users_userprofile_profile') and hasattr(user.users_userprofile_profile, 'address'):
+      profile = user.users_userprofile_profile
+      if isinstance(profile.address, GoogleAddress):
+        return profile.address.address_line
+      if isinstance(profile.address, SimpleAddress):
+        return profile.address.street + ', ' + profile.address.number + ' - ' + profile.address.neighbourhood + ' - ' + profile.address.city
 
   def dehydrate_city_state(self, user):
-    if user.profile is not None:
-      if isinstance(user.profile.address, GoogleAddress):
-        return user.profile.address.city_state
-      if isinstance(user.profile.address, SimpleAddress):
-        return user.profile.address.city
+    if hasattr(user, 'users_userprofile_profile') and hasattr(user.users_userprofile_profile, 'address'):
+      profile = user.users_userprofile_profile
+      if isinstance(profile.address, GoogleAddress):
+        return profile.address.city_state
+      if isinstance(profile.address, SimpleAddress):
+        return profile.address.city
 
   def dehydrate_has_done_volunteer_work_before(self, user):
-    if user.profile is not None:
-      return user.profile.has_done_volunteer_work_before
+    if hasattr(user, 'users_userprofile_profile'):
+      return user.users_userprofile_profile.has_done_volunteer_work_before
     return None
 
 

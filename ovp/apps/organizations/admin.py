@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.db import models
+from django.db.models import Count, Sum
 from martor.widgets import AdminMartorWidget
 from django.utils.translation import ugettext_lazy as _
 
@@ -43,7 +44,7 @@ class OrganizationResource(CleanModelResource):
   city_state = Field(column_name='Cidade/Estado')
   causes = Field(column_name='Causas')
   image = Field(column_name='Imagem')
-  volunteers = Field(column_name='Número de Voluntários')
+  volunteers = Field(attribute='applied_count', column_name='Número de Voluntários')
   website = Field(attribute='website', column_name='Site')
   facebook_page = Field(attribute='facebook_page', column_name='Facebook')
   instagram_user = Field(attribute='instagram_user', column_name='Instagram')
@@ -56,6 +57,7 @@ class OrganizationResource(CleanModelResource):
     fields = (
       'id',
       'name',
+      'description',
       'owner_name',
       'owner_email',
       'owner_phone',
@@ -76,7 +78,17 @@ class OrganizationResource(CleanModelResource):
       'created_project',
       'benefited_people',
       'rating',
+      'volunteers',
     )
+
+  def before_export(self, qs, *args, **kwargs):
+    return qs \
+      .prefetch_related('causes', 'project_set') \
+      .select_related('address', 'owner', 'image') \
+      .annotate(
+          project_count=Count('project'),
+          applied_count=Sum('project__applied_count')
+      )
 
 
   def dehydrate_address(self, organization):
@@ -99,17 +111,8 @@ class OrganizationResource(CleanModelResource):
     if organization.causes:
       return ", ".join([c.name for c in organization.causes.all()])
 
-  def dehydrate_volunteers(self, organization):
-    project = Project.objects.filter(organization=organization)
-    total = 0
-    for p in project:
-      total += p.applied_count
-
-    return total
-
   def dehydrate_created_project(self, organization):
-    projects = Project.objects.filter(organization=organization)
-    if len(projects) > 0:
+    if organization.project_count > 0:
       return "Sim"
 
     return "Não"

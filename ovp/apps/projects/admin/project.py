@@ -2,6 +2,7 @@ import os
 
 from django import forms
 from django.db import models
+from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html
 from martor.widgets import AdminMartorWidget
@@ -53,14 +54,13 @@ class ProjectResource(CleanModelResource):
   benefited_people = Field(attribute='benefited_people', column_name='Pessoas beneficiadas')
   applied_count = Field(attribute='applied_count', column_name='Número de inscritos')
   disponibility = Field(column_name='Presencial ou a distancia')
-  bookmark = Field(column_name='Número de curtidas')
+  bookmark = Field(attribute='bookmark_count', column_name='Número de curtidas')
 
   class Meta:
     model = Project
     fields = (
       'id',
       'name',
-      'applied_count',
       'owner_id',
       'owner_name',
       'owner_email',
@@ -84,6 +84,12 @@ class ProjectResource(CleanModelResource):
       'closed',
       'bookmark',
     )
+
+  def before_export(self, qs, *args, **kwargs):
+    return qs \
+      .prefetch_related('causes', 'job', 'work', 'roles') \
+      .select_related('organization', 'address', 'owner', 'image') \
+      .annotate(bookmark_count=Count('bookmarks'))
 
   def dehydrate_organization(self, project):
     if project.organization:
@@ -123,18 +129,14 @@ class ProjectResource(CleanModelResource):
       pass
 
   def dehydrate_start_date(self, project):
-    try:
-      job = Job.objects.filter(project=project)
-      return job[0].start_date.strftime("%d/%m/%Y %H:%M:%S")
-    except:
-      return "recorrente"
+    if hasattr(project, 'job'):
+      return project.job.start_date.strftime("%d/%m/%Y %H:%M:%S")
+    return "recorrente"
 
   def dehydrate_end_date(self, project):
-    try:
-      job = Job.objects.filter(project=project)
-      return job[0].end_date.strftime("%d/%m/%Y %H:%M:%S")
-    except:
-      return "recorrente"
+    if hasattr(project, 'job'):
+      return project.job.end_date.strftime("%d/%m/%Y %H:%M:%S")
+    return "recorrente"
 
   def dehydrate_address(self, project):
     if project.address is not None:
@@ -144,20 +146,16 @@ class ProjectResource(CleanModelResource):
         return project.address.street + ', ' + project.address.number + ' - ' + project.address.neighbourhood + ' - ' + project.address.city
 
   def dehydrate_disponibility(self, project):
-    try:
-      return "A distância" if project.job.can_be_done_remotely else "Presencial"
-    except:
-      pass
+    obj = None
+    if hasattr(project, 'job'):
+      obj = project.job
+    elif hasattr(project, 'work'):
+      obj = project.work
 
-    try:
-      return "A distância" if project.work.can_be_done_remotely else "Presencial"
-    except:
-      pass
+    if obj:
+      return "A distância" if obj.can_be_done_remotely else "Presencial"
 
     return None
-
-  def dehydrate_bookmark(self, project):
-    return project.bookmark_count()
 
   def dehydrate_link(self, project):
     site_url = os.environ.get('SITE_URL', None)
