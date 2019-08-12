@@ -73,7 +73,7 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     # Address
     if address_data:
-      address_sr = GoogleAddress(typed_address=address_data['typed_address'], typed_address2=address_data['typed_address2'])
+      address_sr = GoogleAddress(typed_address=address_data['typed_address'], typed_address2=address_data.get('typed_address2', None))
       address_sr.save(object_channel=instance.channel.slug)
       validated_data['address'] = address_sr
 
