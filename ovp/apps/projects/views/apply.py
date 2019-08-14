@@ -17,10 +17,11 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import response
 from rest_framework import status
+from rest_framework import mixins
 from drf_yasg.utils import swagger_auto_schema
 
 @ChannelViewSet
-class ApplyResourceViewSet(viewsets.GenericViewSet):
+class ApplyResourceViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
   """
   ApplyResourceViewSet resource endpoint
   """
@@ -28,12 +29,16 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
   ##################
   # ViewSet routes #
   ##################
-  def list(self, request, *arg, **kwargs):
-    """ Retrieve a list of applies for a project. """
-    applies = self.get_queryset(**kwargs)
-    serializer = self.get_serializer_class()(applies, many=True, context=self.get_serializer_context())
+  def list(self, request, *args, **kwargs):
+    queryset = self.filter_queryset(self.get_queryset(**kwargs))
 
-    return response.Response(serializer.data)
+    page = self.paginate_queryset(queryset)
+    if page is not None:
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    serializer = self.get_serializer(queryset, many=True)
+    return Response(serializer.data)
 
   def partial_update(self, request, *args, **kwargs):
     """ Update an apply status. """
