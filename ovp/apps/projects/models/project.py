@@ -216,3 +216,15 @@ def update_max_applies_from_roles(sender, **kwargs):
       vacancies = queryset.aggregate(Sum('vacancies')).get('vacancies__sum')
       project.max_applies_from_roles = vacancies if vacancies else 0
       project.save()
+
+@receiver(post_delete, sender=Apply)
+def update_applied_count_on_apply_delete(sender, **kwargs):
+  if not kwargs.get('raw', False):
+    try:
+      project = kwargs['instance'].project
+    except Project.DoesNotExist:
+      return False
+
+    if project:
+      project.applied_count = project.get_volunteers_numbers()
+      project.save()
