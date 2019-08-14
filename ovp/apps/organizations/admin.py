@@ -213,7 +213,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   resource_class = OrganizationResource
 
   list_display = [
-    'id', 'created_date', 'name', 'published', 'highlighted', 'owner__email', 'owner__phone', 'city_state', 'volunteers', 'address', 'rating', 'modified_date', 'deleted'
+    'id', 'created_date', 'name', 'highlighted', 'published', 'deleted', 'owner__email', 'owner__phone', 'city_state', 'volunteers', 'address', 'rating', 'modified_date'
   ]
 
   list_filter = [
