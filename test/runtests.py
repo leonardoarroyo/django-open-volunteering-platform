@@ -89,11 +89,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'atadosdev',
+        'USER': 'atados',
+        'PASSWORD': 'atados',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
