@@ -15,7 +15,7 @@ def ChannelViewSet(cls):
   get_queryset = getattr(cls, "get_queryset", None)
   if get_queryset:
     def patched_get_queryset(self, *args, **kwargs):
-      return CFM.filter_queryset(self.request.channel, get_queryset(self, *args, **kwargs))
+      return CFM.filter_queryset(self.request.channel, get_queryset(self, *args, **kwargs), distinct=True)
     cls.get_queryset = patched_get_queryset
 
   # We also patch the queryset

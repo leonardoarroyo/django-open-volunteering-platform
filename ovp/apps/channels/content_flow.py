@@ -29,9 +29,12 @@ class ContentFlowManager():
     model_class = next(iter(queryset.query.models))
     return self._filter_qs_or_sqs(destination_channel, SQ, 'channel', model_class, queryset)
 
-  def filter_queryset(self, destination_channel, queryset):
+  def filter_queryset(self, destination_channel, queryset, distinct=False):
     model_class = queryset.model
-    return self._filter_qs_or_sqs(destination_channel, Q, 'channel__slug', model_class, queryset)
+    obj = self._filter_qs_or_sqs(destination_channel, Q, 'channel__slug', model_class, queryset)
+    if distinct:
+      obj = obj.distinct('pk')
+    return obj
 
   def _filter_qs_or_sqs(self, destination_channel, Q_SQ, channel_filter_name, model_class, qs):
     if Q_SQ == Q:
