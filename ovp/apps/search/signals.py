@@ -73,8 +73,11 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
     """ Custom handler for project delete """
     self.handle_delete(instance.__class__, instance)
 
-    if instance.organization:
-      self.handle_save(instance.organization.__class__, instance.organization)
+    try:
+      if instance.organization:
+        self.handle_save(instance.organization.__class__, instance.organization)
+    except Organization.DoesNotExist:
+      pass # just returns, instance already deleted from database
 
   def handle_address_save(self, sender, instance, **kwargs):
     """ Custom handler for address save """
