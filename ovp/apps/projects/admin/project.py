@@ -130,12 +130,16 @@ class ProjectResource(CleanModelResource):
 
   def dehydrate_start_date(self, project):
     if hasattr(project, 'job'):
-      return project.job.start_date.strftime("%d/%m/%Y %H:%M:%S")
+      if project.job.start_date:
+        return project.job.start_date.strftime("%d/%m/%Y %H:%M:%S")
+      return ""
     return "recorrente"
 
   def dehydrate_end_date(self, project):
     if hasattr(project, 'job'):
-      return project.job.end_date.strftime("%d/%m/%Y %H:%M:%S")
+      if project.job.end_date:
+        return project.job.end_date.strftime("%d/%m/%Y %H:%M:%S")
+      return ""
     return "recorrente"
 
   def dehydrate_address(self, project):
