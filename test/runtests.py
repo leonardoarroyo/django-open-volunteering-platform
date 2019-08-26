@@ -4,6 +4,7 @@ import os
 import sys
 import django
 import threading
+import dj_database_url
 
 from django.conf import settings
 from django.core.management import execute_from_command_line
@@ -90,15 +91,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-    }
+  'default': dj_database_url.parse(os.environ['DATABASE_URL'])
 }
-
-if '--keepdb' in sys.argv:
-    DATABASES['default']['NAME'] = '/tmp/ovp.test.db.sqlite3'
 
 gettext = lambda s: s
 
