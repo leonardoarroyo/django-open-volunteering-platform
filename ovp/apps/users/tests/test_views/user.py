@@ -36,7 +36,7 @@ class UserResourceViewSetTestCase(TestCase):
 
   def test_can_create_user_with_valid_passwords(self):
     """Assert that it's possible to create an user with a series of valid passwords"""
-    passwords = ['thisisapassword', 'password with spaces', '83721904', '837 283', '!!#$*&()+=', '  thisisapassword  ']
+    passwords = ['thisisapassword', 'password with spaces', '  thisisapassword  ']
     for i, password in enumerate(passwords):
       response = create_user('testvalidpassword{}@test.com'.format(i), password)
       self.assertTrue(response.data['uuid'])
