@@ -1,3 +1,4 @@
+from django.db.models import Q
 from ovp.apps.users import serializers
 from ovp.apps.users import models
 from ovp.apps.users import emails
@@ -83,12 +84,19 @@ class PublicUserResourceViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewS
   """
   PublicUserResourceViewSet resource endpoint
   """
-  queryset = models.User.objects.filter(public=True)
   serializer_class = serializers.LongUserPublicRetrieveSerializer
   lookup_field = 'slug'
   lookup_value_regex = '[^/]+' # default is [^/.]+ - here we're allowing dots in the url slug field
   email = ''
   locale = ''
+
+  def get_queryset(self, *args, **kwargs):
+    q = Q(public=True)
+
+    if self.request.user.is_authenticated:
+      q = q | Q(pk=self.request.user.pk)
+
+    return models.User.objects.filter(q)
 
   def retrieve(self, *args, **kwargs):
     """ Retrieve an user profile. """

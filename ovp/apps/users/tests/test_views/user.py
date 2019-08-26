@@ -162,11 +162,25 @@ class UserResourceViewSetTestCase(TestCase):
 
   def test_cant_retrieve_hidden_user(self):
     """ Assert it's not possible to retrieve a hidden profile """
+    slug = create_user(extra_data={'public': False}).data['slug']
+
+    client = APIClient()
+    response = client.get(reverse('public-users-detail', [slug]), format="json")
+    self.assertTrue(response.status_code == 404)
+
+    create_user(email="a@b.com")
+    client.force_authenticate(user=models.User.objects.get(email="a@b.com"))
+    response = client.get(reverse('public-users-detail', [slug]), format="json")
+    self.assertTrue(response.status_code == 404)
+
+  def test_can_retrieve_hidden_user_if_self(self):
+    """ Assert it's possible to retrieve your own hidden profile """
     response = create_user(extra_data={'public': False})
 
     client = APIClient()
+    client.force_authenticate(user=models.User.objects.get(email="validemail@gmail.com"))
     response = client.get(reverse('public-users-detail', [response.data['slug']]), format="json")
-    self.assertTrue(response.status_code == 404)
+    self.assertTrue(response.status_code == 200)
 
   def test_ask_for_credentials(self):
     """Assert that unauthenticated users can't get current user info"""
