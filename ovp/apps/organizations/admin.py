@@ -201,6 +201,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     'contact_email',
     'categories',
     'flairs',
+    'members',
 
     'facebook_page', 'website', 'instagram_user',
 
