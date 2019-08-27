@@ -105,6 +105,12 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
   address_components = indexes.MultiValueField(faceted=True)
   channel = indexes.CharField()
   organization = indexes.IntegerField(faceted=True)
+  organization_categories = indexes.MultiValueField(faceted=True)
+
+  def prepare_organization_categories(self, obj):
+    if obj.organization:
+      return list(obj.organization.categories.values_list('pk', flat=True).distinct())
+    return []
 
   def prepare_job(self, obj):
     job = False

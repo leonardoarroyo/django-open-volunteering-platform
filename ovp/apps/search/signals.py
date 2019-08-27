@@ -19,7 +19,7 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
   """
   attach_to = {
     Project: ('handle_project_save', 'handle_project_delete'),
-    Organization: ('handle_save', 'handle_delete'),
+    Organization: ('handle_organization_save', 'handle_organization_delete'),
     User: ('handle_save', 'handle_delete'),
     get_profile_model(): ('handle_profile_save', 'handle_profile_delete'),
     GoogleAddress: ('handle_address_save', 'handle_address_delete'),
@@ -60,6 +60,18 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
 
     for item in self.m2m_user:
       models.signals.m2m_changed.disconnect(self.handle_m2m_user, sender=item)
+
+  def handle_organization_save(self, sender, instance, **kwargs):
+    """ Custom handler for organization save """
+    self.handle_save(instance.__class__, instance)
+
+    # We reindex projects, as it index information about organization(organization categories)
+    for prj in instance.project_set.all():
+      self.handle_save(prj.__class__, prj)
+
+  def handle_organization_delete(self, sender, instance, **kwargs):
+    """ Custom handler for organization delete """
+    self.handle_delete(instance.__class__, instance)
 
   def handle_project_save(self, sender, instance, **kwargs):
     """ Custom handler for project save """
