@@ -217,7 +217,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   ]
 
   list_filter = [
-    ('created_date', DateRangeFilter), ('modified_date', DateRangeFilter), 'highlighted', 'published', 'deleted', StateListFilter, CityListFilter
+    ('created_date', DateRangeFilter), ('modified_date', DateRangeFilter), 'highlighted', 'published', 'deleted', StateListFilter, CityListFilter, 'categories'
   ]
 
   list_editable = [
