@@ -160,8 +160,9 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
 
 
 
-class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin, ChannelMixin):
+class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CategoriesMixin, CausesMixin, AddressComponentsMixin, ChannelMixin):
   org_id = indexes.IntegerField(model_attr='id')
+  categories = indexes.MultiValueField(faceted=True)
   name = CustomCharField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
