@@ -33,6 +33,7 @@ class OrganizationResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
   name = Field(attribute='name', column_name='Nome do Projeto')
   description = Field(attribute='description', column_name='Descricao')
+  details = Field(attribute='details', column_name='Detalhes')
   document = Field(attribute='document', column_name='CNPJ')
   owner_name = Field(column_name='Responsavel: nome')
   owner_email = Field(column_name='Responsavel: email')
@@ -60,6 +61,7 @@ class OrganizationResource(CleanModelResource):
       'id',
       'name',
       'description',
+      'details',
       'owner_name',
       'owner_email',
       'owner_phone',
