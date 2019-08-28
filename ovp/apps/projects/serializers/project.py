@@ -213,7 +213,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     # Associate categories
     if categories:
-      instance.categories.remove(*core_models.Category.objects.filter(channel__slug=self.context["request"].channel))
+      instance.categories.remove(*models.Category.objects.filter(channel__slug=self.context["request"].channel))
       for category in categories:
         c = models.Category.objects.get(pk=category['id'])
         instance.categories.add(c)
