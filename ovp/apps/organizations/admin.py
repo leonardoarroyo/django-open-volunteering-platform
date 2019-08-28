@@ -42,6 +42,8 @@ class OrganizationResource(CleanModelResource):
   contact_phone = Field(attribute='contact_phone', column_name='Contato: telefone')
   address = Field(column_name='Endereço')
   city_state = Field(column_name='Cidade/Estado')
+  lat = Field(column_name='Latitude')
+  lng = Field(column_name='Longitude')
   causes = Field(column_name='Causas')
   image = Field(column_name='Imagem')
   volunteers = Field(attribute='applied_count', column_name='Número de Voluntários')
@@ -66,6 +68,8 @@ class OrganizationResource(CleanModelResource):
       'contact_phone',
       'address',
       'city_state',
+      'lat',
+      'lng',
       'image',
       'facebook_page',
       'instagram_user',
@@ -97,6 +101,18 @@ class OrganizationResource(CleanModelResource):
         return organization.address.address_line
       if isinstance(organization.address, SimpleAddress):
         return organization.address.street + ', ' + organization.address.number + ' - ' + organization.address.neighbourhood + ' - ' + organization.address.city
+
+  def dehydrate_latlng(self, field, organization):
+    if organization.address is not None:
+      if isinstance(organization.address, GoogleAddress):
+        return getattr(organization.address, field, None)
+    return None
+
+  def dehydrate_lat(self, organization):
+    return self.dehydrate_latlng('lat', organization)
+
+  def dehydrate_lng(self, organization):
+    return self.dehydrate_latlng('lng', organization)
 
   def dehydrate_owner_name(self, organization):
     return organization.owner.name
