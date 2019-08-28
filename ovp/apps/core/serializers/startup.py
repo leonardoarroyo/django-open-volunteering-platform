@@ -1,3 +1,4 @@
+from ovp.apps.channels.content_flow import CFM
 from rest_framework.serializers import Serializer
 from rest_framework.fields import IntegerField
 from ovp.apps.core.models import Skill
@@ -9,10 +10,10 @@ from .cause import FullCauseSerializer
 
 class StartupData():
   def __init__(self, request):
-    self.skills = Skill.objects.filter(channel__slug=request.channel)
-    self.causes = Cause.objects.filter(channel__slug=request.channel)
+    self.skills = CFM.filter_queryset(request.channel, Skill.objects.all(), distinct=True)
+    self.causes = CFM.filter_queryset(request.channel, Cause.objects.all(), distinct=True)
     self.volunteer_count = User.objects.filter(channel__slug=request.channel).count()
-    self.nonprofit_count = Organization.objects.filter(channel__slug=request.channel, published=True).count()
+    self.nonprofit_count = CFM.filter_queryset(request.channel, Organization.objects.filter(published=True), distinct=True).count()
 
 class StartupSerializer(Serializer):
   skills = SkillSerializer(many=True, required=False)

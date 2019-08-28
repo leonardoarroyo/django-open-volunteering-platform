@@ -5,6 +5,7 @@ from django.utils import translation
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
+from ovp.apps.channels.models import Channel
 from ovp.apps.core import models
 from ovp.apps.core import serializers
 
@@ -34,6 +35,36 @@ class TestStartupView(TestCase):
       self.assertTrue(response.data["skills"] == skills_data)
       self.assertTrue(response.data["causes"] == causes_data)
 
+  def test_content_flow(self):
+    Channel.objects.create(name="Test channel", slug="test-channel")
+
+    client = APIClient()
+    response = client.get(reverse("startup"), format="json")
+    len_skills = len(response.data["skills"])
+    len_causes = len(response.data["causes"])
+
+    self._add_contentflow()
+    response = client.get(reverse("startup"), format="json")
+    self.assertEqual(len(response.data["skills"]), len_skills*2)
+    self.assertEqual(len(response.data["causes"]), len_causes*2)
+
+  def _add_contentflow(self):
+    from ovp.apps.channels.content_flow import BaseContentFlow
+    from ovp.apps.channels.content_flow import NoContentFlow
+    from ovp.apps.channels.content_flow import CFM
+    from django.db.models import Q
+
+    class Flow():
+      source = "test-channel"
+      destination = "default"
+
+      def get_filter_queryset_q_obj(self, model_class):
+        if model_class in [models.Cause, models.Skill]:
+          return Q()
+
+        raise NoContentFlow
+
+    CFM.add_flow(Flow())
 
 class TestContactFormView(TestCase):
   def setUp(self):
