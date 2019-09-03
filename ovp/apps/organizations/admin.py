@@ -43,6 +43,7 @@ class OrganizationResource(CleanModelResource):
   contact_phone = Field(attribute='contact_phone', column_name='Contato: telefone')
   address = Field(column_name='Endereço')
   city_state = Field(column_name='Cidade/Estado')
+  neighborhood = Field(column_name='Bairro')
   lat = Field(column_name='Latitude')
   lng = Field(column_name='Longitude')
   causes = Field(column_name='Causas')
@@ -70,6 +71,7 @@ class OrganizationResource(CleanModelResource):
       'contact_phone',
       'address',
       'city_state',
+      'neighborhood',
       'lat',
       'lng',
       'image',
@@ -103,6 +105,19 @@ class OrganizationResource(CleanModelResource):
         return organization.address.address_line
       if isinstance(organization.address, SimpleAddress):
         return organization.address.street + ', ' + organization.address.number + ' - ' + organization.address.neighbourhood + ' - ' + organization.address.city
+
+  def dehydrate_neighborhood(self, organization):
+    # TODO: FIX
+    # This is generating one query per organization on export
+    # Maybe bring neighborhood into GoogleAddress as a field?
+    if organization.address is not None:
+      if isinstance(organization.address, GoogleAddress):
+        qs = organization.address.address_components.filter(types__name="neighborhood")
+        if qs.count():
+          return qs[0].long_name
+        return ""
+      if isinstance(organization.address, SimpleAddress):
+        return organization.address.neighbourhood
 
   def dehydrate_latlng(self, field, organization):
     if organization.address is not None:
