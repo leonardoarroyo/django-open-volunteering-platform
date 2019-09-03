@@ -41,6 +41,7 @@ class ProjectResource(CleanModelResource):
   organization = Field(column_name='ONG')
   address = Field(column_name='Endereço')
   city_state = Field(column_name='Cidade/Estado')
+  neighborhood = Field(column_name='Bairro')
   link = Field(column_name='link')
   owner_id = Field(column_name='ID Responsavel')
   owner_name = Field(column_name='Nome Responsavel')
@@ -69,6 +70,7 @@ class ProjectResource(CleanModelResource):
       'organization',
       'address',
       'city_state',
+      'neighborhood',
       'image',
       'description',
       'roles',
@@ -141,6 +143,19 @@ class ProjectResource(CleanModelResource):
         return project.job.end_date.strftime("%d/%m/%Y %H:%M:%S")
       return ""
     return "recorrente"
+
+  def dehydrate_neighborhood(self, project):
+    # TODO: FIX
+    # This is generating one query per project on export
+    # Maybe bring neighborhood into GoogleAddress as a field?
+    if project.address is not None:
+      if isinstance(project.address, GoogleAddress):
+        qs = project.address.address_components.filter(types__name="sublocality_level_1")
+        if qs.count():
+          return qs[0].long_name
+        return ""
+      if isinstance(project.address, SimpleAddress):
+        return project.address.neighbourhood
 
   def dehydrate_address(self, project):
     if project.address is not None:
