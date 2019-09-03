@@ -47,6 +47,9 @@ urlpatterns = [
 
   # Gallery
   url(r'^', include(ovp.apps.gallery.urls)),
+
+  # Digest
+  url(r'^', include(ovp.apps.digest.urls)),
 ]
 
 # Test urls
