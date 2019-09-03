@@ -112,7 +112,7 @@ class OrganizationResource(CleanModelResource):
     # Maybe bring neighborhood into GoogleAddress as a field?
     if organization.address is not None:
       if isinstance(organization.address, GoogleAddress):
-        qs = organization.address.address_components.filter(types__name="neighborhood")
+        qs = organization.address.address_components.filter(types__name="sublocality_level_1")
         if qs.count():
           return qs[0].long_name
         return ""
