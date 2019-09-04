@@ -36,8 +36,13 @@ class VolunteerRoleInline(TabularInline):
 class DocumentInline(TabularInline):
   model = Project.documents.through
   exclude = ['channel']
+  readonly_fields = ['download_link']
   verbose_name = "Document"
   verbose_name_plural = "Documents"
+
+  def download_link(self, instance):
+    url = instance.uploadeddocument.document.url
+    return format_html('<a href="{}">Download</a>', url)
 
 class ProjectResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
