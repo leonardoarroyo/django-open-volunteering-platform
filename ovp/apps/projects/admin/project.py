@@ -12,6 +12,7 @@ from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
 from ovp.apps.projects.models import Project, VolunteerRole, Job, Work
+from ovp.apps.uploads.models import UploadedDocument
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
@@ -31,6 +32,12 @@ from jet.filters import DateRangeFilter
 class VolunteerRoleInline(TabularInline):
   model = VolunteerRole
   exclude = ['channel']
+
+class DocumentInline(TabularInline):
+  model = Project.documents.through
+  exclude = ['channel']
+  verbose_name = "Document"
+  verbose_name_plural = "Documents"
 
 class ProjectResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
@@ -271,6 +278,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   inlines = [
     VolunteerRoleInline,
+    DocumentInline,
     JobInline, WorkInline
   ]
 
