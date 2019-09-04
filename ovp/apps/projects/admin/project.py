@@ -42,7 +42,7 @@ class DocumentInline(TabularInline):
 
   def download_link(self, instance):
     url = instance.uploadeddocument.document.url
-    return format_html('<a href="{}">Download</a>', url)
+    return format_html('<a target="_blank" href="{}">Download</a>', url)
 
 class ProjectResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
