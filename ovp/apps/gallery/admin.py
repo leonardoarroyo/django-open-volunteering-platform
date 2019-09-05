@@ -19,7 +19,7 @@ class UploadedImageInline(TabularInline):
 
   def download_link(self, instance):
     url = instance.uploadedimage.image.url
-    return format_html('<a href="{}">Download</a>', url)
+    return format_html('<a href="{}" target="_blank">Download</a>', url)
 
 class GalleryAdmin(ChannelModelAdmin):
   fields = ['id', 'uuid', 'name',  'description', 'owner', 'images', ('created_date', 'modified_date')]
