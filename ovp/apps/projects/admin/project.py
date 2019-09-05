@@ -44,6 +44,12 @@ class DocumentInline(TabularInline):
     url = instance.uploadeddocument.document.url
     return format_html('<a target="_blank" href="{}">Download</a>', url)
 
+class GalleryInline(TabularInline):
+  model = Project.galleries.through
+  exclude = ['channel']
+  verbose_name = "Gallery"
+  verbose_name_plural = "Gallery"
+
 class ProjectResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
   name = Field(attribute='name', column_name='Nome do Projeto')
@@ -284,6 +290,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
   inlines = [
     VolunteerRoleInline,
     DocumentInline,
+    GalleryInline,
     JobInline, WorkInline
   ]
 

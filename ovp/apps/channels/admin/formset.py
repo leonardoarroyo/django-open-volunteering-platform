@@ -1,4 +1,5 @@
 from django.forms.models import BaseInlineFormSet
+from ovp.apps.channels.models.abstract import ChannelRelationship
 
 
 class AdminInlineFormSet(BaseInlineFormSet):
@@ -35,8 +36,11 @@ class AdminInlineFormSet(BaseInlineFormSet):
     obj = form.save(commit=False)
     pk_value = getattr(self.instance, self.fk.remote_field.field_name)
     setattr(obj, self.fk.get_attname(), getattr(pk_value, 'pk', pk_value))
-    if commit:
+    if commit and issubclass(obj.__class__, ChannelRelationship):
       obj.save(object_channel=request.user.channel.slug)
+    if commit and not issubclass(obj.__class__, ChannelRelationship):
+      obj.save()
+
     # form.save_m2m() can be called via the formset later on if commit=False
     if commit and hasattr(form, 'save_m2m'):
       form.save_m2m()
