@@ -175,4 +175,23 @@ msgstr "Proteção Animal"
 msgid "People with disabilities"
 msgstr "Pessoas com Deficiência"
 
+msgid "Politics"
+msgstr "Política"
 
+msgid "Children"
+msgstr "Crianças"
+
+msgid "Culture and Art"
+msgstr "Cultura e Arte"
+
+msgid "Refugees"
+msgstr "Refugiados"
+
+msgid "Citizenship"
+msgstr "Cidadania"
+
+msgid "Women"
+msgstr "Mulheres"
+
+msgid "Sustainability"
+msgstr "Sustentabilidade"

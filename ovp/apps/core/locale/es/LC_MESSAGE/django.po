@@ -1,0 +1,109 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-05-23 18:49+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: Skills
+msgid "Arts/Handcrafting"
+msgstr "Arte/Artesania"
+
+msgid "Communication"
+msgstr "Comunicación"
+
+msgid "Dance/Music"
+msgstr "Danza/Música"
+
+msgid "Law"
+msgstr "Derecho"
+
+msgid "Education"
+msgstr "Educación"
+
+msgid "Sports"
+msgstr "Deportes"
+
+msgid "Cooking"
+msgstr "Cocina"
+
+msgid "Management"
+msgstr "Administración"
+
+msgid "Idioms"
+msgstr "Idiomas"
+
+msgid "Computers/Technology"
+msgstr "Ordenadores/Tecnología"
+
+msgid "Health"
+msgstr "Salud"
+
+msgid "Other"
+msgstr "Otro"
+
+#: Causes
+msgid "Professional Training"
+msgstr "Entrenamiento Profesional"
+
+msgid "Fight Poverty"
+msgstr "Lucha contra la pobreza"
+
+msgid "Conscious consumption"
+msgstr "Consumo Consciente"
+
+msgid "Culture, Sport and Art"
+msgstr "Cultura, Deporte y Arte"
+
+msgid "Human Rights"
+msgstr "Derechos Humanos"
+
+msgid "Youth"
+msgstr "Juventud"
+
+msgid "Elders"
+msgstr "Ancianos"
+
+msgid "Environment"
+msgstr "Medio Ambiente"
+
+msgid "Citizen Participation"
+msgstr "Participación Ciudadana"
+
+msgid "Animal Protection"
+msgstr "Protección Animal"
+
+msgid "People with disabilities"
+msgstr "Personas com discapacidad"
+
+msgid "Politics"
+msgstr "Politica"
+
+msgid "Children"
+msgstr "Niños y Niñas"
+
+msgid "Culture and Art"
+msgstr "Cultura y Arte"
+
+msgid "Refugees"
+msgstr "Refugiados"
+
+msgid "Citizenship"
+msgstr "Ciudadania"
+
+msgid "Women"
+msgstr "Mujeres"
+
+msgid "Sustainability"
+msgstr "Sostenibilidad"
