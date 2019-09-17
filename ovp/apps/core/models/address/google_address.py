@@ -135,6 +135,7 @@ def update_address(sender, instance, **kwargs):
   with vcr.use_cassette("/tmp/google-address", record_mode="new_episodes"):
     r = requests.get(url)
   data = r.json()
+  print(data)
 
   # Iterate through address components
   instance.address_components.clear()
