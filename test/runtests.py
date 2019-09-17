@@ -6,12 +6,16 @@ import django
 import threading
 import dj_database_url
 
+from dotenv import load_dotenv
+
 from django.conf import settings
 from django.core.management import execute_from_command_line
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, (os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))))
+
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Unfortunately, apps can not be installed via ``modify_settings``
 # decorator, because it would miss the database setup.
@@ -92,7 +96,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 DATABASES = {
-  'default': dj_database_url.parse(os.environ['DATABASE_URL'])
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+    },
 }
 
 gettext = lambda s: s
