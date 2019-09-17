@@ -140,7 +140,9 @@ def update_address(sender, instance, **kwargs):
   # Iterate through address components
   instance.address_components.clear()
   if len(data['results']) > 0:
+    print("components", data['results'][0]['address_components'])
     for component in data['results'][0]['address_components']:
+      print("component", component)
     # TODO: Do not work only with first result
       # Look for component with same name and type
       ac = AddressComponent.objects.annotate(count=Count('types')).filter(long_name=component['long_name'], short_name=component['short_name'])
