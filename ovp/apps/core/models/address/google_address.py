@@ -150,14 +150,18 @@ def update_address(sender, instance, **kwargs):
         ac = ac.filter(types__name=component_type)
       ac = ac.filter(count=len(component['types']))
 
+      print("ac count", ac.count())
       if not ac.count():
+        print("ac not found, creating")
       # Component not found, creating
         ac = AddressComponent(long_name=component['long_name'], short_name=component['short_name'])
         ac.save(object_channel=instance.channel.slug)
       else:
+        print("ac found")
         ac = ac.first()
         ac.types.clear()
         ac.save()
+      print(ac)
 
 
       # Add types for component
@@ -169,6 +173,9 @@ def update_address(sender, instance, **kwargs):
           at.save(object_channel=instance.channel.slug)
         ac.types.add(at)
 
+      print("added types")
+      print("adding comp to address")
+
       instance.address_components.add(ac)
 
     try:
@@ -178,4 +185,5 @@ def update_address(sender, instance, **kwargs):
       pass
 
     # Using update to avoid post_save signal
+    print("updating")
     GoogleAddress.objects.filter(pk=instance.pk).update(address_line=instance.get_address(), city_state=instance.get_city_state())
