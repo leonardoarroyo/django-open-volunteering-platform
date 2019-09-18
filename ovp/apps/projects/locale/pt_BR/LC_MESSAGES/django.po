@@ -95,7 +95,7 @@ msgstr "E-mail de contato"
 
 #: django-ovp-projects/ovp.apps.projects/admin/project.py:101
 msgid "Owner phone"
-msgstr "Telefone do responsável"
+msgstr "Telefone de contato"
 
 #: django-ovp-projects/ovp.apps.projects/models/apply.py:15
 msgid "user"
