@@ -151,7 +151,9 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     # queryset = filters.by_organizations(queryset, organization)
     queryset = filters.by_channel_content_flow(queryset, self.request.channel)
 
+    print("searching")
     result_keys = [q.pk for q in queryset]
+    print(result_keys)
 
     result = querysets.get_project_queryset(request=self.request).filter(pk__in=result_keys)
 
