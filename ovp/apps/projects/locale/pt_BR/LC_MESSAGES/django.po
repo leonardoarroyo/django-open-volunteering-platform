@@ -91,7 +91,7 @@ msgstr "Nome do responsável"
 
 #: django-ovp-projects/ovp.apps.projects/admin/project.py:96
 msgid "Owner email"
-msgstr "E-mail do responsável"
+msgstr "E-mail de contato"
 
 #: django-ovp-projects/ovp.apps.projects/admin/project.py:101
 msgid "Owner phone"
