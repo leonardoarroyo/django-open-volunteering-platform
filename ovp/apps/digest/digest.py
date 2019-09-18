@@ -112,7 +112,7 @@ def generate_content_for_user(user):
   )
   projects = Project.objects.filter(channel__slug=user.channel.slug, deleted=False, closed=False, published=True, published_date__gte=timezone.now() - relativedelta(seconds=config['projects']['max_age'])).exclude(pk__in=not_projects)
   projects = UserSkillsCausesFilter() \
-      .annotate_queryset(projects, user, no_check=True) \
+      .annotate_queryset(projects, user, no_check=True, append_assumed=True) \
       .order_by("-relevance")[:config["projects"]["maximum"]]
 
   if len(projects) < config["projects"]["minimum"]:
