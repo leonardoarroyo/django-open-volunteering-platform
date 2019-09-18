@@ -38,13 +38,16 @@ def send_email(v):
   DigestEmail(recipient, channel, async_mail=False).sendDigest(v)
   print(".", end="", flush=True)
 
-def send_campaign(chunk_size=0, channel="default"):
+def send_campaign(chunk_size=0, channel="default", email_list=None):
   try:
     campaign = DigestLog.objects.order_by("-pk")[0].campaign + 1
   except:
     campaign = 1
 
-  user_list = list(pre_filter(get_email_list(channel)))
+  if not email_list:
+    email_list = get_email_list(channel)
+
+  user_list = list(pre_filter(email_list))
 
   try:
     chunks = math.ceil(len(user_list)/chunk_size)
