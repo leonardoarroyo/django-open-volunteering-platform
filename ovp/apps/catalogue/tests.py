@@ -30,6 +30,7 @@ def setUp():
     # Categories
     category1 = Category.objects.create(name="Hot", object_channel="default")
     category2 = Category.objects.create(name="Get your hands dirty", object_channel="default")
+    category3 = Category.objects.create(name="Coming up", object_channel="default")
 
     # Catalogue
     catalogue = Catalogue.objects.create(name="Home", slug="home", object_channel="default")
@@ -47,6 +48,7 @@ def setUp():
     section3_filter1 = SectionFilter.objects.create(section=section3, type="DATEDELTA", object_channel="default")
     section3_filter1.filter.operator ="gte"
     section3_filter1.filter.save()
+
     section3_filter2 = SectionFilter.objects.create(section=section3, type="DATEDELTA", object_channel="default")
     section3_filter2.filter.operator = "lte"
     section3_filter2.filter.weeks = 1
@@ -65,6 +67,7 @@ def setUp():
     date2 = JobDate.objects.create(job=job2, start_date=timezone.now()+relativedelta(days=3), end_date=timezone.now()+relativedelta(days=3), object_channel="default")
 
     project3 = Project.objects.create(name="sample 3", owner=user, description="description", details="detail", object_channel="default", published=True)
+    project3.categories.add(category3)
     job3 = Job.objects.create(project=project3, object_channel="default")
     date3 = JobDate.objects.create(job=job3, start_date=timezone.now()+relativedelta(weeks=1, days=1), end_date=timezone.now()+relativedelta(weeks=1, days=1), object_channel="default")
 
@@ -83,11 +86,17 @@ class CatalogueCacheTestCase(TestCase):
         # 2 from category filters(section "hot")
         # 2 from category filters(section "get your hands dirty")
         # 2 from datedelta filters(section "coming up")
-            response = self.client.get(reverse("catalogue", ["home"]), format="json")
+            response = self.client.get(
+                reverse("catalogue", ["home"]),
+                format="json"
+            )
         self.assertEqual(len(response.data["sections"]), 3)
 
         with self.assertNumQueries(1):
-            response2 = self.client.get(reverse("catalogue", ["home"]), format="json")
+            response2 = self.client.get(
+                reverse("catalogue", ["home"]),
+                format="json"
+            )
         self.assertEqual(response.data, response2.data)
 
     def test_fetch_catalogue_num_queries(self):
@@ -102,13 +111,23 @@ class CatalogueCacheTestCase(TestCase):
         request = self._generate_request()
         catalogue = get_catalogue("default", "home", request)
         fetched = fetch_catalogue(catalogue, request=request)
-        self.assertEqual(fetched["sections"][0]["projects"].__class__, QuerySet)
+        self.assertEqual(
+            fetched["sections"][0]["projects"].__class__,
+            QuerySet
+        )
 
     def test_fetch_queryset_with_serializer(self):
         request = self._generate_request()
         catalogue = get_catalogue("default", "home", request)
-        fetched = fetch_catalogue(catalogue, request=request, serializer=ProjectSearchSerializer)
-        self.assertEqual(fetched["sections"][0]["projects"].__class__, ReturnList)
+        fetched = fetch_catalogue(
+            catalogue,
+            request=request,
+            serializer=ProjectSearchSerializer
+        )
+        self.assertEqual(
+            fetched["sections"][0]["projects"].__class__,
+            ReturnList
+        )
 
     def _generate_request(self):
         request = RequestFactory().get("/")
@@ -133,10 +152,12 @@ class CatalogueViewTestCase(TestCase):
 
     def test_is_bookmarked(self):
         response = self.client.get(reverse("catalogue", ["home"]), format="json")
-        if len(response.data["sections"]) > 0:
-            for section in response.data["sections"]:
-                for project in section["projects"]:
-                    self.assertTrue("is_bookmarked" in project)
+        self.assertTrue(len(response.data["sections"]) > 0)
+        sections = response.data["sections"]
+        for project in sections[1]["projects"]:
+            self.assertTrue("is_bookmarked" in project)
+        for project in sections[2]["projects"]:
+            self.assertTrue("is_bookmarked" in project)
 
 
 class CategoryFilterTestCase(TestCase):
@@ -147,11 +168,11 @@ class CategoryFilterTestCase(TestCase):
 
     def test_category_filter(self):
         response = self.client.get(reverse("catalogue", ["home"]), format="json")
-        self.assertEqual(len(response.data["sections"][0]["projects"]), 1)
-        self.assertEqual(response.data["sections"][0]["projects"][0]["name"], "sample 1")
-
         self.assertEqual(len(response.data["sections"][1]["projects"]), 1)
         self.assertEqual(response.data["sections"][1]["projects"][0]["name"], "sample 2")
+
+        self.assertEqual(len(response.data["sections"][2]["projects"]), 1)
+        self.assertEqual(response.data["sections"][2]["projects"][0]["name"], "sample 1")
 
 
 class DateDeltaFilterTestCase(TestCase):
@@ -162,5 +183,5 @@ class DateDeltaFilterTestCase(TestCase):
 
     def test_datedelta_filter(self):
         response = self.client.get(reverse("catalogue", ["home"]), format="json")
-        self.assertEqual(len(response.data["sections"][2]["projects"]), 1)
-        self.assertEqual(response.data["sections"][2]["projects"][0]["name"], "sample 2")
+        self.assertEqual(len(response.data["sections"][1]["projects"]), 1)
+        self.assertEqual(response.data["sections"][1]["projects"][0]["name"], "sample 2")

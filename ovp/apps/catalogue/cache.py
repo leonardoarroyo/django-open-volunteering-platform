@@ -104,7 +104,6 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
   by passing a serializer argument.
   """
   # Base queryset
-
   if catalogue_dict["fetched"] and not request.user.is_authenticated():
     return catalogue_dict
 
