@@ -228,6 +228,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     'benefited_people',
     'address',
     'image',
+    'cover',
     'document',
     'contact_name',
     'contact_phone',
