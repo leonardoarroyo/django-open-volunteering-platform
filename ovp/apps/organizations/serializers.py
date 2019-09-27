@@ -3,7 +3,6 @@ from django.core.exceptions import ValidationError
 from ovp.apps.uploads.serializers import UploadedImageSerializer
 
 from ovp.apps.users.models.user import User
-from ovp.apps.users.serializers.user import ShortUserPublicRetrieveSerializer
 
 from ovp.apps.core.models import Cause
 from ovp.apps.core.helpers import get_address_serializers
@@ -113,6 +112,13 @@ class UserOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
     model = User
     fields = ['name', 'email', 'phone']
 
+class MemberRetrieveSerializer(ChannelRelationshipSerializer):
+  avatar = UploadedImageSerializer()
+
+  class Meta:
+    model = User
+    fields = ['uuid', 'name', 'avatar', 'slug']
+
 class OrganizationSearchSerializer(ChannelRelationshipSerializer):
   address = address_serializers[1]()
   image = UploadedImageSerializer()
@@ -130,7 +136,7 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   causes = CauseSerializer(many=True)
   flairs = FlairSerializer(many=True)
   owner = UserOrganizationRetrieveSerializer()
-  members = ShortUserPublicRetrieveSerializer(many=True)
+  members = MemberRetrieveSerializer(many=True)
   galleries = GalleryRetrieveSerializer(many=True)
   is_bookmarked = serializers.SerializerMethodField()
   projects_count = serializers.SerializerMethodField()
