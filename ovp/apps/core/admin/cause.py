@@ -6,23 +6,25 @@ from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
 from ovp.apps.core.models import Cause
 
-class CauseInline(TabularInline):
-  model = Cause
 
-class CauseAdmin(ChannelModelAdmin):
-	fields = ['id', 'name', 'image', 'slug']
-
-	list_display = ['id', 'name']
-
+<<<<<<< HEAD
 	list_filter = []
 
 	list_editable = []
 
 	search_fields = ['id', 'name']
+=======
+class CauseInline(TabularInline):
+    model = Cause
+>>>>>>> PEP8 nos arquivos de ovp/apps/core/admin/
 
-	readonly_fields = ['id']
 
-	raw_id_fields = []
+class CauseAdmin(ChannelModelAdmin):
+    fields = ['id', 'name', 'image', 'slug']
+    list_display = ['id', 'name']
+    list_editable = ['name']
+    search_fields = ['id', 'name']
+    readonly_fields = ['id']
 
 
 admin_site.register(Cause, CauseAdmin)

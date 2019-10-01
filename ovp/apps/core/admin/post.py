@@ -11,26 +11,46 @@ from martor.widgets import AdminMartorWidget
 
 
 class PostAdmin(ChannelModelAdmin):
-  fields = ['id', 'user', 'gallery', ('published',  'deleted'), 'content', ('created_date', 'modified_date', 'deleted_date')]
 
-  list_display = ['id', 'post', 'title', 'published', 'deleted']
+    fields = [
+        'id',
+        'user',
+        'gallery',
+        (
+            'published',
+            'deleted'
+        ),
+        'content',
+        (
+            'created_date',
+            'modified_date',
+            'deleted_date'
+        )
+    ]
 
-  list_filter = []
+    list_display = [
+        'id',
+        'post',
+        'title',
+        'published',
+        'deleted'
+    ]
 
-  list_editable = []
+    search_fields = [
+        'id',
+        'content'
+    ]
 
-  search_fields = ['id', 'content']
+    readonly_fields = ['id', 'created_date', 'modified_date', 'deleted_date']
 
-  readonly_fields = ['id', 'created_date', 'modified_date', 'deleted_date']
+    raw_id_fields = []
 
-  raw_id_fields = []
+    formfield_overrides = {
+        models.TextField: {'widget': AdminMartorWidget},
+    }
 
-  formfield_overrides = {
-    models.TextField: {'widget': AdminMartorWidget},
-  }
-
-  def post(self, obj):
-    return obj.__str__()
+    def post(self, obj):
+        return obj.__str__()
 
 
 admin_site.register(Post, PostAdmin)
