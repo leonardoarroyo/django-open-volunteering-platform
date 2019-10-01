@@ -303,6 +303,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
       total += p.applied_count
 
     return total
+  volunteers.short_description = _("Volunteers")
 
   def city_state(self, obj):
     if obj.address is not None:
@@ -310,6 +311,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
         return obj.address.city_state
       if isinstance(obj.address, SimpleAddress):
         return obj.address.city
+  city_state.short_description = _("City/state")
 
   def get_queryset(self, request): #pragma: no cover
     qs = super(OrganizationAdmin, self).get_queryset(request)

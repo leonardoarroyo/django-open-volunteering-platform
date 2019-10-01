@@ -16,94 +16,92 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: admin/apply.py:166
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 #: admin/apply.py:174
 msgid "E-mail"
-msgstr "E-mail"
+msgstr ""
 
 #: admin/apply.py:182
 msgid "Phone"
-msgstr "Telefone"
+msgstr ""
 
 #: admin/apply.py:189 admin/apply.py:197 admin/apply.py:205
 #: admin/project.py:319
 msgid "None"
-msgstr "Nenhum"
+msgstr ""
 
 #: admin/apply.py:190 models/project.py:188
 msgid "Project"
-msgstr "Projeto"
+msgstr ""
 
 #: admin/apply.py:198 admin/project.py:320
 msgid "Organization"
-msgstr "Organização"
+msgstr ""
 
 #: admin/apply.py:206
 msgid "Address"
-msgstr "Endereço"
+msgstr ""
 
 #: admin/job.py:19 admin/job.py:20
 msgid "Job"
-msgstr "Ação Pontual"
+msgstr ""
 
 #: admin/jobdate.py:14
 msgid "Job Date"
 msgstr ""
 
 #: admin/jobdate.py:15
-#, fuzzy
-#| msgid "job dates"
 msgid "Job Dates"
-msgstr "datas de ações"
+msgstr ""
 
 #: admin/project.py:304
 msgid "Opportunities"
-msgstr "Oportunidades"
+msgstr ""
 
 #: admin/project.py:312
 msgid "Type not specified"
-msgstr "Tipo não especificado"
+msgstr ""
 
 #: admin/project.py:313
 msgid "Can be done remotely?"
-msgstr "Pode ser feita remotamente?"
+msgstr ""
 
 #: admin/project.py:324 admin/project.py:329 admin/project.py:334
 msgid "Owner not assigned"
-msgstr "Responsável não definido"
+msgstr ""
 
 #: admin/project.py:325
 msgid "Owner name"
-msgstr "Nome do responsável"
+msgstr ""
 
 #: admin/project.py:330
 msgid "Owner email"
-msgstr "E-mail de contato"
+msgstr ""
 
 #: admin/project.py:335
 msgid "Owner phone"
-msgstr "Telefone de contato"
+msgstr ""
 
 #: apps.py:6
 msgid "Projects"
-msgstr "Projetos"
+msgstr ""
 
 #: models/apply.py:17
 msgid "user"
-msgstr "usuário"
+msgstr ""
 
 #: models/apply.py:18 models/project.py:176
 msgid "project"
-msgstr "projeto"
+msgstr ""
 
 #: models/apply.py:19
 msgid "status"
-msgstr "status"
+msgstr ""
 
 #: models/apply.py:20
 msgid "role"
@@ -111,23 +109,23 @@ msgstr ""
 
 #: models/apply.py:21
 msgid "created date"
-msgstr "criada em"
+msgstr ""
 
 #: models/apply.py:22
 msgid "canceled date"
-msgstr "cancelada em"
+msgstr ""
 
 #: models/apply.py:24 models/category.py:9
 msgid "name"
-msgstr "nome"
+msgstr ""
 
 #: models/apply.py:25
 msgid "email"
-msgstr "e-mail"
+msgstr ""
 
 #: models/apply.py:26
 msgid "phone"
-msgstr "telefone"
+msgstr ""
 
 #: models/apply.py:27
 msgid "Documento"
@@ -135,89 +133,87 @@ msgstr ""
 
 #: models/apply.py:28
 msgid "message"
-msgstr "mensagem"
+msgstr ""
 
 #: models/apply.py:77
 msgid "apply"
-msgstr "inscrição"
+msgstr ""
 
 #: models/apply.py:78
 msgid "applies"
-msgstr "inscrições"
+msgstr ""
 
 #: models/category.py:11
-#, fuzzy
-#| msgid "Description"
 msgid "description"
-msgstr "Descrição"
+msgstr ""
 
 #: models/category.py:12 models/project.py:32
 msgid "image"
-msgstr "imagem"
+msgstr ""
 
 #: models/category.py:13 models/project.py:53
 msgid "Highlighted"
-msgstr "Em destaque"
+msgstr ""
 
 #: models/category.py:27
 msgid "category"
-msgstr "categoria"
+msgstr ""
 
 #: models/category.py:28 models/project.py:41
 msgid "categories"
-msgstr "categorias"
+msgstr ""
 
 #: models/job.py:7
 msgid "Label"
-msgstr "Título"
+msgstr ""
 
 #: models/job.py:8 models/job.py:31
 msgid "Start date"
-msgstr "Data de início"
+msgstr ""
 
 #: models/job.py:9 models/job.py:32
 msgid "End date"
-msgstr "Data de finalização"
+msgstr ""
 
 #: models/job.py:10 models/job.py:59
 msgid "job"
-msgstr "ação pontual"
+msgstr ""
 
 #: models/job.py:25
 msgid "job date"
-msgstr "data da ação"
+msgstr ""
 
 #: models/job.py:26
 msgid "job dates"
-msgstr "datas de ações"
+msgstr ""
 
 #: models/job.py:33 models/work.py:10
 msgid "This job can be done remotely"
-msgstr "Essa ação pode ser feita remotamente"
+msgstr ""
 
 #: models/job.py:36
 msgid "Unbound Job"
-msgstr "Ação sem projeo"
+msgstr ""
 
 #: models/job.py:60
 msgid "jobs"
-msgstr "ações pontuais"
+msgstr ""
 
 #: models/project.py:33
 msgid "address"
-msgstr "endereço"
+msgstr ""
 
 #: models/project.py:34
 msgid "skills"
-msgstr "habilidades"
+msgstr ""
 
 #: models/project.py:35
 msgid "causes"
-msgstr "causas"
+msgstr ""
 
 #: models/project.py:36
 msgid "galleries"
-msgstr "galleries"
+msgstr ""
 
 #: models/project.py:37
 msgid "posts"
@@ -229,11 +225,11 @@ msgstr ""
 
 #: models/project.py:42
 msgid "owner"
-msgstr "responsável"
+msgstr ""
 
 #: models/project.py:43
 msgid "organization"
-msgstr "organização"
+msgstr ""
 
 #: models/project.py:44
 msgid "item"
@@ -245,31 +241,31 @@ msgstr ""
 
 #: models/project.py:50
 msgid "Project name"
-msgstr "Nome do projeto"
+msgstr ""
 
 #: models/project.py:52
 msgid "Published"
-msgstr "Publicado"
+msgstr ""
 
 #: models/project.py:54 models/project.py:189
 msgid "Applied count"
-msgstr "inscrições"
+msgstr ""
 
 #: models/project.py:57
 msgid "Public"
-msgstr "Público"
+msgstr ""
 
 #: models/project.py:58
 msgid "Minimum Age"
-msgstr "Idade mínima"
+msgstr ""
 
 #: models/project.py:59
 msgid "Hidden address"
-msgstr "Endereço oculto"
+msgstr ""
 
 #: models/project.py:60
 msgid "Crowdfunding"
-msgstr "Crowdfunding"
+msgstr ""
 
 #: models/project.py:61
 msgid "Skip address filter"
@@ -277,11 +273,11 @@ msgstr ""
 
 #: models/project.py:62
 msgid "Project Type"
-msgstr "Tipo do projeto"
+msgstr ""
 
 #: models/project.py:65
 msgid "Partnership"
-msgstr "Parceria"
+msgstr ""
 
 #: models/project.py:66
 msgid "Chat Enabled"
@@ -289,7 +285,7 @@ msgstr ""
 
 #: models/project.py:67
 msgid "Canceled"
-msgstr "cancelada"
+msgstr ""
 
 #: models/project.py:68
 msgid "testimony"
@@ -297,118 +293,116 @@ msgstr ""
 
 #: models/project.py:72
 msgid "Published date"
-msgstr "Data de publicação"
+msgstr ""
 
 #: models/project.py:73
 msgid "Closed"
-msgstr "Fechado"
+msgstr ""
 
 #: models/project.py:74
 msgid "Closed date"
-msgstr "Data de fechamento"
+msgstr ""
 
 #: models/project.py:75
 msgid "Canceled date"
-msgstr "cancelada em"
+msgstr ""
 
 #: models/project.py:76
 msgid "Deleted"
-msgstr "Desligado"
+msgstr ""
 
 #: models/project.py:77
 msgid "Deleted date"
-msgstr "Data de desligamento"
+msgstr ""
 
 #: models/project.py:78
 msgid "Created date"
-msgstr "Criado em"
+msgstr ""
 
 #: models/project.py:79
 msgid "Modified date"
-msgstr "Modificado em"
+msgstr ""
 
 #: models/project.py:82 models/project.py:186
 msgid "Details"
-msgstr "Detalhes"
+msgstr ""
 
 #: models/project.py:83
 msgid "Short description"
-msgstr "Descrição curta"
+msgstr ""
 
 #: models/project.py:177
 msgid "projects"
-msgstr "projetos"
+msgstr ""
 
 #: models/project.py:184
 msgid "Role name"
-msgstr "Nome do cargo"
+msgstr ""
 
 #: models/project.py:185
 msgid "Prerequisites"
-msgstr "Pré-requisitos"
+msgstr ""
 
 #: models/project.py:187
 msgid "Vacancies"
-msgstr "Vagas"
+msgstr ""
 
 #: models/project.py:194
 msgid "volunteer role"
-msgstr "cargo do voluntário"
+msgstr ""
 
 #: models/project.py:195
 msgid "volunteer roles"
-msgstr "cargos do voluntário"
+msgstr ""
 
 #: models/work.py:8
 msgid "Weekly hours"
-msgstr "Horas semanais"
+msgstr ""
 
 #: models/work.py:9
 msgid "Description"
-msgstr "Descrição"
+msgstr ""
 
 #: models/work.py:13
 #, python-format
 msgid "%d hours per week"
-msgstr "%d horas por semana"
+msgstr ""
 
 #: models/work.py:17
 msgid "work"
-msgstr "ação recorrente"
+msgstr ""
 
 #: models/work.py:18
 msgid "works"
-msgstr "ações recorrentes"
+msgstr ""
 
 #: views/project.py:31
 msgid "User Name"
-msgstr "Nome do voluntário"
+msgstr ""
 
 #: views/project.py:31
 msgid "User Email"
-msgstr "Email do voluntário"
+msgstr ""
 
 #: views/project.py:31
 msgid "User Phone"
-msgstr "Telefone do voluntário"
+msgstr ""
 
 #: views/project.py:31
 msgid "Applied At"
-msgstr "Aplicado em"
+msgstr ""
 
 #: views/project.py:31
-#, fuzzy
-#| msgid "Role name"
 msgid "Role"
-msgstr "Nome do cargo"
+msgstr ""
 
 #: views/project.py:31
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #: views/project.py:100
 msgid "Applied Users"
-msgstr "Usuários cadastrados"
+msgstr ""
 
 #: core.Cause/name:1
 msgid "Treinamento Profissional"
@@ -607,10 +601,8 @@ msgid "Arts/Handcrafting"
 msgstr ""
 
 #: core.Skill/name:28
-#, fuzzy
-#| msgid "organization"
 msgid "Communication"
-msgstr "organização"
+msgstr ""
 
 #: core.Skill/name:29
 msgid "Dance/Music"
@@ -645,17 +637,9 @@ msgid "Others"
 msgstr ""
 
 #: core.Skill/name:39
-#, fuzzy
-#| msgid "Organization"
 msgid "Organização"
-msgstr "Organização"
+msgstr ""
 
 #: core.Skill/name:40
 msgid "Agilidade"
 msgstr ""
-
-#~ msgid "edit"
-#~ msgstr "alterar"
-
-#~ msgid "Edit dates"
-#~ msgstr "alterar datas"

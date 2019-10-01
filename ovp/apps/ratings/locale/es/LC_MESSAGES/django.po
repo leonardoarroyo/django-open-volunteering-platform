@@ -2,159 +2,41 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-01 13:57-0300\n"
+"POT-Creation-Date: 2019-10-01 13:39-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: pt_BR\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: models/address/google_address.py:34
-msgid "Typed address"
-msgstr "Endereço digitado"
-
-#: models/address/google_address.py:35
-msgid "Typed address 2"
-msgstr "Complemento"
-
-#: models/address/google_address.py:36
-msgid "Address line"
-msgstr "Linha de endereço"
-
-#: models/address/google_address.py:37
-msgid "City/state"
-msgstr "Cidade/estado"
-
-#: models/address/google_address.py:38
-msgid "Latitude"
-msgstr "Latitude"
-
-#: models/address/google_address.py:39
-msgid "Longitude"
-msgstr "Longitude"
-
-#: models/address/google_address.py:117
-msgid "google address"
-msgstr "endereço"
-
-#: models/address/google_address.py:118
-msgid "google addresses"
-msgstr "endereços"
-
-#: models/availability.py:23
-msgid "Weekday"
-msgstr "Dia da Semana"
-
-#: models/availability.py:24
-msgid "Day period"
-msgstr "Período do Dia"
-
-#: models/cause.py:17 models/flair.py:7 models/skill.py:17
-msgid "name"
-msgstr "nome"
-
-#: models/cause.py:18 models/flair.py:9
-msgid "image"
+#: apps.py:6
+msgid "Ratings"
 msgstr ""
 
-#: models/cause.py:19 models/skill.py:18
-msgid "slug"
+#: mixins.py:6
+msgid "Rating"
 msgstr ""
 
-#: models/cause.py:23
-msgid "cause"
-msgstr "causa"
-
-#: models/contact.py:7 models/lead.py:13
-msgid "Email"
-msgstr "Email"
-
-#: models/flair.py:8
-msgid "value"
-msgstr ""
-
-#: models/flair.py:13
-msgid "flair"
-msgstr ""
-
-#: models/lead.py:12
+#: models.py:16
 msgid "Name"
-msgstr "Nome"
-
-#: models/lead.py:14
-msgid "Phone"
-msgstr "Telefone"
-
-#: models/lead.py:15
-msgid "Country"
-msgstr "País"
-
-#: models/lead.py:16
-msgid "City"
 msgstr ""
 
-#: models/lead.py:17
-msgid "Date"
-msgstr "Data"
-
-#: models/lead.py:18
-msgid "Type"
-msgstr "Tipo"
-
-#: models/lead.py:19
-msgid "Employee number"
-msgstr "Número de funcionário"
-
-#: models/lead.py:23
-msgid "Lead"
-msgstr "Lead"
-
-#: models/lead.py:24
-msgid "Leads"
-msgstr "Leads"
-
-#: models/post.py:8
-msgid "title"
+#: models.py:17
+msgid "Description"
 msgstr ""
 
-#: models/post.py:9
-msgid "content"
+#: models.py:18
+msgid "Parameter type"
 msgstr ""
-
-#: models/post.py:10
-msgid "user"
-msgstr ""
-
-#: models/post.py:11
-msgid "reply"
-msgstr ""
-
-#: models/post.py:14
-msgid "Created date"
-msgstr ""
-
-#: models/post.py:15
-msgid "Modified date"
-msgstr ""
-
-#: models/post.py:16
-msgid "Deleted date"
-msgstr ""
-
-#: models/post.py:17
-msgid "gallery"
-msgstr ""
-
-#: models/skill.py:22
-msgid "skill"
-msgstr "habilidade"
 
 #: core.Cause/name:1
 msgid "Treinamento Profissional"
@@ -169,20 +51,16 @@ msgid "Consumo Consciente"
 msgstr ""
 
 #: core.Cause/name:4
-#, fuzzy
-#| msgid "Culture and Art"
 msgid "Cultura e Arte"
-msgstr "Cultura e Arte"
+msgstr ""
 
 #: core.Cause/name:5
 msgid "Direitos Humanos"
 msgstr ""
 
 #: core.Cause/name:6 core.Skill/name:5
-#, fuzzy
-#| msgid "Education"
 msgid "Educação"
-msgstr "Educação"
+msgstr ""
 
 #: core.Cause/name:7
 msgid "Crianças"
@@ -225,16 +103,12 @@ msgid "Mulheres"
 msgstr ""
 
 #: core.Cause/name:34 core.Skill/name:6
-#, fuzzy
-#| msgid "Sports"
 msgid "Esportes"
-msgstr "Esportes"
+msgstr ""
 
 #: core.Cause/name:35
-#, fuzzy
-#| msgid "Refugees"
 msgid "Refugiados"
-msgstr "Refugiados"
+msgstr ""
 
 #: core.Cause/name:36
 msgid "LGBTQ+"
@@ -266,71 +140,67 @@ msgstr ""
 
 #: core.Cause/name:56
 msgid "Professional Training"
-msgstr "Treinamento Profissional"
+msgstr ""
 
 #: core.Cause/name:57
 msgid "Fight Poverty"
-msgstr "Combate à Pobreza"
+msgstr ""
 
 #: core.Cause/name:58
 msgid "Conscious consumption"
-msgstr "Consumo Consciente"
+msgstr ""
 
 #: core.Cause/name:59
 msgid "Culture, Sport and Art"
-msgstr "Cultura, Esportes e Arte"
+msgstr ""
 
 #: core.Cause/name:60
 msgid "Human Rights"
-msgstr "Direitos Humanos"
+msgstr ""
 
 #: core.Cause/name:61 core.Skill/name:31
 msgid "Education"
-msgstr "Educação"
+msgstr ""
 
 #: core.Cause/name:62
 msgid "Youth"
-msgstr "Jovens"
+msgstr ""
 
 #: core.Cause/name:63
 msgid "Elders"
-msgstr "Idosos"
+msgstr ""
 
 #: core.Cause/name:64
 msgid "Environment"
-msgstr "Meio Ambiente"
+msgstr ""
 
 #: core.Cause/name:65
 msgid "Citizen Participation"
-msgstr "Participação Cidadã"
+msgstr ""
 
 #: core.Cause/name:66
 msgid "Animal Protection"
-msgstr "Proteção Animal"
+msgstr ""
 
 #: core.Cause/name:67 core.Skill/name:37
 msgid "Health"
-msgstr "Saúde"
+msgstr ""
 
 #: core.Cause/name:68
 msgid "People with disabilities"
-msgstr "Pessoas com Deficiência"
+msgstr ""
 
 #: core.Cause/name:82
-#, fuzzy
-#| msgid "Sustainability"
 msgid "Sustentabilidade"
-msgstr "Sustentabilidade"
+msgstr ""
 
 #: core.Skill/name:1
 msgid "Artes/Trabalho manual"
 msgstr ""
 
 #: core.Skill/name:2
-#, fuzzy
-#| msgid "Communication"
 msgid "Comunicação"
-msgstr "Comunicação"
+msgstr ""
 
 #: core.Skill/name:3
 msgid "Dança/Música"
@@ -349,16 +219,12 @@ msgid "Gerenciamento"
 msgstr ""
 
 #: core.Skill/name:9
-#, fuzzy
-#| msgid "Idioms"
 msgid "Idiomas"
-msgstr "Idiomas"
+msgstr ""
 
 #: core.Skill/name:10
-#, fuzzy
-#| msgid "Computers/Technology"
 msgid "Computadores/Tecnologia"
-msgstr "Computadores/Tecnologia"
+msgstr ""
 
 #: core.Skill/name:12
 msgid "Outros"
@@ -366,45 +232,43 @@ msgstr ""
 
 #: core.Skill/name:27
 msgid "Arts/Handcrafting"
-msgstr "Artes/Trabalho manual"
+msgstr ""
 
 #: core.Skill/name:28
 msgid "Communication"
-msgstr "Comunicação"
+msgstr ""
 
 #: core.Skill/name:29
 msgid "Dance/Music"
-msgstr "Dança/Música"
+msgstr ""
 
 #: core.Skill/name:30
 msgid "Law"
-msgstr "Direito"
+msgstr ""
 
 #: core.Skill/name:32
 msgid "Sports"
-msgstr "Esportes"
+msgstr ""
 
 #: core.Skill/name:33
 msgid "Cooking"
-msgstr "Cozinha"
+msgstr ""
 
 #: core.Skill/name:34
 msgid "Management"
-msgstr "Gerenciamento"
+msgstr ""
 
 #: core.Skill/name:35
 msgid "Idioms"
-msgstr "Idiomas"
+msgstr ""
 
 #: core.Skill/name:36
 msgid "Computers/Technology"
-msgstr "Computadores/Tecnologia"
+msgstr ""
 
 #: core.Skill/name:38
-#, fuzzy
-#| msgid "Other"
 msgid "Others"
-msgstr "Outro"
+msgstr ""
 
 #: core.Skill/name:39
 msgid "Organização"
@@ -413,21 +277,3 @@ msgstr ""
 #: core.Skill/name:40
 msgid "Agilidade"
 msgstr ""
-
-#~ msgid "English"
-#~ msgstr "Inglês"
-
-#~ msgid "Portuguese"
-#~ msgstr "Português"
-
-#~ msgid "Politics"
-#~ msgstr "Política"
-
-#~ msgid "Children"
-#~ msgstr "Crianças"
-
-#~ msgid "Citizenship"
-#~ msgstr "Cidadania"
-
-#~ msgid "Women"
-#~ msgstr "Mulheres"

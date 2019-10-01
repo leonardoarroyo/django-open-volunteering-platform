@@ -20,4 +20,5 @@ class CountryFilterMixin():
     filter_params[address_param + '__address_components__short_name__in'] = user_countries
     filter_params[address_param + '__address_components__types__name__exact'] = 'country'
 
+    return query_set
     return query_set.filter(**filter_params)
