@@ -35,8 +35,8 @@ class TestBaseMail(TestCase):
         """
         bm = ovp.apps.core.emails.BaseMail('a@b.c', channel="default")
         bm.sendEmail('base', 'test', {})
-        subject = 'Override email subjects by creating\
-                   a template named {emailTemplate}-subject.txt'
+        subject = "Override email subjects by creating " \
+                  "a template named {emailTemplate}-subject.txt"
         self.assertTrue(mail.outbox[0].subject == subject)
 
 
