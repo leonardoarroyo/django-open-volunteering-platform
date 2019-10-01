@@ -1,6 +1,7 @@
 from ovp.apps.users import emails
 from ovp.apps.users.models.profile import get_profile_model
 from ovp.apps.users.models.password_history import PasswordHistory
+from ovp.apps.users.models.email_verification import EmailVerificationToken
 
 from ovp.apps.channels.models import ChannelRelationship
 from ovp.apps.channels.models.manager import ChannelRelationshipManager
@@ -126,13 +127,18 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
       context = {"name": self.name, "email": self.email}
       self.email = self.__original_email
       self.mailing().sendUpdateEmail(context)
+
       self.email = context['email']
+      self.is_email_verified = False
+      EmailVerificationToken.objects.create(user=self, object_channel=self.channel.slug)
 
     no_email = kwargs.pop("no_email", False)
     obj = super(User, self).save(*args, **kwargs)
 
-    if creating and not no_email:
-      self.mailing().sendWelcome()
+    if creating:
+      if not no_email:
+        self.mailing().sendWelcome()
+      EmailVerificationToken.objects.create(user=self, object_channel=self.channel.slug)
 
     return obj
 

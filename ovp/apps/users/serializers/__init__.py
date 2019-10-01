@@ -11,3 +11,5 @@ from ovp.apps.users.serializers.password_recovery import RecoverPasswordSerializ
 
 from ovp.apps.users.serializers.profile import ProfileCreateUpdateSerializer
 from ovp.apps.users.serializers.profile import ProfileRetrieveSerializer
+
+from ovp.apps.users.serializers.email_verification import EmailVerificationSerializer

@@ -36,3 +36,9 @@ class UserMail(BaseMail):
     Sent when volunteer requests reset email
     """
     return self.sendEmail('updateEmail', 'Update Email', context)
+
+  def sendEmailVerification(self, context):
+    """
+    Sent when email verification token is created
+    """
+    return self.sendEmail('emailVerification', 'Verify your email', context)

@@ -1,3 +1,4 @@
+from ovp.apps.users.models import User
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
@@ -51,3 +52,10 @@ def create_token(email='test@recovery.token', headers={}):
 
   client = APIClient()
   return client.post(reverse('recovery-token-list'), data, format="json", **headers)
+
+def create_email_token(email='test@email.token', headers={}):
+  user = User.objects.get(email=email)
+  client = APIClient()
+  client.force_authenticate(user)
+
+  return client.post(reverse('request-email-verification-list'), format="json", **headers)

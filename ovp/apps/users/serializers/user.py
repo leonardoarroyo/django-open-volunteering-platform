@@ -152,7 +152,7 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_user_count', 'rating_requests_project_count', 'rating_requests_projects_with_unrated_users', 'is_subscribed_to_newsletter', 'chat_enabled', 'document']
+    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_user_count', 'rating_requests_project_count', 'rating_requests_projects_with_unrated_users', 'is_subscribed_to_newsletter', 'chat_enabled', 'document', 'is_email_verified']
 
   def get_chat_enabled(self, obj):
     applies = Apply.objects.filter(project__published=True, project__chat_enabled=True, user=obj)
