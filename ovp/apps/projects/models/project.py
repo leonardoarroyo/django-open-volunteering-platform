@@ -61,7 +61,7 @@ class Project(ChannelRelationship, RatedModelMixin):
   skip_address_filter = models.BooleanField(_('Skip address filter'), default=False)
   type = models.FloatField(_('Project Type'), choices=types, default=1, max_length=10)
 
-  benefited_people = models.IntegerField(blank=True, null=True, default=0)
+  benefited_people = models.IntegerField(_('Benefited people'), blank=True, null=True, default=0)
   partnership = models.BooleanField(_('Partnership'), default=False)
   chat_enabled = models.BooleanField(_('Chat Enabled'), default=False)
   canceled = models.BooleanField(_("Canceled"), default=False)

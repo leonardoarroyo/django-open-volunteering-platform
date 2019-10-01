@@ -654,8 +654,8 @@ msgstr "Organização"
 msgid "Agilidade"
 msgstr ""
 
-#~ msgid "edit"
-#~ msgstr "alterar"
+msgid "edit"
+msgstr "alterar"
 
-#~ msgid "Edit dates"
-#~ msgstr "alterar datas"
+msgid "Edit dates"
+msgstr "alterar datas"

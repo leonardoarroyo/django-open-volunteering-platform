@@ -344,6 +344,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
       return obj.address.city_state
     else:
       return ""
+  city_state.short_description = _("City/state")
 
   def volunteers__list(self, obj):
     site_url = os.environ.get('ADMIN_URL', None)
