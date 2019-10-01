@@ -173,6 +173,6 @@ def update_address(sender, instance, **kwargs):
         GoogleAddress.objects.filter(pk=instance.pk).update(lat=data['results'][0]['geometry']['location']['lat'], lng=data['results'][0]['geometry']['location']['lng'])
     except: #pragma: no cover
       pass
-
+    
     # Using update to avoid post_save signal
     GoogleAddress.objects.filter(pk=instance.pk).update(address_line=instance.get_address(), city_state=instance.get_city_state())
