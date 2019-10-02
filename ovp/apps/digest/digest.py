@@ -16,12 +16,12 @@ import math
 
 config = {
   'interval': {
-    'minimum': 60 * 60 * 24,
+    'minimum': 60 * 60 * 24 * 6,
     'maximum': 0
   },
   'projects': {
-    'minimum': 1,
-    'maximum': 3,
+    'minimum': 3,
+    'maximum': 6,
     'max_age': 60 * 60 * 24 * 7 * 8,
   }
 }
@@ -48,6 +48,10 @@ def send_campaign(chunk_size=0, channel="default", email_list=None):
     email_list = get_email_list(channel)
 
   user_list = list(pre_filter(email_list))
+
+  if not len(user_list):
+    print("0 users to send.")
+    return
 
   try:
     chunks = math.ceil(len(user_list)/chunk_size)
@@ -130,6 +134,8 @@ def generate_content_for_user(user):
         "description": p.description,
         "image": p.image.image_small if p.image and p.image.image_small else "",
         "image_absolute": p.image.absolute if p.image else False,
+        "disponibility": p.job if hasattr(p, 'job') else (p.work if hasattr(p, 'work') else None),
+        "disponibility_type": 'job' if hasattr(p, 'job') else ('work' if hasattr(p, 'work') else None)
       } for p in projects
     ]
   }
