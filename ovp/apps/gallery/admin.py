@@ -22,40 +22,41 @@ class UploadedImageInline(TabularInline):
         url = instance.uploadedimage.image.url
         return format_html('<a href="{}" target="_blank">Download</a>', url)
 
-    class GalleryAdmin(ChannelModelAdmin):
-        fields = [
-            'id',
-            'uuid',
-            'name',
-            'description',
-            'owner',
-            'images',
-            (
-                'created_date',
-                'modified_date'
-            )
-        ]
 
-        list_display = ['id', 'uuid', 'name']
+class GalleryAdmin(ChannelModelAdmin):
+    fields = [
+        'id',
+        'uuid',
+        'name',
+        'description',
+        'owner',
+        'images',
+        (
+            'created_date',
+            'modified_date'
+        )
+    ]
 
-        list_filter = []
+    list_display = ['id', 'uuid', 'name']
 
-        list_editable = []
+    list_filter = []
 
-        search_fields = ['id', 'content']
+    list_editable = []
 
-        readonly_fields = ['id', 'uuid', 'created_date', 'modified_date']
+    search_fields = ['id', 'content']
 
-        raw_id_fields = []
+    readonly_fields = ['id', 'uuid', 'created_date', 'modified_date']
 
-        formfield_overrides = {
-            models.TextField: {'widget': AdminMartorWidget},
-        }
+    raw_id_fields = []
 
-        inlines = [UploadedImageInline]
+    formfield_overrides = {
+        models.TextField: {'widget': AdminMartorWidget},
+    }
 
-        def post(self, obj):
-            return obj.__str__()
+    inlines = [UploadedImageInline]
+
+    def post(self, obj):
+        return obj.__str__()
 
 
 admin_site.register(Gallery, GalleryAdmin)
