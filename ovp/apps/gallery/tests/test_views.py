@@ -210,6 +210,3 @@ class GalleryViewSetTestCase(TestCase):
             HTTP_X_OVP_CHANNEL="default"
         )
         self.assertEqual(response.status_code, 200)
-
-    def test_can_associate_gallery(self):
-        pass

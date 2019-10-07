@@ -50,15 +50,6 @@ class GalleryResourceViewSet(mixins.CreateModelMixin,
             )
         return super().get_permissions()
 
-    ##################
-    # ViewSet routes #
-    ##################
-    def associate_with_model(self, *args, **kwargs):
-        pass
-
-    def unassociate_with_model(self, *args, **kwargs):
-        pass
-
     def partial_update(self, request, *args, **kwargs):
         """ Partially update an gallery object. """
         instance = self.get_object()
