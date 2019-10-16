@@ -437,3 +437,6 @@ msgstr "Cultura e Arte"
 
 msgid "Counscious consumption"
 msgstr "Consumo consciente"
+
+msgid "Refugees"
+msgstr "Refugiados"
