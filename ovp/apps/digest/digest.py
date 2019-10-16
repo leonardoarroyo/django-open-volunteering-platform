@@ -59,6 +59,9 @@ def send_campaign(chunk_size=0, channel="default", email_list=None):
     chunks = 1
     chunk_size = len(user_list)
 
+  if not len(user_list):
+    return
+
   print("Sending campaign {}.\nChunk size: {}\nChunks: {}".format(campaign, chunk_size, chunks))
 
   for i in range(0, len(user_list), chunk_size):
