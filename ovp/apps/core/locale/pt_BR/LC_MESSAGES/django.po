@@ -169,8 +169,6 @@ msgid "Consumo Consciente"
 msgstr ""
 
 #: core.Cause/name:4
-#, fuzzy
-#| msgid "Culture and Art"
 msgid "Cultura e Arte"
 msgstr "Cultura e Arte"
 
@@ -179,8 +177,6 @@ msgid "Direitos Humanos"
 msgstr ""
 
 #: core.Cause/name:6 core.Skill/name:5
-#, fuzzy
-#| msgid "Education"
 msgid "Educação"
 msgstr "Educação"
 
@@ -401,10 +397,8 @@ msgid "Computers/Technology"
 msgstr "Computadores/Tecnologia"
 
 #: core.Skill/name:38
-#, fuzzy
-#| msgid "Other"
 msgid "Others"
-msgstr "Outro"
+msgstr "Outros"
 
 #: core.Skill/name:39
 msgid "Organização"
@@ -414,20 +408,32 @@ msgstr ""
 msgid "Agilidade"
 msgstr ""
 
-#~ msgid "English"
-#~ msgstr "Inglês"
+msgid "Other"
+msgstr "Outro"
 
-#~ msgid "Portuguese"
-#~ msgstr "Português"
+msgid "English"
+msgstr "Inglês"
 
-#~ msgid "Politics"
-#~ msgstr "Política"
+msgid "Portuguese"
+msgstr "Português"
 
-#~ msgid "Children"
-#~ msgstr "Crianças"
+msgid "Politics"
+msgstr "Política"
 
-#~ msgid "Citizenship"
-#~ msgstr "Cidadania"
+msgid "Children"
+msgstr "Crianças"
 
-#~ msgid "Women"
-#~ msgstr "Mulheres"
+msgid "Citizenship"
+msgstr "Cidadania"
+
+msgid "Women"
+msgstr "Mulheres"
+
+msgid "Susteinability"
+msgstr "Sustentabilidade"
+
+msgid "Culture and Art"
+msgstr "Cultura e Arte"
+
+msgid "Counscious consumption"
+msgstr "Consumo consciente"
