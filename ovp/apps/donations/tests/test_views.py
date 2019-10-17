@@ -310,3 +310,45 @@ class TestSubscriptionViewSet(TestCase):
   #  import pudb;pudb.set_trace()
   #  self.assertEqual(response.status_code, 201)
   #  self.assertEqual(Subscription.objects.all().count(), 1)
+
+
+class TestPublicUserDonationListing(TestCase):
+  def setUp(self):
+    self.backend = ZoopBackend()
+    self.client = APIClient()
+    self.user = User.objects.create_user(name="a", email="testmail-projects@test.com", password="test_returned", object_channel="default")
+    self.donator = User.objects.create_user(name="a", email="donator@test.com", password="test_returned", object_channel="default")
+    self.organization = Organization.objects.create(name="test org", owner=self.user, object_channel="default", allow_donations=True)
+    self.organization_received_anonymously = Organization.objects.create(name="test org received anonymously", owner=self.user, object_channel="default", allow_donations=True)
+    self.organization_not_received = Organization.objects.create(name="test org not received", owner=self.user, object_channel="default", allow_donations=False)
+
+    self.data = {
+      "organization_id": self.organization.id,
+      "amount": 100,
+      "token": "invalid"
+    }
+
+
+  def test_organizations_are_shown_on_public_user(self):
+    self.client.force_authenticate(user=self.donator)
+    self.data["token"] = card_token("5201561050024014")
+    self.client.post(reverse("donation-donate"), data=self.data, format="json")
+
+    client = APIClient()
+    response = client.get(reverse('public-users-detail', [self.donator.slug]), format="json")
+
+    self.assertEqual(len(response.data['donated_to_organizations']), 1)
+    self.assertEqual(response.data['donated_to_organizations'][0]['slug'], self.organization.slug)
+
+  def test_anonymous_donations_are_not_shown_on_public_user(self):
+    self.client.force_authenticate(user=self.donator)
+    self.data["token"] = card_token("5201561050024014")
+    self.data["organization_id"] = self.organization_received_anonymously.pk
+    self.data["anonymous"] = True
+    self.client.post(reverse("donation-donate"), data=self.data, format="json")
+
+    client = APIClient()
+    response = client.get(reverse('public-users-detail', [self.donator.slug]), format="json")
+
+    self.assertEqual(self.organization_received_anonymously.transaction_set.count(), 1)
+    self.assertEqual(len(response.data['donated_to_organizations']), 0)
