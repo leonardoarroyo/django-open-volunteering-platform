@@ -1,6 +1,7 @@
 from ovp.apps.users import emails
 from ovp.apps.users.models.profile import get_profile_model
 from ovp.apps.users.models.password_history import PasswordHistory
+from ovp.apps.users.models.email_verification import EmailVerificationToken
 
 from ovp.apps.channels.models import ChannelRelationship
 from ovp.apps.channels.models.manager import ChannelRelationshipManager
@@ -11,8 +12,10 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 
+from django.apps import apps
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.exceptions import ValidationError
 
 from django.db import models
 from django.utils import timezone
@@ -28,6 +31,7 @@ import uuid
 from shortuuid.main import encode as encode_uuid
 
 from random import randint
+
 
 
 class UserManager(ChannelRelationshipManager, BaseUserManager):
@@ -57,6 +61,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
   email = models.EmailField(_('Email'), max_length=190)
   locale = models.CharField(_('Locale'), max_length=8, null=False, blank=True, default='en')
   rating_requests = GenericRelation(RatingRequest, related_query_name='rated_object_user')
+  flairs = models.ManyToManyField('core.Flair', verbose_name=_('flairs'), related_name="users", blank=True)
 
   # User information
   name = models.CharField(_('Name'), max_length=200, null=False, blank=False)
@@ -64,6 +69,7 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
   avatar = models.ForeignKey('uploads.UploadedImage', blank=False, null=True, related_name='avatar_user', verbose_name=_('avatar'))
   phone = models.CharField(_('Phone'), max_length=30, null=True, blank=True)
   phone2 = models.CharField(_('Phone 2'), max_length=30, null=True, blank=True)
+  document = models.CharField(_('Document'), max_length=40, null=True, blank=True)
 
   # Flags
   public = models.BooleanField(_('Public'), default=True)
@@ -121,13 +127,18 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
       context = {"name": self.name, "email": self.email}
       self.email = self.__original_email
       self.mailing().sendUpdateEmail(context)
+
       self.email = context['email']
+      self.is_email_verified = False
+      EmailVerificationToken.objects.create(user=self, object_channel=self.channel.slug)
 
     no_email = kwargs.pop("no_email", False)
     obj = super(User, self).save(*args, **kwargs)
 
-    if creating and not no_email:
-      self.mailing().sendWelcome()
+    if creating:
+      if not no_email:
+        self.mailing().sendWelcome()
+      EmailVerificationToken.objects.create(user=self, object_channel=self.channel.slug)
 
     return obj
 
@@ -151,7 +162,9 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
       return None
 
   def active_organizations(self):
-    return self.organizations_member.filter(deleted=False)
+    Organization = apps.get_model('organizations', 'Organization')
+    qs = self.organizations_member.filter(deleted=False) | Organization.objects.filter(deleted=False, owner=self)
+    return qs.distinct('pk')
 
   @staticmethod
   def autocomplete_search_fields():
@@ -173,6 +186,12 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
     if hasattr(self, 'profile') and hasattr(self.profile, 'collaborator_code'): #TODO: Move this outside OVP, need to reimplement user model checking everywhere
       return "#{} - {}".format(self.profile.collaborator_code, self.name)
     return self.name
+
+  def clean(self):
+    if self.pk:
+      if User.objects.filter(email__iexact=self.email, channel=self.channel).exclude(pk=self.pk).count():
+        raise ValidationError("There's already an user with email {}.".format(self.email))
+    return super(User, self).clean()
 
 
 @receiver(post_save, sender=User)

@@ -11,6 +11,7 @@ from ovp.apps.catalogue.models import SectionFilter
 
 from ovp.apps.catalogue.models import CategoryFilter
 from ovp.apps.catalogue.models import DateDeltaFilter
+from ovp.apps.catalogue.models import HighlightedFilter
 
 
 ##################################
@@ -37,7 +38,7 @@ class FilterObjectMixin():
 ##################################
 class SectionInline(CompactInline):
   model = Section
-  fields = ["name", "slug", "amount"]
+  fields = ["name", "slug", "amount", "order"]
   show_change_link = True
 
 class SectionFilterInline(FilterObjectMixin, CompactInline):
@@ -57,7 +58,7 @@ class CatalogueAdmin(ChannelModelAdmin):
   inlines = [SectionInline]
 
 class SectionAdmin(ChannelModelAdmin):
-  fields = ["name", "slug", "catalogue", "amount", "type"]
+  fields = ["name", "slug", "catalogue", "amount", "type", "order"]
   list_display = ["name", "slug", "catalogue"]
   search_fields = ["id", "name", "slug", "catalogue__name", "catalogue__slug"]
   inlines = [SectionFilterInline]
@@ -89,5 +90,12 @@ class DateDeltaFilterAdmin(ChannelModelAdmin):
   def get_model_perms(self, request):
     return {'change': False, 'add': False, 'delete': False}
 
+class HighlightedFilterAdmin(ChannelModelAdmin):
+  fields = ["highlighted" ]
+
+  def get_model_perms(self, request):
+    return {'change': False, 'add': False, 'delete': False}
+
 admin_site.register(CategoryFilter, CategoryFilterAdmin)
 admin_site.register(DateDeltaFilter, DateDeltaFilterAdmin)
+admin_site.register(HighlightedFilter, HighlightedFilterAdmin)

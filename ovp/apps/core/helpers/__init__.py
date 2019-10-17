@@ -55,17 +55,19 @@ def get_email_subject(channel, email, default):
 
   return _(title)
 
-def generate_slug(channel, model, name):
+def generate_slug(model, name, channel=None):
   if name:
     slug = slugify(name)[0:99]
     append = ''
     i = 0
 
-    query = model.objects.filter(slug=slug + append, channel__slug=channel)
+    query = model.objects.filter(slug=slug + append)
+    query = query.filter(channel__slug=channel) if channel else query
     while query.count() > 0:
       i += 1
       append = '-' + str(i)
-      query = model.objects.filter(slug=slug + append, channel__slug=channel)
+      query = model.objects.filter(slug=slug + append)
+      query = query.filter(channel__slug=channel) if channel else query
     return slug + append
   return None
 

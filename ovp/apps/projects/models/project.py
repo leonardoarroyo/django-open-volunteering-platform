@@ -33,21 +33,22 @@ class Project(ChannelRelationship, RatedModelMixin):
   address = models.ForeignKey(get_address_model(), blank=True, null=True, verbose_name=_('address'), db_constraint=False)
   skills = models.ManyToManyField('core.Skill', verbose_name=_('skills'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'))
-  commentaries = models.ManyToManyField('core.Commentary', verbose_name=_('commentaries'))
-  galleries = models.ManyToManyField('gallery.Gallery', verbose_name=_('galleries'))
-  documents = models.ManyToManyField('uploads.UploadedDocument', verbose_name=_('documents'))
+  galleries = models.ManyToManyField('gallery.Gallery', verbose_name=_('galleries'), blank=True)
+  posts = models.ManyToManyField('core.Post', verbose_name=_('posts'), blank=True)
+  documents = models.ManyToManyField('uploads.UploadedDocument', verbose_name=_('documents'), blank=True)
 
   # Relationships
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)
   owner = models.ForeignKey('users.User', verbose_name=_('owner'))
-  organization = models.ForeignKey('organizations.Organization', blank=False, null=True, verbose_name=_('organization'))
+  organization = models.ForeignKey('organizations.Organization', blank=True, null=True, verbose_name=_('organization'))
   item = models.ForeignKey('items.Item', blank=True, null=True, verbose_name=_('item'))
   rating_requests = GenericRelation(RatingRequest, related_query_name='rated_object_project')
+  flairs = models.ManyToManyField('core.Flair', verbose_name=_('flairs'), related_name="projects", blank=True)
 
 
   # Fields
   name = models.CharField(_('Project name'), max_length=100)
-  slug = models.SlugField(max_length=100, blank=True, null=True)
+  slug = models.SlugField(max_length=100, blank=True, null=True, unique=True)
   published = models.BooleanField(_("Published"), default=False)
   highlighted = models.BooleanField(_("Highlighted"), default=False, blank=False)
   applied_count = models.IntegerField(_('Applied count'), blank=False, null=False, default=0)
@@ -60,18 +61,18 @@ class Project(ChannelRelationship, RatedModelMixin):
   skip_address_filter = models.BooleanField(_('Skip address filter'), default=False)
   type = models.FloatField(_('Project Type'), choices=types, default=1, max_length=10)
 
-  benefited_people = models.IntegerField(blank=True, null=True, default=0)
+  benefited_people = models.IntegerField(_('Benefited people'), blank=True, null=True, default=0)
   partnership = models.BooleanField(_('Partnership'), default=False)
   chat_enabled = models.BooleanField(_('Chat Enabled'), default=False)
   canceled = models.BooleanField(_("Canceled"), default=False)
   testimony = models.TextField(_('testimony'), max_length=3000, blank=True, null=True)
-  
+
 
   # Date fields
   published_date = models.DateTimeField(_("Published date"), blank=True, null=True)
   closed = models.BooleanField(_("Closed"), default=False)
   closed_date = models.DateTimeField(_("Closed date"), blank=True, null=True)
-  canceled_date = models.DateTimeField(_("Closed date"), blank=True, null=True)
+  canceled_date = models.DateTimeField(_("Canceled date"), blank=True, null=True)
   deleted = models.BooleanField(_("Deleted"), default=False)
   deleted_date = models.DateTimeField(_("Deleted date"), blank=True, null=True)
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
@@ -115,11 +116,6 @@ class Project(ChannelRelationship, RatedModelMixin):
   '''
   Model operation methods
   '''
-  def delete(self, *args, **kwargs):
-    self.deleted = True
-    self.published = False
-    self.save()
-
   def save(self, *args, **kwargs):
     creating = False
 
@@ -138,7 +134,7 @@ class Project(ChannelRelationship, RatedModelMixin):
           self.mailing().sendProjectClosed({'project': self})
         except:
           pass
-      
+
       if not orig.canceled and self.canceled:
         self.closed_date = timezone.now()
 
@@ -146,7 +142,7 @@ class Project(ChannelRelationship, RatedModelMixin):
         self.deleted_date = timezone.now()
     else:
       # Project being created
-      self.slug = generate_slug(kwargs.get("object_channel", None), Project, self.name)
+      self.slug = generate_slug(Project, self.name)
       creating = True
 
     # If there is no description, take 100 chars from the details
@@ -174,12 +170,11 @@ class Project(ChannelRelationship, RatedModelMixin):
 
   def __str__(self):
       return  '%s' % (self.name)
-  
+
   class Meta:
     app_label = 'projects'
     verbose_name = _('project')
     verbose_name_plural = _('projects')
-    unique_together = (('slug', 'channel'), )
 
 
 class VolunteerRole(ChannelRelationship):
@@ -202,13 +197,19 @@ class VolunteerRole(ChannelRelationship):
   def __str__(self):
     return  '%s - %s - %s (%s vacancies)' % (self.name, self.details, self.prerequisites, self.vacancies)
 
+  def get_volunteers_numbers(self):
+    return Apply.objects.filter(role=self, project=self.project, status__in=["applied", "confirmed-volunteer"]).count()
+
 
 
 @receiver(post_save, sender=VolunteerRole)
 @receiver(post_delete, sender=VolunteerRole)
 def update_max_applies_from_roles(sender, **kwargs):
   if not kwargs.get('raw', False):
-    project = kwargs['instance'].project
+    try:
+      project = kwargs['instance'].project
+    except Project.DoesNotExist:
+      return False
 
     if project:
       queryset = VolunteerRole.objects.filter(project=project)
@@ -216,3 +217,14 @@ def update_max_applies_from_roles(sender, **kwargs):
       project.max_applies_from_roles = vacancies if vacancies else 0
       project.save()
 
+@receiver(post_delete, sender=Apply)
+def update_applied_count_on_apply_delete(sender, **kwargs):
+  if not kwargs.get('raw', False):
+    try:
+      project = kwargs['instance'].project
+    except Project.DoesNotExist:
+      return False
+
+    if project:
+      project.applied_count = project.get_volunteers_numbers()
+      project.save()

@@ -4,6 +4,7 @@ from ovp.apps.faq.serializers.faq import FaqRetrieveSerializer
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 
 from rest_framework import mixins
+from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework import response
 
@@ -15,10 +16,12 @@ class FaqResourceViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
     Retrieve list of frequently asked questions.
     """
-    category = request.data.get('category', None)
+    category = request.query_params.get('category', None)
+    language = request.query_params.get('language', None)
     queryset = self.get_queryset()
-    if category:
-      queryset = queryset.filter(category=category)
+
+    queryset = queryset.filter(category=category) if category else queryset
+    queryset = queryset.filter(language=language) if language else queryset
 
     serializer = FaqRetrieveSerializer(queryset, many=True)
 

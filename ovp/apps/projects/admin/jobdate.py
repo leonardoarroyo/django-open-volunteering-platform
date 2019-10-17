@@ -9,6 +9,10 @@ from ovp.apps.projects.models import JobDate
 
 class JobDateInline(TabularInline):
   model = JobDate
+  exclude = ['channel']
+  fields = ['name', 'start_date', 'end_date']
+  verbose_name = _('Job Date')
+  verbose_name_plural = _('Job Dates')
 
 
 class JobDateAdmin(ChannelModelAdmin):

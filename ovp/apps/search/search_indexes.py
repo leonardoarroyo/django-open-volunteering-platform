@@ -105,6 +105,12 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
   address_components = indexes.MultiValueField(faceted=True)
   channel = indexes.CharField()
   organization = indexes.IntegerField(faceted=True)
+  organization_categories = indexes.MultiValueField(faceted=True)
+
+  def prepare_organization_categories(self, obj):
+    if obj.organization:
+      return list(obj.organization.categories.values_list('pk', flat=True).distinct())
+    return []
 
   def prepare_job(self, obj):
     job = False
@@ -160,7 +166,9 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
 
 
 
-class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin, ChannelMixin):
+class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CategoriesMixin, CausesMixin, AddressComponentsMixin, ChannelMixin):
+  org_id = indexes.IntegerField(model_attr='id')
+  categories = indexes.MultiValueField(faceted=True)
   name = CustomCharField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
@@ -169,6 +177,10 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
   published = indexes.BooleanField(model_attr='published')
   deleted = indexes.BooleanField(model_attr='deleted')
   channel = indexes.CharField()
+  projects_categories = indexes.MultiValueField(faceted=True)
+
+  def prepare_projects_categories(self, obj):
+    return list(obj.project_set.all().values_list('categories__pk', flat=True).distinct())
 
   def get_model(self):
     return Organization

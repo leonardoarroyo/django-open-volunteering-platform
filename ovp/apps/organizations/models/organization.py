@@ -29,6 +29,8 @@ class Organization(ChannelRelationship, RatedModelMixin):
   cover = models.ForeignKey('uploads.UploadedImage', blank=True, null=True, related_name="+", verbose_name=_('cover'))
   causes = models.ManyToManyField('core.Cause', verbose_name=_('causes'), blank=True)
   members = models.ManyToManyField('users.User', verbose_name=_('members'), related_name="organizations_member", blank=True)
+  galleries = models.ManyToManyField('gallery.Gallery', verbose_name=_('galleries'), related_name="galleries", blank=True)
+  flairs = models.ManyToManyField('core.Flair', verbose_name=_('flairs'), related_name="organizations", blank=True)
 
   # Fields
   categories = models.ManyToManyField('projects.Category', verbose_name=_('categories'), blank=True)
@@ -36,13 +38,14 @@ class Organization(ChannelRelationship, RatedModelMixin):
   name = models.CharField(_('Name'), max_length=300)
   website = models.URLField(_('Website'), blank=True, null=True, default=None)
   facebook_page = models.CharField(_('Facebook'), max_length=255, blank=True, null=True, default=None)
+  instagram_user = models.CharField(_('Instagram'), max_length=255, blank=True, null=True, default=None)
   type = models.PositiveSmallIntegerField(_('Type'), choices=ORGANIZATION_TYPES, default=0)
   details = models.TextField(_('Details'), max_length=3000, blank=True, null=True, default=None)
   description = models.CharField(_('Short description'), max_length=320, blank=True, null=True)
   hidden_address = models.BooleanField(_('Hidden address'), default=False)
   verified = models.BooleanField(_('Verified'), default=False)
   document = models.CharField(_('CNPJ'), unique=True, max_length=100, validators=[validate_CNPJ], blank=True, null=True)
-  benefited_people = models.IntegerField(blank=True, null=True, default=0)
+  benefited_people = models.IntegerField(_('Benefited people'), blank=True, null=True, default=0)
   allow_donations = models.BooleanField(_('Allow donations'), default=False)
 
   # Organization contact
@@ -98,7 +101,7 @@ class Organization(ChannelRelationship, RatedModelMixin):
         self.deleted_date = timezone.now()
     else:
       # Organization being created
-      self.slug = generate_slug(kwargs.get("object_channel", None), Organization, self.name)
+      self.slug = generate_slug(Organization, self.name)
       creating = True
 
     self.document = format_CNPJ(self.document)
@@ -128,6 +131,5 @@ class Organization(ChannelRelationship, RatedModelMixin):
     app_label = 'organizations'
     verbose_name = _('organization')
     verbose_name_plural = _('organizations')
-    unique_together = (('slug', 'channel'), )
 
 

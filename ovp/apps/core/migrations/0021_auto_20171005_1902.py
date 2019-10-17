@@ -10,10 +10,10 @@ def foward_func(apps, schema_editor):
     Skill = apps.get_model('core', 'Skill')
     Cause = apps.get_model('core', 'Cause')
     for skill in Skill.objects.all():
-      skill.slug = generate_slug(skill.channel.slug, Skill, skill.name)
+      skill.slug = generate_slug(Skill, skill.name, skill.channel.slug)
       skill.save()
     for cause in Cause.objects.all():
-      cause.slug = generate_slug(cause.channel.slug, Cause, cause.name)
+      cause.slug = generate_slug(Cause, cause.name, cause.channel.slug)
       cause.save()
     return True
 

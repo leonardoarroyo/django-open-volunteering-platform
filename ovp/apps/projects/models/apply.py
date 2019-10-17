@@ -25,6 +25,7 @@ class Apply(ChannelRelationship):
   email = models.CharField(_('email'), max_length=190, blank=True, null=True)
   phone = models.CharField(_('phone'), max_length=30, blank=True, null=True)
   document = models.CharField(_('Documento'), max_length=100, blank=True, null=True)
+  message = models.TextField(_('message'), max_length=3000, blank=True, null=True)
 
   def __init__(self, *args, **kwargs):
     super(Apply, self).__init__(*args, **kwargs)
@@ -61,12 +62,8 @@ class Apply(ChannelRelationship):
     self.__original_status = self.status
 
     if self.role:
-      if self.status == 'applied' or self.status == 'confirmed-volunteer':
-        self.role.applied_count += 1
-        self.role.save()
-      else:
-        self.role.applied_count -= 1 if self.role.applied_count > 0 else 0
-        self.role.save()
+      self.role.applied_count = self.role.get_volunteers_numbers()
+      self.role.save()
 
     # Updating project applied_count
     self.project.applied_count = self.project.get_volunteers_numbers()

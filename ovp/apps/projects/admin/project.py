@@ -2,13 +2,17 @@ import os
 
 from django import forms
 from django.db import models
+from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import format_html
 from martor.widgets import AdminMartorWidget
 
+from ovp.apps.admin.resources import CleanModelResource
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
 from ovp.apps.projects.models import Project, VolunteerRole, Job, Work
+from ovp.apps.uploads.models import UploadedDocument
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
@@ -19,7 +23,6 @@ from .work import WorkInline
 
 from ovp.apps.core.mixins import CountryFilterMixin
 
-from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
@@ -30,7 +33,24 @@ class VolunteerRoleInline(TabularInline):
   model = VolunteerRole
   exclude = ['channel']
 
-class ProjectResource(resources.ModelResource):
+class DocumentInline(TabularInline):
+  model = Project.documents.through
+  exclude = ['channel']
+  readonly_fields = ['download_link']
+  verbose_name = "Document"
+  verbose_name_plural = "Documents"
+
+  def download_link(self, instance):
+    url = instance.uploadeddocument.document.url
+    return format_html('<a target="_blank" href="{}">Download</a>', url)
+
+class GalleryInline(TabularInline):
+  model = Project.galleries.through
+  exclude = ['channel']
+  verbose_name = "Gallery"
+  verbose_name_plural = "Gallery"
+
+class ProjectResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
   name = Field(attribute='name', column_name='Nome do Projeto')
   description = Field(attribute='description', column_name='Descricao')
@@ -38,43 +58,58 @@ class ProjectResource(resources.ModelResource):
   organization_id = Field(column_name='ID ONG')
   organization = Field(column_name='ONG')
   address = Field(column_name='Endereço')
+  city_state = Field(column_name='Cidade/Estado')
+  neighborhood = Field(column_name='Bairro')
   link = Field(column_name='link')
   owner_id = Field(column_name='ID Responsavel')
   owner_name = Field(column_name='Nome Responsavel')
   owner_email = Field(column_name='Email Responsavel')
   owner_phone = Field(column_name='Telefone Responsavel')
+  roles_count = Field(column_name='Número de funções')
+  roles = Field(column_name='Funções')
   image = Field(column_name='Imagem')
   start_date = Field(column_name='Data de início')
   end_date = Field(column_name='Data de Encerramento')
   benefited_people = Field(attribute='benefited_people', column_name='Pessoas beneficiadas')
+  applied_count = Field(attribute='applied_count', column_name='Número de inscritos')
   disponibility = Field(column_name='Presencial ou a distancia')
-  bookmark = Field(column_name='Número de curtidas')
-  
+  bookmark = Field(attribute='bookmark_count', column_name='Número de curtidas')
+
   class Meta:
     model = Project
     fields = (
       'id',
       'name',
-      'applied_count',
       'owner_id',
       'owner_name',
       'owner_email',
       'owner_phone',
       'organization_id',
-      'organization', 
+      'organization',
       'address',
+      'city_state',
+      'neighborhood',
       'image',
       'description',
+      'roles',
+      'roles_count',
       'link',
       'disponibility',
       'causes',
       'start_date',
       'end_date',
+      'applied_count',
       'benefited_people',
       'published',
       'closed',
       'bookmark',
     )
+
+  def before_export(self, qs, *args, **kwargs):
+    return qs \
+      .prefetch_related('causes', 'job', 'work', 'roles') \
+      .select_related('organization', 'address', 'owner', 'image') \
+      .annotate(bookmark_count=Count('bookmarks'))
 
   def dehydrate_organization(self, project):
     if project.organization:
@@ -105,24 +140,40 @@ class ProjectResource(resources.ModelResource):
       return project.owner.phone
 
   def dehydrate_image(self, project):
-    api_url = os.environ.get('API_URL', None) 
-    if project.image:
-      return api_url+project.image.image_large.url if api_url is not None \
-        else project.image.image_large.url
+    api_url = os.environ.get('API_URL', None)
+    try:
+      if project.image:
+        return api_url+project.image.image_large.url if api_url is not None \
+          else project.image.image_large.url
+    except ValueError:
+      pass
 
   def dehydrate_start_date(self, project):
-    try:
-      job = Job.objects.filter(project=project)
-      return job[0].start_date.strftime("%d/%m/%Y %H:%M:%S")
-    except:
-      return "recorrente"
+    if hasattr(project, 'job'):
+      if project.job.start_date:
+        return project.job.start_date.strftime("%d/%m/%Y %H:%M:%S")
+      return ""
+    return "recorrente"
 
   def dehydrate_end_date(self, project):
-    try:
-      job = Job.objects.filter(project=project)
-      return job[0].end_date.strftime("%d/%m/%Y %H:%M:%S")
-    except:
-      return "recorrente"
+    if hasattr(project, 'job'):
+      if project.job.end_date:
+        return project.job.end_date.strftime("%d/%m/%Y %H:%M:%S")
+      return ""
+    return "recorrente"
+
+  def dehydrate_neighborhood(self, project):
+    # TODO: FIX
+    # This is generating one query per project on export
+    # Maybe bring neighborhood into GoogleAddress as a field?
+    if project.address is not None:
+      if isinstance(project.address, GoogleAddress):
+        qs = project.address.address_components.filter(types__name="sublocality_level_1")
+        if qs.count():
+          return qs[0].long_name
+        return ""
+      if isinstance(project.address, SimpleAddress):
+        return project.address.neighbourhood
 
   def dehydrate_address(self, project):
     if project.address is not None:
@@ -132,20 +183,16 @@ class ProjectResource(resources.ModelResource):
         return project.address.street + ', ' + project.address.number + ' - ' + project.address.neighbourhood + ' - ' + project.address.city
 
   def dehydrate_disponibility(self, project):
-    try:
-      return "A distância" if project.job.can_be_done_remotely else "Presencial"
-    except:
-      pass
+    obj = None
+    if hasattr(project, 'job'):
+      obj = project.job
+    elif hasattr(project, 'work'):
+      obj = project.work
 
-    try:
-      return "A distância" if project.work.can_be_done_remotely else "Presencial"
-    except:
-      pass
+    if obj:
+      return "A distância" if obj.can_be_done_remotely else "Presencial"
 
     return None
-
-  def dehydrate_bookmark(self, project):
-    return project.bookmark_count()
 
   def dehydrate_link(self, project):
     site_url = os.environ.get('SITE_URL', None)
@@ -153,6 +200,22 @@ class ProjectResource(resources.ModelResource):
       return site_url + project.slug
 
     return project.slug
+
+  def dehydrate_city_state(self, project):
+    if project.address is not None:
+      if isinstance(project.address, GoogleAddress):
+        return project.address.city_state
+      if isinstance(project.address, SimpleAddress):
+        return project.address.city
+
+  def dehydrate_roles_count(self, project):
+    return project.roles.count()
+
+  def dehydrate_roles(self, project):
+    roles = project.roles.all()
+    if len(roles):
+      return ", ".join([str(r.name) for r in roles])
+    return ""
 
 
 class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin):
@@ -174,7 +237,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     ('owner__name', 'owner__email', 'owner__phone'),
 
     ('applied_count', 'benefited_people'),
-
+    ('volunteers__list'),
     ('can_be_done_remotely', 'skip_address_filter', 'chat_enabled'),
 
     ('published', 'closed', 'deleted', 'canceled'),
@@ -183,6 +246,10 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     'address',
     'image',
     'categories',
+    'posts',
+    'documents',
+    'galleries',
+    'flairs',
 
     ('created_date', 'modified_date'),
 
@@ -193,11 +260,12 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
   resource_class = ProjectResource
 
   list_display = [
-    'id', 'created_date', 'name', 'highlighted', 'published', 'closed', 'organization__name', 'city_state', 'applied_count', # fix: CIDADE, PONTUAL OU RECORRENTE
-    'deleted', #fix: EMAIL STATUS
-    ]
+    'id', 'created_date', 'name', 'highlighted', 'published', 'closed', 'deleted', 'organization__name', 'city_state', 'applied_count', 'total_opportunities'
+  ]
 
   list_filter = [
+    ('closed_date', DateRangeFilter),
+    ('canceled_date', DateRangeFilter),
     ('created_date', DateRangeFilter), # fix: PONTUAL OU RECORRENTE
     'highlighted', 'published', 'closed', 'deleted', StateListFilter, CityListFilter, 'categories'
   ]
@@ -212,7 +280,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   readonly_fields = [
     'id', 'created_date', 'modified_date', 'published_date', 'closed_date', 'deleted_date', 'canceled_date', 'applied_count', 'max_applies_from_roles',
-    'owner__name', 'owner__email', 'owner__phone', 'can_be_done_remotely'
+    'owner__name', 'owner__email', 'owner__phone', 'can_be_done_remotely', 'volunteers__list'
   ]
 
   raw_id_fields = []
@@ -221,11 +289,19 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   inlines = [
     VolunteerRoleInline,
+    DocumentInline,
+    GalleryInline,
     JobInline, WorkInline
   ]
 
   #def Resource(model, **kwargs):
 
+  def total_opportunities(self, obj):
+    roles = obj.roles.all()
+    if roles:
+      return sum((role.vacancies or 0) + (role.applied_count or 0) for role in roles)
+    return 0
+  total_opportunities.short_description = _('Opportunities')
 
   def can_be_done_remotely(self, obj):
     if obj.hasattr('job') and obj.job:
@@ -268,5 +344,13 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
       return obj.address.city_state
     else:
       return ""
+  city_state.short_description = _("City/state")
+
+  def volunteers__list(self, obj):
+    site_url = os.environ.get('ADMIN_URL', None)
+    if site_url:
+      return format_html("<a href='" + site_url + "admin/projects/apply/?q=" + obj.name + "' target='__blank'>Lista de Voluntários</a>")
+
+    return ""
 
 admin_site.register(Project, ProjectAdmin)

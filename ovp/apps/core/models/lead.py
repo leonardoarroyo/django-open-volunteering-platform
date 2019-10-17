@@ -15,8 +15,8 @@ class Lead(ChannelRelationship):
   country = models.CharField(_('Country'), max_length=2, null=True, blank=True)
   city = models.CharField(_('City'), max_length=100, null=True, blank=True)
   date = models.DateTimeField(_('Date'), auto_now_add=True, null=True, blank=True)
-  type = models.CharField(max_length=10, choices=POSSIBLE_TYPES, default='', null=True, blank=True)
-  employee_number = models.IntegerField(default=0, null=True, blank=True)
+  type = models.CharField(_('Type'), max_length=10, choices=POSSIBLE_TYPES, default='', null=True, blank=True)
+  employee_number = models.IntegerField(_('Employee number'), default=0, null=True, blank=True)
 
   class Meta:
     app_label = 'core'

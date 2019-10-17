@@ -2,13 +2,20 @@ from django.test import TestCase
 from django.core import mail
 from django.utils import timezone
 
+from dateutil.relativedelta import relativedelta
+from django.utils import timezone
+
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from ovp.apps.core.helpers import get_email_subject, is_email_enabled
+from ovp.apps.channels.models import Channel
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization, OrganizationInvite
 from ovp.apps.projects.models import Project
+from ovp.apps.gallery.models import Gallery
+from ovp.apps.core.models import Cause
+from ovp.apps.core.models import Skill
 
 import copy
 
@@ -28,7 +35,15 @@ class OrganizationResourceViewSetTestCase(TestCase):
   def test_can_create_organization(self):
     """Assert that it's possible to create a organization while authenticated"""
     user = User.objects.create_user(email="test_can_create_organization@gmail.com", password="testcancreate", object_channel="default")
-    data = copy.copy(base_organization)
+    data = copy.deepcopy(base_organization)
+
+    Channel.objects.create(slug="test-channel")
+    c = Cause.objects.create(name="other-channel", object_channel="test-channel")
+    data["causes"].append({"id": c.id})
+
+    g1 = Gallery.objects.create(name="test", owner=user, object_channel="default")
+    g2 = Gallery.objects.create(name="other-channel", owner=user, object_channel="test-channel")
+    data["galleries"] = [{"id": g1.id}, {"id": g2.id}]
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -43,7 +58,8 @@ class OrganizationResourceViewSetTestCase(TestCase):
     self.assertTrue(response.data["contact_name"] == data["contact_name"])
     self.assertTrue(response.data["contact_phone"] == data["contact_phone"])
     self.assertTrue(response.data["contact_email"] == data["contact_email"])
-    self.assertTrue(len(response.data["causes"]) == 2)
+    self.assertTrue(len(response.data["causes"]) == 3)
+    self.assertTrue(len(response.data["galleries"]) == 2)
 
     organization = Organization.objects.get(pk=response.data["id"])
     self.assertTrue(organization.owner.id == user.id)
@@ -108,7 +124,6 @@ class OrganizationResourceViewSetTestCase(TestCase):
     response = client.post(reverse("organization-list"), data, format="json")
 
     response = client.get(reverse("organization-detail", ["test-organization"]), format="json")
-
     self.assertTrue(response.data["name"] == data["name"])
     self.assertTrue(response.data["slug"] == "test-organization")
     self.assertTrue(response.data["details"] == data["details"])
@@ -118,6 +133,7 @@ class OrganizationResourceViewSetTestCase(TestCase):
     self.assertTrue(response.data["contact_email"] == data["contact_email"])
     self.assertTrue(response.data["published"] == False)
     self.assertTrue(len(response.data["causes"]) == 2)
+    self.assertTrue(len(response.data["galleries"]) == 0)
     self.assertTrue("image" in response.data)
     self.assertTrue("cover" in response.data)
 
@@ -129,7 +145,7 @@ class OrganizationResourceViewSetTestCase(TestCase):
     client = APIClient()
     client.force_authenticate(user=User.objects.last())
 
-    data = {"name": "updated name", "slug": "updated-slug", "details": "updated details", "description": "updated description", "address": {"typed_address": "campinas, sp"}, "causes": [{"id": 3}, {"id": 4}], "contact_name": "updated name", "contact_phone": "+551198765432", "contact_email": "updated@email.com"}
+    data = {"name": "updated name", "slug": "updated-slug", "details": "updated details", "description": "updated description", "address": {"typed_address": "campinas, sp"}, "causes": [{"id": 3}, {"id": 4}], "contact_name": "updated name", "contact_phone": "+551198765432", "contact_email": "updated@email.com", "galleries": []}
 
     response = client.patch(reverse("organization-detail", ["test-organization"]), data, format="json")
     self.assertTrue(response.status_code == 200)
@@ -140,9 +156,11 @@ class OrganizationResourceViewSetTestCase(TestCase):
     self.assertTrue(response.data["contact_name"] == data["contact_name"])
     self.assertTrue(response.data["contact_phone"] == data["contact_phone"])
     self.assertTrue(response.data["contact_email"] == data["contact_email"])
-    self.assertTrue(len(response.data["causes"]) == 2)
+
+    self.assertTrue(len(response.data["causes"]) == 3)
     self.assertTrue(response.data["causes"][0]["id"] == 3)
     self.assertTrue(response.data["causes"][1]["id"] == 4)
+    self.assertTrue(response.data["causes"][2]["name"] == "other-channel")
 
   def test_can_retrieve_projects(self):
     """ Assert it's possible to retrieve organization projects """
@@ -206,7 +224,15 @@ class OrganizationInviteTestCase(TestCase):
     self.test_can_invite_user()
     response = self.client.post(reverse("organization-invite-user", ["test-organization"]), {"email": "valid@user.com"}, format="json")
     self.assertTrue(response.status_code == 400)
-    self.assertTrue(response.data["email"] == ["This user is already invited to this organization."])
+    self.assertTrue(response.data["email"] == ["This user was already invited to this organization in the last 60 minutes."])
+
+    i = OrganizationInvite.objects.first()
+    i.created_date = timezone.now() - relativedelta(hours=2)
+    i.save()
+
+    response = self.client.post(reverse("organization-invite-user", ["test-organization"]), {"email": "valid@user.com"}, format="json")
+    self.assertTrue(response.status_code == 200)
+    self.assertTrue(OrganizationInvite.objects.get(pk=i.pk).revoked_date != None)
 
   def test_can_invite_user(self):
     """ Test it's possible to invite user """

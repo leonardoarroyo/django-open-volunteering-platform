@@ -3,6 +3,8 @@ from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from django.utils import timezone
 
+from ovp.apps.core.serializers.flair import FlairSerializer
+
 from ovp.apps.users import models
 from ovp.apps.users.helpers import get_settings, import_from_string
 from ovp.apps.users.models.profile import get_profile_model
@@ -34,7 +36,7 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'email', 'password', 'phone', 'phone2', 'avatar', 'locale', 'profile', 'public', 'slug', 'is_subscribed_to_newsletter']
+    fields = ['uuid', 'name', 'email', 'password', 'phone', 'phone2', 'avatar', 'locale', 'profile', 'public', 'slug', 'is_subscribed_to_newsletter', 'document']
     extra_kwargs = {'password': {'write_only': True}}
 
   def validate(self, data):
@@ -45,13 +47,22 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
       try:
         validate_password(password=password)
       except ValidationError as e:
-        errors['password'] = list(e.messages)
+        errors['password'] = list(map(lambda x: [x.code, x.message], e.error_list))
 
     if data.get('email'):
       email = data.get('email', '')
       users = models.User.objects.filter(email=email, channel__slug=self.context["request"].channel)
       if users.count():
         errors['email'] = "An user with this email is already registered."
+
+    s = get_settings()
+    validation_functions = s.get('USER_REGISTER_VALIDATION_FUNCTIONS', [])
+    for func_string in validation_functions:
+      func = import_from_string(func_string)
+      out = func(data, self.context)
+      if out:
+        errors = {**errors, **out}
+        break
 
     if errors:
       raise serializers.ValidationError(errors)
@@ -79,7 +90,7 @@ class UserUpdateSerializer(UserCreateSerializer):
   class Meta:
     model = models.User
     permission_classes = (permissions.IsAuthenticated,)
-    fields = ['name', 'phone', 'phone2', 'password', 'avatar', 'current_password', 'locale', 'profile', 'public', 'is_subscribed_to_newsletter']
+    fields = ['name', 'phone', 'phone2', 'password', 'avatar', 'current_password', 'locale', 'profile', 'public', 'is_subscribed_to_newsletter', 'document']
     extra_kwargs = {'password': {'write_only': True}}
 
 
@@ -93,7 +104,7 @@ class UserUpdateSerializer(UserCreateSerializer):
       try:
         validate_password(password=password)
       except ValidationError as e:
-        errors['password'] = list(e.messages)
+        errors['password'] = list(map(lambda x: [x.code, x.message], e.error_list))
 
       if not authenticate(email=self.context['request'].user.email, password=current_password, channel=self.context["request"].channel):
         errors['current_password'] = ["Invalid password."]
@@ -141,7 +152,7 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_user_count', 'rating_requests_project_count', 'rating_requests_projects_with_unrated_users', 'is_subscribed_to_newsletter', 'chat_enabled']
+    fields = ['uuid', 'name', 'phone', 'phone2', 'avatar', 'email', 'locale', 'profile', 'slug', 'public', 'organizations', 'rating_requests_user_count', 'rating_requests_project_count', 'rating_requests_projects_with_unrated_users', 'is_subscribed_to_newsletter', 'chat_enabled', 'document', 'is_email_verified']
 
   def get_chat_enabled(self, obj):
     applies = Apply.objects.filter(project__published=True, project__chat_enabled=True, user=obj)
@@ -171,12 +182,13 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
   applies = ApplyUserRetrieveSerializer(many=True, source="apply_set")
+  flairs = FlairSerializer(many=True)
   bookmarked_projects = BookmarkUserRetrieveSerializer(many=True, source="projectbookmark_set")
   volunteer_hours = serializers.SerializerMethodField()
 
   class Meta:
     model = models.User
-    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects', 'volunteer_hours', 'rating']
+    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects', 'volunteer_hours', 'rating', 'flairs']
 
   def get_volunteer_hours(self, obj):
     volunteer_hours = timezone.timedelta(hours=0)
@@ -215,18 +227,20 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
 
 class UserProjectRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
+  flairs = FlairSerializer(many=True)
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'avatar', 'email', 'phone', 'phone2', 'slug']
+    fields = ['uuid', 'name', 'avatar', 'email', 'phone', 'phone2', 'slug', 'flairs']
 
 class UserApplyRetrieveSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()
   profile = get_profile_serializers()[1]()
+  flairs = FlairSerializer(many=True)
 
   class Meta:
     model = models.User
-    fields = ['uuid', 'name', 'slug', 'avatar', 'phone', 'phone2', 'email', 'profile', 'rating']
+    fields = ['uuid', 'name', 'slug', 'avatar', 'phone', 'phone2', 'email', 'profile', 'rating', 'flairs']
 
 class UserSearchSerializer(ChannelRelationshipSerializer):
   avatar = UploadedImageSerializer()

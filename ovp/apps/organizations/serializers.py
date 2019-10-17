@@ -7,6 +7,7 @@ from ovp.apps.users.models.user import User
 from ovp.apps.core.models import Cause
 from ovp.apps.core.helpers import get_address_serializers
 from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
+from ovp.apps.core.serializers.flair import FlairSerializer
 
 from ovp.apps.organizations import models
 from ovp.apps.organizations import validators
@@ -15,6 +16,10 @@ from ovp.apps.organizations.decorators import hide_address
 from ovp.apps.projects.models import Project
 
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer, ChannelRetrieveSerializer
+
+from ovp.apps.gallery.models import Gallery
+from ovp.apps.gallery.serializers import (GalleryAssociationSerializer,
+                                          GalleryRetrieveSerializer)
 
 from rest_framework import serializers
 from rest_framework import permissions
@@ -32,13 +37,15 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
   causes = CauseAssociationSerializer(many=True, required=False)
   image = UploadedImageSerializer(required=False)
   image_id = serializers.IntegerField(required=False)
+  galleries = GalleryAssociationSerializer(many=True, required=False)
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'image_id', 'cover', 'hidden_address', 'causes', 'contact_name', 'contact_email', 'contact_phone', 'benefited_people', 'allow_donations']
+    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'instagram_user', 'address', 'details', 'description', 'type', 'image', 'image_id', 'cover', 'hidden_address', 'causes', 'contact_name', 'contact_email', 'contact_phone', 'benefited_people', 'galleries', 'allow_donations']
 
   def create(self, validated_data):
     causes = validated_data.pop('causes', [])
+    galleries = validated_data.pop('galleries', [])
     address_data = validated_data.pop('address', None)
 
     # Address
@@ -55,10 +62,16 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
       c = Cause.objects.get(pk=cause['id'])
       organization.causes.add(c)
 
+    # Associate galleries
+    for gallery in galleries:
+      c = Gallery.objects.get(pk=gallery['id'])
+      organization.galleries.add(c)
+
     return organization
 
   def update(self, instance, validated_data):
     causes = validated_data.pop('causes', [])
+    galleries = validated_data.pop('galleries', [])
     address_data = validated_data.pop('address', None)
 
     # Iterate and save fields as drf default
@@ -78,10 +91,17 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
 
     # Associate causes
     if causes:
-      instance.causes.clear()
+      instance.causes.remove(*Cause.objects.filter(channel__slug=self.context["request"].channel))
       for cause in causes:
         c = Cause.objects.get(pk=cause['id'])
         instance.causes.add(c)
+
+    # Associate galleries
+    if galleries:
+      instance.galleries.remove(*Gallery.objects.filter(channel__slug=self.context["request"].channel))
+      for gallery in galleries:
+        g = Gallery.objects.get(pk=gallery['id'])
+        instance.galleries.add(g)
 
     instance.save()
 
@@ -92,6 +112,13 @@ class UserOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
     model = User
     fields = ['name', 'email', 'phone']
 
+class MemberRetrieveSerializer(ChannelRelationshipSerializer):
+  avatar = UploadedImageSerializer()
+
+  class Meta:
+    model = User
+    fields = ['uuid', 'name', 'avatar', 'slug']
+
 class OrganizationSearchSerializer(ChannelRelationshipSerializer):
   address = address_serializers[1]()
   image = UploadedImageSerializer()
@@ -100,21 +127,24 @@ class OrganizationSearchSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'is_bookmarked', 'verified', 'rating', 'channel']
+    fields = ['id', 'slug', 'owner', 'name', 'website', 'facebook_page', 'instagram_user', 'address', 'details', 'description', 'type', 'image', 'is_bookmarked', 'verified', 'rating', 'channel']
 
 class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   address = address_serializers[1]()
   image = UploadedImageSerializer()
   cover = UploadedImageSerializer()
   causes = CauseSerializer(many=True)
+  flairs = FlairSerializer(many=True)
   owner = UserOrganizationRetrieveSerializer()
+  members = MemberRetrieveSerializer(many=True)
+  galleries = GalleryRetrieveSerializer(many=True)
   is_bookmarked = serializers.SerializerMethodField()
   projects_count = serializers.SerializerMethodField()
   channel = ChannelRetrieveSerializer()
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count', 'rating', 'benefited_people', 'channel', 'allow_donations']
+    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'instagram_user', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'galleries', 'flairs', 'members', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count', 'rating', 'benefited_people', 'channel', 'allow_donations']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
@@ -164,6 +194,8 @@ class MemberRemoveSerializer(serializers.Serializer):
     fields = ['email']
 
 class MemberListRetrieveSerializer(ChannelRelationshipSerializer):
+  avatar = UploadedImageSerializer()
+
   class Meta:
     model = User
     fields = ['id', 'uuid', 'name', 'email', 'avatar', 'slug']

@@ -1,4 +1,4 @@
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template import Template
 from django.template.loader import get_template
 from django.template.exceptions import TemplateDoesNotExist
@@ -6,6 +6,8 @@ from django.conf import settings
 from django.utils import translation
 from ovp.apps.core.helpers import is_email_enabled, get_email_subject
 from ovp.apps.channels.cache import get_channel_setting
+import os
+import json
 
 import threading, sys
 
@@ -29,6 +31,9 @@ class BaseMail:
     self.email_address = email_address
     self.async_mail = async_mail
     self.locale = locale or getattr(settings, "LANGUAGE_CODE", "en-us")
+    self.all_emails = json.loads(os.environ.get("EMAIL_FROM_POSSIBILITIES", "{}"))
+    self.all_users = json.loads(os.environ.get("EMAIL_USER_POSSIBILITIES", "{}"))
+    self.all_passwords = json.loads(os.environ.get("PASSWORD_POSSIBILITIES", "{}"))
 
   def sendEmail(self, template_name, subject, context={}):
     if not is_email_enabled(self.channel, template_name):
@@ -46,7 +51,14 @@ class BaseMail:
     text_content, html_content = self.__render(template_name, ctx)
     self.__resetLocale()
 
-    msg = EmailMultiAlternatives(subject, text_content, self.from_email, [self.email_address])
+    from_email = self.all_emails.get(self.channel, self.from_email)
+    from_user = self.all_users.get(self.channel, settings.EMAIL_HOST_USER)
+    from_password = self.all_passwords.get(self.channel, settings.EMAIL_HOST_PASSWORD)
+    connection = get_connection(
+      username = from_user,
+      password = from_password,
+    )
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [self.email_address], connection=connection)
     msg.attach_alternative(html_content, "text/html")
 
     async_flag = None

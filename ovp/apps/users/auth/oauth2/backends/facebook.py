@@ -1,5 +1,7 @@
 from social_core.backends.facebook import FacebookOAuth2 as FacebookOAuth2Base
 from rest_framework.exceptions import AuthenticationFailed
+import os
+import json
 
 class FacebookOAuth2(FacebookOAuth2Base):
   def auth_allowed(self, response, details):
@@ -16,3 +18,9 @@ class FacebookOAuth2(FacebookOAuth2Base):
       'email': data['email'],
       'name': data['fullname'],
     }
+
+  def get_key_and_secret(self):
+    url = self.strategy.request.META['HTTP_HOST']
+    keys = json.loads(os.environ.get('FACEBOOK_KEYS', "{}"))
+    key_tuple = tuple(keys.get(self.strategy.request.channel, (self.setting('KEY'), self.setting('SECRET'))))
+    return key_tuple

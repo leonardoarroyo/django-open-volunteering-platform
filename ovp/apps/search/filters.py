@@ -6,8 +6,10 @@ from rest_framework.exceptions import NotAuthenticated
 
 from django.db.models import When, F, IntegerField, Count, Case
 
+from ovp.apps.core.models import Cause, Skill
+from ovp.apps.users.models.profile import UserProfile
 from ovp.apps.channels.cache import get_channel_setting
-from ovp.apps.channels.helpers import get_subchannels_list
+from ovp.apps.channels.content_flow import CFM
 
 import json
 
@@ -18,20 +20,27 @@ from datetime import datetime
 #####################
 
 class UserSkillsCausesFilter:
-  def get_skills_and_causes(self, user):
-    if not user.is_authenticated():
+  def get_skills_and_causes(self, user, no_check=False, append_assumed=False):
+    if not no_check and not user.is_authenticated():
       raise NotAuthenticated()
 
     output = {"skills": [], "causes": []}
 
-    if user.profile:
-      output["skills"] = user.profile.skills.values_list('id', flat=True)
-      output["causes"] = user.profile.causes.values_list('id', flat=True)
+    try:
+      if user.users_userprofile_profile:
+        output["skills"] = user.users_userprofile_profile.skills.values_list('id', flat=True)
+        output["causes"] = user.users_userprofile_profile.causes.values_list('id', flat=True)
+    except UserProfile.DoesNotExist:
+      pass
+
+    if append_assumed:
+      output["skills"] += Skill.objects.filter(project__apply__user=user).values_list('pk', flat=True)
+      output["causes"] += Causes.objects.filter(project__apply__user=user).values_list('pk', flat=True)
 
     return output
 
-  def annotate_queryset(self, queryset, user):
-    skills_causes = self.get_skills_and_causes(user)
+  def annotate_queryset(self, queryset, user, no_check=False, append_assumed=False):
+    skills_causes = self.get_skills_and_causes(user, no_check=no_check)
 
     queryset = queryset\
                 .annotate(\
@@ -82,8 +91,12 @@ def get_operator_and_items(string=''):
 
 def by_channels(queryset, channel_string=None):
   """ Filter queryset by a comma delimeted channels list """
-  channel_list = get_subchannels_list(channel_string)
   queryset = queryset.filter(channel__in=channel_list)
+
+  return queryset
+
+def by_channel_content_flow(queryset, channel_string=None):
+  queryset = CFM.filter_searchqueryset(channel_string, queryset)
 
   return queryset
 

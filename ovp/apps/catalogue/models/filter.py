@@ -77,3 +77,25 @@ class DateDeltaFilter(Filter):
     k = "published_date__{}".format(self.operator)
     v = timezone.now() + relativedelta(days=self.days, weeks=self.weeks, months=self.months, years=self.years)
     return {k: v}
+
+
+####################
+# Highlighted Filter #
+####################
+
+HIGHLIGHTED_OPTIONS = (
+  (1, _("True")),
+  (0, _("False")),
+)
+
+class HighlightedFilter(Filter):
+  highlighted = models.IntegerField(_("Highlighted"), choices=HIGHLIGHTED_OPTIONS, default=1)
+
+  def __str__(self):
+    return _("Highlighted Filter")
+
+  def filter_information(self):
+    return  "Highlighted: {}".format(self.get_highlighted_display())
+
+  def get_filter_kwargs(self):
+    return {"highlighted": self.highlighted}

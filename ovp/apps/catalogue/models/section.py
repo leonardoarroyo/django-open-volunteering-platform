@@ -7,13 +7,16 @@ from ovp.apps.channels.models.abstract import ChannelRelationship
 
 from ovp.apps.catalogue.models.filter import CategoryFilter
 from ovp.apps.catalogue.models.filter import DateDeltaFilter
+from ovp.apps.catalogue.models.filter import HighlightedFilter
 
 CATEGORY = "CATEGORY"
 DATEDELTA = "DATEDELTA"
+HIGHLIGHTED = "HIGHLIGHTED"
 
 FILTER_TYPES = (
   (CATEGORY, _("Category")),
   (DATEDELTA, _("Date delta")),
+  (HIGHLIGHTED, _("Highlighted")),
 )
 
 SECTION_TYPES = (
@@ -27,6 +30,7 @@ class Section(ChannelRelationship):
   slug = models.SlugField(_("Slug"), max_length=100)
   amount = models.IntegerField(_("Amount"), default=20)
   type = models.CharField(_("Section type"), max_length=30, choices=SECTION_TYPES, default='projects')
+  order = models.IntegerField(_("Order"), default=0)
 
   def __str__(self):
     return self.name
@@ -69,3 +73,5 @@ class SectionFilter(ChannelRelationship):
       self.filter = CategoryFilter.objects.create(object_channel=kwargs.get("object_channel"))
     if self.type == DATEDELTA:
       self.filter = DateDeltaFilter.objects.create(object_channel=kwargs.get("object_channel"))
+    if self.type == HIGHLIGHTED:
+      self.filter = HighlightedFilter.objects.create(object_channel=kwargs.get("object_channel"))

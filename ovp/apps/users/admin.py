@@ -1,20 +1,20 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from ovp.apps.admin.resources import CleanModelResource
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.users.models import User
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
 
-from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from jet.filters import DateRangeFilter
 
-class UserResource(resources.ModelResource):
+class UserResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
   name = Field(attribute='name', column_name='Nome')
   email = Field(attribute='email', column_name='Email')
@@ -23,6 +23,8 @@ class UserResource(resources.ModelResource):
   city_state = Field(column_name='Cidade/Estado')
   causes = Field(column_name='Causas')
   joined_date = Field(attribute='joined_date', column_name='Data do cadastro')
+  document = Field(attribute='document', column_name='Documento')
+  has_done_volunteer_work_before = Field(attribute='has_done_volunteer_work_before')
 
   class Meta:
     model = User
@@ -31,36 +33,52 @@ class UserResource(resources.ModelResource):
       'name',
       'email',
       'phone',
+      'document',
       'address',
       'city_state',
+      'has_done_volunteer_work_before'
       'causes',
       'joined_date',
     )
 
+  def before_export(self, queryset, *args, **kwargs):
+    return queryset \
+            .prefetch_related('users_userprofile_profile__causes') \
+            .select_related('users_userprofile_profile', 'users_userprofile_profile__address')
+
   def dehydrate_causes(self, user):
-    if user.profile:
-      return ", ".join([c.name for c in user.profile.causes.all()])
+    if hasattr(user, 'users_userprofile_profile'):
+      return ", ".join([c.name for c in user.users_userprofile_profile.causes.all()])
 
   def dehydrate_address(self, user):
-    if user.profile is not None:
-      if isinstance(user.profile.address, GoogleAddress):
-        return user.profile.address.address_line
-      if isinstance(user.profile.address, SimpleAddress):
-        return user.profile.address.street + ', ' + user.profile.address.number + ' - ' + user.profile.address.neighbourhood + ' - ' + user.profile.address.city
+    if hasattr(user, 'users_userprofile_profile') and hasattr(user.users_userprofile_profile, 'address'):
+      profile = user.users_userprofile_profile
+      if isinstance(profile.address, GoogleAddress):
+        return profile.address.address_line
+      if isinstance(profile.address, SimpleAddress):
+        return profile.address.street + ', ' + profile.address.number + ' - ' + profile.address.neighbourhood + ' - ' + profile.address.city
 
   def dehydrate_city_state(self, user):
-    if user.profile is not None:
-      if isinstance(user.profile.address, GoogleAddress):
-        return user.profile.address.city_state
-      if isinstance(user.profile.address, SimpleAddress):
-        return user.profile.address.city
+    if hasattr(user, 'users_userprofile_profile') and hasattr(user.users_userprofile_profile, 'address'):
+      profile = user.users_userprofile_profile
+      if isinstance(profile.address, GoogleAddress):
+        return profile.address.city_state
+      if isinstance(profile.address, SimpleAddress):
+        return profile.address.city
+
+  def dehydrate_has_done_volunteer_work_before(self, user):
+    if hasattr(user, 'users_userprofile_profile'):
+      return user.users_userprofile_profile.has_done_volunteer_work_before
+    return None
 
 
 class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocompleteAdmin):
   fields = [
-    ('id', 'name', 'email'), 'slug', 'phone', 'password',
+    ('id', 'name', 'email'), 'slug', 'phone', 'password', 'document',
     ('is_staff','is_superuser','is_active','is_email_verified','public',),
-    'groups'
+    'groups',
+    'flairs',
+    'has_done_volunteer_work_before'
   ]
 
   resource_class = UserResource
@@ -81,7 +99,13 @@ class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocomplet
     'email', 'name'
   ]
 
-  readonly_fields = ['id']
+  readonly_fields = ['id', 'has_done_volunteer_work_before']
   raw_id_fields = []
+
+  def has_done_volunteer_work_before(self, user):
+    v = None
+    if user.profile is not None:
+      v = user.profile.has_done_volunteer_work_before
+    return v if v else "Undefined"
 
 admin_site.register(User, UserAdmin)

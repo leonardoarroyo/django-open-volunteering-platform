@@ -7,8 +7,15 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from ovp.apps.projects.models import Project
+from ovp.apps.projects.models import Category
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
+from ovp.apps.gallery.models import Gallery
+from ovp.apps.core.models import Post
+from ovp.apps.core.models import Cause
+from ovp.apps.core.models import Skill
+from ovp.apps.channels.models import Channel
+from ovp.apps.uploads.models import UploadedDocument
 
 from ovp.apps.channels.models.channel_setting import ChannelSetting
 
@@ -36,7 +43,7 @@ class ProjectResourceViewSetTestCase(TestCase):
     """Assert that it's possible to create a project while authenticated"""
     user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
 
-    data = copy.copy(base_project)
+    data = copy.deepcopy(base_project)
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -65,7 +72,7 @@ class ProjectResourceViewSetTestCase(TestCase):
     client = APIClient()
     client.force_authenticate(user=user)
 
-    data = copy.copy(base_project)
+    data = copy.deepcopy(base_project)
     data["name"] = ""
 
     response = client.post(reverse("project-list"), data, format="json")
@@ -79,7 +86,7 @@ class ProjectResourceViewSetTestCase(TestCase):
     client = APIClient()
     client.force_authenticate(user=user)
 
-    data = copy.copy(base_project)
+    data = copy.deepcopy(base_project)
     response = client.post(reverse("project-list"), data, format="json")
 
     response = client.get(reverse("project-detail", ["test-project"]), format="json")
@@ -107,7 +114,7 @@ class ProjectCloseTestCase(TestCase):
     self.client = APIClient()
     self.client.force_authenticate(user=user)
 
-    data = copy.copy(base_project)
+    data = copy.deepcopy(base_project)
     self.project = self.client.post(reverse("project-list"), data, format="json")
 
   def test_cant_close_project_if_not_owner_or_organization_member(self):
@@ -125,30 +132,174 @@ class ProjectCloseTestCase(TestCase):
     self.assertTrue(Project.objects.get(slug="test-project").closed)
 
 
-class ProjectCommentTestCase(TestCase):
+class ProjectPostTestCase(TestCase):
   def setUp(self):
     user = User.objects.create_user(email="test_comment@gmail.com", password="testcomment", object_channel="default")
+    self.gallery = Gallery.objects.create(owner=user, object_channel="default")
     self.client = APIClient()
     self.client.force_authenticate(user=user)
-
-    data = copy.copy(base_project)
-    self.project = self.client.post(reverse("project-list"), data, format="json")
 
     ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
     cache.clear()
 
-  def test_user_can_comment_in_project(self):
-    """ Assert that user can comment in project """
-    comment = {
-      "content": "test comment",
+    data = copy.deepcopy(base_project)
+    self.project = self.client.post(reverse("project-list"), data, format="json")
+
+  def test_only_owner_or_organization_member_can_post(self):
+    post = {"content": "test"}
+    self.client = APIClient()
+
+    # Unauthenticated
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    self.assertEqual(response.status_code, 401)
+
+    # Not part of organization
+    testuser = User.objects.create_user(email="test_comment1@gmail.com", password="testcomment", object_channel="default")
+    self.client.force_authenticate(user=testuser)
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    self.assertEqual(response.status_code, 403)
+
+    # As organization owner
+    organization = Organization.objects.create(name="test", owner=testuser, object_channel="default")
+    Project.objects.filter(slug="test-project").update(organization=organization)
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    self.assertEqual(response.status_code, 200)
+
+    # As organization member
+    testuser2 = User.objects.create_user(email="test_comment2@gmail.com", password="testcomment", object_channel="default")
+    self.client.force_authenticate(user=testuser2)
+    organization.members.add(testuser2)
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    self.assertEqual(response.status_code, 200)
+
+  def test_user_can_post_in_project(self, content="test content"):
+    """ Assert that user can post in project """
+    post = {
+      "title": "title",
+      "content": content,
     }
-    response = self.client.post(reverse("project-commentary", ["test-project"]), comment, format="json")
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
     self.assertTrue(response.status_code == 200)
+
+  def test_post_with_gallery_and_documents(self):
+    post = {
+      "content": "test",
+      "gallery": Gallery.objects.last().pk
+    }
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    self.assertTrue(response.status_code == 200)
+    self.assertEqual(response.data["gallery"], Gallery.objects.last().pk)
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data['posts'][0]['gallery']['id'], Gallery.objects.last().pk)
+
+  def test_unpublished_posts(self, content="test content"):
+    """ Assert that unpublished posts come flagged """
+    post = {
+      "content": content,
+    }
+    response = self.client.post(reverse("project-post", ["test-project"]), post, format="json")
+    Post.objects.all().update(published=False)
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data['posts'][0]['published'], False)
+
+  def test_retrieve_posts(self):
+    self.test_user_can_post_in_project(content="a")
+    self.test_user_can_post_in_project(content="b")
+    self.test_user_can_post_in_project(content="c")
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+
+    self.assertEqual(len(response.data['posts']), 3)
+    self.assertEqual(response.data['posts'][0]['content'], "c")
+    self.assertEqual(response.data['posts'][1]['content'], "b")
+    self.assertEqual(response.data['posts'][2]['content'], "a")
+
+  def test_update_posts(self):
+    data = {
+        "title": "updated",
+        "content": "updated",
+        "gallery": Gallery.objects.last().pk,
+    }
+    self.test_user_can_post_in_project()
+    post_pk = Post.objects.last().pk
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data['posts'][0]['content'], "test content")
+    self.assertEqual(response.data['posts'][0]['title'], "title")
+    self.assertEqual(response.data['posts'][0]['gallery'], None)
+
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk+1]), data, format="json")
+    self.assertEqual(response.status_code, 404)
+
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), data, format="json")
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(response.data['posts'][0]['content'], "updated")
+    self.assertEqual(response.data['posts'][0]['gallery']['id'], Gallery.objects.last().pk)
+
+  def test_only_owner_or_organization_member_can_update_post(self):
+    self.test_user_can_post_in_project()
+    self.client = APIClient()
+    post_pk = Post.objects.last().pk
+
+    data = {
+        "title": "updated",
+        "content": "updated",
+        "gallery": Gallery.objects.last().pk,
+    }
+
+    # Unauthenticated
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), data, format="json")
+    self.assertEqual(response.status_code, 401)
+
+    # Not part of organization
+    testuser = User.objects.create_user(email="test_comment1@gmail.com", password="testcomment", object_channel="default")
+    self.client.force_authenticate(user=testuser)
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), data, format="json")
+    self.assertEqual(response.status_code, 403)
+
+    # As organization owner
+    organization = Organization.objects.create(name="test", owner=testuser, object_channel="default")
+    Project.objects.filter(slug="test-project").update(organization=organization)
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), data, format="json")
+    self.assertEqual(response.status_code, 200)
+
+    # As organization member
+    testuser2 = User.objects.create_user(email="test_comment2@gmail.com", password="testcomment", object_channel="default")
+    self.client.force_authenticate(user=testuser2)
+    organization.members.add(testuser2)
+    response = self.client.patch(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), data, format="json")
+    self.assertEqual(response.status_code, 200)
+
+  def test_delete_post(self):
+    self.test_user_can_post_in_project()
+    self.client = APIClient()
+    post_pk = Post.objects.last().pk
+
+    # Unauthenticated
+    response = self.client.delete(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), format="json")
+    self.assertEqual(response.status_code, 401)
+
+    # Not part of organization
+    testuser = User.objects.create_user(email="test_comment1@gmail.com", password="testcomment", object_channel="default")
+    self.client.force_authenticate(user=testuser)
+    response = self.client.delete(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), format="json")
+    self.assertEqual(response.status_code, 403)
+
+    # As organization owner
+    organization = Organization.objects.create(name="test", owner=testuser, object_channel="default")
+    Project.objects.filter(slug="test-project").update(organization=organization)
+    response = self.client.delete(reverse("project-post/(?P<post-id>[\w-]+)", ["test-project", Post.objects.last().pk]), format="json")
+    self.assertEqual(response.status_code, 204)
+
+    response = self.client.get(reverse("project-detail", ["test-project"]), format="json")
+    self.assertEqual(len(response.data['posts']), 0)
 
 
 # This tests should run if declaring the following setings on runtests.py
 # They can't work without rerunning migrations as django expects the default GoogleAddress related model
-# 
+#
 # @override_settings(OVP_CORE={"ADDRESS_MODEL": "ovp.apps.core.models.SimpleAddress", "ADDRESS_SERIALIZER_TUPLE": ("ovp.apps.core.serializers.SimpleAddressSerializer", "ovp.apps.core.serializers.SimpleAddressSerializer", "ovp.apps.core.serializers.SimpleAddressSerializer")})
 # class ProjectWithSimpleAddressTestCase(TestCase):
 #  def setUp(self):
@@ -157,7 +308,7 @@ class ProjectCommentTestCase(TestCase):
 #    self.client = APIClient()
 #    self.client.force_authenticate(user=self.user)
 
-#    self.data = copy.copy(base_project)
+#    self.data = copy.deepcopy(base_project)
 #    self.data["organization_id"] = self.organization.pk
 #    self.data["address"] = {
 #      "street": "Av. Paulista",
@@ -209,7 +360,7 @@ class ProjectWithOrganizationTestCase(TestCase):
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
     self.second_user = User.objects.create_user(email="test_second_user@test.com", password="testcancreate", object_channel="default")
     self.third_user = User.objects.create_user(email="test_third_user@test.com", password="testcancreate", object_channel="default")
-    self.data = copy.copy(base_project)
+    self.data = copy.deepcopy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
 
@@ -300,11 +451,11 @@ class ProjectWithOrganizationTestCase(TestCase):
     """Assert that it's possible to create a project with another owner"""
     ChannelSetting.objects.create(key="CAN_CREATE_PROJECTS_WITHOUT_ORGANIZATION", value="1", object_channel="default")
     cache.clear()
-    
+
     client = APIClient()
     client.force_authenticate(user=self.user)
 
-    data = copy.copy(base_project)
+    data = copy.deepcopy(base_project)
     data["owner"] = self.second_user.pk
 
     # Without organization
@@ -319,7 +470,7 @@ class ProjectWithOrganizationTestCase(TestCase):
     response = client.post(reverse("project-list"), data, format="json")
     self.assertTrue(response.status_code == 400)
     self.assertTrue(response.data["owner"][0] == "User is a not a member of the organization.")
-    
+
     # Part of the organization
     organization.members.add(self.second_user)
     response = client.post(reverse("project-list"), data, format="json")
@@ -356,8 +507,12 @@ class ManageableProjectsRouteTestCase(TestCase):
     """Test hitting route authenticated returns projects"""
     response = self.client.get(reverse("project-manageable"), {}, format="json")
     self.assertTrue(response.status_code == 200)
-    self.assertTrue(len(response.data) == 3)
+    self.assertTrue(len(response.data["results"]) == 3)
 
+  def test_number_of_queries(self):
+    """Test project manageable does only 30 queries"""
+    with self.assertNumQueries(30):
+      response = self.client.get(reverse("project-manageable"), {}, format="json")
 
 class ProjectResourceUpdateTestCase(TestCase):
   def setUp(self):
@@ -365,9 +520,21 @@ class ProjectResourceUpdateTestCase(TestCase):
     cache.clear()
 
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
-    self.data = copy.copy(base_project)
+    self.data = copy.deepcopy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
+
+    Channel.objects.create(slug="test-channel")
+    c = Cause.objects.create(name="other-channel", object_channel="test-channel")
+    s = Skill.objects.create(name="other-channel", object_channel="test-channel")
+    g = Gallery.objects.create(name="other-channel", owner=self.user, object_channel="test-channel")
+    ct = Category.objects.create(name="other-channel", object_channel="test-channel")
+    u = UploadedDocument.objects.create(name="other-channel", object_channel="test-channel")
+    self.data["causes"].append({"id": c.id})
+    self.data["skills"].append({"id": s.id})
+    self.data["galleries"] = [{"id": g.id}]
+    self.data["documents"] = [{"id": u.id}]
+    self.data["categories"] = [{"id": ct.id}]
 
     response = self.client.post(reverse("project-list"), self.data, format="json")
     self.assertTrue(response.status_code == 201)
@@ -381,16 +548,32 @@ class ProjectResourceUpdateTestCase(TestCase):
     response = self.client.patch(reverse("project-detail", ["test-project"]), {}, format="json")
     self.assertTrue(response.status_code == 403)
 
+  def test_update_fields_without_organization(self):
+    """Test patch request update fields without organization field"""
+    ChannelSetting.objects.all().delete()
+    cache.clear()
+
+    updated_project = {"name": "test update", "details": "update", "description": "update", "causes": [{"id": 3}], "skills": [{"id": 1}, {"id": 2}, {"id": 3}]}
+    response = self.client.patch(reverse("project-detail", ["test-project"]), updated_project, format="json")
+    self.assertTrue(response.status_code == 200)
+
   def test_update_fields(self):
     """Test patch request update fields"""
-    updated_project = {"name": "test update", "details": "update", "description": "update", "causes": [{"id": 3}], "skills": [{"id": 1}, {"id": 2}, {"id": 3}]}
+    updated_project = {"name": "test update", "details": "update", "description": "update", "causes": [{"id": 3}], "skills": [{"id": 1}, {"id": 2}, {"id": 3}], "galleries": [], "documents": [], "categories": []}
     response = self.client.patch(reverse("project-detail", ["test-project"]), updated_project, format="json")
     self.assertTrue(response.status_code == 200)
     self.assertTrue(response.data["name"] == "test update")
     self.assertTrue(response.data["details"] == "update")
     self.assertTrue(response.data["description"] == "update")
-    self.assertTrue(len(response.data["causes"]) == 1)
-    self.assertTrue(len(response.data["skills"]) == 3)
+
+    # Don't erase associations with other channel objects
+    self.assertTrue(len(response.data["causes"]) == 2)
+    self.assertTrue(len(response.data["skills"]) == 4)
+    self.assertEqual(response.data["causes"][-1]["name"], "other-channel")
+    self.assertEqual(response.data["skills"][-1]["name"], "other-channel")
+    self.assertTrue(len(response.data["galleries"]) == 1)
+    self.assertTrue(len(response.data["documents"]) == 1)
+    self.assertTrue(len(response.data["categories"]) == 1)
 
     user = User.objects.create_user(email="another@user.com", password="testcancreate", object_channel="default")
     organization = Organization(name="test", type=0, owner=self.user)
@@ -443,7 +626,7 @@ class DisponibilityTestCase(TestCase):
     cache.clear()
 
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
-    self.data = copy.copy(base_project)
+    self.data = copy.deepcopy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
 
@@ -546,7 +729,7 @@ class VolunteerRoleTestCase(TestCase):
     cache.clear()
 
     self.user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
-    self.data = copy.copy(base_project)
+    self.data = copy.deepcopy(base_project)
     self.client = APIClient()
     self.client.force_authenticate(user=self.user)
 

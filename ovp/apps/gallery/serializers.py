@@ -52,12 +52,11 @@ class GalleryCreateUpdateSerializer(ChannelRelationshipSerializer):
 
 class GalleryAssociationSerializer(ChannelRelationshipSerializer):
   id = serializers.IntegerField()
-  images = UploadedImageAssociationSerializer(many=True)
 
   class Meta:
     model = Gallery
     fields = ('id', 'uuid', 'name', 'description', 'images')
-    read_only_fields = ('uuid', )
+    read_only_fields = ('uuid', 'images')
 
 
 class AssociateWithModel(serializers.Serializer):

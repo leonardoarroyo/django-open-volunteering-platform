@@ -4,6 +4,7 @@ import os
 import sys
 import django
 import threading
+import dj_database_url
 
 from django.conf import settings
 from django.core.management import execute_from_command_line
@@ -16,17 +17,19 @@ sys.path.insert(0, (os.path.abspath(os.path.join(os.path.dirname(__file__), ".."
 # decorator, because it would miss the database setup.
 CUSTOM_INSTALLED_APPS = (
     'ovp.apps.core',
+    'ovp.apps.admin',
     'ovp.apps.uploads',
     'ovp.apps.users',
     'ovp.apps.projects',
     'ovp.apps.organizations',
-    'ovp.apps.search',
     'ovp.apps.faq',
+    'ovp.apps.search',
     'ovp.apps.channels',
     'ovp.apps.catalogue',
     'ovp.apps.items',
-    'ovp.apps.gallery',
     'ovp.apps.ratings',
+    'ovp.apps.gallery',
+    'ovp.apps.digest',
     'ovp.apps.donations',
     'django.contrib.admin',
     'jet',
@@ -89,16 +92,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-    }
+  'default': dj_database_url.parse(os.environ['DATABASE_URL'])
 }
-
-if '--keepdb' in sys.argv:
-    DATABASES['default']['NAME'] = '/tmp/ovp.test.db.sqlite3'
 
 gettext = lambda s: s
 
@@ -181,6 +177,7 @@ test_cases = [
   'ovp.apps.catalogue',
   'ovp.apps.ratings',
   'ovp.apps.gallery',
+  'ovp.apps.digest',
 ]
 
 # Allow accessing test options from the command line.

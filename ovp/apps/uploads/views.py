@@ -1,7 +1,7 @@
 import json
 
 from ovp.apps.uploads.models import UploadedImage, UploadedDocument
-from ovp.apps.uploads.serializers import UploadedImageSerializer, ImageGallerySerializer, UploadedDocumentSerializer
+from ovp.apps.uploads.serializers import UploadedImageSerializer, UploadedDocumentSerializer
 
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 
@@ -56,22 +56,6 @@ class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     return response.Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
-class ImageGalleryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-  queryset = UploadedImage.objects.filter(category__isnull=False)
-  serializer_class = ImageGallerySerializer
-  swagger_schema = None
-
-  def list(self, *args, **kwargs):
-    return super(ImageGalleryViewSet, self).list(*args, **kwargs)
-
-  def get_queryset(self):
-    queryset = self.queryset
-    category = self.request.query_params.get('category', None)
-    if category is not None:
-      queryset = queryset.filter(category=category)
-    return queryset
-
-
 @ChannelViewSet
 class UploadedDocumentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
   queryset = UploadedDocument.objects.all()
@@ -100,6 +84,6 @@ class UploadedDocumentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         self.object = serializer.save()
         headers = self.get_success_headers(serializer.data)
         return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-      
+
       return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return response.Response(status=status.HTTP_401_UNAUTHORIZED)

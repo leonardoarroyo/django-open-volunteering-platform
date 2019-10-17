@@ -2,6 +2,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from jet.filters import DateRangeFilter
 
+from ovp.apps.admin.resources import CleanModelResource
 from ovp.apps.admin.filters import SingleTextInputFilter
 from ovp.apps.organizations.admin import StateListFilter as BaseStateListFilter
 from ovp.apps.organizations.admin import CityListFilter as BaseCityListFilter
@@ -13,11 +14,10 @@ from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
 from ovp.apps.core.helpers import get_address_model
 
-from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
-class ApplyResource(resources.ModelResource):
+class ApplyResource(CleanModelResource):
   project_id = Field(column_name="ID Projeto")
   project = Field(column_name="Projeto")
   organization = Field(column_name="ONG")
@@ -25,6 +25,7 @@ class ApplyResource(resources.ModelResource):
   volunteer_name = Field(column_name="Nome do Voluntario")
   volunteer_email = Field(column_name="Email do Voluntario")
   volunteer_phone = Field(column_name="Telefone do Voluntario")
+  volunteer_document = Field(column_name="Documento")
   address = Field(column_name="Endereco do projeto")
 
   class Meta:
@@ -35,6 +36,7 @@ class ApplyResource(resources.ModelResource):
       'volunteer_name',
       'volunteer_phone',
       'volunteer_email',
+      'volunteer_document'
       'status',
       'date',
       'organization',
@@ -42,8 +44,14 @@ class ApplyResource(resources.ModelResource):
       'project'
     )
 
+  def before_export(self, qs, *args, **kwargs):
+    return qs \
+      .select_related('project__organization', 'user', 'project__address')
+
   def dehydrate_organization(self, apply):
-    return apply.project.organization.name
+    if hasattr(apply, 'project') and hasattr(apply.project, 'organization') and apply.project.organization != None:
+      return apply.project.organization.name
+    return ""
 
   def dehydrate_project(self, apply):
     return apply.project.name
@@ -83,6 +91,10 @@ class ApplyResource(resources.ModelResource):
 
     return apply.phone
 
+  def dehydrate_volunteer_document(self, apply):
+    if apply.user is not None:
+      return apply.user.document
+    return apply.document
 
 class StateListFilter(BaseStateListFilter):
     def queryset(self, request, queryset):
@@ -121,7 +133,8 @@ class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
     'email',
     'phone',
     'username',
-    'document'
+    'document',
+    'message'
   ]
 
   list_display = [

@@ -31,6 +31,7 @@ from rest_framework import decorators
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from django.db.models import Q
 from haystack.query import SearchQuerySet, SQ
 
 
@@ -75,7 +76,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
     queryset = filters.by_published(queryset, published)
     queryset = filters.by_address(queryset, address) if address else queryset
     queryset = filters.by_causes(queryset, cause) if cause else queryset
-    queryset = filters.by_channels(queryset, self.request.channel)
+    queryset = filters.by_channel_content_flow(queryset, self.request.channel)
 
     result_keys = [q.pk for q in queryset]
     result = querysets.get_organization_queryset(request=self.request).filter(pk__in=result_keys)
@@ -105,7 +106,7 @@ project_params = [
 ]
 class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   filter_backends = (filters.ProjectRelevanceOrderingFilter,)
-  ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance', 'closed', 'job__end_date')
+  ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance', 'closed', 'published', 'job__end_date')
   serializer_class = ProjectSearchSerializer
 
   @swagger_auto_schema(manual_parameters=project_params)
@@ -133,6 +134,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     organization = params.get('organization', None)
     disponibility = params.get('disponibility', None)
     date = params.get('date', None)
+    manageable = params.get('manageable', None)
 
     queryset = SearchQuerySet().models(Project)
     queryset = queryset.filter(highlighted=1) if highlighted else queryset
@@ -147,11 +149,16 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = filters.by_disponibility(queryset, disponibility)
     queryset = filters.by_date(queryset, date)
     # queryset = filters.by_organizations(queryset, organization)
-    queryset = filters.by_channels(queryset, self.request.channel)
+    queryset = filters.by_channel_content_flow(queryset, self.request.channel)
 
+    print("searching")
     result_keys = [q.pk for q in queryset]
+    print(result_keys)
 
     result = querysets.get_project_queryset(request=self.request).filter(pk__in=result_keys)
+
+    if manageable == 'true' and self.request.user.is_authenticated:
+      result = result.filter(Q(organization__members=self.request.user) | Q(organization__owner=self.request.user) | Q(owner=self.request.user))
 
     if organization:
       org = [o for o in organization.split(',')]

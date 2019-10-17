@@ -29,9 +29,10 @@ class ApplyAndUnapplyTestCase(TestCase):
     response = client.get(reverse("project-detail", ["test-project"]), format="json")
     self.assertTrue(response.data["current_user_is_applied"] == False)
 
-    response = client.post(reverse("project-applies-apply", ["test-project"]), format="json")
+    response = client.post(reverse("project-applies-apply", ["test-project"]), data={"message": "test"}, format="json")
     self.assertTrue(response.data["detail"] == "Successfully applied.")
     self.assertTrue(response.status_code == 200)
+    self.assertTrue(Apply.objects.last().message == "test")
 
     response = client.post(reverse("project-applies-apply", ["test-project"]), format="json")
     self.assertTrue(response.data["non_field_errors"][0] == "The fields email, project must make a unique set.")
@@ -158,6 +159,7 @@ class ProjectAppliesRetrievingTestCase(TestCase):
     self.assertTrue("date" in response.data[0])
     self.assertTrue("canceled_date" in response.data[0])
     self.assertTrue("status" in response.data[0])
+    self.assertTrue("message" in response.data[0])
     self.assertTrue("name" in response.data[0]["user"])
     self.assertTrue("avatar" in response.data[0]["user"])
     self.assertTrue("email" in response.data[0]["user"])

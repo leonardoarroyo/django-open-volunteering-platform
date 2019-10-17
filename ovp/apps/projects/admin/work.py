@@ -9,7 +9,8 @@ from ovp.apps.projects.models import Work
 
 class WorkAdmin(ChannelModelAdmin):
   fields = [
-    ('id', 'project'),
+    'id',
+    'project',
     'weekly_hours',
     'description',
     'can_be_done_remotely',

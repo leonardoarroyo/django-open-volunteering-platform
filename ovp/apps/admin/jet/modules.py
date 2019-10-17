@@ -7,7 +7,7 @@ from jet.dashboard.modules import DashboardModule
 from django.contrib.admin.models import LogEntry
 from django.db.models import Q
 from ovp.apps.organizations.models import Organization
-from ovp.apps.projects.models import Project, Apply
+from ovp.apps.projects.models import Project, Apply, VolunteerRole
 from ovp.apps.users.models import User
 from django.db.models import Sum
 from django.conf import settings
@@ -75,12 +75,14 @@ class Indicators(DashboardModule):
         date_min = date_max
         date_max = tmp
 
-      organizations_created = self.date_filter(Organization.objects.filter(deleted=False), date_min, date_max, "created_date")
-      organizations_published = self.date_filter(Organization.objects.filter(deleted=False), date_min, date_max, "published_date")
-      projects_created = self.date_filter(Project.objects.filter(deleted=False), date_min, date_max, "created_date")
-      projects_published = self.date_filter(Project.objects.filter(deleted=False), date_min, date_max, "published_date")
-      users = self.date_filter(User.objects.all(), date_min, date_max, "joined_date")
-      applies = self.date_filter(Apply.objects.all(), date_min, date_max, "date")
+      channel=context["user"].channel
+      organizations_created = self.date_filter(Organization.objects.filter(deleted=False, channel=channel), date_min, date_max, "created_date")
+      organizations_published = self.date_filter(Organization.objects.filter(deleted=False, channel=channel), date_min, date_max, "published_date")
+      projects_created = self.date_filter(Project.objects.filter(deleted=False, channel=channel), date_min, date_max, "created_date")
+      projects_published = self.date_filter(Project.objects.filter(deleted=False, channel=channel), date_min, date_max, "published_date")
+      projects_published_pks=list(projects_published.values_list('pk', flat=True))
+      users = self.date_filter(User.objects.filter(channel=channel), date_min, date_max, "joined_date")
+      applies = self.date_filter(Apply.objects.filter(channel=channel), date_min, date_max, "date")
 
       apply_distinct_qs = Apply.objects.all()
       if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
@@ -94,6 +96,10 @@ class Indicators(DashboardModule):
       self.users_count = users.count()
       self.applies_count = applies.count()
       self.applies_count_distinct = applies_distinct.count()
+      self.vacancies = VolunteerRole.objects.filter(project__pk__in=projects_published_pks).aggregate(Sum('vacancies'))['vacancies__sum']
+      if not self.vacancies:
+        self.vacancies = 0
+
       self.benefited_people_count = projects_published.aggregate(Sum('benefited_people'))["benefited_people__sum"]
       if not self.benefited_people_count:
         self.benefited_people_count = 0

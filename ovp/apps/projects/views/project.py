@@ -9,10 +9,11 @@ from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 from ovp.apps.channels.cache import get_channel_setting
 
 from ovp.apps.core.helpers.xls import Response as XLSResponse
-from ovp.apps.core.mixins import CommentaryCreateMixin
+from ovp.apps.core.mixins import PostCreateMixin
 from ovp.apps.core.mixins import BookmarkMixin
-from ovp.apps.core.serializers import commentary as comments_serializer
+from ovp.apps.core.serializers import post as post_serializers
 from ovp.apps.core.serializers import EmptySerializer
+from ovp.apps.core.pagination import StandardResultsSetPagination
 
 from rest_framework import decorators
 from rest_framework import mixins
@@ -31,7 +32,7 @@ EXPORT_APPLIED_USERS_HEADERS = [
 ]
 
 @ChannelViewSet
-class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
   """
   ProjectResourceViewSet resource endpoint
   """
@@ -101,10 +102,28 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
   @decorators.list_route(['GET'])
   def manageable(self, request, *args, **kwargs):
     """ Retrieve a list of projects the authenticated user can manage. """
+    paginator = StandardResultsSetPagination()
     projects = self.get_queryset().filter(Q(owner=request.user) | Q(organization__owner=request.user) | Q(organization__members=request.user))
+    projects = projects.order_by('created_date')
 
-    if request.query_params.get('no_organization', None):
+    params = request.query_params
+    if params.get('no_organization') == 'true':
       projects = projects.filter(organization=None)
+    if params.get('published'):
+      published = params.get('published') == 'true'
+      projects = projects.filter(published=published)
+    if params.get('closed'):
+      closed = params.get('closed') == 'true'
+      projects = projects.filter(closed=closed)
+    if params.get('query'):
+      query = params.get('query')
+      projects = projects.filter(content=query)
+
+
+    page = paginator.paginate_queryset(projects, request)
+    if page is not None:
+      serializer = self.get_serializer_class()(page, many=True, context=self.get_serializer_context())
+      return paginator.get_paginated_response(serializer.data)
 
     serializer = self.get_serializer_class()(projects, many=True, context=self.get_serializer_context())
     return response.Response(serializer.data)
@@ -145,19 +164,27 @@ class ProjectResourceViewSet(BookmarkMixin, CommentaryCreateMixin, mixins.Create
     if self.action == 'export_applied_users':
       self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
 
+    if self.action == 'post':
+      self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
+
+    if self.action == 'post_patch_delete':
+      self.permission_classes = (permissions.IsAuthenticated, ProjectRetrieveOwnsOrIsOrganizationMember)
+
     return super(ProjectResourceViewSet, self).get_permissions()
 
   def get_serializer_class(self):
     if self.action in ['create', 'partial_update']:
       return serializers.ProjectCreateUpdateSerializer
     if self.action == 'manageable':
-      return serializers.ProjectManageableRetrieveSerializer
+      return serializers.ProjectManageableSerializer
     if self.action == 'close':
       return EmptySerializer
     if self.action == 'bookmarked':
       return serializers.ProjectRetrieveSerializer
-    if self.action == 'commentary':
-      return comments_serializer.CommentaryCreateSerializer
+    if self.action == 'post':
+      return post_serializers.PostCreateSerializer
+    if self.action == 'post_patch_delete':
+      return post_serializers.PostUpdateSerializer
     if self.action == 'retrieve':
       if ProjectRetrieveOwnsOrIsOrganizationMember().has_object_permission(self.request, None, self.get_object()):
         return serializers.ProjectManageableRetrieveSerializer

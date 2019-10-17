@@ -23,7 +23,7 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = get_profile_model()
-    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address', 'birthday_date', 'department']
+    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address', 'birthday_date', 'department', 'has_done_volunteer_work_before']
 
   def create(self, validated_data):
     skills = validated_data.pop('skills', [])
@@ -73,10 +73,10 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
 
     # Address
     if address_data:
-      address_sr = GoogleAddress(typed_address=address_data['typed_address'], typed_address2=address_data['typed_address2'])
+      address_sr = GoogleAddress(typed_address=address_data['typed_address'], typed_address2=address_data.get('typed_address2', None))
       address_sr.save(object_channel=instance.channel.slug)
       validated_data['address'] = address_sr
-    
+
     return super(ProfileCreateUpdateSerializer, self).update(instance, validated_data)
 
 class ProfileRetrieveSerializer(ChannelRelationshipSerializer):
@@ -87,7 +87,7 @@ class ProfileRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = get_profile_model()
-    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address', 'birthday_date']
+    fields = ['full_name', 'about', 'skills', 'causes', 'gender', 'address', 'hidden_address', 'birthday_date', 'has_done_volunteer_work_before']
 
 class ProfileSearchSerializer(ChannelRelationshipSerializer):
   skills = SkillSerializer(many=True)

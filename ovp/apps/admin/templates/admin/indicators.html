@@ -1,3 +1,4 @@
+{% load i18n %}
 <style>
   .indicator-value {
     font-size: 32px;
@@ -62,7 +63,7 @@
 </style>
 <div>
   <div class="indicator-header">
-    <h4>Números {% if module.date_min or module.date_max %}parciais{% else %}totais{% endif %}
+    <h4>{% if module.date_min or module.date_max %}{% blocktrans %}Partial numbers{% endblocktrans %}{% else %}{% blocktrans %}Total numbers{% endblocktrans %}{% endif %}
       <a href="#" class="filter-indicators">
         <span class="icon-calendar float-right"></span>
       </a>
@@ -71,41 +72,49 @@
   <div class="indicator-row">
     <div class="indicator-col">
       <h1 class="indicator-value">{{ module.organizations_count }}</h1>
-      <p class="indicator-label">ONGs cadastradas</p>
+      <p class="indicator-label">{% blocktrans %}Organizations registered{% endblocktrans %}</p>
     </div>
     <div class="indicator-col">
       <h1 class="indicator-value">{{ module.organizations_published_count }}</h1>
-      <p class="indicator-label">ONGs publicadas</p>
+      <p class="indicator-label">{% blocktrans %}Organizations published{% endblocktrans %}</p>
     </div>
   </div>
   <div class="indicator-row">
     <div class="indicator-col">
       <h1 class="indicator-value">{{ module.projects_count }}</h1>
-      <p class="indicator-label">Ações cadastradas</p>
+      <p class="indicator-label">{% blocktrans %}Registered vacancies{% endblocktrans %}</p>
     </div>
     <div class="indicator-col">
       <h1 class="indicator-value">{{ module.projects_published_count }}</h1>
-      <p class="indicator-label">Ações publicadas</p>
+      <p class="indicator-label">{% blocktrans %}Published vacancies{% endblocktrans %}</p>
     </div>
   </div>
   <div class="indicator-row">
     <div class="indicator-col">
       <h1 class="indicator-value">{{ module.users_count }}</h1>
-      <p class="indicator-label">Usuários</p>
+      <p class="indicator-label">{% blocktrans %}User count{% endblocktrans %}</p>
     </div>
     <div class="indicator-col">
       <h1 class="indicator-value">{{ module.applies_count }}</h1>
-      <p class="indicator-label">Voluntários inscritos</p>
+      <p class="indicator-label">{% blocktrans %}Applied volunteers{% endblocktrans %}</p>
     </div>
   </div>
   <div class="indicator-row">
     <div class="indicator-col">
       <h1 class="indicator-value">{{ module.applies_count_distinct }}</h1>
-      <p class="indicator-label">Voluntários únicos inscritos</p>
+      <p class="indicator-label">{% blocktrans %}Unique volunteers applied{% endblocktrans %}</p>
     </div>
     <div class="indicator-col">
       <h1 class="indicator-value">{{ module.benefited_people_count }}</h1>
-      <p class="indicator-label">Pessoas beneficiadas</p>
+      <p class="indicator-label">{% blocktrans %}Benefited people{% endblocktrans %}</p>
+    </div>
+  </div>
+  <div class="indicator-row">
+    <div class="indicator-col">
+      <h1 class="indicator-value">{{ module.vacancies }}</h1>
+      <p class="indicator-label">{% blocktrans %}Total vacancies{% endblocktrans %}</p>
+    </div>
+    <div class="indicator-col">
     </div>
   </div>
 </div>
@@ -174,5 +183,4 @@
       })
     })
   });
-
 </script>

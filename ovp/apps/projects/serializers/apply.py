@@ -13,7 +13,7 @@ class ApplyCreateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Apply
-    fields = ['username', 'email', 'phone', 'project', 'user', 'role']
+    fields = ['username', 'email', 'phone', 'project', 'user', 'role', 'message']
 
 class ApplyUpdateSerializer(ChannelRelationshipSerializer):
   status = serializers.ChoiceField(choices=apply_status_choices)
@@ -26,10 +26,10 @@ class ApplyRetrieveSerializer(ChannelRelationshipSerializer):
   user = UserApplyRetrieveSerializer()
   status = serializers.CharField()
   role = role.VolunteerRoleApplySerializer()
-  
+
   class Meta:
     model = models.Apply
-    fields = ['id', 'email', 'username', 'phone', 'date', 'canceled_date', 'status', 'user', 'role']
+    fields = ['id', 'email', 'username', 'phone', 'date', 'canceled_date', 'status', 'user', 'role', 'message']
 
   def get_status(self, object):
     return object.get_status_display()

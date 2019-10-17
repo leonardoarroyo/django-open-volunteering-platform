@@ -6,7 +6,7 @@ from ovp.apps.core.serializers import EmptySerializer
 
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 from ovp.apps.channels.cache import get_channel_setting
-from ovp.apps.channels.helpers import get_subchannels_list
+from ovp.apps.channels.content_flow import CFM
 
 from ovp.apps.projects.serializers import apply as serializers
 from ovp.apps.projects import models
@@ -58,8 +58,6 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
     project = self.get_project_object(**kwargs)
     data['project'] = project.id
 
-    role = data['role'] if 'role' in data else 0
-
     if request.user.is_authenticated():
       user = request.user
       data['username'] = user.name
@@ -70,7 +68,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
     try:
       existing_apply = self.get_queryset(**kwargs).get(email=data['email'], status='unapplied')
       existing_apply.status = "applied"
-      existing_apply.role_id = role
+      existing_apply.role_id = data['role'] if 'role' in data else None
       existing_apply.save()
     except ObjectDoesNotExist:
       apply_sr = self.get_serializer_class()(data=data, context=self.get_serializer_context())
@@ -112,7 +110,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
 
     if self.action == 'apply':
       return serializers.ApplyCreateSerializer
-    
+
     if self.action == 'unapply':
       return EmptySerializer
 
@@ -136,5 +134,6 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
 
   def get_project_object(self, *args, **kwargs):
     slug=kwargs.get('project_slug')
+    qs = CFM.filter_queryset(self.request.channel, models.Project.objects.all())
 
-    return get_object_or_404(models.Project, slug=slug, channel__slug__in=get_subchannels_list(self.request.channel))
+    return get_object_or_404(qs, slug=slug)

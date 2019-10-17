@@ -21,3 +21,6 @@ class Gallery(ChannelRelationship):
   deleted_date = models.DateTimeField(_("Deleted date"), blank=True, null=True)
   created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
   modified_date = models.DateTimeField(_('Modified date'), auto_now=True)
+
+  def __str__(self):
+    return str(self.uuid)

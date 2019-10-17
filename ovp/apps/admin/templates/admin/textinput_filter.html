@@ -39,7 +39,7 @@
             <fieldset class="module aligned">
               <div class="form-row {{ field.id }}" style="width: 152px;">
                     <div>
-                      <input type="text" value="{{ choices.0.current_value }}" name="{{ choices.0.parameter_name }}" placeholder="{% blocktrans with filter_title=title %} By {{ filter_title }} {% endblocktrans %}" style="width: 142px;">
+                      <input type="text" value="{% if choices.0.current_value %}{{ choices.0.current_value }}{% endif %}" name="{{ choices.0.parameter_name }}" placeholder="{% blocktrans with filter_title=title %} By {{ filter_title }} {% endblocktrans %}" style="width: 142px;">
                     </div>
                 </div>
             </fieldset>

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.db import models
+from django.db.models import Count, Sum
 from martor.widgets import AdminMartorWidget
 from django.utils.translation import ugettext_lazy as _
 
@@ -10,6 +11,7 @@ from ovp.apps.core.models import AddressComponent
 
 from ovp.apps.projects.models import Project
 
+from ovp.apps.admin.resources import CleanModelResource
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.core.mixins import CountryFilterMixin
@@ -18,7 +20,6 @@ from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
 from ovp.apps.core.helpers import get_address_model
 
-from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
@@ -28,21 +29,29 @@ from jet.filters import DateRangeFilter
 # This file contains some "pragma: no cover" because the admin
 # class is not covered by the test suite
 
-class OrganizationResource(resources.ModelResource):
+class OrganizationResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
   name = Field(attribute='name', column_name='Nome do Projeto')
   description = Field(attribute='description', column_name='Descricao')
+  details = Field(attribute='details', column_name='Detalhes')
   document = Field(attribute='document', column_name='CNPJ')
-  owner_name = Field(column_name='Nome Responsavel')
-  owner_email = Field(column_name='Email Responsavel')
-  owner_phone = Field(column_name='Telefone Responsavel')
+  owner_name = Field(column_name='Responsavel: nome')
+  owner_email = Field(column_name='Responsavel: email')
+  owner_phone = Field(column_name='Responsavel: telefone')
+  contact_name = Field(attribute='contact_name', column_name='Contato: nome')
+  contact_email = Field(attribute='contact_email', column_name='Contato: email')
+  contact_phone = Field(attribute='contact_phone', column_name='Contato: telefone')
   address = Field(column_name='Endereço')
   city_state = Field(column_name='Cidade/Estado')
+  neighborhood = Field(column_name='Bairro')
+  lat = Field(column_name='Latitude')
+  lng = Field(column_name='Longitude')
   causes = Field(column_name='Causas')
   image = Field(column_name='Imagem')
-  volunteers = Field(column_name='Número de Voluntários')
+  volunteers = Field(attribute='applied_count', column_name='Número de Voluntários')
   website = Field(attribute='website', column_name='Site')
   facebook_page = Field(attribute='facebook_page', column_name='Facebook')
+  instagram_user = Field(attribute='instagram_user', column_name='Instagram')
   created_project = Field(column_name='Ong já criou ação?')
   benefited_people = Field(attribute='benefited_people', column_name='Pessoas beneficiadas')
   rating = Field(attribute='rating', column_name='Avaliação')
@@ -52,13 +61,22 @@ class OrganizationResource(resources.ModelResource):
     fields = (
       'id',
       'name',
+      'description',
+      'details',
       'owner_name',
-      'owner_email', 
+      'owner_email',
       'owner_phone',
+      'contact_name',
+      'contact_email',
+      'contact_phone',
       'address',
       'city_state',
+      'neighborhood',
+      'lat',
+      'lng',
       'image',
       'facebook_page',
+      'instagram_user',
       'website',
       'document',
       'causes',
@@ -68,7 +86,18 @@ class OrganizationResource(resources.ModelResource):
       'created_project',
       'benefited_people',
       'rating',
+      'volunteers',
     )
+
+  def before_export(self, qs, *args, **kwargs):
+    return qs \
+      .prefetch_related('causes', 'project_set') \
+      .select_related('address', 'owner', 'image') \
+      .annotate(
+          project_count=Count('project'),
+          applied_count=Sum('project__applied_count')
+      )
+
 
   def dehydrate_address(self, organization):
     if organization.address is not None:
@@ -76,6 +105,31 @@ class OrganizationResource(resources.ModelResource):
         return organization.address.address_line
       if isinstance(organization.address, SimpleAddress):
         return organization.address.street + ', ' + organization.address.number + ' - ' + organization.address.neighbourhood + ' - ' + organization.address.city
+
+  def dehydrate_neighborhood(self, organization):
+    # TODO: FIX
+    # This is generating one query per organization on export
+    # Maybe bring neighborhood into GoogleAddress as a field?
+    if organization.address is not None:
+      if isinstance(organization.address, GoogleAddress):
+        qs = organization.address.address_components.filter(types__name="sublocality_level_1")
+        if qs.count():
+          return qs[0].long_name
+        return ""
+      if isinstance(organization.address, SimpleAddress):
+        return organization.address.neighbourhood
+
+  def dehydrate_latlng(self, field, organization):
+    if organization.address is not None:
+      if isinstance(organization.address, GoogleAddress):
+        return getattr(organization.address, field, None)
+    return None
+
+  def dehydrate_lat(self, organization):
+    return self.dehydrate_latlng('lat', organization)
+
+  def dehydrate_lng(self, organization):
+    return self.dehydrate_latlng('lng', organization)
 
   def dehydrate_owner_name(self, organization):
     return organization.owner.name
@@ -90,17 +144,8 @@ class OrganizationResource(resources.ModelResource):
     if organization.causes:
       return ", ".join([c.name for c in organization.causes.all()])
 
-  def dehydrate_volunteers(self, organization):
-    project = Project.objects.filter(organization=organization)
-    total = 0
-    for p in project:
-      total += p.applied_count
-
-    return total
-
   def dehydrate_created_project(self, organization):
-    projects = Project.objects.filter(organization=organization)
-    if len(projects) > 0:
+    if organization.project_count > 0:
       return "Sim"
 
     return "Não"
@@ -183,13 +228,16 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
     'benefited_people',
     'address',
     'image',
+    'cover',
     'document',
     'contact_name',
     'contact_phone',
     'contact_email',
     'categories',
+    'flairs',
+    'members',
 
-    'facebook_page', 'website',
+    'facebook_page', 'website', 'instagram_user',
 
     'description', 'details',
     'causes',
@@ -200,11 +248,11 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
   resource_class = OrganizationResource
 
   list_display = [
-    'id', 'created_date', 'name', 'published', 'highlighted', 'owner__email', 'owner__phone', 'city_state', 'volunteers', 'address', 'rating', 'modified_date', 'deleted'
+    'id', 'created_date', 'name', 'highlighted', 'published', 'deleted', 'owner__email', 'owner__phone', 'city_state', 'volunteers', 'address', 'rating', 'modified_date'
   ]
 
   list_filter = [
-    ('created_date', DateRangeFilter), ('modified_date', DateRangeFilter), 'highlighted', 'published', 'deleted', StateListFilter, CityListFilter
+    ('created_date', DateRangeFilter), ('modified_date', DateRangeFilter), 'highlighted', 'published', 'deleted', StateListFilter, CityListFilter, 'categories'
   ]
 
   list_editable = [
@@ -255,6 +303,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
       total += p.applied_count
 
     return total
+  volunteers.short_description = _("Volunteers")
 
   def city_state(self, obj):
     if obj.address is not None:
@@ -262,6 +311,7 @@ class OrganizationAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilter
         return obj.address.city_state
       if isinstance(obj.address, SimpleAddress):
         return obj.address.city
+  city_state.short_description = _("City/state")
 
   def get_queryset(self, request): #pragma: no cover
     qs = super(OrganizationAdmin, self).get_queryset(request)
