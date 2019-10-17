@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
 from ovp.apps.core.helpers import generate_slug
 from ovp.apps.core.helpers import get_address_model
@@ -126,6 +127,12 @@ class Organization(ChannelRelationship, RatedModelMixin):
 
   def is_bookmarked(self, user):
     return self.bookmarks.filter(user=user).count() > 0
+
+  def donators(self):
+    User = get_user_model()
+    user_pks = set(self.transaction_set.filter(status='succeeded', anonymous=False).values_list('user', flat=True))
+    qs = User.objects.filter(id__in=user_pks)
+    return qs.distinct('pk')
 
   class Meta:
     app_label = 'organizations'
