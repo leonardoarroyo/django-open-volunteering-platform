@@ -20,9 +20,9 @@ config = {
     'maximum': 0
   },
   'projects': {
-    'minimum': 3,
+    'minimum': 1,
     'maximum': 6,
-    'max_age': 60 * 60 * 24 * 7 * 8,
+    'max_age': 60 * 60 * 24 * 7 * 4,
   }
 }
 
@@ -113,11 +113,25 @@ def generate_content(email_list, campaign, channel='default'):
 
   return real_result
 
+def filter_by_address(qs, user):
+  if not user.profile or not user.profile.address:
+    return qs
+  state = user.profile.address.address_components.filter(types__name="administrative_area_level_1").first()
+
+  if not state:
+    return qs
+  state = state.short_name
+  filtered_qs = qs.filter(address__address_components__short_name=state,
+                   address__address_components__types__name="administrative_area_level_1")
+
+  return filtered_qs if filtered_qs.count() > 0 else qs
+
 def generate_content_for_user(user):
   not_projects = list(
     DigestLogContent.objects.filter(digest_log__recipient=user.email, content_type=PROJECT, channel=user.channel).values_list('content_id', flat=True)
   )
   projects = Project.objects.filter(channel__slug=user.channel.slug, deleted=False, closed=False, published=True, published_date__gte=timezone.now() - relativedelta(seconds=config['projects']['max_age'])).exclude(pk__in=not_projects)
+  projects = filter_by_address(projects, user)
   projects = UserSkillsCausesFilter() \
       .annotate_queryset(projects, user, no_check=True, append_assumed=True) \
       .order_by("-relevance")[:config["projects"]["maximum"]]
