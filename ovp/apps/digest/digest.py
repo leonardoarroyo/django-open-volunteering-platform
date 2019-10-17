@@ -78,6 +78,7 @@ def send_campaign(chunk_size=0, channel="default", email_list=None):
 def get_email_list(channel="default"):
   return set(
     User.objects
+      .select_related('channel', 'users_userprofile_profile')
       .filter(channel__slug=channel, is_subscribed_to_newsletter=True)
       .values_list('email', flat=True)
   )
@@ -130,7 +131,10 @@ def generate_content_for_user(user):
   not_projects = list(
     DigestLogContent.objects.filter(digest_log__recipient=user.email, content_type=PROJECT, channel=user.channel).values_list('content_id', flat=True)
   )
-  projects = Project.objects.filter(channel__slug=user.channel.slug, deleted=False, closed=False, published=True, published_date__gte=timezone.now() - relativedelta(seconds=config['projects']['max_age'])).exclude(pk__in=not_projects)
+  projects = Project.objects \
+    .filter(channel__slug=user.channel.slug, deleted=False, closed=False, published=True, published_date__gte=timezone.now() - relativedelta(seconds=config['projects']['max_age'])) \
+    .exclude(pk__in=not_projects) \
+    .select_related('image', 'job', 'work')
   projects = filter_by_address(projects, user)
   projects = UserSkillsCausesFilter() \
       .annotate_queryset(projects, user, no_check=True, append_assumed=True) \
