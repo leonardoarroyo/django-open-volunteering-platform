@@ -71,7 +71,7 @@ def send_campaign(chunk_size=0, channel="default", email_list=None):
       chunk = user_list[i:i+chunk_size]
       content_map = generate_content(chunk, campaign)
 
-      pool = ThreadPool(8)
+      pool = ThreadPool(4)
       result = pool.map(send_email, content_map)
       print("")
 
