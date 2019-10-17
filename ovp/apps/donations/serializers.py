@@ -9,6 +9,7 @@ class DonateSerializer(serializers.Serializer):
   token = serializers.CharField(required=True)
   amount = serializers.IntegerField(required=True, validators=[MinValueValidator(1)])
   organization_id = serializers.IntegerField(required=True)
+  anonymous = serializers.BooleanField(required=False)
 
   def validate(self, data):
     pre_validation = super(DonateSerializer, self).validate(data)
@@ -17,9 +18,9 @@ class DonateSerializer(serializers.Serializer):
 
 class TransactionRetrieveSerializer(serializers.ModelSerializer):
   organization = OrganizationRetrieveSerializer()
-  
+
   class Meta:
-    fields = ["uuid", "organization", "amount", "status", "date_created", "date_modified"]
+    fields = ["uuid", "organization", "amount", "status", "date_created", "date_modified", "anonymous"]
     model = Transaction
 
 class UUIDInputSerializer(serializers.Serializer):
@@ -37,6 +38,7 @@ class SubscribeSerializer(serializers.Serializer):
   interval = serializers.IntegerField(required=True, validators=[MinValueValidator(1)])
   customer = serializers.CharField(required=True)
   organization_id = serializers.IntegerField(required=True)
+  anonymous = serializers.BooleanField(required=False)
 
   def validate(self, data):
     pre_validation = super(SubscribeSerializer, self).validate(data)
@@ -45,7 +47,7 @@ class SubscribeSerializer(serializers.Serializer):
 
 class SubscriptionRetrieveSerializer(serializers.ModelSerializer):
   organization = OrganizationRetrieveSerializer()
-  
+
   class Meta:
-    fields = ["uuid", "organization", "amount", "status", "date_created", "date_modified"]
+    fields = ["uuid", "organization", "amount", "status", "date_created", "date_modified", "anonymous"]
     model = Subscription

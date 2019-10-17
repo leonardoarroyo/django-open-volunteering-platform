@@ -83,6 +83,7 @@ class DonationViewSet(viewsets.GenericViewSet):
       message=charge_data[1]["message"],
       backend_transaction_id=backend_response_data.get("id", None),
       backend_transaction_number=backend_response_data.get("transaction_number", None),
+      anonymous=data.get("anonymous", False),
       object_channel=request.channel
     )
 
@@ -135,7 +136,8 @@ class DonationViewSet(viewsets.GenericViewSet):
         status = response_data["status"],
         backend_subscription_id = response_data["id"],
         backend_plan_id = plan,
-        object_channel = request.channel
+        anonymous = data.get("anonymous", False),
+        object_channel = request.channel,
       )
 
     return response.Response(response_data, status=status)

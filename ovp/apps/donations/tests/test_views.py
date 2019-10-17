@@ -63,6 +63,29 @@ class TestDonationsViewSet(TestCase):
     self.assertEqual(transaction.message, "Transaction was authorized.")
     self.assertTrue(transaction.backend_transaction_id)
     self.assertTrue(transaction.backend_transaction_number)
+    self.assertEqual(transaction.anonymous, False)
+
+  def test_can_donate_anonymously(self):
+    self.client.force_authenticate(user=self.donator)
+    self.data["token"] = card_token("5201561050024014")
+    self.data["anonymous"] = True
+
+    self.assertEqual(Transaction.objects.all().count(), 0)
+
+    response = self.client.post(reverse("donation-donate"), data=self.data, format="json")
+    self.assertEqual(response.status_code, 201)
+    self.assertEqual(response.data, {'status': 'succeeded', 'message': 'Transaction was authorized.'})
+
+    self.assertEqual(Transaction.objects.all().count(), 1)
+    transaction = Transaction.objects.last()
+    self.assertEqual(transaction.user, self.donator)
+    self.assertEqual(transaction.organization, self.organization)
+    self.assertEqual(transaction.amount, self.data["amount"])
+    self.assertEqual(transaction.status, "succeeded")
+    self.assertEqual(transaction.message, "Transaction was authorized.")
+    self.assertTrue(transaction.backend_transaction_id)
+    self.assertTrue(transaction.backend_transaction_number)
+    self.assertEqual(transaction.anonymous, True)
 
   def test_cant_donate_negative(self):
     self.client.force_authenticate(user=self.donator)
@@ -203,6 +226,26 @@ class TestSubscriptionViewSet(TestCase):
     self.assertEqual(subscription.organization, self.organization)
     self.assertEqual(subscription.user, self.donator)
     self.assertEqual(subscription.status, "active")
+    self.assertEqual(subscription.anonymous, False)
+
+  def test_can_subscribe_anonymously(self):
+    self.client.force_authenticate(user=self.donator)
+    self.data["token"] = card_token("5201561050024014")
+    self.data["customer"] = self.backend.create_customer(first_name="Abraham", last_name="Lincoln", description="Third sector donator", email="abrahamlincoln@usa.gov").json()["id"]
+    self.data["anonymous"] = True
+
+    self.assertEqual(Subscription.objects.all().count(), 0)
+
+    response = self.client.post(reverse("donation-subscribe"), data=self.data, format="json")
+    self.assertEqual(response.status_code, 201)
+    self.assertEqual(Subscription.objects.all().count(), 1)
+
+    subscription = Subscription.objects.last()
+    self.assertEqual(subscription.amount, self.data["amount"])
+    self.assertEqual(subscription.organization, self.organization)
+    self.assertEqual(subscription.user, self.donator)
+    self.assertEqual(subscription.status, "active")
+    self.assertEqual(subscription.anonymous, True)
 
   def test_can_retrieve_subscriptions(self):
     self.client.force_authenticate(user=self.donator)
