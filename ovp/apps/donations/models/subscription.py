@@ -8,8 +8,9 @@ class Subscription(ChannelRelationship):
   organization = models.ForeignKey('organizations.Organization', on_delete=models.CASCADE)
   amount = models.IntegerField(blank=False, null=False)
   status = models.CharField(max_length=80)
-  backend_subscription_id = models.CharField(max_length=30, blank=True, null=True)
-  backend_plan_id = models.CharField(max_length=30, blank=True, null=True)
+  backend_subscription_id = models.CharField(max_length=80, blank=True, null=True)
+  backend_plan_id = models.CharField(max_length=80, blank=True, null=True)
+  anonymous = models.BooleanField('Anonymous subscription', default=False)
 
   date_created = models.DateTimeField(auto_now_add=True)
   date_modified = models.DateTimeField(auto_now=True)

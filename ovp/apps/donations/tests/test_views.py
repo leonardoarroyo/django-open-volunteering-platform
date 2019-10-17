@@ -42,7 +42,7 @@ class TestDonationsViewSet(TestCase):
 
     response = self.client.post(reverse("donation-donate"), data=self.data, format="json")
     self.assertEqual(response.status_code, 400)
-    self.assertEqual(response.json(), {'organization_id': ["Organization with 'id' 1 and 'allow_donations' True does not exist."]})
+    self.assertEqual(response.json(), {'organization_id': ["Organization with 'id' {} and 'allow_donations' True does not exist.".format(self.organization.pk)]})
 
   def test_can_donate(self):
     self.client.force_authenticate(user=self.donator)
@@ -185,7 +185,7 @@ class TestSubscriptionViewSet(TestCase):
 
     response = self.client.post(reverse("donation-subscribe"), data=self.data, format="json")
     self.assertEqual(response.status_code, 400)
-    self.assertEqual(response.json(), {'organization_id': ["Organization with 'id' 1 and 'allow_donations' True does not exist."]})
+    self.assertEqual(response.json(), {'organization_id': ["Organization with 'id' {} and 'allow_donations' True does not exist.".format(self.organization.id)]})
 
   def test_can_subscribe(self):
     self.client.force_authenticate(user=self.donator)

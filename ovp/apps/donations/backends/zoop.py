@@ -15,8 +15,8 @@ class ZoopBackend(BaseBackend):
     self.pub_key = getattr(settings, "ZOOP_PUB_KEY", None)
     self.seller_id = getattr(settings, "ZOOP_SELLER_ID", None)
     self.statement_descriptor = getattr(settings, "ZOOP_STATEMENT_DESCRIPTOR", None)
-    
-    assert (self.marketplace_id and self.pub_key and 
+
+    assert (self.marketplace_id and self.pub_key and
             self.seller_id and self.statement_descriptor)
 
   def _build_url(self, resource):
@@ -58,7 +58,7 @@ class ZoopBackend(BaseBackend):
 
     if response.status_code == 408:
       return (response.status_code, {"status": "timeout", "message": response_data["error"]["message"], "category": response_data["error"]["category"]}, response)
-    
+
     if response.status_code in [403, 500, 502]:
       return (500, {"status": "error", "message": "Internal error occurred. This issue is being investigated."}, response)
 
@@ -107,9 +107,9 @@ class ZoopBackend(BaseBackend):
 
 
   """"
-    The following methods are not used in production. They are only used in the test suite to 
+    The following methods are not used in production. They are only used in the test suite to
     These routes should be called from the front-end.
-  """ 
+  """
   def generate_card_token(self,
                           holder_name=None,
                           expiration_month=None,
