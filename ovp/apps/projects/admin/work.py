@@ -8,32 +8,29 @@ from ovp.apps.projects.models import Work
 
 
 class WorkAdmin(ChannelModelAdmin):
-  fields = [
-    'id',
-    'project',
-    'weekly_hours',
-    'description',
-    'can_be_done_remotely',
-  ]
+    fields = [
+        ('id', 'project'),
+        'weekly_hours',
+        'description',
+        'can_be_done_remotely',
+    ]
 
-  list_display = [
-    'id', 'project', 'weekly_hours', 'can_be_done_remotely'
-  ]
+    list_display = [
+        'id',
+        'project',
+        'weekly_hours',
+        'can_be_done_remotely'
+    ]
 
-  list_filter = []
-
-  list_editable = []
-
-  search_fields = ['project__name', 'project__organization__name']
-
-  readonly_fields = ['id']
-
-  raw_id_fields = []
-
+    list_editable = []
+    search_fields = ['project__name', 'project__organization__name']
+    readonly_fields = ['id']
+    raw_id_fields = []
 
 class WorkInline(TabularInline):
-  model = Work
-  exclude = ['channel']
+
+    model = Work
+    exclude = ['channel']
 
 
 admin_site.register(Work, WorkAdmin)
