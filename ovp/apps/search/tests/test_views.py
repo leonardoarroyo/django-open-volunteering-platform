@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.core.management import call_command
 from django.core.cache import cache
+from django.utils import timezone
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -52,7 +53,7 @@ def create_sample_projects():
   work = Work(can_be_done_remotely=False, project=project, weekly_hours=0)
   work.save(object_channel="default")
 
-  project = Project(name="test project2", slug="test-slug2", details="abc", description="abc", owner=user1, address=address2, highlighted=True, published=True)
+  project = Project(name="test project2", slug="test-slug2", details="abc", description="abc", owner=user1, address=address2, highlighted=True, published=True, published_date=timezone.now())
   project.save(object_channel="default")
   project.causes.add(Cause.objects.get(pk=2))
   project.categories.add(category2)
@@ -61,7 +62,7 @@ def create_sample_projects():
   job = Job(can_be_done_remotely=True, project=project, start_date=date)
   job.save(object_channel="default")
 
-  project = Project(name="test project3", slug="test-slug3", details="abc", description="abc", owner=user1, address=address3, published=True)
+  project = Project(name="test project3", slug="test-slug3", details="abc", description="abc", owner=user1, address=address3, published=True, published_date=timezone.now())
   project.save(object_channel="default")
   project.skills.add(Skill.objects.get(pk=2))
   project.causes.add(Cause.objects.get(pk=3))
@@ -71,10 +72,10 @@ def create_sample_projects():
   project = Project(name="test project4", slug="test-slug4", details="abc", description="abc", owner=user1, address=address4, published=False)
   project.save(object_channel="default")
 
-  project = Project(name="test project5", slug="test-slug5", details="abc", description="abc", owner=user1, address=address5, published=True, closed=True)
+  project = Project(name="test project5", slug="test-slug5", details="abc", description="abc", owner=user1, address=address5, published=True, closed=True, published_date=timezone.now())
   project.save(object_channel="default")
 
-  project = Project(name="test project6", slug="test-slug6", details="abc", description="abc", owner=user2, address=address6, published=True)
+  project = Project(name="test project6", slug="test-slug6", details="abc", description="abc", owner=user2, address=address6, published=True, published_date=timezone.now())
   project.save(object_channel="test-channel")
 
 def create_sample_organizations():
