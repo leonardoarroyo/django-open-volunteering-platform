@@ -8,4 +8,4 @@ class FaqRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = Faq
-    fields = ['id', 'question', 'answer', 'category']
+    fields = ['id', 'question', 'answer', 'language', 'category']

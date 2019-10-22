@@ -6,6 +6,7 @@ from rest_framework.exceptions import NotAuthenticated
 
 from django.db.models import When, F, IntegerField, Count, Case
 
+from ovp.apps.core.models import Cause, Skill
 from ovp.apps.users.models.profile import UserProfile
 from ovp.apps.channels.cache import get_channel_setting
 from ovp.apps.channels.content_flow import CFM
@@ -19,7 +20,7 @@ from datetime import datetime
 #####################
 
 class UserSkillsCausesFilter:
-  def get_skills_and_causes(self, user, no_check=False):
+  def get_skills_and_causes(self, user, no_check=False, append_assumed=False):
     if not no_check and not user.is_authenticated():
       raise NotAuthenticated()
 
@@ -32,9 +33,13 @@ class UserSkillsCausesFilter:
     except UserProfile.DoesNotExist:
       pass
 
+    if append_assumed:
+      output["skills"] += Skill.objects.filter(project__apply__user=user).values_list('pk', flat=True)
+      output["causes"] += Causes.objects.filter(project__apply__user=user).values_list('pk', flat=True)
+
     return output
 
-  def annotate_queryset(self, queryset, user, no_check=False):
+  def annotate_queryset(self, queryset, user, no_check=False, append_assumed=False):
     skills_causes = self.get_skills_and_causes(user, no_check=no_check)
 
     queryset = queryset\

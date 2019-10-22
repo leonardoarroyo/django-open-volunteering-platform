@@ -1,3 +1,4 @@
+from .generic_token import GenericUserTokenViewSet
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
@@ -16,39 +17,13 @@ from rest_framework import filters
 from drf_yasg.utils import swagger_auto_schema
 
 @ChannelViewSet
-class RecoveryTokenViewSet(viewsets.GenericViewSet):
+class RecoveryTokenViewSet(GenericUserTokenViewSet):
   """
   RecoveryToken resource endpoint
   """
   queryset = models.User.objects.all()
   serializer_class = serializers.RecoveryTokenSerializer
-
-  @swagger_auto_schema(responses={200: 'OK', 429: 'Too many requests.'})
-  def create(self, request, *args, **kwargs):
-    """ Request a password recovery token. An email will be dispatched if the user is registered on the platform. """
-    email = request.data.get('email', None)
-
-    try:
-      user = self.get_queryset().get(email__iexact=email)
-    except:
-      user = None
-
-    if user:
-      # Allow only 5 requests per hour
-      limit = 5
-      now = timezone.now()
-      to_check = (now - relativedelta(hours=1)).replace(tzinfo=timezone.utc)
-      tokens = models.PasswordRecoveryToken.objects.filter(user=user, created_date__gte=to_check, channel__slug=request.channel)
-
-      if tokens.count() >= limit:
-        will_release = tokens.order_by('-created_date')[limit-1].created_date + relativedelta(hours=1)
-        seconds = abs((will_release - now).seconds)
-        return response.Response({'success': False, 'message': 'Five tokens generated last hour.', 'try_again_in': seconds}, status=status.HTTP_429_TOO_MANY_REQUESTS)
-
-      token = models.PasswordRecoveryToken.objects.create(user=user, object_channel=request.channel)
-
-    return response.Response({'success': True, 'message': 'Token requested successfully(if user exists).'})
-
+  Token = models.PasswordRecoveryToken
 
 @ChannelViewSet
 class RecoverPasswordViewSet(viewsets.GenericViewSet):

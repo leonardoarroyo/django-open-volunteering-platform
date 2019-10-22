@@ -11,6 +11,7 @@ import ovp.apps.faq.urls
 import ovp.apps.catalogue.urls
 import ovp.apps.ratings.urls
 import ovp.apps.gallery.urls
+import ovp.apps.digest.urls
 
 urlpatterns = [
   # Admin

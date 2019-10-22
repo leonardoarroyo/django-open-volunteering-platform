@@ -6,6 +6,7 @@ from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.uploads.models import UploadedImage
 from ovp.apps.uploads.models import UploadedDocument
 
+
 class UploadedImageAdmin(ChannelModelAdmin):
   fields = [
     'id', 'image', 'image_small', 'image_medium', 'image_large'

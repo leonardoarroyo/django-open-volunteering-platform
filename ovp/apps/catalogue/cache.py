@@ -92,10 +92,11 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
 
   params  = request.GET
   address = params.get('address', None)
+  closed = params.get('closed', 'false')
 
   queryset = SearchQuerySet().models(Project)
   queryset = filters.by_published(queryset, 'true')
-  queryset = filters.by_closed(queryset, 'false')
+  queryset = filters.by_closed(queryset, closed)
   queryset = filters.by_address(queryset, address, project=True)
   queryset = filters.by_channel_content_flow(queryset, channel)
 

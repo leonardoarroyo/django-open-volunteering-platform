@@ -112,6 +112,13 @@ class UserOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
     model = User
     fields = ['name', 'email', 'phone']
 
+class MemberRetrieveSerializer(ChannelRelationshipSerializer):
+  avatar = UploadedImageSerializer()
+
+  class Meta:
+    model = User
+    fields = ['uuid', 'name', 'avatar', 'slug']
+
 class OrganizationSearchSerializer(ChannelRelationshipSerializer):
   address = address_serializers[1]()
   image = UploadedImageSerializer()
@@ -129,6 +136,7 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   causes = CauseSerializer(many=True)
   flairs = FlairSerializer(many=True)
   owner = UserOrganizationRetrieveSerializer()
+  members = MemberRetrieveSerializer(many=True)
   galleries = GalleryRetrieveSerializer(many=True)
   is_bookmarked = serializers.SerializerMethodField()
   projects_count = serializers.SerializerMethodField()
@@ -136,7 +144,7 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'instagram_user', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'galleries', 'flairs', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count', 'rating', 'benefited_people', 'channel']
+    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'instagram_user', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'galleries', 'flairs', 'members', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count', 'rating', 'benefited_people', 'channel']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user

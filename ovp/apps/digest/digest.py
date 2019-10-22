@@ -16,13 +16,13 @@ import math
 
 config = {
   'interval': {
-    'minimum': 60 * 60 * 24,
+    'minimum': 60 * 60 * 24 * 6,
     'maximum': 0
   },
   'projects': {
     'minimum': 1,
-    'maximum': 3,
-    'max_age': 60 * 60 * 24 * 7 * 8,
+    'maximum': 6,
+    'max_age': 60 * 60 * 24 * 7 * 4,
   }
 }
 
@@ -38,19 +38,29 @@ def send_email(v):
   DigestEmail(recipient, channel, async_mail=False).sendDigest(v)
   print(".", end="", flush=True)
 
-def send_campaign(chunk_size=0, channel="default"):
+def send_campaign(chunk_size=0, channel="default", email_list=None):
   try:
     campaign = DigestLog.objects.order_by("-pk")[0].campaign + 1
   except:
     campaign = 1
 
-  user_list = list(pre_filter(get_email_list(channel)))
+  if not email_list:
+    email_list = get_email_list(channel)
+
+  user_list = list(pre_filter(email_list))
+
+  if not len(user_list):
+    print("0 users to send.")
+    return
 
   try:
     chunks = math.ceil(len(user_list)/chunk_size)
   except ZeroDivisionError:
     chunks = 1
     chunk_size = len(user_list)
+
+  if not len(user_list):
+    return
 
   print("Sending campaign {}.\nChunk size: {}\nChunks: {}".format(campaign, chunk_size, chunks))
 
@@ -61,13 +71,14 @@ def send_campaign(chunk_size=0, channel="default"):
       chunk = user_list[i:i+chunk_size]
       content_map = generate_content(chunk, campaign)
 
-      pool = ThreadPool(24)
+      pool = ThreadPool(8)
       result = pool.map(send_email, content_map)
       print("")
 
 def get_email_list(channel="default"):
   return set(
     User.objects
+      .select_related('channel', 'users_userprofile_profile')
       .filter(channel__slug=channel, is_subscribed_to_newsletter=True)
       .values_list('email', flat=True)
   )
@@ -103,13 +114,30 @@ def generate_content(email_list, campaign, channel='default'):
 
   return real_result
 
+def filter_by_address(qs, user):
+  if not user.profile or not user.profile.address:
+    return qs
+  state = user.profile.address.address_components.filter(types__name="administrative_area_level_1").first()
+
+  if not state:
+    return qs
+  state = state.short_name
+  filtered_qs = qs.filter(address__address_components__short_name=state,
+                   address__address_components__types__name="administrative_area_level_1")
+
+  return filtered_qs if filtered_qs.count() > 0 else qs
+
 def generate_content_for_user(user):
   not_projects = list(
     DigestLogContent.objects.filter(digest_log__recipient=user.email, content_type=PROJECT, channel=user.channel).values_list('content_id', flat=True)
   )
-  projects = Project.objects.filter(channel__slug=user.channel.slug, deleted=False, closed=False, published=True, published_date__gte=timezone.now() - relativedelta(seconds=config['projects']['max_age'])).exclude(pk__in=not_projects)
+  projects = Project.objects \
+    .filter(channel__slug=user.channel.slug, deleted=False, closed=False, published=True, published_date__gte=timezone.now() - relativedelta(seconds=config['projects']['max_age'])) \
+    .exclude(pk__in=not_projects) \
+    .select_related('image', 'job', 'work')
+  projects = filter_by_address(projects, user)
   projects = UserSkillsCausesFilter() \
-      .annotate_queryset(projects, user, no_check=True) \
+      .annotate_queryset(projects, user, no_check=True, append_assumed=True) \
       .order_by("-relevance")[:config["projects"]["maximum"]]
 
   if len(projects) < config["projects"]["minimum"]:
@@ -127,6 +155,8 @@ def generate_content_for_user(user):
         "description": p.description,
         "image": p.image.image_small if p.image and p.image.image_small else "",
         "image_absolute": p.image.absolute if p.image else False,
+        "disponibility": p.job if hasattr(p, 'job') else (p.work if hasattr(p, 'work') else None),
+        "disponibility_type": 'job' if hasattr(p, 'job') else ('work' if hasattr(p, 'work') else None)
       } for p in projects
     ]
   }

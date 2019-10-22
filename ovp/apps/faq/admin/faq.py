@@ -6,7 +6,7 @@ from ovp.apps.faq.models import Faq
 
 class FaqAdmin(ChannelModelAdmin):
 	list_display = ['id', 'question']
-	fields = ['category', 'question', 'answer']
+	fields = ['category', 'question', 'answer', 'language']
 	search_fields = [
     'question'
   ]

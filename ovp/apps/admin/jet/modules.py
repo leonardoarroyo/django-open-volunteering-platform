@@ -75,13 +75,14 @@ class Indicators(DashboardModule):
         date_min = date_max
         date_max = tmp
 
-      organizations_created = self.date_filter(Organization.objects.filter(deleted=False), date_min, date_max, "created_date")
-      organizations_published = self.date_filter(Organization.objects.filter(deleted=False), date_min, date_max, "published_date")
-      projects_created = self.date_filter(Project.objects.filter(deleted=False), date_min, date_max, "created_date")
-      projects_published = self.date_filter(Project.objects.filter(deleted=False), date_min, date_max, "published_date")
+      channel=context["user"].channel
+      organizations_created = self.date_filter(Organization.objects.filter(deleted=False, channel=channel), date_min, date_max, "created_date")
+      organizations_published = self.date_filter(Organization.objects.filter(deleted=False, channel=channel), date_min, date_max, "published_date")
+      projects_created = self.date_filter(Project.objects.filter(deleted=False, channel=channel), date_min, date_max, "created_date")
+      projects_published = self.date_filter(Project.objects.filter(deleted=False, channel=channel), date_min, date_max, "published_date")
       projects_published_pks=list(projects_published.values_list('pk', flat=True))
-      users = self.date_filter(User.objects.all(), date_min, date_max, "joined_date")
-      applies = self.date_filter(Apply.objects.all(), date_min, date_max, "date")
+      users = self.date_filter(User.objects.filter(channel=channel), date_min, date_max, "joined_date")
+      applies = self.date_filter(Apply.objects.filter(channel=channel), date_min, date_max, "date")
 
       apply_distinct_qs = Apply.objects.all()
       if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':

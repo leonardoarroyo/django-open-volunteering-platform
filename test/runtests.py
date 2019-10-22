@@ -91,7 +91,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 DATABASES = {
   'default': dj_database_url.parse(os.environ['DATABASE_URL'])
 }

@@ -12,6 +12,7 @@ from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
 from ovp.apps.projects.models import Project, VolunteerRole, Job, Work
+from ovp.apps.uploads.models import UploadedDocument
 from ovp.apps.organizations.models import Organization
 from ovp.apps.core.models import GoogleAddress
 from ovp.apps.core.models import SimpleAddress
@@ -32,6 +33,23 @@ class VolunteerRoleInline(TabularInline):
   model = VolunteerRole
   exclude = ['channel']
 
+class DocumentInline(TabularInline):
+  model = Project.documents.through
+  exclude = ['channel']
+  readonly_fields = ['download_link']
+  verbose_name = "Document"
+  verbose_name_plural = "Documents"
+
+  def download_link(self, instance):
+    url = instance.uploadeddocument.document.url
+    return format_html('<a target="_blank" href="{}">Download</a>', url)
+
+class GalleryInline(TabularInline):
+  model = Project.galleries.through
+  exclude = ['channel']
+  verbose_name = "Gallery"
+  verbose_name_plural = "Gallery"
+
 class ProjectResource(CleanModelResource):
   id = Field(attribute='id', column_name='ID')
   name = Field(attribute='name', column_name='Nome do Projeto')
@@ -41,6 +59,7 @@ class ProjectResource(CleanModelResource):
   organization = Field(column_name='ONG')
   address = Field(column_name='Endereço')
   city_state = Field(column_name='Cidade/Estado')
+  neighborhood = Field(column_name='Bairro')
   link = Field(column_name='link')
   owner_id = Field(column_name='ID Responsavel')
   owner_name = Field(column_name='Nome Responsavel')
@@ -69,6 +88,7 @@ class ProjectResource(CleanModelResource):
       'organization',
       'address',
       'city_state',
+      'neighborhood',
       'image',
       'description',
       'roles',
@@ -141,6 +161,19 @@ class ProjectResource(CleanModelResource):
         return project.job.end_date.strftime("%d/%m/%Y %H:%M:%S")
       return ""
     return "recorrente"
+
+  def dehydrate_neighborhood(self, project):
+    # TODO: FIX
+    # This is generating one query per project on export
+    # Maybe bring neighborhood into GoogleAddress as a field?
+    if project.address is not None:
+      if isinstance(project.address, GoogleAddress):
+        qs = project.address.address_components.filter(types__name="sublocality_level_1")
+        if qs.count():
+          return qs[0].long_name
+        return ""
+      if isinstance(project.address, SimpleAddress):
+        return project.address.neighbourhood
 
   def dehydrate_address(self, project):
     if project.address is not None:
@@ -256,6 +289,8 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
 
   inlines = [
     VolunteerRoleInline,
+    DocumentInline,
+    GalleryInline,
     JobInline, WorkInline
   ]
 
@@ -309,6 +344,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
       return obj.address.city_state
     else:
       return ""
+  city_state.short_description = _("City/state")
 
   def volunteers__list(self, obj):
     site_url = os.environ.get('ADMIN_URL', None)
