@@ -11,9 +11,14 @@ from ovp.apps.search.filters import UserSkillsCausesFilter
 from ovp.apps.uploads import helpers
 from django.db.models import Value, IntegerField
 
-import time
 import math
+import time
 
+
+############
+## Config ##
+############
+# TODO: Migrate this to django settings
 config = {
   'interval': {
     'minimum': 60 * 60 * 24 * 6,
@@ -24,57 +29,12 @@ config = {
     'maximum': 6,
     'max_age': 60 * 60 * 24 * 7 * 4,
   }
+
 }
 
-def send_email(v):
-  recipient = v["email"]
-  channel = v["channel"]
-  campaign = v["campaign"]
-
-  dlog = DigestLog.objects.create(recipient=recipient, campaign=campaign, object_channel=channel)
-  for project in v["projects"]:
-    DigestLogContent.objects.create(object_channel=channel, content_type=PROJECT, content_id=project["pk"], digest_log=dlog)
-  v["uuid"] = str(dlog.uuid)
-  DigestEmail(recipient, channel, async_mail=False).sendDigest(v)
-  print(".", end="", flush=True)
-
-def send_campaign(chunk_size=0, channel="default", email_list=None):
-  try:
-    campaign = DigestLog.objects.order_by("-pk")[0].campaign + 1
-  except:
-    campaign = 1
-
-  if not email_list:
-    email_list = get_email_list(channel)
-
-  user_list = list(pre_filter(email_list))
-
-  if not len(user_list):
-    print("0 users to send.")
-    return
-
-  try:
-    chunks = math.ceil(len(user_list)/chunk_size)
-  except ZeroDivisionError:
-    chunks = 1
-    chunk_size = len(user_list)
-
-  if not len(user_list):
-    return
-
-  print("Sending campaign {}.\nChunk size: {}\nChunks: {}".format(campaign, chunk_size, chunks))
-
-  for i in range(0, len(user_list), chunk_size):
-      chunk_i = math.ceil(i/chunk_size) + 1
-
-      print("Processing chunk {}/{}".format(chunk_i, chunks))
-      chunk = user_list[i:i+chunk_size]
-      content_map = generate_content(chunk, campaign)
-
-      pool = ThreadPool(8)
-      result = pool.map(send_email, content_map)
-      print("")
-
+###############
+## Querysets ##
+###############
 def get_email_list(channel="default"):
   return set(
     User.objects
@@ -92,28 +52,6 @@ def pre_filter(email_list):
   return set(filter(lambda x: x not in sent_recently, email_list))
 
 
-def generate_content(email_list, campaign, channel='default'):
-  print("generating content")
-  content_dict = {}
-
-  print("fetching users")
-  users = list(User.objects
-    .prefetch_related('users_userprofile_profile__causes', 'users_userprofile_profile__skills')
-    .select_related('channel')
-    .filter(channel__slug=channel, email__in=email_list)
-    .annotate(campaign=Value(campaign, IntegerField())))
-
-  print("fetched users")
-
-  pool = ThreadPool(8)
-  result = pool.map_async(generate_content_for_user, users, chunksize=4)
-  real_result = result.get()
-  pool.close()
-  pool.join()
-  real_result = filter(lambda x: x != None, real_result)
-
-  return real_result
-
 def filter_by_address(qs, user):
   if not user.profile or not user.profile.address:
     return qs
@@ -126,6 +64,43 @@ def filter_by_address(qs, user):
                    address__address_components__types__name="administrative_area_level_1")
 
   return filtered_qs if filtered_qs.count() > 0 else qs
+
+
+######################
+## Generate content ##
+######################
+def generate_content_sync(users):
+  content = []
+  for user in users:
+    content.append(generate_content_for_user(user))
+  return filter(lambda x: x != None, content)
+
+def generate_content_threaded(users):
+  pool = ThreadPool(8)
+  result = pool.map_async(generate_content_for_user, users, chunksize=4)
+  real_result = result.get()
+  pool.close()
+  pool.join()
+  return filter(lambda x: x != None, real_result)
+
+def generate_content(email_list, campaign, channel='default', threaded=True):
+  print("generating content")
+  content_dict = {}
+
+  print("fetching users")
+  users = list(User.objects
+    .prefetch_related('users_userprofile_profile__causes', 'users_userprofile_profile__skills')
+    .select_related('channel')
+    .filter(channel__slug=channel, email__in=email_list)
+    .annotate(campaign=Value(campaign, IntegerField())))
+
+  print("fetched users")
+  if threaded:
+    content = generate_content_threaded(users)
+  else:
+    content = generate_content_sync(users)
+
+  return content
 
 def generate_content_for_user(user):
   not_projects = list(
@@ -160,3 +135,56 @@ def generate_content_for_user(user):
       } for p in projects
     ]
   }
+
+
+##############
+## Triggers ##
+##############
+def send_email(v):
+  recipient = v["email"]
+  channel = v["channel"]
+  campaign = v["campaign"]
+
+  dlog = DigestLog.objects.create(recipient=recipient, campaign=campaign, object_channel=channel)
+  for project in v["projects"]:
+    DigestLogContent.objects.create(object_channel=channel, content_type=PROJECT, content_id=project["pk"], digest_log=dlog)
+  v["uuid"] = str(dlog.uuid)
+  DigestEmail(recipient, channel, async_mail=False).sendDigest(v)
+  print(".", end="", flush=True)
+
+def send_campaign(chunk_size=0, channel="default", email_list=None, threaded=True):
+  try:
+    campaign = DigestLog.objects.order_by("-pk")[0].campaign + 1
+  except:
+    campaign = 1
+
+  if not email_list:
+    email_list = get_email_list(channel)
+
+  user_list = list(pre_filter(email_list))
+
+  if not len(user_list):
+    print("0 users to send.")
+    return
+
+  try:
+    chunks = math.ceil(len(user_list)/chunk_size)
+  except ZeroDivisionError:
+    chunks = 1
+    chunk_size = len(user_list)
+
+  if not len(user_list):
+    return
+
+  print("Sending campaign {}.\nChunk size: {}\nChunks: {}".format(campaign, chunk_size, chunks))
+
+  for i in range(0, len(user_list), chunk_size):
+      chunk_i = math.ceil(i/chunk_size) + 1
+
+      print("Processing chunk {}/{}".format(chunk_i, chunks))
+      chunk = user_list[i:i+chunk_size]
+      content_map = generate_content(chunk, campaign, threaded=threaded)
+
+      pool = ThreadPool(8)
+      result = pool.map(send_email, content_map)
+      print("")
