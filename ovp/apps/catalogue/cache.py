@@ -43,6 +43,7 @@ def get_catalogue(channel, slug, request):
           "name": section.name,
           "slug": section.slug,
           "amount": section.amount,
+          "skip_address_filter": section.skip_address_filter,
           "filters": [],
           "type": section.type,
         }
@@ -97,7 +98,6 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
   queryset = SearchQuerySet().models(Project)
   queryset = filters.by_published(queryset, 'true')
   queryset = filters.by_closed(queryset, closed)
-  queryset = filters.by_address(queryset, address, project=True)
   queryset = filters.by_channel_content_flow(queryset, channel)
 
   result_keys = [q.pk for q in queryset]
@@ -107,7 +107,6 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
 
   queryset = SearchQuerySet().models(Organization)
   queryset = filters.by_published(queryset, 'true')
-  queryset = filters.by_address(queryset, address, project=True)
   queryset = filters.by_channel_content_flow(queryset, channel)
 
   result_keys = [q.pk for q in queryset]
@@ -128,6 +127,10 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
       qs = organization_base_queryset
     else:
       qs = project_base_queryset
+
+    # Filter qs by area
+    if not section["skip_address_filter"]:
+      qs = filters.by_address(qs, address, project=True)
 
     # Filter queryset
     for kwargs in section["filters"]:

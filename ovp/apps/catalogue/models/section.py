@@ -31,6 +31,7 @@ class Section(ChannelRelationship):
   amount = models.IntegerField(_("Amount"), default=20)
   type = models.CharField(_("Section type"), max_length=30, choices=SECTION_TYPES, default='projects')
   order = models.IntegerField(_("Order"), default=0)
+  skip_address_filter = models.BooleanField(_("Skip addres filter"), default=False)
 
   def __str__(self):
     return self.name
