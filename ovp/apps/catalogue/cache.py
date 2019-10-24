@@ -113,8 +113,8 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
   address = params.get('address', None)
   closed = params.get('closed', 'false')
 
-  project_keys = get_project_keys(address, closed, channel)
-  organization_keys = get_organization_keys(address, channel)
+  project_keys = get_project_keys(address, closed, channel, skip_address_filter=False)
+  organization_keys = get_organization_keys(address, channel, skip_address_filter=False)
   project_base_queryset = get_organization_queryset(request=request).filter(pk__in=organization_keys).order_by("-created_date")
 
   if catalogue_dict["fetched"] and request.user.is_authenticated():
@@ -127,16 +127,11 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None, context=None
     return catalogue_dict
 
   for i, section in enumerate(catalogue_dict["sections"]):
-    # Filter qs by area
-    if not section["skip_address_filter"]:
-      if catalogue_dict["sections"][i]["type"] == "organizations":
-        organization_keys = get_organization_keys(address, channel, skip_address_filter=True)
-      else:
-        project_keys = get_project_keys(address, closed, channel, skip_address_filter=True)
-
     if catalogue_dict["sections"][i]["type"] == "organizations":
+      organization_keys = get_organization_keys(address, channel, skip_address_filter=section["skip_address_filter"])
       qs = get_organization_queryset(request=request).filter(pk__in=organization_keys).order_by("-created_date")
     else:
+      project_keys = get_project_keys(address, closed, channel, skip_address_filter=section["skip_address_filter"])
       qs = get_project_queryset(request=request).filter(pk__in=project_keys).order_by("-created_date")
 
     # Filter queryset
