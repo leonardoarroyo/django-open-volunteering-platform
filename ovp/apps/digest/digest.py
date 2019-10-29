@@ -21,7 +21,7 @@ import time
 # TODO: Migrate this to django settings
 config = {
   'interval': {
-    'minimum': 60 * 60 * 24 * 6,
+    'minimum': 60 * 60 * 24 * 3,
     'maximum': 0
   },
   'projects': {
