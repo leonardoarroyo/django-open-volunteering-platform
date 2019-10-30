@@ -14,19 +14,7 @@ from ovp.apps.core.helpers import get_email_subject
 class AWSBackend(BaseBackend):
   def __init__(self, channel):
     self.channel = channel
-    self.client = boto3.client('ses',
-        )
-
-  def send_email(self, v):
-    digest_uuid = self.create_digest_log(v)
-    v['uuid'] = digest_uuid
-
-    #dlog = DigestLog.objects.create(recipient=recipient, campaign=campaign, object_channel=channel)
-    #for project in v["projects"]:
-    #  DigestLogContent.objects.create(object_channel=channel, content_type=PROJECT, content_id=project["pk"], digest_log=dlog)
-    #v["uuid"] = str(dlog.uuid)
-    #DigestEmail(recipient, channel, async_mail=False).sendDigest(v)
-    #print(".", end="", flush=True)
+    self.client = boto3.client('ses')
 
   def send_chunk(self, content):
     template_uuid = self._create_template()

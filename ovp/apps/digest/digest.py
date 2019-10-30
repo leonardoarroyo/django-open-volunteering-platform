@@ -25,7 +25,6 @@ config = {
     'maximum': 6,
     'max_age': 60 * 60 * 24 * 7 * 4,
   }
-
 }
 
 class ContentGenerator():
