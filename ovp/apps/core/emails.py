@@ -48,7 +48,7 @@ class BaseMail:
 
     self.__setLocale()
     subject = get_email_subject(self.channel, template_name, subject)
-    text_content, html_content = self.__render(template_name, ctx)
+    text_content, html_content = self._render(template_name, ctx)
     self.__resetLocale()
 
     from_email = self.all_emails.get(self.channel, self.from_email)
@@ -76,7 +76,7 @@ class BaseMail:
 
     return result
 
-  def __render(self, template_name, ctx):
+  def _render(self, template_name, ctx):
     test_channels = getattr(settings, "TEST_CHANNELS", [])
 
     try:
