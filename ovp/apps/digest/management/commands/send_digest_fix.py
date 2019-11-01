@@ -11,4 +11,4 @@ class Command(BaseCommand):
     all_emails = campaign._get_email_list()
     to_send = filter(lambda x: x not in sent, all_emails)
     campaign.cg = ContentGenerator(threaded=False)
-    campaign.send_campaign(chunk_size=1000, email_list=to_send)
+    campaign.send_campaign(chunk_size=50, email_list=to_send)

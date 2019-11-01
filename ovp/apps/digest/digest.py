@@ -16,6 +16,7 @@ from django.db.models import Value, IntegerField
 import math
 import time
 
+cache = {}
 config = {
   'interval': {
     'minimum': 60 * 60 * 24 * 3,
@@ -82,11 +83,8 @@ class ContentGenerator():
     if len(projects) < config["projects"]["minimum"]:
       return None
 
-    return {
-      "email": user.email,
-      "channel": user.channel.slug,
-      "campaign": user.campaign,
-      "projects": [
+    if not cache.get("projects", None):
+      cache["projects"] = [
         {
           "pk": p.pk,
           "name": p.name,
@@ -98,7 +96,12 @@ class ContentGenerator():
           "disponibility_type": 'job' if hasattr(p, 'job') else ('work' if hasattr(p, 'work') else None)
         } for p in projects
       ]
-    }
+
+    return {
+      "email": user.email,
+      "channel": user.channel.slug,
+      "campaign": user.campaign,
+      "projects": cache["projects"]}
 
   def filter_by_address(self, qs, user):
     if not user.profile or not user.profile.address:
