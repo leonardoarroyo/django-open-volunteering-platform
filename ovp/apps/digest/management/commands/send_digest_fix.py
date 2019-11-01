@@ -1,12 +1,14 @@
-from ovp.apps.digest.digest import get_email_list
-from ovp.apps.digest.digest import send_campaign
+from ovp.apps.digest.digest import ContentGenerator
+from ovp.apps.digest.digest import DigestCampaign
 from ovp.apps.digest.models import DigestLog
+from ovp.apps.digest.backends.aws import AWSBackend
 from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
   def handle(self, *args, **options):
-    sent = set(DigestLog.objects.filter(campaign=2).values_list('recipient', flat=True))
-    all_emails = get_email_list()
+    campaign = DigestCampaign(backend=AWSBackend)
+    sent = set(DigestLog.objects.filter(campaign__gte=3).values_list('recipient', flat=True))
+    all_emails = campaign._get_email_list()
     to_send = filter(lambda x: x not in sent, all_emails)
-    send_campaign(chunk_size=1000, email_list=to_send)
-
+    campaign.cg = ContentGenerator(threaded=False)
+    campaign.send_campaign(chunk_size=1000, email_list=to_send)
