@@ -21,9 +21,9 @@ class AWSBackend(BaseBackend):
     content = list(content)
 
     response=self.client.send_bulk_templated_email(
-        Source='Atados <noreply@atados.com.br>',
-        ReplyToAddresses=['noreply@atados.com.br'],
-        ReturnPath='noreply@atados.com.br',
+        Source='Atados <noreply@atados.email>',
+        ReplyToAddresses=['noreply@atados.email'],
+        ReturnPath='noreply@atados.email',
         Template=template_uuid,
         DefaultTemplateData=json.dumps({}),
         Destinations=self._generate_aws_destinations(content)
