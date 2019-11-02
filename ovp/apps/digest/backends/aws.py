@@ -64,8 +64,10 @@ class AWSBackend(BaseBackend):
 
       # Fix instance to str
       for i, project in enumerate(message["projects"]):
-        message["projects"][i]["disponibility"] = project["disponibility"].start_date.strftime('%d/%m/%y às %H:%M') if isinstance(project["disponibility"], Job) and project["disponibility"].start_date is not None else ('Recorrente' if isinstance(project["disponibility"], Work) else "")
-        message["projects"][i]["image"] = project["image"] if project["image_absolute"] else "https://atados-v3.storage.googleapis.com/{}".format(project["image"])
+        if not message["projects"][i].get("fixed", None):
+          message["projects"][i]["disponibility"] = project["disponibility"].start_date.strftime('%d/%m/%y às %H:%M') if isinstance(project["disponibility"], Job) and project["disponibility"].start_date is not None else ('Recorrente' if isinstance(project["disponibility"], Work) else "")
+          message["projects"][i]["image"] = project["image"] if project["image_absolute"] else "https://atados-v3.storage.googleapis.com/{}".format(project["image"])
+          message["projects"][i]["fixed"] = True
 
       aws_destinations.append({
         'Destination': {
