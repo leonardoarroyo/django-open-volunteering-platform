@@ -23,8 +23,8 @@ config = {
   },
   'projects': {
     'minimum': 1,
-    'maximum': 9,
-    'max_age': 60 * 60 * 24 * 7 * 4,
+    'maximum': 6,
+    'max_age': 60 * 60 * 24 * 7 * 2,
   }
 }
 
@@ -69,10 +69,9 @@ class ContentGenerator():
     not_projects = list(
       DigestLogContent.objects.filter(digest_log__recipient=user.email, content_type=PROJECT, channel=user.channel).values_list('content_id', flat=True)
     )
-    #.filter(channel__slug=user.channel.slug, deleted=False, closed=False, published=True, published_date__gte=timezone.now() - relativedelta(seconds=config['projects']['max_age'])) \
-    #.exclude(pk__in=not_projects) \
     projects = Project.objects \
-      .filter(channel__slug=user.channel.slug, deleted=False, closed=False, published=True, categories=Category.objects.filter(slug="oleo-no-nordeste")) \
+      .filter(channel__slug=user.channel.slug, deleted=False, closed=False, published=True, published_date__gte=timezone.now() - relativedelta(seconds=config['projects']['max_age'])) \
+      .exclude(pk__in=not_projects) \
       .select_related('image', 'job', 'work')
     projects = self.filter_by_address(projects, user)
     projects = UserSkillsCausesFilter() \
