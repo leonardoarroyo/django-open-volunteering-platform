@@ -103,6 +103,23 @@ class ProjectResourceViewSetTestCase(TestCase):
     self.assertTrue(len(response.data["causes"]) == 2)
     self.assertTrue(len(response.data["skills"]) == 2)
 
+  def test_roles_with_id_fail(self):
+    """Assert serializer doesn't accept roles with id"""
+    user = User.objects.create_user(email="test_can_create_project@gmail.com", password="testcancreate", object_channel="default")
+
+    data = copy.deepcopy(base_project)
+    data["roles"] = [{"name": "test", "prerequisites": "test2", "details": "test3", "vacancies": 5}]
+
+    client = APIClient()
+    client.force_authenticate(user=user)
+
+    response = client.post(reverse("project-list"), data, format="json")
+    self.assertTrue(response.status_code == 201)
+
+    data["roles"][0]["id"] = 25535
+    response = client.post(reverse("project-list"), data, format="json")
+    self.assertTrue(response.status_code == 201)
+    self.assertNotEqual(Project.objects.get(pk=response.data["id"]).roles.first().pk, 25535)
 
 
 class ProjectCloseTestCase(TestCase):

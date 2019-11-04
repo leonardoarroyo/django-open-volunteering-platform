@@ -4,7 +4,8 @@ from ovp.apps.projects.models import VolunteerRole
 from rest_framework import serializers
 
 class VolunteerRoleSerializer(ChannelRelationshipSerializer):
-  id = serializers.ModelField(model_field=VolunteerRole()._meta.get_field("id"), required=False)
+  id = serializers.ModelField(model_field=VolunteerRole()._meta.get_field("id"), required=False, read_only=True)
+
   class Meta:
     model = VolunteerRole
     fields = ['name', 'prerequisites', 'details', 'vacancies', 'applied_count', 'id']
