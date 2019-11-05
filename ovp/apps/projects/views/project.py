@@ -59,7 +59,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
     ##################
     def retrieve(self, *args, **kwargs):
         """ Retrieve a project. """
-        return super(ProjectResourceViewSet, self).retrieve(*args, **kwargs)
+        return super().retrieve(*args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         """ Create a project. """
@@ -146,7 +146,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
             Q(organization__owner=request.user) |
             Q(organization__members=request.user)
         )
-        projects = projects.order_by('created_date')
+        projects = projects.order_by('pk')
 
         params = request.query_params
         if params.get('no_organization') == 'true':
