@@ -14,13 +14,7 @@ import ovp.apps.ratings.urls
 import ovp.apps.gallery.urls
 import ovp.apps.digest.urls
 
-urlpatterns = [
-  # Admin
-  url(r'^jet/', include('jet.urls', 'jet')),
-  url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
-  url(r'^martor/', include('martor.urls')),
-  url(r'^admin/', admin_site.urls),
-
+core_urls = [
   # Core
   url(r'^', include(ovp.apps.core.urls)),
 
@@ -56,6 +50,12 @@ urlpatterns = [
 
   # Digest
   url(r'^', include(ovp.apps.digest.urls)),
-
 ]
 
+urlpatterns = [
+  # Admin
+  url(r'^jet/', include('jet.urls', 'jet')),
+  url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
+  url(r'^martor/', include('martor.urls')),
+  url(r'^admin/', admin_site.urls),
+] + core_urls
