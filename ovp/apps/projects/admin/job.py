@@ -20,10 +20,15 @@ class JobInline(TabularInline):
   verbose_name_plural = _('Job')
 
   def admin_link(self, instance):
-    url = reverse('admin:%s_%s_change' % (instance._meta.app_label,
-                                          instance._meta.model_name),
-                  args=(instance.id,))
-    return format_html('<a href="{}">Edit</a>', url)
+    if instance.id is None:
+      url = reverse('admin:%s_%s_add' % (instance._meta.app_label,
+                                            instance._meta.model_name))
+      return format_html('<a href="{}">Create</a>', url)
+    else:
+      url = reverse('admin:%s_%s_change' % (instance._meta.app_label,
+                                            instance._meta.model_name),
+                    args=(instance.id,))
+      return format_html('<a href="{}">Edit</a>', url)
 
 
 class JobAdmin(ChannelModelAdmin, CountryFilterMixin):
