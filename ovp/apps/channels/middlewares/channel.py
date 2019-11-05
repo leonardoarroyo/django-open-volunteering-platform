@@ -1,3 +1,4 @@
+import re
 from ovp.apps.channels.cache import get_channel
 
 from rest_framework.request import Request
@@ -8,6 +9,7 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.functional import SimpleLazyObject
 from django.contrib.auth.middleware import get_user
+from django.conf import settings
 
 import urllib.parse as parse
 
@@ -182,7 +184,9 @@ class ChannelProcessorMiddleware():
 
   def _admin_should_redirect_to_admin_page(self, request):
     path = request.get_full_path()
-    if not path.startswith("/admin") and not path.startswith("/jet") and not path.startswith("/static") and not path.startswith("/martor"):
+    enabled_languages_regex = "|".join(["{}/".format(x[0]) for x in settings.LANGUAGES])
+
+    if not re.match(r'^/({})?admin'.format(enabled_languages_regex), path) and not path.startswith("/jet") and not path.startswith("/static") and not path.startswith("/martor"):
       return True
 
     return False
