@@ -13,7 +13,7 @@ class SMTPBackend(BaseBackend):
 
     print(".", end="", flush=True)
 
-  def send_chunk(self, content):
+  def send_chunk(self, content, template_context={}):
     pool = ThreadPool(8)
     result = pool.map(self.send_email, content)
     print("")

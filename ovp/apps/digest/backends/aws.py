@@ -16,8 +16,8 @@ class AWSBackend(BaseBackend):
     self.channel = channel
     self.client = boto3.client('ses')
 
-  def send_chunk(self, content):
-    template_uuid = self._create_template()
+  def send_chunk(self, content, template_context):
+    template_uuid = self._create_template(template_context)
     content = list(content)
 
     response=self.client.send_bulk_templated_email(
@@ -75,7 +75,7 @@ class AWSBackend(BaseBackend):
       })
     return aws_destinations
 
-  def _create_template(self):
+  def _create_template(self, template_context):
     m = BaseMail('', channel=self.channel)
     uuid = str(uuid4())
     self.client.create_template(
@@ -83,7 +83,7 @@ class AWSBackend(BaseBackend):
           'TemplateName': uuid,
           'SubjectPart': get_email_subject(self.channel, 'userDigest-aws', 'New digest'),
           'TextPart': '',
-          'HtmlPart': m._render('userDigest-aws', {})[1]
+          'HtmlPart': m._render('userDigest-aws', template_context)[1]
           }
         )
     return uuid

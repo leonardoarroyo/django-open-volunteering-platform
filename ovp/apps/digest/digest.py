@@ -1,4 +1,5 @@
 from multiprocessing.dummy import Pool as ThreadPool
+from bs4 import BeautifulSoup
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from ovp.apps.projects.models import Project
@@ -15,6 +16,7 @@ from django.db.models import Value, IntegerField
 
 import math
 import time
+import requests
 
 config = {
   'interval': {
@@ -96,7 +98,8 @@ class ContentGenerator():
           "disponibility": p.job if hasattr(p, 'job') else (p.work if hasattr(p, 'work') else None),
           "disponibility_type": 'job' if hasattr(p, 'job') else ('work' if hasattr(p, 'work') else None)
         } for p in projects
-      ]
+      ],
+      "posts": self.get_blog_posts()
     }
 
   def filter_by_address(self, qs, user):
@@ -111,6 +114,18 @@ class ContentGenerator():
                      address__address_components__types__name="administrative_area_level_1")
 
     return filtered_qs if filtered_qs.count() > 0 else qs
+
+  def get_blog_posts(self):
+    response = requests.get("https://blog.atados.com.br/wp-json/wp/v2/posts?per_page=2")
+    return {
+      "posts": [{
+          "url": x["link"],
+          "title": BeautifulSoup(x["title"]["rendered"], features="html.parser").get_text(),
+          "excerpt": BeautifulSoup(x["excerpt"]["rendered"], features="html.parser").get_text(),
+          "image": x["better_featured_image"]["media_details"]["sizes"]["medium"]["source_url"]
+        } for x in response.json()]
+    }
+    return posts
 
 class DigestCampaign():
   def __init__(self, channel="default", backend=SMTPBackend, campaign=None):
@@ -168,6 +183,7 @@ class DigestCampaign():
     print("Sending campaign {}.\nChunk size: {}\nChunks: {}".format(self.campaign, chunk_size, chunks))
 
     out = []
+    template_context = self.cg.get_blog_posts()
     for i in range(0, len(user_list), chunk_size):
         chunk_i = math.ceil(i/chunk_size) + 1
 
@@ -175,5 +191,5 @@ class DigestCampaign():
         chunk = user_list[i:i+chunk_size]
         content = self.cg.generate_content(chunk, self.campaign)
 
-        out.append(self.backend.send_chunk(content))
+        out.append(self.backend.send_chunk(content, template_context))
     return out
