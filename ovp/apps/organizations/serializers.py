@@ -167,7 +167,7 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
 
 
 class OrganizationInviteSerializer(serializers.Serializer):
-  email = fields.EmailField(validators=[validators.invite_email_validator])
+  email = fields.EmailField(validators=[validators.InviteEmailValidator()])
 
   class Meta:
     fields = ['email']
@@ -188,7 +188,7 @@ class OrganizationInviteRetrieveSerializer(ChannelRelationshipSerializer):
     fields = ['invitator', 'invited']
 
 class MemberRemoveSerializer(serializers.Serializer):
-  email = fields.EmailField(validators=[validators.invite_email_validator])
+  email = fields.EmailField(validators=[validators.InviteEmailValidator()])
 
   class Meta:
     fields = ['email']

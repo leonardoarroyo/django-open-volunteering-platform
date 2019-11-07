@@ -92,7 +92,7 @@ class OrganizationResourceViewSet(BookmarkMixin, mixins.CreateModelMixin, mixins
     """ Invite user to manage organization. The supplied email address must be registered. """
     organization = self.get_object()
 
-    serializer = self.get_serializer_class()(data=request.data)
+    serializer = self.get_serializer_class()(data=request.data, context=self.get_serializer_context())
     serializer.is_valid(raise_exception=True)
 
     invited = User.objects.get(email=request.data["email"], channel__slug=request.channel)

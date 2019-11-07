@@ -30,7 +30,6 @@ CUSTOM_INSTALLED_APPS = (
     "ovp.apps.ratings",
     "ovp.apps.gallery",
     "ovp.apps.digest",
-    'django_inlinecss',
     'django.contrib.admin',
     'jet',
     'jet.dashboard',
@@ -128,7 +127,7 @@ settings.configure(
     TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': [os.path.abspath(os.path.join(BASE_DIR, '../../templates')), os.path.abspath(os.path.join(BASE_DIR, '../../channels/default/templates'))],
+            'DIRS': [os.path.abspath(os.path.join(BASE_DIR, '../../templates'))],
             'APP_DIRS': True,
             'OPTIONS': {
                 'context_processors': [

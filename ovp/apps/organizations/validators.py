@@ -12,16 +12,20 @@ from django.core import validators
 
 from django.utils.translation import ugettext_lazy as _
 
-def invite_email_validator(email):
-  try:
-    validate_email(email)
-  except ValidationError as e:
-    return True # we let serializers.EmailField validation handle invalid emails
+class InviteEmailValidator():
+    def __call__(self, email):
+        try:
+          validate_email(email)
+        except ValidationError as e:
+          return True # we let serializers.EmailField validation handle invalid emails
 
-  try:
-    User.objects.get(email=email)
-  except User.DoesNotExist:
-    raise serializers.ValidationError("This user is not valid.")
+        try:
+          User.objects.get(email=email, channel__slug=self.channel)
+        except User.DoesNotExist:
+          raise serializers.ValidationError("This user is not valid.")
+
+    def set_context(self, serializer):
+        self.channel = serializer.context['request'].channel
 
 error_messages = {
     'invalid': ("Invalid CNPJ number."),
@@ -65,7 +69,7 @@ def validate_CNPJ(value):
         raise ValidationError(error_messages['invalid'])
 
     return orig_value
-    
+
 def format_CNPJ(value):
   if value is None or len(value) == 0:
     return None
