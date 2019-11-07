@@ -18,7 +18,7 @@ import time
 
 config = {
   'interval': {
-    'minimum': 60 * 60 * 24 * 3,
+    'minimum': 60 * 60 * 24 * 1,
     'maximum': 0
   },
   'projects': {
