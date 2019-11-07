@@ -7,6 +7,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from ovp.apps.projects.models import Project
+from ovp.apps.projects.models import VolunteerRole
 from ovp.apps.projects.models import Category
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
@@ -758,15 +759,52 @@ class VolunteerRoleTestCase(TestCase):
     self.assertTrue(response.data["roles"]["non_field_errors"] == ["Expected a list of items but got type \"dict\"."])
     self.assertTrue(response.status_code == 400)
 
-
   def test_roles_get_saved(self):
     """Test roles get saved"""
-    expected_response = [{"name": "test", "prerequisites": "test2", "details": "test3", "vacancies": 5, "applied_count": 0, "id": 1}]
     self.data["roles"] = [{"name": "test", "prerequisites": "test2", "details": "test3", "vacancies": 5}]
     response = self.client.post(reverse("project-list"), self.data, format="json")
     self.assertTrue(response.status_code == 201)
-    self.assertTrue(response.data["roles"] == expected_response)
+    self.assertTrue(response.data["roles"][0]["name"] == "test")
+    self.assertTrue(response.data["roles"][0]["prerequisites"] == "test2")
+    self.assertTrue(response.data["roles"][0]["details"] == "test3")
+    self.assertTrue(response.data["roles"][0]["vacancies"] == 5)
+    self.assertTrue("id" in response.data["roles"][0])
 
     response = self.client.get(reverse("project-detail", ['test-project']), format="json")
     self.assertTrue(response.status_code == 200)
-    self.assertTrue(response.data["roles"] == expected_response)
+    self.assertTrue(response.data["roles"][0]["name"] == "test")
+    self.assertTrue(response.data["roles"][0]["prerequisites"] == "test2")
+    self.assertTrue(response.data["roles"][0]["details"] == "test3")
+    self.assertTrue(response.data["roles"][0]["vacancies"] == 5)
+    self.assertTrue("id" in response.data["roles"][0])
+
+  def test_cant_update_unowned_role(self):
+    """Assert serializer doesn't accept roles with id"""
+    data = copy.deepcopy(base_project)
+    data["name"] = "project 1"
+    data["roles"] = [{"name": "test", "prerequisites": "test", "details": "test", "vacancies": 5}]
+    response = self.client.post(reverse("project-list"), data, format="json")
+    self.assertTrue(response.status_code == 201)
+    vr1 = VolunteerRole.objects.filter(project__slug=response.data['slug']).first()
+
+    data = copy.deepcopy(base_project)
+    data["name"] = "project 2"
+    data["roles"] = [{"name": "another role", "prerequisites": "test2", "details": "test2", "vacancies": 5}]
+    response = self.client.post(reverse("project-list"), data, format="json")
+    self.assertTrue(response.status_code == 201)
+    vr2 = VolunteerRole.objects.filter(project__slug=response.data['slug']).first()
+
+    data = {
+      "roles": [
+        {"id": vr2.pk, "name": "aaaaa", "prerequisites": "aaaaa", "details": "aaaa", "vacancies": 5},
+        {"id": vr1.pk, "name": "bbbbb", "prerequisites": "bbbbb", "details": "bbbb", "vacancies": 5} # this should fail as vr1.pk is related to another project
+      ]
+    }
+    response = self.client.patch(reverse("project-detail", [response.data["slug"]]), data, format="json")
+    self.assertTrue(response.status_code == 200)
+    self.assertEqual(response.data["roles"][0]["name"], "aaaaa")
+    self.assertEqual(VolunteerRole.objects.get(pk=vr2.pk).name, "aaaaa")
+
+    self.assertEqual(response.data["roles"][1]["name"], "bbbbb")
+    self.assertNotEqual(response.data["roles"][1]["id"], "bbbbb")
+    self.assertEqual(VolunteerRole.objects.get(pk=vr1.pk).name, "test")
