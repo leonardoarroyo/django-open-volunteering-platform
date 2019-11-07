@@ -270,9 +270,7 @@ class ProjectAdmin(ImportExportModelAdmin, ChannelModelAdmin, CountryFilterMixin
     'highlighted', 'published', 'closed', 'deleted', StateListFilter, CityListFilter, 'categories'
   ]
 
-  list_editable = [
-    'highlighted', 'published', 'closed'
-  ]
+  list_editable = []
 
   search_fields = [
     'name', 'organization__name'

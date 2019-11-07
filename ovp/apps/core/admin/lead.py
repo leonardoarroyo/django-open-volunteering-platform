@@ -35,7 +35,7 @@ class LeadAdmin(ImportExportModelAdmin, ChannelModelAdmin):
   fields = ['id', 'name', 'email', 'phone', 'type', 'employee_number']
   list_display = ['id', 'name', 'email', 'phone', 'type']
   list_filter = []
-  list_editable = ['name']
+  list_editable = []
   search_fields = ['id', 'name', 'email', 'phone', 'type']
   readonly_fields = ['id']
   raw_id_fields = []

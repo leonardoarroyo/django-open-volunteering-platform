@@ -16,7 +16,7 @@ class CauseAdmin(ChannelModelAdmin):
 
 	list_filter = []
 
-	list_editable = ['name']
+	list_editable = []
 
 	search_fields = ['id', 'name']
 

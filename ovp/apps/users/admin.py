@@ -91,9 +91,7 @@ class UserAdmin(ImportExportModelAdmin, ChannelModelAdmin, ForeignKeyAutocomplet
     'is_active', 'is_staff', ('joined_date', DateRangeFilter)
   ]
 
-  list_editable = [
-    'is_active', 'is_staff', 'is_email_verified'
-  ]
+  list_editable = []
 
   search_fields = [
     'email', 'name'

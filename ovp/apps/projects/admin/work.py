@@ -22,7 +22,7 @@ class WorkAdmin(ChannelModelAdmin):
 
   list_filter = []
 
-  list_editable = ['can_be_done_remotely']
+  list_editable = []
 
   search_fields = ['project__name', 'project__organization__name']
 
