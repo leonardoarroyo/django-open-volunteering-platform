@@ -37,11 +37,13 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
   causes = CauseAssociationSerializer(many=True, required=False)
   image = UploadedImageSerializer(required=False)
   image_id = serializers.IntegerField(required=False)
+  cover = UploadedImageSerializer(required=False)
+  cover_id = serializers.IntegerField(required=False)
   galleries = GalleryAssociationSerializer(many=True, required=False)
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'instagram_user', 'address', 'details', 'description', 'type', 'image', 'image_id', 'cover', 'hidden_address', 'causes', 'contact_name', 'contact_email', 'contact_phone', 'benefited_people', 'galleries']
+    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'instagram_user', 'address', 'details', 'description', 'type', 'image', 'image_id', 'cover', 'cover_id', 'hidden_address', 'causes', 'contact_name', 'contact_email', 'contact_phone', 'benefited_people', 'galleries']
 
   def create(self, validated_data):
     causes = validated_data.pop('causes', [])
