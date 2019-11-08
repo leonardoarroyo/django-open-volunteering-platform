@@ -70,6 +70,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
       existing_apply.status = "applied"
       existing_apply.role_id = data['role'] if 'role' in data else None
       existing_apply.save()
+      obj = existing_apply
     except ObjectDoesNotExist:
       apply_sr = self.get_serializer_class()(data=data, context=self.get_serializer_context())
       apply_sr.is_valid(raise_exception=True)
