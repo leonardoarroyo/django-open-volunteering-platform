@@ -75,7 +75,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
       apply_sr.is_valid(raise_exception=True)
       obj = apply_sr.save()
 
-    return response.Response(serializers.ApplyRetrieveSerializer(obj, context=self.get_serializer_context()))
+    return response.Response(serializers.ApplyRetrieveSerializer(obj, context=self.get_serializer_context()).data)
 
   @swagger_auto_schema(method="POST", responses={200: 'OK'})
   @decorators.list_route(['POST'])
