@@ -73,9 +73,9 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
     except ObjectDoesNotExist:
       apply_sr = self.get_serializer_class()(data=data, context=self.get_serializer_context())
       apply_sr.is_valid(raise_exception=True)
-      apply_sr.save()
+      obj = apply_sr.save()
 
-    return response.Response({'detail': 'Successfully applied.'}, status=status.HTTP_200_OK)
+    return serializers.ApplyRetrieveSerializer(obj, context=self.get_serializer_context())
 
   @swagger_auto_schema(method="POST", responses={200: 'OK'})
   @decorators.list_route(['POST'])
