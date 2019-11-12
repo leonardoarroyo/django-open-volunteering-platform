@@ -1,0 +1,159 @@
+- model: oauth2_provider.Application
+  pk: 1
+  fields:
+    authorization_grant_type: 'password'
+    client_type: 'confidential'
+    client_id: client
+    client_secret: secret
+    created: '2019-11-11T16:39:38-03:00'
+    updated: '2019-11-11T16:39:38-03:00'
+- model: catalogue.Catalogue
+  pk: 1
+  fields:
+    slug: home
+    name: Home
+    channel_id: 1
+- model: catalogue.Section
+  pk: 1
+  fields:
+    slug: vagas
+    name: Vagas
+    catalogue_id: 1
+    channel_id: 1
+- model: users.User
+  pk: 1
+  fields:
+    uuid: a31299b9-ce58-47ec-8e4f-14b05087ccbf
+    email: user@atados.com.br
+    name: John doe
+    slug: john-doe
+    phone: 119988776655
+    public: true
+    # qweqweqwe
+    password: pbkdf2_sha256$36000$Wn7JgvCCuxb7$NMSjaDS/bFJqQRV9NhjEODjZaby5OF60v4W1fpJ1bog=
+    is_staff: true
+    is_superuser: true
+    is_active: true
+    is_email_verified: true
+    channel_id: 1
+- model: organizations.Organization
+  pk: 1
+  fields:
+    name: ONG 1
+    website: atados.com.br
+    facebook_page: facebook.com/page/1
+    highlighted: true
+    published: true
+    published_date: '2019-11-11T16:39:38-03:00'
+    deleted: false
+    created_date: '2019-11-11T16:39:38-03:00'
+    modified_date: '2019-11-11T16:39:38-03:00'
+    details: 'Lorem ipsum dolor iset'
+    description: 'Lorem ipsum dolor iset'
+    owner_id: 1
+    type: 1
+    slug: ong-1
+    hidden_address: false
+    contact_email: ong@gmail.com
+    contact_name: Ongueiro
+    contact_phone: 22412312312
+    channel_id: 1
+    verified: true
+    is_inactive: false
+    instagram_user: atados
+    members:
+      - 1
+- model: projects.Project
+  pk: 1
+  fields:
+    name: Vaga Work
+    slug: vaga-work
+    published: true
+    highlighted: true
+    closed: false
+    created_date: '2019-11-11T16:39:38-03:00'
+    modified_date: '2019-11-11T16:39:38-03:00'
+    owner_id: 1
+    description: Lorem ipsum dolor iset
+    details: Lorem ipsum dolor iset
+    organization_id: 1
+    public_project: true
+    hidden_address: false
+    crowdfunding: false
+    channel_id: 1
+    skip_address_filter: false
+    type: 1
+    chat_enabled: true
+    canceled: false
+- model: projects.Work
+  pk: 1
+  fields:
+    project_id: 1
+    description: Lorem ipsum dolor iset
+    weekly_hours: 12
+    can_be_done_remotely: true
+    channel_id: 1
+- model: projects.Project
+  pk: 2
+  fields:
+    name: Vaga Job
+    slug: vaga-job
+    published: true
+    highlighted: true
+    closed: false
+    created_date: '2019-11-11T16:39:38-03:00'
+    modified_date: '2019-11-11T16:39:38-03:00'
+    owner_id: 1
+    description: Lorem ipsum dolor iset
+    details: Lorem ipsum dolor iset
+    organization_id: 1
+    public_project: true
+    hidden_address: false
+    crowdfunding: false
+    channel_id: 1
+    skip_address_filter: false
+    type: 1
+    chat_enabled: true
+    canceled: false
+- model: projects.Job
+  pk: 1
+  fields:
+    project_id: 2
+    start_date: '2019-11-11T16:39:38-03:00'
+    end_date: '2019-11-11T16:39:38-03:00'
+    channel_id: 1
+- model: projects.JobDate
+  pk: 1
+  fields:
+    job_id: 1
+    start_date: '2019-11-11T16:39:38-03:00'
+    end_date: '2019-11-11T16:39:38-03:00'
+    name: 'Home'
+    channel_id: 1
+- model: projects.VolunteerRole
+  pk: 1
+  fields:
+    project_id: 1
+    name: Role 1
+    details: Lorem ipsum dolor iset
+    prerequisites: Lorem ipsum dolor iset
+    vacancies: 10
+    channel_id: 1
+- model: projects.VolunteerRole
+  pk: 2
+  fields:
+    project_id: 1
+    name: Role 2
+    details: Lorem ipsum dolor iset
+    prerequisites: Lorem ipsum dolor iset
+    vacancies: 5
+    channel_id: 1
+- model: projects.VolunteerRole
+  pk: 3
+  fields:
+    project_id: 2
+    name: Role 1
+    details: Lorem ipsum dolor iset
+    prerequisites: Lorem ipsum dolor iset
+    vacancies: 10
+    channel_id: 1
