@@ -8,15 +8,32 @@ from ovp.apps.organizations.models import Organization
 from .skill import SkillSerializer
 from .cause import FullCauseSerializer
 
-class StartupData():
-  def __init__(self, request):
-    self.skills = CFM.filter_queryset(request.channel, Skill.objects.all(), distinct=True)
-    self.causes = CFM.filter_queryset(request.channel, Cause.objects.all(), distinct=True)
-    self.volunteer_count = User.objects.filter(channel__slug=request.channel).count()
-    self.nonprofit_count = CFM.filter_queryset(request.channel, Organization.objects.filter(published=True), distinct=True).count()
+
+class StartupData(object):
+
+    def __init__(self, request):
+        self.skills = CFM.filter_queryset(
+            request.channel,
+            Skill.objects.all(),
+            distinct=True
+        )
+        self.causes = CFM.filter_queryset(
+            request.channel,
+            Cause.objects.all(),
+            distinct=True
+        )
+        self.volunteer_count = User.objects.filter(
+            channel__slug=request.channel
+        ).count()
+        self.nonprofit_count = CFM.filter_queryset(
+            request.channel,
+            Organization.objects.filter(published=True),
+            distinct=True
+        ).count()
+
 
 class StartupSerializer(Serializer):
-  skills = SkillSerializer(many=True, required=False)
-  causes = FullCauseSerializer(many=True, required=False)
-  volunteer_count = IntegerField(required=False)
-  nonprofit_count = IntegerField(required=False)
+    skills = SkillSerializer(many=True, required=False)
+    causes = FullCauseSerializer(many=True, required=False)
+    volunteer_count = IntegerField(required=False)
+    nonprofit_count = IntegerField(required=False)

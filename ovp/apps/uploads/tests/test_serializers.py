@@ -15,45 +15,60 @@ from tempfile import NamedTemporaryFile
 
 
 class UploadedImageSerializerTestCase(TestCase):
-  def test_image_urls(self):
-    """Assert that image object returns url"""
-    user = get_user_model().objects.create_user('test_image_urls@test.com', 'validpassword', object_channel="default")
 
-    client = APIClient()
-    client.force_authenticate(user=user)
+    def test_image_urls(self):
+        """
+        Assert that image object returns url
+        """
+        user = get_user_model().objects.create_user(
+            'test_image_urls@test.com',
+            'validpassword',
+            object_channel="default"
+        )
 
-    image = Image.new('RGB', (100, 100))
-    tmp_file = NamedTemporaryFile(suffix=".jpg")
-    image.save(tmp_file, format="JPEG")
-    tmp_file.seek(0) # otherwise we start reading at the end
+        client = APIClient()
+        client.force_authenticate(user=user)
 
-    data = {
-      'image': tmp_file
-    }
+        image = Image.new('RGB', (100, 100))
+        tmp_file = NamedTemporaryFile(suffix=".jpg")
+        image.save(tmp_file, format="JPEG")
+        tmp_file.seek(0)  # otherwise we start reading at the end
 
-    response = client.post(reverse('upload-images-list'), data, format="multipart")
+        data = {
+            'image': tmp_file
+        }
 
-    self.assertTrue(response.status_code == 201)
+        response = client.post(
+            reverse('upload-images-list'),
+            data,
+            format="multipart"
+        )
 
-    img_id = response.data['id']
-    img = UploadedImage.objects.get(pk=img_id)
+        self.assertTrue(response.status_code == 201)
 
-    factory = APIRequestFactory()
-    request = factory.post('/')
-    serializer = UploadedImageSerializer(instance=img, context={'request': request})
+        img_id = response.data['id']
+        img = UploadedImage.objects.get(pk=img_id)
 
-    media_path = getattr(settings, "MEDIA_URL")
-    if media_path == "":
-      media_path = "/"
+        factory = APIRequestFactory()
+        request = factory.post('/')
+        serializer = UploadedImageSerializer(
+            instance=img,
+            context={'request': request}
+        )
 
-    test_url = 'http://testserver{media_path}user-uploaded/images'.format(media_path=media_path)
+        media_path = getattr(settings, "MEDIA_URL")
+        if media_path == "":
+            media_path = "/"
 
-    self.assertTrue(test_url in serializer.get_image_url(img))
-    self.assertTrue(test_url in serializer.get_image_small_url(img))
-    self.assertTrue(test_url in serializer.get_image_medium_url(img))
-    self.assertTrue(test_url in serializer.get_image_large_url(img))
+        endpoint = 'http://testserver{media_path}user-uploaded/images'
+        test_url = endpoint.format(media_path=media_path)
 
-    self.assertTrue(img.uuid in serializer.get_image_url(img))
-    self.assertTrue(img.uuid in serializer.get_image_small_url(img))
-    self.assertTrue(img.uuid in serializer.get_image_medium_url(img))
-    self.assertTrue(img.uuid in serializer.get_image_large_url(img))
+        self.assertTrue(test_url in serializer.get_image_url(img))
+        self.assertTrue(test_url in serializer.get_image_small_url(img))
+        self.assertTrue(test_url in serializer.get_image_medium_url(img))
+        self.assertTrue(test_url in serializer.get_image_large_url(img))
+
+        self.assertTrue(img.uuid in serializer.get_image_url(img))
+        self.assertTrue(img.uuid in serializer.get_image_small_url(img))
+        self.assertTrue(img.uuid in serializer.get_image_medium_url(img))
+        self.assertTrue(img.uuid in serializer.get_image_large_url(img))
