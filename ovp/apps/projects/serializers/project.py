@@ -125,6 +125,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     causes = CauseAssociationSerializer(many=True, required=False)
     skills = SkillAssociationSerializer(many=True, required=False)
     categories = CategoryAssociationSerializer(many=True, required=False)
+    documents = UploadedDocumentAssociationSerializer(many=True, required=False)
     galleries = GalleryAssociationSerializer(many=True, required=False)
     image = UploadedImageSerializer(read_only=True)
     image_id = serializers.IntegerField(required=False)
@@ -217,7 +218,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
                 context=self.context
             )
             role_sr.is_valid(raise_exception=True)
-            role = role_sr.create(role_data)
+            role = role_sr.create(role_sr.validated_data)
             project.roles.add(role)
 
         # Disponibility

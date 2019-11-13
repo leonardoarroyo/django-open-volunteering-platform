@@ -55,7 +55,6 @@ class ApplyAndUnapplyTestCase(TestCase):
             data={"message": "test"},
             format="json"
         )
-        self.assertTrue(response.data["detail"] == "Successfully applied.")
         self.assertTrue(response.status_code == 200)
         self.assertTrue(Apply.objects.last().message == "test")
 
@@ -108,7 +107,6 @@ class ApplyAndUnapplyTestCase(TestCase):
             reverse("project-applies-apply", ["test-project"]),
             format="json"
         )
-        self.assertTrue(response.data["detail"] == "Successfully applied.")
         self.assertTrue(response.status_code == 200)
 
         project = Project.objects.get(slug="test-project")
@@ -135,7 +133,6 @@ class ApplyAndUnapplyTestCase(TestCase):
             reverse("project-applies-apply", ["test-project"]),
             format="json"
         )
-        self.assertTrue(response.data["detail"] == "Successfully applied.")
         self.assertTrue(response.status_code == 200)
 
         project = Project.objects.get(slug="test-project")
@@ -274,7 +271,6 @@ class ApplyAndUnapplyTestCase(TestCase):
             {"email": "testemail@test.com"},
             format="json"
         )
-        self.assertTrue(response.data["detail"] == "Successfully applied.")
         self.assertTrue(response.status_code == 200)
 
 
@@ -307,7 +303,6 @@ class ProjectAppliesRetrievingTestCase(TestCase):
             reverse("project-applies-apply", ["test-project"]),
             format="json"
         )
-        self.assertTrue(response.data["detail"] == "Successfully applied.")
         self.assertTrue(response.status_code == 200)
 
     def _assert_apply_response_data(self, response):
@@ -422,7 +417,6 @@ class ProjectApplyStatusUpdateTestCase(TestCase):
             reverse("project-applies-apply", ["test-project"]),
             format="json"
         )
-        self.assertTrue(response.data["detail"] == "Successfully applied.")
         self.assertTrue(response.status_code == 200)
 
         # Get apply

@@ -892,8 +892,8 @@ class ManageableProjectsRouteTestCase(TestCase):
         self.assertTrue(len(response.data["results"]) == 3)
 
     def test_number_of_queries(self):
-        """Test project manageable does only 30 queries"""
-        with self.assertNumQueries(30):
+        """Test project manageable does only 36 queries"""
+        with self.assertNumQueries(36):
             response = self.client.get(
                 reverse("project-manageable"),
                 {},
@@ -1035,8 +1035,8 @@ class ProjectResourceUpdateTestCase(TestCase):
         # Don't erase associations with other channel objects
         self.assertTrue(len(response.data["causes"]) == 2)
         self.assertTrue(len(response.data["skills"]) == 4)
-        self.assertEqual(response.data["causes"][-1]["name"], "other-channel")
-        self.assertEqual(response.data["skills"][-1]["name"], "other-channel")
+        self.assertEqual(response.data["causes"][0]["name"], "other-channel")
+        self.assertEqual(response.data["skills"][0]["name"], "other-channel")
         self.assertTrue(len(response.data["galleries"]) == 1)
         self.assertTrue(len(response.data["documents"]) == 1)
         self.assertTrue(len(response.data["categories"]) == 1)
@@ -1146,16 +1146,6 @@ class ProjectResourceUpdateTestCase(TestCase):
 
     def test_update_roles(self):
         """Test patch request update roles resource"""
-        expected_response = [
-            {
-                "name": "test",
-                "prerequisites": "test2",
-                "details": "test3",
-                "vacancies": 5,
-                "applied_count": 0,
-                "id": 1
-            }
-        ]
         updated_project = {
             "roles": [
                 {
@@ -1176,7 +1166,11 @@ class ProjectResourceUpdateTestCase(TestCase):
         )
 
         self.assertTrue(response.status_code == 200)
-        self.assertTrue(response.data["roles"] == expected_response)
+        self.assertTrue(response.data["roles"][0]["name"] == updated_project["roles"][0]["name"])
+        self.assertTrue(response.data["roles"][0]["prerequisites"] == updated_project["roles"][0]["prerequisites"])
+        self.assertTrue(response.data["roles"][0]["details"] == updated_project["roles"][0]["details"])
+        self.assertTrue(response.data["roles"][0]["vacancies"] == updated_project["roles"][0]["vacancies"])
+        self.assertTrue(response.data["roles"][0]["applied_count"] == 0)
 
 
 class DisponibilityTestCase(TestCase):

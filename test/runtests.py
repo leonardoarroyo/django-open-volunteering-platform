@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 from django.conf import settings
 from django.core.management import execute_from_command_line
 
-
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, (os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))))
 
@@ -96,14 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-    },
+    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
 }
 
 gettext = lambda s: s

@@ -38,35 +38,6 @@ class ProjectModelTestCase(TestCase):
         self.assertTrue(project.get_phone() == phone)
         self.assertTrue(project.get_email() == email)
 
-    def test_project_delete(self):
-        """
-        Assert project delete method modifies .deleted and .published columns
-        """
-        user = User.objects.create_user(
-            email="test_deleted@deleted.com",
-            password="test_deleted",
-            object_channel="default"
-        )
-        project = Project.objects.create(
-            name="test project",
-            slug="test deleted",
-            details="abc",
-            description="abc",
-            owner=user,
-            published=True,
-            object_channel="default"
-        )
-
-        self.assertTrue(project.deleted is False)
-        self.assertTrue(project.published is True)
-        self.assertTrue(project.deleted_date is None)
-
-        project.delete()
-
-        self.assertTrue(project.deleted is True)
-        self.assertTrue(project.published is False)
-        self.assertTrue(project.deleted_date)
-
     def test_project_publish(self):
         """ Assert publishing a project updates .published_date """
         user = User.objects.create_user(

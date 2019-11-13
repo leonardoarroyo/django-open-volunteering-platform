@@ -100,7 +100,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
             serializers.ApplyRetrieveSerializer(
                 obj,
                 context=self.get_serializer_context()
-            ),
+            ).data,
             status=status.HTTP_200_OK
         )
 
