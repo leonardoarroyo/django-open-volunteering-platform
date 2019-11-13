@@ -9,3 +9,4 @@ mock
 sphinx
 sphinx_rtd_theme
 drf-yasg==1.11.0
+dj-database-url
