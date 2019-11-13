@@ -185,10 +185,11 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
   flairs = FlairSerializer(many=True)
   bookmarked_projects = BookmarkUserRetrieveSerializer(many=True, source="projectbookmark_set")
   volunteer_hours = serializers.SerializerMethodField()
+  donated_to_organizations = OrganizationSearchSerializer(many=True)
 
   class Meta:
     model = models.User
-    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects', 'volunteer_hours', 'rating', 'flairs']
+    fields = ['name', 'avatar', 'profile', 'slug', 'applies', 'bookmarked_projects', 'volunteer_hours', 'rating', 'flairs', 'donated_to_organizations']
 
   def get_volunteer_hours(self, obj):
     volunteer_hours = timezone.timedelta(hours=0)
@@ -214,7 +215,6 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
 
     resp = (volunteer_hours.days * 24) + (volunteer_hours.seconds // 3600)
     return resp
-
 
   def to_representation(self, *args, **kwargs):
     ret = super(LongUserPublicRetrieveSerializer, self).to_representation(*args, **kwargs)

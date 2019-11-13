@@ -43,7 +43,7 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'instagram_user', 'address', 'details', 'description', 'type', 'image', 'image_id', 'cover', 'cover_id', 'hidden_address', 'causes', 'contact_name', 'contact_email', 'contact_phone', 'benefited_people', 'galleries']
+    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'instagram_user', 'address', 'details', 'description', 'type', 'image', 'image_id', 'cover', 'cover_id', 'hidden_address', 'causes', 'contact_name', 'contact_email', 'contact_phone', 'benefited_people', 'galleries', 'allow_donations']
 
   def create(self, validated_data):
     causes = validated_data.pop('causes', [])
@@ -121,6 +121,9 @@ class MemberRetrieveSerializer(ChannelRelationshipSerializer):
     model = User
     fields = ['uuid', 'name', 'avatar', 'slug']
 
+class DonatorRetrieveSerializer(MemberRetrieveSerializer):
+    pass
+
 class OrganizationSearchSerializer(ChannelRelationshipSerializer):
   address = address_serializers[1]()
   image = UploadedImageSerializer()
@@ -142,11 +145,12 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
   galleries = GalleryRetrieveSerializer(many=True)
   is_bookmarked = serializers.SerializerMethodField()
   projects_count = serializers.SerializerMethodField()
+  donators = DonatorRetrieveSerializer(many=True)
   channel = ChannelRetrieveSerializer()
 
   class Meta:
     model = models.Organization
-    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'instagram_user', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'galleries', 'flairs', 'members', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count', 'rating', 'benefited_people', 'channel']
+    fields = ['id', 'slug', 'owner', 'document', 'name', 'website', 'facebook_page', 'instagram_user', 'address', 'details', 'description', 'type', 'image', 'cover', 'published', 'hidden_address', 'causes', 'galleries', 'flairs', 'members', 'contact_name', 'contact_phone', 'contact_email', 'is_bookmarked', 'verified', 'projects_count', 'rating', 'benefited_people', 'channel', 'allow_donations', 'donators']
 
   def get_is_bookmarked(self, instance):
     user = self.context['request'].user
