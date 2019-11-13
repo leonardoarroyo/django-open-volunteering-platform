@@ -166,6 +166,12 @@ class User(ChannelRelationship, AbstractBaseUser, PermissionsMixin, RatedModelMi
     qs = self.organizations_member.filter(deleted=False) | Organization.objects.filter(deleted=False, owner=self)
     return qs.distinct('pk')
 
+  def donated_to_organizations(self):
+    Organization = apps.get_model('organizations', 'Organization')
+    org_pks = set(self.transaction_set.filter(status='succeeded', anonymous=False).values_list('organization', flat=True))
+    qs = Organization.objects.filter(id__in=org_pks)
+    return qs.distinct('pk')
+
   @staticmethod
   def autocomplete_search_fields():
     return 'name',

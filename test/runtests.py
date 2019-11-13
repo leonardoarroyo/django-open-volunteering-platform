@@ -6,30 +6,34 @@ import django
 import threading
 import dj_database_url
 
+from dotenv import load_dotenv
+
 from django.conf import settings
 from django.core.management import execute_from_command_line
-
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, (os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))))
 
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
 # Unfortunately, apps can not be installed via ``modify_settings``
 # decorator, because it would miss the database setup.
 CUSTOM_INSTALLED_APPS = (
-    "ovp.apps.core",
-    "ovp.apps.admin",
-    "ovp.apps.uploads",
-    "ovp.apps.users",
-    "ovp.apps.projects",
-    "ovp.apps.organizations",
-    "ovp.apps.faq",
-    "ovp.apps.search",
-    "ovp.apps.channels",
-    "ovp.apps.catalogue",
-    "ovp.apps.items",
-    "ovp.apps.ratings",
-    "ovp.apps.gallery",
-    "ovp.apps.digest",
+    'ovp.apps.core',
+    'ovp.apps.admin',
+    'ovp.apps.uploads',
+    'ovp.apps.users',
+    'ovp.apps.projects',
+    'ovp.apps.organizations',
+    'ovp.apps.faq',
+    'ovp.apps.search',
+    'ovp.apps.channels',
+    'ovp.apps.catalogue',
+    'ovp.apps.items',
+    'ovp.apps.ratings',
+    'ovp.apps.gallery',
+    'ovp.apps.digest',
+    'ovp.apps.donations',
     'django.contrib.admin',
     'jet',
     'jet.dashboard',
@@ -92,7 +96,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 DATABASES = {
-  'default': dj_database_url.parse(os.environ['DATABASE_URL'])
+    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
 }
 
 gettext = lambda s: s
@@ -155,7 +159,11 @@ settings.configure(
     HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor',
     SILENCED_SYSTEM_CHECKS=["auth.E003", "auth.W004"],
     AUTHENTICATION_BACKENDS = ['ovp.apps.users.auth.oauth2.backends.facebook.FacebookOAuth2', 'ovp.apps.users.auth.oauth2.backends.google.GoogleOAuth2', 'rest_framework_social_oauth2.backends.DjangoOAuth2', 'ovp.apps.users.auth.backends.ChannelBasedAuthentication'],
-    TEST_CHANNELS=["test-channel", "channel1"]
+    TEST_CHANNELS=["test-channel", "channel1"],
+    ZOOP_MARKETPLACE_ID=os.environ.get('ZOOP_MARKETPLACE_ID', None),
+    ZOOP_PUB_KEY=os.environ.get('ZOOP_PUB_KEY', None),
+    ZOOP_SELLER_ID=os.environ.get('ZOOP_SELLER_ID', None),
+    ZOOP_STATEMENT_DESCRIPTOR='Test OVP donation'
 )
 
 django.setup()
