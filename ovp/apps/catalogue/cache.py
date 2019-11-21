@@ -92,8 +92,8 @@ def fetch_user_relevance_catalogue(catalogue, queryset, request, context=None, s
         "amount": 4,
     }
 
-    queryset = filters.UserSkillsCausesFilter()
-    queryset = queryset.annotate_queryset(queryset, request.user)
+    user_filter = filters.UserSkillsCausesFilter()
+    queryset = user_filter.annotate_queryset(queryset, request.user)
     queryset = queryset.order_by("-relevance")[:4]
 
     if serializer:
