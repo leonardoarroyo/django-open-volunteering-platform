@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'rest_framework_social_oauth2',
 ] + get_core_apps()
 
-AUTH_USER_MODEL='users.User'
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -140,33 +140,36 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework_csv.renderers.CSVRenderer',
-    )
-}
+    )}
 
 # Email
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/email-messages'
 
-EMAIL_HOST=os.environ.get('EMAIL_HOST', None)
-EMAIL_PORT=os.environ.get('EMAIL_PORT', 465)
-EMAIL_HOST_USER=os.environ.get('EMAIL_HOST_USER', None)
-EMAIL_HOST_PASSWORD=os.environ.get('EMAIL_HOST_PASSWORD', None)
-DEFAULT_FROM_EMAIL="{} <{}>".format(os.environ.get('EMAIL_FROM_NAME', 'default'), EMAIL_HOST_USER)
+EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
+EMAIL_PORT = os.environ.get('EMAIL_PORT', 465)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
+DEFAULT_FROM_EMAIL = "{} <{}>".format(
+    os.environ.get(
+        'EMAIL_FROM_NAME',
+        'default'),
+    EMAIL_HOST_USER)
 
-SSL=os.environ.get('EMAIL_USE_SSL', False)
+SSL = os.environ.get('EMAIL_USE_SSL', False)
 if SSL:
-  EMAIL_USE_SSL=True
+    EMAIL_USE_SSL = True
 
 # Haystack
 
-HAYSTACK_CONNECTIONS={
-'default': {
-  'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-  'PATH': os.path.join('/tmp', 'whoosh_index'),
-  },
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join('/tmp', 'whoosh_index'),
+    },
 }
-HAYSTACK_SIGNAL_PROCESSOR='ovp.apps.search.signals.TiedModelRealtimeSignalProcessor'
+HAYSTACK_SIGNAL_PROCESSOR = 'ovp.apps.search.signals.TiedModelRealtimeSignalProcessor'
 
 # System checks
 

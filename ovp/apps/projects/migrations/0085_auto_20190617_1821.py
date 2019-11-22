@@ -16,20 +16,33 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='canceled_date',
-            field=models.DateTimeField(blank=True, null=True, verbose_name='Canceled date'),
+            field=models.DateTimeField(
+                blank=True,
+                null=True,
+                verbose_name='Canceled date'),
         ),
         migrations.AlterField(
             model_name='project',
             name='organization',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='organizations.Organization', verbose_name='organization'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='organizations.Organization',
+                verbose_name='organization'),
         ),
         migrations.AlterField(
             model_name='project',
             name='slug',
-            field=models.SlugField(blank=True, max_length=100, null=True, unique=True),
+            field=models.SlugField(
+                blank=True,
+                max_length=100,
+                null=True,
+                unique=True),
         ),
         migrations.AlterUniqueTogether(
             name='project',
-            unique_together=set([]),
+            unique_together=set(
+                []),
         ),
     ]

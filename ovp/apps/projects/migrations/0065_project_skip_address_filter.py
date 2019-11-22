@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='skip_address_filter',
-            field=models.BooleanField(default=False, verbose_name='Skip address filter'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Skip address filter'),
         ),
     ]

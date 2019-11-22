@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='section',
-            options={'verbose_name': 'section', 'verbose_name_plural': 'sections'},
+            options={
+                'verbose_name': 'section',
+                'verbose_name_plural': 'sections'},
         ),
     ]

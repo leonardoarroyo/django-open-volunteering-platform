@@ -15,12 +15,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='catalogue',
             name='slug',
-            field=models.SlugField(default='', max_length=100, verbose_name='Slug'),
+            field=models.SlugField(
+                default='',
+                max_length=100,
+                verbose_name='Slug'),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name='section',
             name='slug',
-            field=models.SlugField(max_length=100, verbose_name='Slug'),
+            field=models.SlugField(
+                max_length=100,
+                verbose_name='Slug'),
         ),
     ]

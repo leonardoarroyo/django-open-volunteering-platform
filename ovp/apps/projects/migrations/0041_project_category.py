@@ -16,6 +16,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='category',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='projects.Category', verbose_name='category'),
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='projects.Category',
+                verbose_name='category'),
         ),
     ]

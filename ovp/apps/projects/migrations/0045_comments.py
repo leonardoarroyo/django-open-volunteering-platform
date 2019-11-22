@@ -18,12 +18,33 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Comments',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('content', models.TextField(max_length=3000, verbose_name='content')),
-                ('reply_to', models.IntegerField(default=0)),
-                ('created_date', models.DateTimeField(auto_now_add=True, verbose_name='Created date')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='projects.Project', verbose_name='project')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='user')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('content',
+                 models.TextField(
+                     max_length=3000,
+                     verbose_name='content')),
+                ('reply_to',
+                 models.IntegerField(
+                     default=0)),
+                ('created_date',
+                 models.DateTimeField(
+                     auto_now_add=True,
+                     verbose_name='Created date')),
+                ('project',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to='projects.Project',
+                     verbose_name='project')),
+                ('user',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to=settings.AUTH_USER_MODEL,
+                     verbose_name='user')),
             ],
         ),
     ]

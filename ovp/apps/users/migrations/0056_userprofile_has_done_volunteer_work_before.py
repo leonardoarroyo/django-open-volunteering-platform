@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userprofile',
             name='has_done_volunteer_work_before',
-            field=models.NullBooleanField(default=None, verbose_name='Has done volunteer work before'),
+            field=models.NullBooleanField(
+                default=None,
+                verbose_name='Has done volunteer work before'),
         ),
     ]

@@ -24,10 +24,11 @@ SECTION_TYPES = (
     ('organizations', _("Organizations")),
 )
 
+
 class Section(ChannelRelationship):
     catalogue = models.ForeignKey(
-      "catalogue.Catalogue",
-      related_name="sections"
+        "catalogue.Catalogue",
+        related_name="sections"
     )
     name = models.CharField(_("Name"), max_length=100)
     slug = models.SlugField(_("Slug"), max_length=100)
@@ -39,7 +40,8 @@ class Section(ChannelRelationship):
         default='projects'
     )
     order = models.IntegerField(_("Order"), default=0)
-    skip_address_filter = models.BooleanField(_("Skip addres filter"), default=False)
+    skip_address_filter = models.BooleanField(
+        _("Skip addres filter"), default=False)
 
     def __str__(self):
         return self.name

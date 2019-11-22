@@ -10,21 +10,23 @@ def foward_func(apps, schema_editor):
     Skill = apps.get_model('core', 'Skill')
     Cause = apps.get_model('core', 'Cause')
     for skill in Skill.objects.all():
-      skill.slug = generate_slug(Skill, skill.name, skill.channel.slug)
-      skill.save()
+        skill.slug = generate_slug(Skill, skill.name, skill.channel.slug)
+        skill.save()
     for cause in Cause.objects.all():
-      cause.slug = generate_slug(Cause, cause.name, cause.channel.slug)
-      cause.save()
+        cause.slug = generate_slug(Cause, cause.name, cause.channel.slug)
+        cause.save()
     return True
+
 
 def rewind_func(apps, schema_editor):
     Skill = apps.get_model('core', 'Skill')
     Cause = apps.get_model('core', 'Cause')
     for skill in Skill.objects.all():
-      skill.slug = None
+        skill.slug = None
     for cause in Cause.objects.all():
-      cause.slug = None
+        cause.slug = None
     return True
+
 
 class Migration(migrations.Migration):
 

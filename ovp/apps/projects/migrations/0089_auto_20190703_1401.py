@@ -15,16 +15,25 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='documents',
-            field=models.ManyToManyField(blank=True, to='uploads.UploadedDocument', verbose_name='documents'),
+            field=models.ManyToManyField(
+                blank=True,
+                to='uploads.UploadedDocument',
+                verbose_name='documents'),
         ),
         migrations.AlterField(
             model_name='project',
             name='galleries',
-            field=models.ManyToManyField(blank=True, to='gallery.Gallery', verbose_name='galleries'),
+            field=models.ManyToManyField(
+                blank=True,
+                to='gallery.Gallery',
+                verbose_name='galleries'),
         ),
         migrations.AlterField(
             model_name='project',
             name='posts',
-            field=models.ManyToManyField(blank=True, to='core.Post', verbose_name='posts'),
+            field=models.ManyToManyField(
+                blank=True,
+                to='core.Post',
+                verbose_name='posts'),
         ),
     ]

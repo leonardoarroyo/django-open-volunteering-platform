@@ -16,6 +16,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='galleries',
-            field=models.ManyToManyField(blank=True, related_name='galleries', to='gallery.Gallery', verbose_name='galleries'),
+            field=models.ManyToManyField(
+                blank=True,
+                related_name='galleries',
+                to='gallery.Gallery',
+                verbose_name='galleries'),
         ),
     ]

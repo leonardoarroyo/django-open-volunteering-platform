@@ -16,11 +16,22 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ratinganswer',
             name='rating',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='answers', to='ratings.Rating'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='answers',
+                to='ratings.Rating'),
         ),
         migrations.AlterField(
             model_name='ratingparameter',
             name='type',
-            field=models.IntegerField(choices=[(1, 'Qualitative'), (2, 'Quantitative'), (3, 'Boolean')], verbose_name='Parameter type'),
+            field=models.IntegerField(
+                choices=[
+                    (1,
+                     'Qualitative'),
+                    (2,
+                     'Quantitative'),
+                    (3,
+                     'Boolean')],
+                verbose_name='Parameter type'),
         ),
     ]

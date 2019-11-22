@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='locale',
-            field=models.CharField(blank=True, default='en', max_length=8, verbose_name='Locale'),
+            field=models.CharField(
+                blank=True,
+                default='en',
+                max_length=8,
+                verbose_name='Locale'),
         ),
     ]

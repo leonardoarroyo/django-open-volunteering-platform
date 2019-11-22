@@ -16,6 +16,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='faq',
             name='category',
-            field=models.ForeignKey(blank=True, default=0, on_delete=django.db.models.deletion.CASCADE, to='faq.Category', verbose_name='Categoria'),
+            field=models.ForeignKey(
+                blank=True,
+                default=0,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='faq.Category',
+                verbose_name='Categoria'),
         ),
     ]

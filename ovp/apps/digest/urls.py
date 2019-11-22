@@ -6,5 +6,5 @@ router = routers.SimpleRouter()
 router.register(r'digest', views.DigestViewSet, 'digest')
 
 urlpatterns = [
-  url(r'^', include(router.urls)),
+    url(r'^', include(router.urls)),
 ]

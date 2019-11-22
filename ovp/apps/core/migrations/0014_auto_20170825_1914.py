@@ -17,19 +17,31 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='cause',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='cause_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='cause_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='lead',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='lead_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='lead_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='skill',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='skill_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='skill_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
     ]

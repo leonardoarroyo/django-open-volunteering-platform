@@ -16,6 +16,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='channels',
-            field=models.ManyToManyField(related_name='channels', to='channels.Channel'),
+            field=models.ManyToManyField(
+                related_name='channels',
+                to='channels.Channel'),
         ),
     ]

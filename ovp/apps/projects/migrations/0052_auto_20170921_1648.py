@@ -20,15 +20,32 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ProjectBookmark',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('channel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='projectbookmark_channel', to='channels.Channel')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='projects.Project')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('channel',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='projectbookmark_channel',
+                     to='channels.Channel')),
+                ('project',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to='projects.Project')),
+                ('user',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'abstract': False,
             },
-            bases=(ovp.apps.channels.models.mixins.ChannelCreatorMixin, models.Model),
+            bases=(
+                ovp.apps.channels.models.mixins.ChannelCreatorMixin,
+                models.Model),
         ),
         migrations.RemoveField(
             model_name='favoriteproject',

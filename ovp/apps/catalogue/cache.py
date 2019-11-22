@@ -23,18 +23,26 @@ def get_project_keys(address, closed, channel, skip_address_filter=False):
     queryset = SearchQuerySet().models(Project)
     queryset = filters.by_published(queryset, 'true')
     queryset = filters.by_closed(queryset, closed)
-    queryset = filters.by_address(queryset, address, project=False) if not skip_address_filter else queryset
+    queryset = filters.by_address(
+        queryset,
+        address,
+        project=False) if not skip_address_filter else queryset
     queryset = filters.by_channel_content_flow(queryset, channel)
 
     return [q.pk for q in queryset]
+
 
 def get_organization_keys(address, channel, skip_address_filter=False):
     queryset = SearchQuerySet().models(Organization)
     queryset = filters.by_published(queryset, 'true')
-    queryset = filters.by_address(queryset, address, project=False) if not skip_address_filter else queryset
+    queryset = filters.by_address(
+        queryset,
+        address,
+        project=False) if not skip_address_filter else queryset
     queryset = filters.by_channel_content_flow(queryset, channel)
 
     return [q.pk for q in queryset]
+
 
 def get_catalogue(channel, slug, request):
     """
@@ -85,7 +93,13 @@ def get_catalogue(channel, slug, request):
 
     return result
 
-def fetch_user_relevance_catalogue(catalogue, queryset, request, context=None, serializer=None):
+
+def fetch_user_relevance_catalogue(
+        catalogue,
+        queryset,
+        request,
+        context=None,
+        serializer=None):
     section_dict = {
         "name": "Recomendado para você",
         "slug": "recomendado-para-voce",
@@ -110,6 +124,7 @@ def fetch_user_relevance_catalogue(catalogue, queryset, request, context=None, s
 
     return catalogue
 
+
 def fetch_catalogue(catalogue_dict, serializer=False, request=None,
                     context=None, channel='default', slug=None):
     """
@@ -125,13 +140,17 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None,
     if catalogue_dict["fetched"] and not request.user.is_authenticated():
         return catalogue_dict
 
-    params  = request.GET
+    params = request.GET
     address = params.get('address', None)
     closed = params.get('closed', 'false')
 
-    project_keys = get_project_keys(address, closed, channel, skip_address_filter=False)
-    organization_keys = get_organization_keys(address, channel, skip_address_filter=False)
-    project_base_queryset = get_project_queryset(request=request).filter(pk__in=project_keys).order_by("-created_date")
+    project_keys = get_project_keys(
+        address, closed, channel, skip_address_filter=False)
+    organization_keys = get_organization_keys(
+        address, channel, skip_address_filter=False)
+    project_base_queryset = get_project_queryset(
+        request=request).filter(
+        pk__in=project_keys).order_by("-created_date")
 
     if catalogue_dict["fetched"] and request.user.is_authenticated():
         catalogue_dict = fetch_user_relevance_catalogue(
@@ -145,11 +164,15 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None,
 
     for i, section in enumerate(catalogue_dict["sections"]):
         if catalogue_dict["sections"][i]["type"] == "organizations":
-            organization_keys = get_organization_keys(address, channel, skip_address_filter=section["skip_address_filter"])
-            qs = get_organization_queryset(request=request).filter(pk__in=organization_keys).order_by("-created_date")
+            organization_keys = get_organization_keys(
+                address, channel, skip_address_filter=section["skip_address_filter"])
+            qs = get_organization_queryset(request=request).filter(
+                pk__in=organization_keys).order_by("-created_date")
         else:
-            project_keys = get_project_keys(address, closed, channel, skip_address_filter=section["skip_address_filter"])
-            qs = get_project_queryset(request=request).filter(pk__in=project_keys).order_by("-created_date")
+            project_keys = get_project_keys(
+                address, closed, channel, skip_address_filter=section["skip_address_filter"])
+            qs = get_project_queryset(request=request).filter(
+                pk__in=project_keys).order_by("-created_date")
 
         # Filter queryset
         for kwargs in section["filters"]:

@@ -15,6 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='document',
-            field=models.CharField(blank=True, default=None, max_length=18, null=True, verbose_name='document'),
+            field=models.CharField(
+                blank=True,
+                default=None,
+                max_length=18,
+                null=True,
+                verbose_name='document'),
         ),
     ]

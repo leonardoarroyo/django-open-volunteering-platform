@@ -17,18 +17,26 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='ratingrequest',
             name='initiator_id',
-            field=models.PositiveIntegerField(default=None),
+            field=models.PositiveIntegerField(
+                default=None),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='ratingrequest',
             name='initiator_type',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='rating_requests_as_initiator', to='contenttypes.ContentType'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='rating_requests_as_initiator',
+                to='contenttypes.ContentType'),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name='ratingrequest',
             name='content_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rating_requests_as_rated', to='contenttypes.ContentType'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='rating_requests_as_rated',
+                to='contenttypes.ContentType'),
         ),
     ]

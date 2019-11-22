@@ -6,6 +6,7 @@ from django.db import migrations
 
 # This migration is deprecated and is now executed as a signal
 
+
 class Migration(migrations.Migration):
 
     dependencies = [

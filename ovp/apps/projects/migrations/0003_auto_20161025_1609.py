@@ -17,27 +17,40 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='causes',
-            field=models.ManyToManyField(to='core.Cause'),
+            field=models.ManyToManyField(
+                to='core.Cause'),
         ),
         migrations.AddField(
             model_name='project',
             name='description',
-            field=models.TextField(blank=True, max_length=160, null=True, verbose_name='Short description'),
+            field=models.TextField(
+                blank=True,
+                max_length=160,
+                null=True,
+                verbose_name='Short description'),
         ),
         migrations.AddField(
             model_name='project',
             name='details',
-            field=models.TextField(default='', max_length=3000, verbose_name='Details'),
+            field=models.TextField(
+                default='',
+                max_length=3000,
+                verbose_name='Details'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='project',
             name='googleaddress',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.GoogleAddress'),
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='core.GoogleAddress'),
         ),
         migrations.AddField(
             model_name='project',
             name='skills',
-            field=models.ManyToManyField(to='core.Skill'),
+            field=models.ManyToManyField(
+                to='core.Skill'),
         ),
     ]

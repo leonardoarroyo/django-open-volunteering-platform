@@ -16,11 +16,18 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='benefited_people',
-            field=models.IntegerField(default=0),
+            field=models.IntegerField(
+                default=0),
         ),
         migrations.AlterField(
             model_name='organization',
             name='address',
-            field=models.OneToOneField(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.GoogleAddress', verbose_name='address'),
+            field=models.OneToOneField(
+                blank=True,
+                db_constraint=False,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='core.GoogleAddress',
+                verbose_name='address'),
         ),
     ]

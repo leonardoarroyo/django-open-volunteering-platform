@@ -17,16 +17,25 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='faq',
             name='answer',
-            field=redactor.fields.RedactorField(default='', max_length=3000, verbose_name='Resposta'),
+            field=redactor.fields.RedactorField(
+                default='',
+                max_length=3000,
+                verbose_name='Resposta'),
         ),
         migrations.AlterField(
             model_name='faq',
             name='category',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='faq.Category', verbose_name='Categoria'),
+            field=models.ForeignKey(
+                default=0,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='faq.Category',
+                verbose_name='Categoria'),
         ),
         migrations.AlterField(
             model_name='faq',
             name='question',
-            field=models.CharField(max_length=100, verbose_name='Pergunta'),
+            field=models.CharField(
+                max_length=100,
+                verbose_name='Pergunta'),
         ),
     ]

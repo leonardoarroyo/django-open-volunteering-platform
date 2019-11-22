@@ -15,11 +15,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='canceled',
-            field=models.BooleanField(default=False, verbose_name='Canceled'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Canceled'),
         ),
         migrations.AddField(
             model_name='project',
             name='canceled_date',
-            field=models.DateTimeField(blank=True, null=True, verbose_name='Closed date'),
+            field=models.DateTimeField(
+                blank=True,
+                null=True,
+                verbose_name='Closed date'),
         ),
     ]

@@ -22,14 +22,47 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UploadedImage',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to=ovp.apps.uploads.models.ImageName(), verbose_name='Image 350x260')),
-                ('image_small', django_resized.forms.ResizedImageField(blank=True, default=None, null=True, upload_to=ovp.apps.uploads.models.ImageName('-small'))),
-                ('image_medium', django_resized.forms.ResizedImageField(blank=True, default=None, null=True, upload_to=ovp.apps.uploads.models.ImageName('-medium'))),
-                ('image_large', django_resized.forms.ResizedImageField(blank=True, default=None, null=True, upload_to=ovp.apps.uploads.models.ImageName('-large'))),
-                ('created_date', models.DateTimeField(auto_now_add=True)),
-                ('modified_date', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('image',
+                 models.ImageField(
+                     upload_to=ovp.apps.uploads.models.ImageName(),
+                     verbose_name='Image 350x260')),
+                ('image_small',
+                 django_resized.forms.ResizedImageField(
+                     blank=True,
+                     default=None,
+                     null=True,
+                     upload_to=ovp.apps.uploads.models.ImageName('-small'))),
+                ('image_medium',
+                 django_resized.forms.ResizedImageField(
+                     blank=True,
+                     default=None,
+                     null=True,
+                     upload_to=ovp.apps.uploads.models.ImageName('-medium'))),
+                ('image_large',
+                 django_resized.forms.ResizedImageField(
+                     blank=True,
+                     default=None,
+                     null=True,
+                     upload_to=ovp.apps.uploads.models.ImageName('-large'))),
+                ('created_date',
+                 models.DateTimeField(
+                     auto_now_add=True)),
+                ('modified_date',
+                 models.DateTimeField(
+                     auto_now=True)),
+                ('user',
+                 models.ForeignKey(
+                     blank=True,
+                     default=None,
+                     null=True,
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'uploaded image',

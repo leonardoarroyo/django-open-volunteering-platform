@@ -193,7 +193,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
             if (int(get_channel_setting(
                     request.channel,
                     "CAN_CREATE_PROJECTS_IN_ANY_ORGANIZATION"
-                    )[0])):
+            )[0])):
                 self.permission_classes = (permissions.IsAuthenticated, )
             else:
                 self.permission_classes = (
@@ -259,7 +259,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
             project_retrieve = ProjectRetrieveOwnsOrIsOrganizationMember()
             if (project_retrieve.has_object_permission(
                     self.request, None, self.get_object()
-                    )):
+            )):
                 return serializers.ProjectManageableRetrieveSerializer
             else:
                 return serializers.ProjectRetrieveSerializer

@@ -16,6 +16,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='details',
-            field=ckeditor.fields.RichTextField(max_length=3000, verbose_name='Details'),
+            field=ckeditor.fields.RichTextField(
+                max_length=3000,
+                verbose_name='Details'),
         ),
     ]

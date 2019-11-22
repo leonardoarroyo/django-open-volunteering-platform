@@ -15,6 +15,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='lead',
             name='type',
-            field=models.CharField(choices=[('company', 'Company'), ('nonprofit', 'Nonprofit')], default='', max_length=10),
+            field=models.CharField(
+                choices=[
+                    ('company',
+                     'Company'),
+                    ('nonprofit',
+                     'Nonprofit')],
+                default='',
+                max_length=10),
         ),
     ]

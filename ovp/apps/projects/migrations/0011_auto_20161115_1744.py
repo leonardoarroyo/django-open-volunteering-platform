@@ -14,23 +14,33 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='availability',
-            options={'verbose_name': 'availability', 'verbose_name_plural': 'availabilities'},
+            options={
+                'verbose_name': 'availability',
+                'verbose_name_plural': 'availabilities'},
         ),
         migrations.AlterModelOptions(
             name='job',
-            options={'verbose_name': 'job', 'verbose_name_plural': 'jobs'},
+            options={
+                'verbose_name': 'job',
+                'verbose_name_plural': 'jobs'},
         ),
         migrations.AlterModelOptions(
             name='jobdate',
-            options={'verbose_name': 'job date', 'verbose_name_plural': 'job dates'},
+            options={
+                'verbose_name': 'job date',
+                'verbose_name_plural': 'job dates'},
         ),
         migrations.AlterModelOptions(
             name='project',
-            options={'verbose_name': 'project', 'verbose_name_plural': 'projects'},
+            options={
+                'verbose_name': 'project',
+                'verbose_name_plural': 'projects'},
         ),
         migrations.AlterModelOptions(
             name='role',
-            options={'verbose_name': 'volunteer role', 'verbose_name_plural': 'volunteer roles'},
+            options={
+                'verbose_name': 'volunteer role',
+                'verbose_name_plural': 'volunteer roles'},
         ),
         migrations.RemoveField(
             model_name='project',

@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='crowdfunding',
-            field=models.BooleanField(default=False, verbose_name='Crowdfunding'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Crowdfunding'),
         ),
     ]

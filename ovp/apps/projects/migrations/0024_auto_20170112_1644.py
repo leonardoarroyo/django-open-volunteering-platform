@@ -15,11 +15,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='apply',
             name='phone',
-            field=models.CharField(blank=True, max_length=30, null=True, verbose_name='phone'),
+            field=models.CharField(
+                blank=True,
+                max_length=30,
+                null=True,
+                verbose_name='phone'),
         ),
         migrations.AddField(
             model_name='apply',
             name='username',
-            field=models.CharField(blank=True, max_length=200, null=True, verbose_name='username'),
+            field=models.CharField(
+                blank=True,
+                max_length=200,
+                null=True,
+                verbose_name='username'),
         ),
     ]

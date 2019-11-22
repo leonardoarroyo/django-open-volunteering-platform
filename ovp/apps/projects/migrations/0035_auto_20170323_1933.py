@@ -15,6 +15,18 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='apply',
             name='status',
-            field=models.CharField(choices=[('applied', 'Applied'), ('unapplied', 'Canceled'), ('confirmed-volunteer', 'Confirmed Volunteer'), ('not-volunteer', 'Not a Volunteer')], default='applied', max_length=30, verbose_name='status'),
+            field=models.CharField(
+                choices=[
+                    ('applied',
+                     'Applied'),
+                    ('unapplied',
+                     'Canceled'),
+                    ('confirmed-volunteer',
+                     'Confirmed Volunteer'),
+                    ('not-volunteer',
+                     'Not a Volunteer')],
+                default='applied',
+                max_length=30,
+                verbose_name='status'),
         ),
     ]

@@ -9,6 +9,7 @@ class ProjectMail(BaseMail):
 
     Context should always include a project instance.
     """
+
     def __init__(self, project, async_mail=None):
         super().__init__(
             project.owner.email,
@@ -40,6 +41,7 @@ class ApplyMail(BaseMail):
     """
     This class is responsible for firing emails for apply related actions
     """
+
     def __init__(self, apply, async_mail=None, locale=None):
         self.apply = apply
         self.async_obj = async_mail
@@ -108,6 +110,7 @@ class ProjectAdminMail(BaseMail):
     """
     This class is responsible for firing emails for Project related actions
     """
+
     def __init__(self, project, async_mail=None):
         email = get_channel_setting(organization.channel.slug, "ADMIN_MAIL")[0]
         super().__init__(

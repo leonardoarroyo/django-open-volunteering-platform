@@ -16,11 +16,25 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='address',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.GoogleAddress', verbose_name='address'),
+            field=models.ForeignKey(
+                blank=True,
+                db_constraint=False,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='core.GoogleAddress',
+                verbose_name='address'),
         ),
         migrations.AlterField(
             model_name='project',
             name='type',
-            field=models.FloatField(choices=[(1, 'Normal'), (2, 'Donation')], default=1, max_length=10, verbose_name='Project Type'),
+            field=models.FloatField(
+                choices=[
+                    (1,
+                     'Normal'),
+                    (2,
+                     'Donation')],
+                default=1,
+                max_length=10,
+                verbose_name='Project Type'),
         ),
     ]

@@ -16,11 +16,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='subscription',
             name='uuid',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+            field=models.UUIDField(
+                default=uuid.uuid4,
+                editable=False,
+                unique=True),
         ),
         migrations.AddField(
             model_name='transaction',
             name='uuid',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+            field=models.UUIDField(
+                default=uuid.uuid4,
+                editable=False,
+                unique=True),
         ),
     ]

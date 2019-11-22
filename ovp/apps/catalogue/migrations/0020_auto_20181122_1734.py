@@ -15,6 +15,14 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='section',
             name='type',
-            field=models.CharField(choices=[('projects', 'Projects'), ('organizations', 'Organizations')], default='projects', max_length=30, verbose_name='Section type'),
+            field=models.CharField(
+                choices=[
+                    ('projects',
+                     'Projects'),
+                    ('organizations',
+                     'Organizations')],
+                default='projects',
+                max_length=30,
+                verbose_name='Section type'),
         ),
     ]

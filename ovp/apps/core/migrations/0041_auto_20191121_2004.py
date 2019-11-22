@@ -15,6 +15,15 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='lead',
             name='type',
-            field=models.CharField(blank=True, choices=[('company', 'Company'), ('nonprofit', 'Nonprofit')], default='', max_length=10, null=True),
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ('company',
+                     'Company'),
+                    ('nonprofit',
+                     'Nonprofit')],
+                default='',
+                max_length=10,
+                null=True),
         ),
     ]

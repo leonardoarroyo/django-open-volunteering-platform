@@ -15,9 +15,40 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Availability',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('weekday', models.PositiveSmallIntegerField(choices=[(1, 'Monday'), (2, 'Tuesday'), (3, 'Wednesday'), (4, 'Thursday'), (5, 'Friday'), (6, 'Saturday'), (0, 'Sunday')], verbose_name='weekday')),
-                ('period', models.PositiveSmallIntegerField(choices=[(0, 'Morning'), (1, 'Afternoon'), (2, 'Evening')], verbose_name='period')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('weekday',
+                 models.PositiveSmallIntegerField(
+                     choices=[
+                         (1,
+                          'Monday'),
+                         (2,
+                          'Tuesday'),
+                         (3,
+                          'Wednesday'),
+                         (4,
+                          'Thursday'),
+                         (5,
+                          'Friday'),
+                         (6,
+                          'Saturday'),
+                         (0,
+                          'Sunday')],
+                     verbose_name='weekday')),
+                ('period',
+                 models.PositiveSmallIntegerField(
+                     choices=[
+                         (0,
+                          'Morning'),
+                         (1,
+                          'Afternoon'),
+                         (2,
+                          'Evening')],
+                     verbose_name='period')),
             ],
             options={
                 'verbose_name': 'availability',
@@ -26,11 +57,14 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='job',
             name='dates',
-            field=models.ManyToManyField(blank=True, to='projects.JobDate'),
+            field=models.ManyToManyField(
+                blank=True,
+                to='projects.JobDate'),
         ),
         migrations.AddField(
             model_name='work',
             name='availabilities',
-            field=models.ManyToManyField(to='projects.Availability'),
+            field=models.ManyToManyField(
+                to='projects.Availability'),
         ),
     ]

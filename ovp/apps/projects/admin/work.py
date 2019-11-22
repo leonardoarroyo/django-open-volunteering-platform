@@ -27,6 +27,7 @@ class WorkAdmin(ChannelModelAdmin):
     readonly_fields = ['id']
     raw_id_fields = []
 
+
 class WorkInline(TabularInline):
 
     model = Work

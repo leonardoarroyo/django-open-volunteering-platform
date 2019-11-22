@@ -18,15 +18,36 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DigestLogContent',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('content_type', models.IntegerField(choices=[(1, 'Project')], verbose_name='Content type')),
-                ('content_id', models.IntegerField(verbose_name='Content id')),
-                ('channel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='digestlogcontent_channel', to='channels.Channel')),
-                ('digest_log', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='digest.DigestLog')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('content_type',
+                 models.IntegerField(
+                     choices=[
+                         (1,
+                          'Project')],
+                     verbose_name='Content type')),
+                ('content_id',
+                 models.IntegerField(
+                     verbose_name='Content id')),
+                ('channel',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='digestlogcontent_channel',
+                     to='channels.Channel')),
+                ('digest_log',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to='digest.DigestLog')),
             ],
             options={
                 'abstract': False,
             },
-            bases=(ovp.apps.channels.models.mixins.ChannelCreatorMixin, models.Model),
+            bases=(
+                ovp.apps.channels.models.mixins.ChannelCreatorMixin,
+                models.Model),
         ),
     ]

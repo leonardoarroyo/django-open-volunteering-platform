@@ -15,6 +15,14 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='type',
-            field=models.CharField(choices=[(1, 'normal'), (2, 'donation')], default=1, max_length=10, verbose_name='Project Type'),
+            field=models.CharField(
+                choices=[
+                    (1,
+                     'normal'),
+                    (2,
+                     'donation')],
+                default=1,
+                max_length=10,
+                verbose_name='Project Type'),
         ),
     ]

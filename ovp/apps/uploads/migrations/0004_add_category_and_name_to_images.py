@@ -14,21 +14,37 @@ class Migration(migrations.Migration):
     operations = [
         migrations.CreateModel(
             name='ImageGalery',
-            fields=[
-            ],
+            fields=[],
             options={
                 'proxy': True,
             },
-            bases=('uploads.uploadedimage',),
+            bases=(
+                'uploads.uploadedimage',
+            ),
         ),
         migrations.AddField(
             model_name='uploadedimage',
             name='category',
-            field=models.CharField(blank=True, choices=[('cover', 'Cover'), ('logo', 'Logo')], default=None, max_length=24, null=True, verbose_name='Category'),
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ('cover',
+                     'Cover'),
+                    ('logo',
+                     'Logo')],
+                default=None,
+                max_length=24,
+                null=True,
+                verbose_name='Category'),
         ),
         migrations.AddField(
             model_name='uploadedimage',
             name='name',
-            field=models.CharField(blank=True, default=None, max_length=64, null=True, verbose_name='Name'),
+            field=models.CharField(
+                blank=True,
+                default=None,
+                max_length=64,
+                null=True,
+                verbose_name='Name'),
         ),
     ]

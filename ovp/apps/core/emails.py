@@ -122,10 +122,12 @@ class BaseMail:
         translation.activate(self.__active_locale)
         self.__active_locale = None
 
+
 class ContactFormMail(BaseMail):
     """
     This class is reponsible for firing emails sent through the contact form
     """
+
     def __init__(self, recipients, channel=None, async_mail=None, locale=None):
         self.channel = channel
         self.recipients = recipients

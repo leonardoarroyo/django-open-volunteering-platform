@@ -11,6 +11,7 @@ class ChannelCreatorMixin(object):
     It contains basic functionality to associate
     a object with a single channel.
     """
+
     def pop_channel_from_kwargs(self, kwargs):
         """
         Pop object_channel from kwargs,

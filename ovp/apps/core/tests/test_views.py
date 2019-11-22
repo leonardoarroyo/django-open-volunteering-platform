@@ -61,8 +61,8 @@ class TestStartupView(TestCase):
 
         self._add_contentflow()
         response = client.get(reverse("startup"), format="json")
-        self.assertEqual(len(response.data["skills"]), len_skills*2)
-        self.assertEqual(len(response.data["causes"]), len_causes*2)
+        self.assertEqual(len(response.data["skills"]), len_skills * 2)
+        self.assertEqual(len(response.data["causes"]), len_causes * 2)
 
     def _add_contentflow(self):
         from ovp.apps.channels.content_flow import BaseContentFlow

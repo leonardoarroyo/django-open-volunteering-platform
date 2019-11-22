@@ -24,7 +24,7 @@ class ContentFlowManager():
     def add_flow(self, flow):
         destination_channel = flow.destination
 
-        if type(self.flow_dict.get(destination_channel, None)) != list:
+        if not isinstance(self.flow_dict.get(destination_channel, None), list):
             self.flow_dict[destination_channel] = []
 
         self.flow_dict[destination_channel].append(flow)
@@ -68,7 +68,7 @@ class ContentFlowManager():
         q_obj = Q_SQ()
         q_obj.add(Q_SQ(**{channel_filter_name: destination_channel}), Q_SQ.OR)
 
-        if type(self.flow_dict.get(destination_channel, None)) == list:
+        if isinstance(self.flow_dict.get(destination_channel, None), list):
             for flow_item in self.flow_dict[destination_channel]:
                 content_flow_q_obj = Q_SQ()
                 content_flow_q_obj.add(

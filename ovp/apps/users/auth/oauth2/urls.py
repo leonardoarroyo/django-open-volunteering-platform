@@ -10,4 +10,3 @@ urlpatterns = [
     url(r'^convert-token/?$', ConvertTokenView.as_view(), name="convert_token"),
     url(r'^revoke-token/?$', RevokeTokenView.as_view(), name="revoke_token"),
 ]
-

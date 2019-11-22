@@ -17,14 +17,30 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ChannelSetting',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('key', models.CharField(max_length=100, verbose_name='Key')),
-                ('value', models.TextField(verbose_name='Value')),
-                ('channel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='channelsetting_channel', to='channels.Channel')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('key',
+                 models.CharField(
+                     max_length=100,
+                     verbose_name='Key')),
+                ('value',
+                 models.TextField(
+                     verbose_name='Value')),
+                ('channel',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='channelsetting_channel',
+                     to='channels.Channel')),
             ],
             options={
                 'abstract': False,
             },
-            bases=(ovp.apps.channels.models.mixins.ChannelCreatorMixin, models.Model),
+            bases=(
+                ovp.apps.channels.models.mixins.ChannelCreatorMixin,
+                models.Model),
         ),
     ]

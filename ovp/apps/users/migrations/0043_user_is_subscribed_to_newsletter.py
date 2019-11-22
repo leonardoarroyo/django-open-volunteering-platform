@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='is_subscribed_to_newsletter',
-            field=models.BooleanField(default=True, verbose_name='Subscribed to newsletter'),
+            field=models.BooleanField(
+                default=True,
+                verbose_name='Subscribed to newsletter'),
         ),
     ]

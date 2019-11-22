@@ -16,6 +16,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='posts',
-            field=models.ManyToManyField(to='core.Post', verbose_name='galleries'),
+            field=models.ManyToManyField(
+                to='core.Post',
+                verbose_name='galleries'),
         ),
     ]
