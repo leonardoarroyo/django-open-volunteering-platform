@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
+
 def foward_func(apps, schema_editor):
     Channel = apps.get_model("channels", "Channel")
     channel = Channel.objects.create(name="default", slug="default")
@@ -17,12 +18,13 @@ def foward_func(apps, schema_editor):
     Cause = apps.get_model("core", "Cause")
 
     for skill in SKILLS:
-      Skill.objects.create(name=skill, channel=channel)
+        Skill.objects.create(name=skill, channel=channel)
 
     for cause in CAUSES:
-      Cause.objects.create(name=cause, channel=channel)
+        Cause.objects.create(name=cause, channel=channel)
 
     return True
+
 
 def rewind_func(apps, schema_editor):
     Channel = apps.get_model("channels", "Channel")

@@ -15,6 +15,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ratingparameter',
             name='name',
-            field=models.CharField(max_length=100, unique=True, verbose_name='Name'),
+            field=models.CharField(
+                max_length=100,
+                unique=True,
+                verbose_name='Name'),
         ),
     ]

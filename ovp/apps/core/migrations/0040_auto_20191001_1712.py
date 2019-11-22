@@ -15,11 +15,25 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='lead',
             name='employee_number',
-            field=models.IntegerField(blank=True, default=0, null=True, verbose_name='Employee number'),
+            field=models.IntegerField(
+                blank=True,
+                default=0,
+                null=True,
+                verbose_name='Employee number'),
         ),
         migrations.AlterField(
             model_name='lead',
             name='type',
-            field=models.CharField(blank=True, choices=[('company', 'Company'), ('nonprofit', 'Nonprofit')], default='', max_length=10, null=True, verbose_name='Type'),
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ('company',
+                     'Company'),
+                    ('nonprofit',
+                     'Nonprofit')],
+                default='',
+                max_length=10,
+                null=True,
+                verbose_name='Type'),
         ),
     ]

@@ -16,11 +16,18 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='passwordrecoverytoken',
             name='used',
-            field=models.DateTimeField(blank=True, default=None, null=True),
+            field=models.DateTimeField(
+                blank=True,
+                default=None,
+                null=True),
         ),
         migrations.AlterField(
             model_name='passwordrecoverytoken',
             name='user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='users.User'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='users.User'),
         ),
     ]

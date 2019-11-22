@@ -19,36 +19,48 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='transaction',
             name='amount',
-            field=models.IntegerField(default=None),
+            field=models.IntegerField(
+                default=None),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='transaction',
             name='date_created',
-            field=models.DateTimeField(auto_now_add=True, default=None),
+            field=models.DateTimeField(
+                auto_now_add=True,
+                default=None),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='transaction',
             name='date_modified',
-            field=models.DateTimeField(auto_now=True),
+            field=models.DateTimeField(
+                auto_now=True),
         ),
         migrations.AddField(
             model_name='transaction',
             name='organization',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='organizations.Organization'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='organizations.Organization'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='transaction',
             name='status',
-            field=models.CharField(default=None, max_length=80),
+            field=models.CharField(
+                default=None,
+                max_length=80),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='transaction',
             name='user',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL),
             preserve_default=False,
         ),
     ]

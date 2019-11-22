@@ -20,6 +20,7 @@ class ChannelViewsetDecoratorTestCase(TestCase):
 
     We test the decorator through the viewset.
     """
+
     def setUp(self):
         # Set up channels
         channel1 = Channel(name="Channel One", slug="channel1")

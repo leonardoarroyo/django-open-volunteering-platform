@@ -28,7 +28,8 @@ class ChannelMiddlewareTestCase(TestCase):
         request = self.crm._add_channel(self.request)
         self.assertTrue(request.channel == "default")
 
-    def test_default_channel_included_in_response_header_no_channel_supplied(self):
+    def test_default_channel_included_in_response_header_no_channel_supplied(
+            self):
         """
         Assert response returns channel
         even without request header
@@ -45,7 +46,8 @@ class ChannelMiddlewareTestCase(TestCase):
         request = self.crm._add_channel(self.request)
         self.assertTrue(request.channel == "test-channel-1")
 
-    def test_correct_channel_included_in_response_header_if_channel_supplied(self):
+    def test_correct_channel_included_in_response_header_if_channel_supplied(
+            self):
         """
         Assert response returns channel
         if channel is supplied on request

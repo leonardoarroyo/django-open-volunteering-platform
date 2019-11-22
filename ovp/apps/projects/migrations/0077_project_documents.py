@@ -16,6 +16,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='documents',
-            field=models.ManyToManyField(to='uploads.UploadedDocument', verbose_name='documents'),
+            field=models.ManyToManyField(
+                to='uploads.UploadedDocument',
+                verbose_name='documents'),
         ),
     ]

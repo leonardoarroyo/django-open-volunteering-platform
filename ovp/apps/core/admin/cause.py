@@ -6,8 +6,10 @@ from ovp.apps.channels.admin import ChannelModelAdmin
 from ovp.apps.channels.admin import TabularInline
 from ovp.apps.core.models import Cause
 
+
 class CauseInline(TabularInline):
     model = Cause
+
 
 class CauseAdmin(ChannelModelAdmin):
     list_filter = []

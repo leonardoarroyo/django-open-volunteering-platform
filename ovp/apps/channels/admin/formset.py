@@ -7,6 +7,7 @@ class AdminInlineFormSet(BaseInlineFormSet):
     We override BaseInlineFormSet because we need
     to pass the request down to the model save method
     """
+
     def save(self, commit=True, request=None):
         if not commit:
             self.saved_forms = []

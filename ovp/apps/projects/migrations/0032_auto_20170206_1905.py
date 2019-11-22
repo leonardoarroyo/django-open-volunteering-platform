@@ -16,11 +16,25 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='apply',
             name='status',
-            field=models.CharField(choices=[('applied', 'Applied'), ('unapplied', 'Canceled')], default='applied', max_length=30, verbose_name='status'),
+            field=models.CharField(
+                choices=[
+                    ('applied',
+                     'Applied'),
+                    ('unapplied',
+                     'Canceled')],
+                default='applied',
+                max_length=30,
+                verbose_name='status'),
         ),
         migrations.AlterField(
             model_name='volunteerrole',
             name='project',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='roles', to='projects.Project', verbose_name='Project'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='roles',
+                to='projects.Project',
+                verbose_name='Project'),
         ),
     ]

@@ -21,7 +21,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='project_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='project_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
     ]

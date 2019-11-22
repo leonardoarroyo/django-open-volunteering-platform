@@ -5,20 +5,20 @@ from django.utils.translation import ugettext_lazy as _
 
 
 AVAILABILITY_PERIODS = (
-  (0, 'Manhã'),
-  (1, 'Tarde'),
-  (2, 'Noite')
+    (0, 'Manhã'),
+    (1, 'Tarde'),
+    (2, 'Noite')
 )
 
 
 AVAILABILITY_WEEKDAYS = (
-  (0, 'Domingo'),
-  (1, 'Segunda'),
-  (2, 'Terça'),
-  (3, 'Quarta'),
-  (4, 'Quinta'),
-  (5, 'Sexta'),
-  (6, 'Sábado')
+    (0, 'Domingo'),
+    (1, 'Segunda'),
+    (2, 'Terça'),
+    (3, 'Quarta'),
+    (4, 'Quinta'),
+    (5, 'Sexta'),
+    (6, 'Sábado')
 )
 
 

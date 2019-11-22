@@ -15,16 +15,27 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organizationinvite',
             name='created_date',
-            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Joined date'),
+            field=models.DateTimeField(
+                auto_now_add=True,
+                null=True,
+                verbose_name='Joined date'),
         ),
         migrations.AddField(
             model_name='organizationinvite',
             name='joined_date',
-            field=models.DateTimeField(blank=True, default=None, null=True, verbose_name='Joined date'),
+            field=models.DateTimeField(
+                blank=True,
+                default=None,
+                null=True,
+                verbose_name='Joined date'),
         ),
         migrations.AddField(
             model_name='organizationinvite',
             name='revoked_date',
-            field=models.DateTimeField(blank=True, default=None, null=True, verbose_name='Modified date'),
+            field=models.DateTimeField(
+                blank=True,
+                default=None,
+                null=True,
+                verbose_name='Modified date'),
         ),
     ]

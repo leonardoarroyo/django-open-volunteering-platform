@@ -17,11 +17,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userprofile',
             name='address',
-            field=models.OneToOneField(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.GoogleAddress', verbose_name='address'),
+            field=models.OneToOneField(
+                blank=True,
+                db_constraint=False,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='core.GoogleAddress',
+                verbose_name='address'),
         ),
         migrations.AddField(
             model_name='userprofile',
             name='hidden_address',
-            field=models.BooleanField(default=False, verbose_name='Hidden address'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Hidden address'),
         ),
     ]

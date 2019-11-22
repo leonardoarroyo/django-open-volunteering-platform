@@ -16,11 +16,20 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='organization',
             name='document',
-            field=models.CharField(blank=True, max_length=18, null=True, unique=True, validators=[ovp.apps.organizations.validators.validate_CNPJ], verbose_name='CNPJ'),
+            field=models.CharField(
+                blank=True,
+                max_length=18,
+                null=True,
+                unique=True,
+                validators=[
+                    ovp.apps.organizations.validators.validate_CNPJ],
+                verbose_name='CNPJ'),
         ),
         migrations.AlterField(
             model_name='organization',
             name='verified',
-            field=models.BooleanField(default=False, verbose_name='Verified'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Verified'),
         ),
     ]

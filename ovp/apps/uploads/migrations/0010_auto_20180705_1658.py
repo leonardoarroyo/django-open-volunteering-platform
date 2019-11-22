@@ -15,11 +15,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='uploadeddocument',
             name='extension',
-            field=models.CharField(blank=True, max_length=5, null=True, verbose_name='Extension'),
+            field=models.CharField(
+                blank=True,
+                max_length=5,
+                null=True,
+                verbose_name='Extension'),
         ),
         migrations.AddField(
             model_name='uploadeddocument',
             name='size',
-            field=models.IntegerField(blank=True, default=0, null=True, verbose_name='Size'),
+            field=models.IntegerField(
+                blank=True,
+                default=0,
+                null=True,
+                verbose_name='Size'),
         ),
     ]

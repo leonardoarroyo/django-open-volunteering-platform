@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='document',
-            field=models.CharField(blank=True, max_length=40, null=True, verbose_name='Document'),
+            field=models.CharField(
+                blank=True,
+                max_length=40,
+                null=True,
+                verbose_name='Document'),
         ),
     ]

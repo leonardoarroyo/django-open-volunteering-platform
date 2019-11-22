@@ -15,7 +15,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sectionfilter',
             name='type',
-            field=models.CharField(choices=[('CATEGORY', 'Category')], default='', max_length=30, verbose_name='Filter type'),
+            field=models.CharField(
+                choices=[
+                    ('CATEGORY',
+                     'Category')],
+                default='',
+                max_length=30,
+                verbose_name='Filter type'),
             preserve_default=False,
         ),
     ]

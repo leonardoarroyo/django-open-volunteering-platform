@@ -10,6 +10,7 @@ from ovp.apps.core.models import Skill
 class SkillInline(TabularInline):
     model = Skill
 
+
 class SkillAdmin(ChannelModelAdmin):
     fields = ['id', 'name', 'slug']
     list_display = ['id', 'name']

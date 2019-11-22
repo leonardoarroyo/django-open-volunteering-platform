@@ -16,11 +16,21 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='address',
-            field=models.OneToOneField(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.GoogleAddress', verbose_name='address'),
+            field=models.OneToOneField(
+                blank=True,
+                db_constraint=False,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='core.GoogleAddress',
+                verbose_name='address'),
         ),
         migrations.AlterField(
             model_name='work',
             name='description',
-            field=models.CharField(blank=True, max_length=4000, null=True, verbose_name='Description'),
+            field=models.CharField(
+                blank=True,
+                max_length=4000,
+                null=True,
+                verbose_name='Description'),
         ),
     ]

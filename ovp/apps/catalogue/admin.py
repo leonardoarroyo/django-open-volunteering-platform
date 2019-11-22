@@ -66,7 +66,14 @@ class CatalogueAdmin(ChannelModelAdmin):
 
 
 class SectionAdmin(ChannelModelAdmin):
-    fields = ["name", "slug", "catalogue", "amount", "type", "order", "skip_address_filter"]
+    fields = [
+        "name",
+        "slug",
+        "catalogue",
+        "amount",
+        "type",
+        "order",
+        "skip_address_filter"]
     list_display = ["name", "slug", "catalogue"]
     search_fields = [
         "id",

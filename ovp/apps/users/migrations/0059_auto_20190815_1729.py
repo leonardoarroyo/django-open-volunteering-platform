@@ -17,7 +17,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='emailverificationtoken',
             name='user',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL),
             preserve_default=False,
         ),
     ]

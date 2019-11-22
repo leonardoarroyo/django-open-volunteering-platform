@@ -16,6 +16,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='faq',
             name='answer',
-            field=ckeditor.fields.RichTextField(default='', max_length=3000, verbose_name='Resposta'),
+            field=ckeditor.fields.RichTextField(
+                default='',
+                max_length=3000,
+                verbose_name='Resposta'),
         ),
     ]

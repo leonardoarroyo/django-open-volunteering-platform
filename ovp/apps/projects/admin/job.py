@@ -22,22 +22,22 @@ class JobInline(TabularInline):
 
     def admin_link(self, instance):
         if instance.id is None:
-          url = reverse(
-              'admin:{0}_{1}_add'.format(
-                  instance._meta.app_label,
-                  instance._meta.model_name
-              )
-          )
-          return format_html('<a href="{}">Create</a>', url)
-        else :
-          url = reverse(
-              'admin:{0}_{1}_change'.format(
-                  instance._meta.app_label,
-                  instance._meta.model_name
-              ),
-              args=(instance.id,)
-          )
-          return format_html('<a href="{}">Edit</a>', url)
+            url = reverse(
+                'admin:{0}_{1}_add'.format(
+                    instance._meta.app_label,
+                    instance._meta.model_name
+                )
+            )
+            return format_html('<a href="{}">Create</a>', url)
+        else:
+            url = reverse(
+                'admin:{0}_{1}_change'.format(
+                    instance._meta.app_label,
+                    instance._meta.model_name
+                ),
+                args=(instance.id,)
+            )
+            return format_html('<a href="{}">Edit</a>', url)
 
 
 class JobAdmin(ChannelModelAdmin, CountryFilterMixin):

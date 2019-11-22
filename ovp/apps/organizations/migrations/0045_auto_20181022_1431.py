@@ -16,11 +16,15 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='rating',
-            field=models.FloatField(default=None, null=True, verbose_name='Rating'),
+            field=models.FloatField(
+                default=None,
+                null=True,
+                verbose_name='Rating'),
         ),
         migrations.AddField(
             model_name='organization',
             name='ratings',
-            field=models.ManyToManyField(to='ratings.Rating'),
+            field=models.ManyToManyField(
+                to='ratings.Rating'),
         ),
     ]

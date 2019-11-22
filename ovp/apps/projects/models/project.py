@@ -26,6 +26,8 @@ types = (
     (1, 'Normal'),
     (2, 'Donation')
 )
+
+
 class Project(ChannelRelationship, RatedModelMixin):
     """
     Project model
@@ -99,7 +101,6 @@ class Project(ChannelRelationship, RatedModelMixin):
         related_name="projects",
         blank=True
     )
-
 
     # Fields
     name = models.CharField(_('Project name'), max_length=100)
@@ -205,6 +206,7 @@ class Project(ChannelRelationship, RatedModelMixin):
     '''
     Data methods
     '''
+
     def get_phone(self):
         return self.owner.phone
 
@@ -223,10 +225,10 @@ class Project(ChannelRelationship, RatedModelMixin):
     def bookmark_count(self):
         return self.bookmarks.count()
 
-
     '''
     Model operation methods
     '''
+
     def save(self, *args, **kwargs):
         creating = False
 

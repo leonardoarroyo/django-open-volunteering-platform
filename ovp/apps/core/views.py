@@ -56,7 +56,7 @@ def contact(request):
         "phone": phone
     }
 
-    if not type(recipients) is list:
+    if not isinstance(recipients, list):
         recipients = [recipients]
 
     # Check if all recipients are valid

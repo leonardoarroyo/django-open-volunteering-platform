@@ -11,6 +11,7 @@ class Filter(ChannelRelationship):
     """
     This base class can be extended to create custom catalogue filters.
     """
+
     def __str__(self):
         return "Base filter"
 

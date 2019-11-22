@@ -65,6 +65,7 @@ class ChannelPermissionsTestCase(TestCase):
     This TestCase asserts an user can't access
     resources with an authentication from another channel
     """
+
     def setUp(self):
         self.user = User.objects.create(
             email="sample_user@gmail.com",

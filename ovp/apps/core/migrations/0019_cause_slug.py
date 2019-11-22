@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='cause',
             name='slug',
-            field=models.SlugField(blank=True, max_length=100, null=True, verbose_name='name'),
+            field=models.SlugField(
+                blank=True,
+                max_length=100,
+                null=True,
+                verbose_name='name'),
         ),
     ]

@@ -17,31 +17,51 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='addresscomponent',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='addresscomponent_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='addresscomponent_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='addresscomponenttype',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='addresscomponenttype_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='addresscomponenttype_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='googleaddress',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='googleaddress_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='googleaddress_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='googleregion',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='googleregion_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='googleregion_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='simpleaddress',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='simpleaddress_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='simpleaddress_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
     ]

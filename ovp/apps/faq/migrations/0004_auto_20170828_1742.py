@@ -18,25 +18,48 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FaqCategory',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='Category name')),
-                ('channel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='faqcategory_channel', to='channels.Channel')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('name',
+                 models.CharField(
+                     max_length=100,
+                     verbose_name='Category name')),
+                ('channel',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='faqcategory_channel',
+                     to='channels.Channel')),
             ],
             options={
                 'abstract': False,
             },
-            bases=(ovp.apps.channels.models.mixins.ChannelCreatorMixin, models.Model),
+            bases=(
+                ovp.apps.channels.models.mixins.ChannelCreatorMixin,
+                models.Model),
         ),
         migrations.AddField(
             model_name='faq',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='faq_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='faq_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name='faq',
             name='category',
-            field=models.ForeignKey(blank=True, default=0, on_delete=django.db.models.deletion.CASCADE, to='faq.FaqCategory', verbose_name='Categoria'),
+            field=models.ForeignKey(
+                blank=True,
+                default=0,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='faq.FaqCategory',
+                verbose_name='Categoria'),
         ),
         migrations.DeleteModel(
             name='Category',

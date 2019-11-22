@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='post',
             name='modified_date',
-            field=models.DateTimeField(auto_now=True, verbose_name='Modified date'),
+            field=models.DateTimeField(
+                auto_now=True,
+                verbose_name='Modified date'),
         ),
     ]

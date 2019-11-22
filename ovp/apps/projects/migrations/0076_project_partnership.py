@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='partnership',
-            field=models.BooleanField(default=False, verbose_name='Partnership'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Partnership'),
         ),
     ]

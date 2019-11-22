@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userprofile',
             name='public',
-            field=models.BooleanField(default=True, verbose_name='Public Profile'),
+            field=models.BooleanField(
+                default=True,
+                verbose_name='Public Profile'),
         ),
     ]

@@ -15,6 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='instagram_user',
-            field=models.CharField(blank=True, default=None, max_length=255, null=True, verbose_name='Instagram'),
+            field=models.CharField(
+                blank=True,
+                default=None,
+                max_length=255,
+                null=True,
+                verbose_name='Instagram'),
         ),
     ]

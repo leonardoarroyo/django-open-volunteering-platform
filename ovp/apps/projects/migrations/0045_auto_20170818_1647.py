@@ -16,11 +16,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='apply',
             name='role',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='projects.VolunteerRole', verbose_name='role'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='projects.VolunteerRole',
+                verbose_name='role'),
         ),
         migrations.AddField(
             model_name='volunteerrole',
             name='applied_count',
-            field=models.IntegerField(default=0, verbose_name='Applied count'),
+            field=models.IntegerField(
+                default=0,
+                verbose_name='Applied count'),
         ),
     ]

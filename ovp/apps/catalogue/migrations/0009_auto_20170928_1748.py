@@ -16,11 +16,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='section',
             name='catalogue',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sections', to='catalogue.Catalogue'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='sections',
+                to='catalogue.Catalogue'),
         ),
         migrations.AlterField(
             model_name='sectionfilter',
             name='section',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='filters', to='catalogue.Section'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='filters',
+                to='catalogue.Section'),
         ),
     ]
