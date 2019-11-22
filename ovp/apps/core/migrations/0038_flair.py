@@ -19,15 +19,38 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Flair',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='name')),
-                ('value', models.CharField(max_length=100, verbose_name='value')),
-                ('channel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='flair_channel', to='channels.Channel')),
-                ('image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='uploads.UploadedImage', verbose_name='image')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('name',
+                 models.CharField(
+                     max_length=100,
+                     verbose_name='name')),
+                ('value',
+                 models.CharField(
+                     max_length=100,
+                     verbose_name='value')),
+                ('channel',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='flair_channel',
+                     to='channels.Channel')),
+                ('image',
+                 models.ForeignKey(
+                     blank=True,
+                     null=True,
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to='uploads.UploadedImage',
+                     verbose_name='image')),
             ],
             options={
                 'verbose_name': 'flair',
             },
-            bases=(ovp.apps.channels.models.mixins.ChannelCreatorMixin, models.Model),
+            bases=(
+                ovp.apps.channels.models.mixins.ChannelCreatorMixin,
+                models.Model),
         ),
     ]

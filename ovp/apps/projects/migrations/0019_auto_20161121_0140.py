@@ -16,13 +16,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='jobdate',
             name='end_date',
-            field=models.DateTimeField(default=timezone.now(), verbose_name='End date'),
+            field=models.DateTimeField(
+                default=timezone.now(),
+                verbose_name='End date'),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name='jobdate',
             name='start_date',
-            field=models.DateTimeField(default=timezone.now(), verbose_name='Start date'),
+            field=models.DateTimeField(
+                default=timezone.now(),
+                verbose_name='Start date'),
             preserve_default=False,
         ),
     ]

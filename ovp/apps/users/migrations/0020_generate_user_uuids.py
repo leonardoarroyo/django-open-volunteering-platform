@@ -5,11 +5,13 @@ from __future__ import unicode_literals
 from django.db import migrations
 import uuid
 
+
 def gen_uuid(apps, schema_editor):
     Model = apps.get_model('users', 'User')
     for user in Model.objects.all():
         user.uuid = uuid.uuid4()
         user.save()
+
 
 class Migration(migrations.Migration):
 

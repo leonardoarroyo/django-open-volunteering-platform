@@ -199,7 +199,8 @@ class ChannelProcessorMiddleware():
 
     def _admin_should_redirect_to_admin_page(self, request):
         path = request.get_full_path()
-        enabled_languages_regex = "|".join(["{}/".format(x[0]) for x in settings.LANGUAGES])
+        enabled_languages_regex = "|".join(
+            ["{}/".format(x[0]) for x in settings.LANGUAGES])
 
         if not re.match(r'^/({})?admin'.format(enabled_languages_regex), path) \
            and not path.startswith("/jet") \

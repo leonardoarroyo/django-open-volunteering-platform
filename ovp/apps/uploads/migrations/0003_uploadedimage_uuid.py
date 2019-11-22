@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='uploadedimage',
             name='uuid',
-            field=models.CharField(blank=True, default=None, max_length=36, verbose_name='UUID'),
+            field=models.CharField(
+                blank=True,
+                default=None,
+                max_length=36,
+                verbose_name='UUID'),
         ),
     ]

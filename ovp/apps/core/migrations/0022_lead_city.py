@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='lead',
             name='city',
-            field=models.CharField(blank=True, max_length=100, null=True, verbose_name='City'),
+            field=models.CharField(
+                blank=True,
+                max_length=100,
+                null=True,
+                verbose_name='City'),
         ),
     ]

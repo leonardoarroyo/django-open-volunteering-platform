@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 from rest_framework_nested.routers import (
-  NestedSimpleRouter, NestedDefaultRouter
+    NestedSimpleRouter, NestedDefaultRouter
 )
 
 from ovp.apps.projects import views

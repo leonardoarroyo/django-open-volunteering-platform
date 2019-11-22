@@ -16,6 +16,7 @@ class ProjectCreateOwnsOrIsOrganizationMember(permissions.BasePermission):
     Permission that only allows an organization owner or member to create
     a project for the given organization.
     """
+
     def has_permission(self, request, view):
         organization_pk = request.data.get('organization_id', None)
 
@@ -42,6 +43,7 @@ class ProjectRetrieveOwnsOrIsOrganizationMember(permissions.BasePermission):
     Permission that only allows the project owner, organization owner
     or organization member to retrieve/modify a existing project.
     """
+
     def has_object_permission(self, request, view, obj):
         if request.user.is_authenticated:
             if obj.owner == request.user:
@@ -63,6 +65,7 @@ class ProjectApplyPermission(permissions.BasePermission):
     Permission that only allows the project owner, organization owner
     or organization member to retrieve a full list of applies for a project.
     """
+
     def has_permission(self, request, view):
         project = get_object_or_404(
             Project,

@@ -310,9 +310,8 @@ class ProjectAdmin(BaseAux):
 
     list_editable = []
 
-
     search_fields = [
-      'name', 'organization__name'
+        'name', 'organization__name'
     ]
 
     readonly_fields = [
@@ -337,18 +336,17 @@ class ProjectAdmin(BaseAux):
     filter_horizontal = ('skills', 'causes',)
 
     inlines = [
-      VolunteerRoleInline,
-      DocumentInline,
-      GalleryInline,
-      JobInline, WorkInline
+        VolunteerRoleInline,
+        DocumentInline,
+        GalleryInline,
+        JobInline, WorkInline
     ]
 
     def total_opportunities(self, obj):
         roles = obj.roles.all()
         if roles:
-            return sum(
-                (role.vacancies or 0) + (role.applied_count or 0) for role in roles
-            )
+            return sum((role.vacancies or 0) + (role.applied_count or 0)
+                       for role in roles)
         return 0
     total_opportunities.short_description = _('Opportunities')
 
@@ -405,5 +403,6 @@ class ProjectAdmin(BaseAux):
                 )
             return format_html(html_string)
         return ""
+
 
 admin_site.register(Project, ProjectAdmin)

@@ -10,13 +10,13 @@ def annotate_bookmark(queryset, request=None):
     """
     if request and request.user.is_authenticated():
         qs = queryset.annotate(
-                is_bookmarked=Count(
-                    Case(
-                        When(bookmarks__user=request.user, then=True),
-                        output_field=BooleanField()
-                    )
+            is_bookmarked=Count(
+                Case(
+                    When(bookmarks__user=request.user, then=True),
+                    output_field=BooleanField()
                 )
             )
+        )
         return qs
     else:
         return queryset.annotate(is_bookmarked=Value(False, BooleanField()))

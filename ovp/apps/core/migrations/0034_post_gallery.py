@@ -17,6 +17,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='post',
             name='gallery',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='gallery.Gallery', verbose_name='gallery'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='gallery.Gallery',
+                verbose_name='gallery'),
         ),
     ]

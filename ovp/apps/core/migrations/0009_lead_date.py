@@ -15,6 +15,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='lead',
             name='date',
-            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Date'),
+            field=models.DateTimeField(
+                auto_now_add=True,
+                null=True,
+                verbose_name='Date'),
         ),
     ]

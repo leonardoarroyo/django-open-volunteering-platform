@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='organization',
             name='description',
-            field=models.CharField(blank=True, max_length=320, null=True, verbose_name='Short description'),
+            field=models.CharField(
+                blank=True,
+                max_length=320,
+                null=True,
+                verbose_name='Short description'),
         ),
     ]

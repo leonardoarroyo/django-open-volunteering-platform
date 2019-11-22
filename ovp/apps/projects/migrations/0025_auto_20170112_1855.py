@@ -17,16 +17,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='max_applies',
-            field=models.IntegerField(default=1),
+            field=models.IntegerField(
+                default=1),
         ),
         migrations.AddField(
             model_name='project',
             name='public_project',
-            field=models.BooleanField(default=True, verbose_name='Public'),
+            field=models.BooleanField(
+                default=True,
+                verbose_name='Public'),
         ),
         migrations.AlterField(
             model_name='project',
             name='owner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='owner'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+                verbose_name='owner'),
         ),
     ]

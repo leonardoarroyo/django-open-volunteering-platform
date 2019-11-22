@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='categories',
-            field=models.ManyToManyField(to='projects.Category', verbose_name='categories'),
+            field=models.ManyToManyField(
+                to='projects.Category',
+                verbose_name='categories'),
         ),
     ]

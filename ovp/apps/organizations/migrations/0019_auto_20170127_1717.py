@@ -16,11 +16,22 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='organization',
             name='cover',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='uploads.UploadedImage', verbose_name='cover'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='+',
+                to='uploads.UploadedImage',
+                verbose_name='cover'),
         ),
         migrations.AlterField(
             model_name='organization',
             name='image',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='uploads.UploadedImage', verbose_name='image'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='uploads.UploadedImage',
+                verbose_name='image'),
         ),
     ]

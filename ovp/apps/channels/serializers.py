@@ -8,6 +8,7 @@ class ChannelRelationshipSerializer(serializers.ModelSerializer):
     This serializer is required for models that extend ChannelRelationship.
     It automatically passes request channel down to the model.
     """
+
     def create(self, validated_data):
         # Force exception if request is unavailable
         request = self.context["request"]

@@ -15,6 +15,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='uploadedimage',
             name='category',
-            field=models.CharField(blank=True, choices=[('organization', 'Organization'), ('project', 'Project')], default=None, max_length=24, null=True, verbose_name='Category'),
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ('organization',
+                     'Organization'),
+                    ('project',
+                     'Project')],
+                default=None,
+                max_length=24,
+                null=True,
+                verbose_name='Category'),
         ),
     ]

@@ -16,26 +16,44 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='passwordrecoverytoken',
             name='created_date',
-            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created date'),
+            field=models.DateTimeField(
+                auto_now_add=True,
+                null=True,
+                verbose_name='Created date'),
         ),
         migrations.AlterField(
             model_name='passwordrecoverytoken',
             name='used_date',
-            field=models.DateTimeField(blank=True, default=None, null=True, verbose_name='Used date'),
+            field=models.DateTimeField(
+                blank=True,
+                default=None,
+                null=True,
+                verbose_name='Used date'),
         ),
         migrations.AlterField(
             model_name='user',
             name='avatar',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='avatar_user', to='uploads.UploadedImage', verbose_name='avatar'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='avatar_user',
+                to='uploads.UploadedImage',
+                verbose_name='avatar'),
         ),
         migrations.AlterField(
             model_name='user',
             name='joined_date',
-            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Joined date'),
+            field=models.DateTimeField(
+                auto_now_add=True,
+                null=True,
+                verbose_name='Joined date'),
         ),
         migrations.AlterField(
             model_name='user',
             name='modified_date',
-            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Modified date'),
+            field=models.DateTimeField(
+                auto_now=True,
+                null=True,
+                verbose_name='Modified date'),
         ),
     ]

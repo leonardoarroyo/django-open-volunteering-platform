@@ -17,16 +17,46 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='uploadedimage',
             name='image_large',
-            field=django_resized.forms.ResizedImageField(blank=True, crop=None, default=None, keep_meta=True, null=True, quality=0, size=[1260, 936], upload_to=ovp.apps.uploads.models.ImageName('-large')),
+            field=django_resized.forms.ResizedImageField(
+                blank=True,
+                crop=None,
+                default=None,
+                keep_meta=True,
+                null=True,
+                quality=0,
+                size=[
+                    1260,
+                    936],
+                upload_to=ovp.apps.uploads.models.ImageName('-large')),
         ),
         migrations.AlterField(
             model_name='uploadedimage',
             name='image_medium',
-            field=django_resized.forms.ResizedImageField(blank=True, crop=None, default=None, keep_meta=True, null=True, quality=0, size=[420, 312], upload_to=ovp.apps.uploads.models.ImageName('-medium')),
+            field=django_resized.forms.ResizedImageField(
+                blank=True,
+                crop=None,
+                default=None,
+                keep_meta=True,
+                null=True,
+                quality=0,
+                size=[
+                    420,
+                    312],
+                upload_to=ovp.apps.uploads.models.ImageName('-medium')),
         ),
         migrations.AlterField(
             model_name='uploadedimage',
             name='image_small',
-            field=django_resized.forms.ResizedImageField(blank=True, crop=None, default=None, keep_meta=True, null=True, quality=0, size=[350, 260], upload_to=ovp.apps.uploads.models.ImageName('-small')),
+            field=django_resized.forms.ResizedImageField(
+                blank=True,
+                crop=None,
+                default=None,
+                keep_meta=True,
+                null=True,
+                quality=0,
+                size=[
+                    350,
+                    260],
+                upload_to=ovp.apps.uploads.models.ImageName('-small')),
         ),
     ]

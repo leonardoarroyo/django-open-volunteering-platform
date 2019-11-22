@@ -114,8 +114,7 @@ class StateListFilter(BaseStateListFilter):
             if address_model == GoogleAddress:
                 return queryset.filter(
                     project__address__address_components__short_name=state,
-                    project__address__address_components__types__name="administrative_area_level_1"
-                )
+                    project__address__address_components__types__name="administrative_area_level_1")
 
             if address_model == SimpleAddress:
                 return queryset.filter(project__address__state=state)
@@ -132,15 +131,17 @@ class CityListFilter(BaseCityListFilter):
             if address_model == GoogleAddress:
                 return queryset.filter(
                     project__address__address_components__long_name=city,
-                    project__address__address_components__types__name="administrative_area_level_2"
-                )
+                    project__address__address_components__types__name="administrative_area_level_2")
 
             if address_model == SimpleAddress:
                 return queryset.filter(project__address__city=city)
         return queryset
 
 
-class ApplyAdmin(ChannelModelAdmin, CountryFilterMixin, ImportExportModelAdmin):
+class ApplyAdmin(
+        ChannelModelAdmin,
+        CountryFilterMixin,
+        ImportExportModelAdmin):
 
     resource_class = ApplyResource
 

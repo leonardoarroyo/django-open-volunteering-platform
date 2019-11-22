@@ -253,7 +253,7 @@ class JobModelTestCase(TestCase):
             object_channel="default"
         )
 
-        human_time = lambda x: x.strftime("%d/%m/%Y")
+        def human_time(x): return x.strftime("%d/%m/%Y")
 
         self.assertTrue(
             job.__str__()
@@ -277,7 +277,7 @@ class JobDateModelTestCase(TestCase):
         date = JobDate(name="test", start_date=start, end_date=end, job=job)
         date.save(object_channel="default")
 
-        human_time = lambda x: x.strftime("%d/%m/%Y %T")
+        def human_time(x): return x.strftime("%d/%m/%Y %T")
 
         self.assertTrue(
             date.__str__()

@@ -17,37 +17,61 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='apply',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='apply_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='apply_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='category',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='category_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='category_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='job',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='job_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='job_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='jobdate',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='jobdate_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='jobdate_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='volunteerrole',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='volunteerrole_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='volunteerrole_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='work',
             name='channel',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='work_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default='',
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='work_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
     ]

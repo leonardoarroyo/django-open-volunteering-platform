@@ -17,13 +17,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='subscription',
             name='channel',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='subscription_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='subscription_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='transaction',
             name='channel',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='transaction_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='transaction_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
     ]

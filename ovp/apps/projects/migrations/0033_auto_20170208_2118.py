@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='apply',
             name='email',
-            field=models.CharField(blank=True, max_length=190, null=True, verbose_name='email'),
+            field=models.CharField(
+                blank=True,
+                max_length=190,
+                null=True,
+                verbose_name='email'),
         ),
     ]

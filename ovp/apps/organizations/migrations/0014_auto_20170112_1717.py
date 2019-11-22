@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
                 choices=[(0, 'Organization'), (1, 'School'), (2, 'Company'), (3, 'Group of volunteers')],
                 default=0,
                 verbose_name='Type'
-                ),
+            ),
         ),
     ]

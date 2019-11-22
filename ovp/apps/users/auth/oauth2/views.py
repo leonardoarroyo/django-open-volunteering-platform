@@ -9,23 +9,37 @@ from ovp.apps.users.auth.oauth2 import serializers
 from .validators import OAuth2Validator
 from .oauthlib_core import KeepRequestChannel
 
-class TokenView(BaseTokenView):
-  validator_class = OAuth2Validator
-  oauthlib_backend_class = KeepRequestChannel
 
-  @swagger_auto_schema(request_body=serializers.RequestTokenViewSerializer, responses={200: serializers.ResponseTokenViewSerializer, 401: 'Unauthorized'})
-  def post(self, *args, **kwargs):
-    """ Exchange authentication credentials for authentication token. """
-    return super(TokenView, self).post(*args, **kwargs)
+class TokenView(BaseTokenView):
+    validator_class = OAuth2Validator
+    oauthlib_backend_class = KeepRequestChannel
+
+    @swagger_auto_schema(
+        request_body=serializers.RequestTokenViewSerializer,
+        responses={
+            200: serializers.ResponseTokenViewSerializer,
+            401: 'Unauthorized'})
+    def post(self, *args, **kwargs):
+        """ Exchange authentication credentials for authentication token. """
+        return super(TokenView, self).post(*args, **kwargs)
+
 
 class RevokeTokenView(BaseRevokeTokenView):
-  @swagger_auto_schema(request_body=serializers.RequestRevokeTokenViewSerializer, responses={204: "No content."})
-  def post(self, *args, **kwargs):
-    """ Revoke an access token. """
-    return super(RevokeTokenView, self).post(*args, **kwargs)
+    @swagger_auto_schema(
+        request_body=serializers.RequestRevokeTokenViewSerializer,
+        responses={
+            204: "No content."})
+    def post(self, *args, **kwargs):
+        """ Revoke an access token. """
+        return super(RevokeTokenView, self).post(*args, **kwargs)
+
 
 class ConvertTokenView(BaseConvertTokenView):
-  @swagger_auto_schema(request_body=serializers.RequestConvertTokenViewSerializer, responses={200: serializers.ResponseConvertTokenViewSerializer, 401: 'Unauthorized'})
-  def post(self, *args, **kwargs):
-    """ Exchange social oauth token(Facebook or Google) for a local authentication token. """
-    return super(ConvertTokenView, self).post(*args, **kwargs)
+    @swagger_auto_schema(
+        request_body=serializers.RequestConvertTokenViewSerializer,
+        responses={
+            200: serializers.ResponseConvertTokenViewSerializer,
+            401: 'Unauthorized'})
+    def post(self, *args, **kwargs):
+        """ Exchange social oauth token(Facebook or Google) for a local authentication token. """
+        return super(ConvertTokenView, self).post(*args, **kwargs)

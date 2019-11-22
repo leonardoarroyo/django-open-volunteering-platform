@@ -34,7 +34,8 @@ class Lead(ChannelRelationship):
         null=True,
         blank=True
     )
-    employee_number = models.IntegerField(_('Employee number'), default=0, null=True, blank=True)
+    employee_number = models.IntegerField(
+        _('Employee number'), default=0, null=True, blank=True)
 
     class Meta:
         app_label = 'core'

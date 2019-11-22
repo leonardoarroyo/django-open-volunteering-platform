@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='work',
             name='can_be_done_remotely',
-            field=models.BooleanField(default=False, verbose_name='This job can be done remotely'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='This job can be done remotely'),
         ),
     ]

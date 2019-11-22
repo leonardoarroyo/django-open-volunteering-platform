@@ -11,6 +11,7 @@ class ChannelRelationshipManager(ChannelCreatorMixin, models.Manager):
     so all objects created with .objects.create()
     get associated with channel.
     """
+
     def create(self, *args, **kwargs):
         self.check_direct_channel_association_kwargs(kwargs)
         object_channel, kwargs = self.pop_channel_from_kwargs(kwargs)

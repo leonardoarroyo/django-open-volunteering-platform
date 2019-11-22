@@ -16,6 +16,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='categories',
-            field=models.ManyToManyField(blank=True, to='projects.Category', verbose_name='categories'),
+            field=models.ManyToManyField(
+                blank=True,
+                to='projects.Category',
+                verbose_name='categories'),
         ),
     ]

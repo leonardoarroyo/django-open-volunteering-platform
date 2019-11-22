@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='channels',
-            field=models.ManyToManyField(related_name='project_channels', to='channels.Channel'),
+            field=models.ManyToManyField(
+                related_name='project_channels',
+                to='channels.Channel'),
         ),
     ]

@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='allow_donations',
-            field=models.BooleanField(default=False, verbose_name='Allow donations'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Allow donations'),
         ),
     ]

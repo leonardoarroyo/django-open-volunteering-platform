@@ -15,11 +15,15 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='subscription',
             name='anonymous',
-            field=models.BooleanField(default=False, verbose_name='Anonymous subscription'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Anonymous subscription'),
         ),
         migrations.AddField(
             model_name='transaction',
             name='anonymous',
-            field=models.BooleanField(default=False, verbose_name='Anonymous subscription'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Anonymous subscription'),
         ),
     ]

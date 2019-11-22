@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='apply',
             name='message',
-            field=models.TextField(blank=True, max_length=3000, null=True, verbose_name='message'),
+            field=models.TextField(
+                blank=True,
+                max_length=3000,
+                null=True,
+                verbose_name='message'),
         ),
     ]

@@ -19,7 +19,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='work',
             name='description',
-            field=models.CharField(default='-', max_length=4000, verbose_name='Description'),
+            field=models.CharField(
+                default='-',
+                max_length=4000,
+                verbose_name='Description'),
             preserve_default=False,
         ),
     ]

@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='imagegalery',
-            options={'verbose_name': 'image gallery', 'verbose_name_plural': 'image galleries'},
+            options={
+                'verbose_name': 'image gallery',
+                'verbose_name_plural': 'image galleries'},
         ),
     ]

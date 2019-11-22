@@ -160,9 +160,12 @@ class ProjectResourceViewSetTestCase(TestCase):
         self.assertTrue(response.data["description"] == data["description"])
         self.assertTrue(response.data["published"] is False)
         self.assertTrue(type(response.data["owner"]) in [dict, OrderedDict])
-        self.assertTrue(type(response.data["applies"]) is list)
-        self.assertTrue(type(response.data["applied_count"]) is int)
-        self.assertTrue(type(response.data["max_applies_from_roles"]) is int)
+        self.assertTrue(isinstance(response.data["applies"], list))
+        self.assertTrue(isinstance(response.data["applied_count"], int))
+        self.assertTrue(
+            isinstance(
+                response.data["max_applies_from_roles"],
+                int))
         self.assertTrue(len(response.data["causes"]) == 2)
         self.assertTrue(len(response.data["skills"]) == 2)
 
@@ -176,10 +179,10 @@ class ProjectResourceViewSetTestCase(TestCase):
 
         data = copy.deepcopy(base_project)
         data["roles"] = [{
-          "name": "test",
-          "prerequisites": "test2",
-          "details": "test3",
-          "vacancies": 5
+            "name": "test",
+            "prerequisites": "test2",
+            "details": "test3",
+            "vacancies": 5
         }]
 
         client = APIClient()
@@ -425,7 +428,7 @@ class ProjectPostTestCase(TestCase):
                 r"project-post/(?P<post-id>[\w-]+)",
                 [
                     "test-project",
-                    Post.objects.last().pk+1
+                    Post.objects.last().pk + 1
                 ]
             ),
             data,
@@ -1166,10 +1169,14 @@ class ProjectResourceUpdateTestCase(TestCase):
         )
 
         self.assertTrue(response.status_code == 200)
-        self.assertTrue(response.data["roles"][0]["name"] == updated_project["roles"][0]["name"])
-        self.assertTrue(response.data["roles"][0]["prerequisites"] == updated_project["roles"][0]["prerequisites"])
-        self.assertTrue(response.data["roles"][0]["details"] == updated_project["roles"][0]["details"])
-        self.assertTrue(response.data["roles"][0]["vacancies"] == updated_project["roles"][0]["vacancies"])
+        self.assertTrue(
+            response.data["roles"][0]["name"] == updated_project["roles"][0]["name"])
+        self.assertTrue(response.data["roles"][0]["prerequisites"]
+                        == updated_project["roles"][0]["prerequisites"])
+        self.assertTrue(
+            response.data["roles"][0]["details"] == updated_project["roles"][0]["details"])
+        self.assertTrue(response.data["roles"][0]["vacancies"]
+                        == updated_project["roles"][0]["vacancies"])
         self.assertTrue(response.data["roles"][0]["applied_count"] == 0)
 
 
@@ -1490,10 +1497,10 @@ class VolunteerRoleTestCase(TestCase):
         data = copy.deepcopy(base_project)
         data["name"] = "project 1"
         data["roles"] = [{
-          "name": "test",
-          "prerequisites": "test",
-          "details": "test",
-          "vacancies": 5
+            "name": "test",
+            "prerequisites": "test",
+            "details": "test",
+            "vacancies": 5
         }]
         response = self.client.post(
             reverse("project-list"),
@@ -1501,39 +1508,40 @@ class VolunteerRoleTestCase(TestCase):
             format="json"
         )
         self.assertTrue(response.status_code == 201)
-        vr1 = VolunteerRole.objects.filter(project__slug=response.data['slug']) \
-                .first()
+        vr1 = VolunteerRole.objects.filter(
+            project__slug=response.data['slug']) .first()
 
         data = copy.deepcopy(base_project)
         data["name"] = "project 2"
         data["roles"] = [{
-          "name": "another role",
-          "prerequisites": "test2",
-          "details": "test2",
-          "vacancies": 5
+            "name": "another role",
+            "prerequisites": "test2",
+            "details": "test2",
+            "vacancies": 5
         }]
-        response = self.client.post(reverse("project-list"), data, format="json")
+        response = self.client.post(
+            reverse("project-list"), data, format="json")
         self.assertTrue(response.status_code == 201)
-        vr2 = VolunteerRole.objects.filter(project__slug=response.data['slug']) \
-            .first()
+        vr2 = VolunteerRole.objects.filter(
+            project__slug=response.data['slug']) .first()
 
         data = {
-          "roles": [
-            {
-              "id": vr2.pk,
-              "name": "aaaaa",
-              "prerequisites": "aaaaa",
-              "details": "aaaa",
-              "vacancies": 5
-            },
-            { # this should fail as vr1.pk is related to another project
-              "id": vr1.pk,
-              "name": "bbbbb",
-              "prerequisites": "bbbbb",
-              "details": "bbbb",
-              "vacancies": 5
-            }
-          ]
+            "roles": [
+                {
+                    "id": vr2.pk,
+                    "name": "aaaaa",
+                    "prerequisites": "aaaaa",
+                    "details": "aaaa",
+                    "vacancies": 5
+                },
+                {  # this should fail as vr1.pk is related to another project
+                    "id": vr1.pk,
+                    "name": "bbbbb",
+                    "prerequisites": "bbbbb",
+                    "details": "bbbb",
+                    "vacancies": 5
+                }
+            ]
         }
         response = self.client.patch(
             reverse(

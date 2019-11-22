@@ -14,9 +14,12 @@ from PIL import Image
 # absolute uri, preventing a #get_blog for each image
 
 def build_absolute_uri(req, image):
-    if hasattr(settings, 'GCS_BUCKET'):
-        return image.url
-    return req.build_absolute_uri(image.url) if image else None
+    try:
+        if hasattr(settings, 'GCS_BUCKET'):
+            return image.url
+        return req.build_absolute_uri(image.url) if image else None
+    except ValueError:
+        return None
 
 
 def perform_image_crop(image_obj, crop_rect=None):

@@ -8,5 +8,5 @@ router = routers.DefaultRouter()
 router.register(r'faq', faq.FaqResourceViewSet, 'faq')
 
 urlpatterns = [
-  url(r'^', include(router.urls)),
+    url(r'^', include(router.urls)),
 ]

@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='sectionfilter',
-            options={'verbose_name': 'section filter', 'verbose_name_plural': 'section filters'},
+            options={
+                'verbose_name': 'section filter',
+                'verbose_name_plural': 'section filters'},
         ),
     ]

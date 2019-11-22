@@ -66,4 +66,5 @@ class LeadAdmin(ImportExportModelAdmin, ChannelModelAdmin):
                 request._set_post(post)
         return super().changelist_view(request, extra_context)
 
+
 admin_site.register(Lead, LeadAdmin)

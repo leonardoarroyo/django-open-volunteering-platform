@@ -15,6 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='faq',
             name='language',
-            field=models.CharField(blank=True, default=None, max_length=10, null=True, verbose_name='Language'),
+            field=models.CharField(
+                blank=True,
+                default=None,
+                max_length=10,
+                null=True,
+                verbose_name='Language'),
         ),
     ]

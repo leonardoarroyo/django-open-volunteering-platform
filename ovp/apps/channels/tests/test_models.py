@@ -8,7 +8,8 @@ from ovp.apps.users.models import User
 
 
 class ChannelTestCase(TestCase):
-    def test_models_that_extend_single_channel_relationship_raise_error_if_no_channel_supplied_on_save(self):
+    def test_models_that_extend_single_channel_relationship_raise_error_if_no_channel_supplied_on_save(
+            self):
         """
         Assert models that extend ChannelRelationship model
         raises error if no channel supplied on save method
@@ -19,7 +20,8 @@ class ChannelTestCase(TestCase):
 
         self.assertEqual(User.objects.count(), 0)
 
-    def test_models_that_extend_single_channel_relationship_can_be_created_with_custom_channel_on_save(self):
+    def test_models_that_extend_single_channel_relationship_can_be_created_with_custom_channel_on_save(
+            self):
         """
         Assert models that extend ChannelRelationship can
         be created with custom channel on save method
@@ -30,7 +32,8 @@ class ChannelTestCase(TestCase):
 
         self.assertTrue(user.channel.slug == "test-channel")
 
-    def test_models_that_extend_single_channel_relationship_raise_error_if_no_channel_supplied_on_create(self):
+    def test_models_that_extend_single_channel_relationship_raise_error_if_no_channel_supplied_on_create(
+            self):
         """
         Assert models that extend ChannelRelationship model
         raises error if no channel supplied on manager create method
@@ -43,7 +46,8 @@ class ChannelTestCase(TestCase):
 
         self.assertEqual(User.objects.count(), 0)
 
-    def test_models_that_extend_single_channel_relationship_can_be_created_with_custom_channel_on_create(self):
+    def test_models_that_extend_single_channel_relationship_can_be_created_with_custom_channel_on_create(
+            self):
         """
         Assert models that extend ChannelRelationship can
         be created with custom channel on manager create method
@@ -56,7 +60,8 @@ class ChannelTestCase(TestCase):
         )
         self.assertTrue(user.channel.slug == "test-channel")
 
-    def test_models_that_extend_single_channel_cant_associate_channel_directly(self):
+    def test_models_that_extend_single_channel_cant_associate_channel_directly(
+            self):
         """
         Assert models that extend ChannelRelationship
         raise exception when trying to associate channel directly

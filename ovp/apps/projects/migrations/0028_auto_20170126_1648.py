@@ -16,11 +16,20 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='apply',
             name='username',
-            field=models.CharField(blank=True, max_length=200, null=True, verbose_name='name'),
+            field=models.CharField(
+                blank=True,
+                max_length=200,
+                null=True,
+                verbose_name='name'),
         ),
         migrations.AlterField(
             model_name='project',
             name='image',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='uploads.UploadedImage', verbose_name='image'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='uploads.UploadedImage',
+                verbose_name='image'),
         ),
     ]

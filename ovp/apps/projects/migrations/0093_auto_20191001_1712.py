@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='benefited_people',
-            field=models.IntegerField(blank=True, default=0, null=True, verbose_name='Benefited people'),
+            field=models.IntegerField(
+                blank=True,
+                default=0,
+                null=True,
+                verbose_name='Benefited people'),
         ),
     ]

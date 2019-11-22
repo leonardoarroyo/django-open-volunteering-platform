@@ -18,7 +18,7 @@ from rest_framework import decorators
 from rest_framework import response
 from rest_framework import permissions
 
+
 @ChannelViewSet
 class OrganizationDonationViewSet(viewsets.GenericViewSet):
-  pass
-
+    pass

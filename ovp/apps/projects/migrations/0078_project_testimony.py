@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='testimony',
-            field=models.TextField(blank=True, max_length=3000, null=True, verbose_name='testimony'),
+            field=models.TextField(
+                blank=True,
+                max_length=3000,
+                null=True,
+                verbose_name='testimony'),
         ),
     ]

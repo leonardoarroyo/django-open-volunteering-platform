@@ -16,6 +16,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='image',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='uploads.UploadedImage'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='uploads.UploadedImage'),
         ),
     ]

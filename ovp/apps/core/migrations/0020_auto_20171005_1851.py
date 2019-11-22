@@ -15,11 +15,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='skill',
             name='slug',
-            field=models.SlugField(blank=True, max_length=100, null=True, verbose_name='slug'),
+            field=models.SlugField(
+                blank=True,
+                max_length=100,
+                null=True,
+                verbose_name='slug'),
         ),
         migrations.AlterField(
             model_name='cause',
             name='slug',
-            field=models.SlugField(blank=True, max_length=100, null=True, verbose_name='slug'),
+            field=models.SlugField(
+                blank=True,
+                max_length=100,
+                null=True,
+                verbose_name='slug'),
         ),
     ]

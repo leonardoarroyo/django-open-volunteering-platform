@@ -8,5 +8,5 @@ donations = routers.SimpleRouter()
 donations.register(r'donations', DonationViewSet, 'donation')
 
 urlpatterns = [
-  url(r'^', include(donations.urls)),
+    url(r'^', include(donations.urls)),
 ]

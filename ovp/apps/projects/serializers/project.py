@@ -11,8 +11,9 @@ from ovp.apps.projects.serializers.disponibility import (
 )
 from ovp.apps.projects.serializers.job import JobSerializer
 from ovp.apps.projects.serializers.work import WorkSerializer
-from ovp.apps.projects.serializers.role import (VolunteerRoleProjectCreateSerializer,
-                                                VolunteerRoleProjectUpdateSerializer)
+from ovp.apps.projects.serializers.role import (
+    VolunteerRoleProjectCreateSerializer,
+    VolunteerRoleProjectUpdateSerializer)
 from ovp.apps.projects.serializers.apply import ProjectAppliesSerializer
 from ovp.apps.projects.serializers.category import (
     CategoryRetrieveSerializer,
@@ -125,7 +126,8 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     causes = CauseAssociationSerializer(many=True, required=False)
     skills = SkillAssociationSerializer(many=True, required=False)
     categories = CategoryAssociationSerializer(many=True, required=False)
-    documents = UploadedDocumentAssociationSerializer(many=True, required=False)
+    documents = UploadedDocumentAssociationSerializer(
+        many=True, required=False)
     galleries = GalleryAssociationSerializer(many=True, required=False)
     image = UploadedImageSerializer(read_only=True)
     image_id = serializers.IntegerField(required=False)
@@ -283,7 +285,9 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
             instance.address = address
 
         if roles:
-            current_roles = list(instance.roles.all().values_list('pk', flat=True))
+            current_roles = list(
+                instance.roles.all().values_list(
+                    'pk', flat=True))
             instance.roles.clear()
             for role_data in roles:
                 identifier = role_data.pop("id") if "id" in role_data else None
@@ -293,10 +297,11 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
                     context=self.context
                 )
                 if identifier in current_roles:
-                  role_instance = models.VolunteerRole.objects.get(pk=identifier)
-                  role = role_sr.update(role_instance, role_data)
+                    role_instance = models.VolunteerRole.objects.get(
+                        pk=identifier)
+                    role = role_sr.update(role_instance, role_data)
                 else:
-                  role = role_sr.create(role_data)
+                    role = role_sr.create(role_data)
                 instance.roles.add(role)
 
         if disp:
@@ -375,6 +380,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     @add_disponibility_representation
     def to_representation(self, instance):
         return super().to_representation(instance)
+
 
 class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
     image = UploadedImageSerializer()
@@ -473,6 +479,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
     @add_disponibility_representation
     def to_representation(self, instance):
         return super().to_representation(instance)
+
 
 class ProjectManageableRetrieveSerializer(ProjectRetrieveSerializer):
 
