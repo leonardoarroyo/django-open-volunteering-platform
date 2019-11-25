@@ -122,7 +122,7 @@ class ApplyAndUnapplyTestCase(TestCase):
         self.assertTrue(response.data["detail"] == "Successfully unapplied.")
 
         a = Apply.objects.last()
-        self.assertTrue(a.status == "unapplied")
+        self.assertTrue(a.status == "unapplied-by-volunteer")
         self.assertTrue(a.canceled_date)
 
         project = Project.objects.get(slug="test-project")
@@ -273,6 +273,8 @@ class ApplyAndUnapplyTestCase(TestCase):
         )
         self.assertTrue(response.status_code == 200)
 
+    def test_first_apply_generates_history(self):
+        pass
 
 class ProjectAppliesRetrievingTestCase(TestCase):
 
@@ -424,21 +426,21 @@ class ProjectApplyStatusUpdateTestCase(TestCase):
 
     def _assert_can_update_apply(self):
         # Update apply
-        data = {"status": "unapplied"}
+        data = {"status": "unapplied-by-volunteer"}
         response = self.client.patch(
             reverse("project-applies-detail", ["test-project", self.apply_id]),
             data=data,
             format="json"
         )
         self.assertTrue(response.status_code == 200)
-        self.assertTrue(response.data["status"] == "unapplied")
+        self.assertTrue(response.data["status"] == "unapplied-by-volunteer")
 
         # Get apply
         response = self.client.get(
             reverse("project-applies-list", ["test-project"]),
             format="json"
         )
-        self.assertTrue(response.data[0]["status"] == "unapplied")
+        self.assertTrue(response.data[0]["status"] == "unapplied-by-volunteer")
 
     def test_project_owner_can_update_apply_status(self):
         """Assert that project owner can update apply status"""
@@ -486,3 +488,6 @@ class ProjectApplyStatusUpdateTestCase(TestCase):
             response.data["status"]
             == ["\"invalid-status\" is not a valid choice."]
         )
+
+    def test_updating_apply_generates_history(self):
+        pass

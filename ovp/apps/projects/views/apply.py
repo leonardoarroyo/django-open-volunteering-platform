@@ -81,7 +81,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
             existing_apply = self.get_queryset(**kwargs)
             existing_apply = existing_apply.get(
                 email=data['email'],
-                status='unapplied'
+                status='unapplied-by-volunteer'
             )
             existing_apply.status = "applied"
             existing_apply.role_id = data['role'] if 'role' in data else None
@@ -114,9 +114,9 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
         try:
             existing_apply = self.get_queryset(**kwargs)
             existing_apply = existing_apply.exclude(
-                status="unapplied"
+                status="unapplied-by-volunteer"
             ).get(email=user.email)
-            existing_apply.status = "unapplied"
+            existing_apply.status = "unapplied-by-volunteer"
             existing_apply.save()
         except ObjectDoesNotExist:
             return response.Response(

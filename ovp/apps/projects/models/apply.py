@@ -9,9 +9,11 @@ from ovp.apps.channels.models.abstract import ChannelRelationship
 
 apply_status_choices = (
     ('applied', 'Applied'),
-    ('unapplied', 'Canceled'),
+    #('unapplied', 'Canceled'),
+    #('not-volunteer', 'Not a Volunteer'),
+    ('unapplied-by-volunteer', 'Canceled by volunteer'),
+    ('unapplied-by-organization', 'Canceled by organization'),
     ('confirmed-volunteer', 'Confirmed Volunteer'),
-    ('not-volunteer', 'Not a Volunteer'),
 )
 
 
@@ -76,39 +78,36 @@ class Apply(ChannelRelationship):
         return emails.ApplyMail(self, async_mail)
 
     def save(self, *args, **kwargs):
-        creating = False
-        if self.pk is None:
-            # Object being created
-            creating = True
-        else:
-            # Object being updated
-            if self.__original_status != self.status:
-                if self.status == "unapplied":
-                    self.canceled_date = timezone.now()
-                else:
-                    self.canceled_date = None
+        creating = self.id is None
 
+        # Set canceled date if status is unapplied
+        if not creating and self.__original_status != self.status:
+            if self.status in ["unapplied-by-volunteer", "unapplied-by-organization"]:
+                self.canceled_date = timezone.now()
+            else:
+                self.canceled_date = None
+
+        # Save
         return_data = super().save(*args, **kwargs)
 
-        # Emails
-        if creating and self.project.closed is False:
-            self.mailing().sendAppliedToVolunteer({'apply': self})
-            self.mailing().sendAppliedToOwner({'apply': self})
-        else:
-            if (self.__original_status != self.status
-                    and self.status == "unapplied"
-                    and self.project.closed is False):
-                self.mailing().sendUnappliedToVolunteer({'apply': self})
-                self.mailing().sendUnappliedToOwner({'apply': self})
+        # Emails and history
+        #if creating and self.project.closed is False:
+        #    self.mailing().sendAppliedToVolunteer({'apply': self})
+        #    self.mailing().sendAppliedToOwner({'apply': self})
+        #else:
+        #    if (self.__original_status != self.status
+        #            and self.status == "unapplied"
+        #            and self.project.closed is False):
+        #        self.mailing().sendUnappliedToVolunteer({'apply': self})
+        #        self.mailing().sendUnappliedToOwner({'apply': self})
 
         # Update original values
         self.__original_status = self.status
 
+        # Updating project applied_count
         if self.role:
             self.role.applied_count = self.role.get_volunteers_numbers()
             self.role.save()
-
-        # Updating project applied_count
         self.project.applied_count = self.project.get_volunteers_numbers()
         self.project.save()
 
@@ -119,3 +118,15 @@ class Apply(ChannelRelationship):
         verbose_name = _('apply')
         verbose_name_plural = _('applies')
         unique_together = (("email", "project"), )
+
+class ApplyStatusHistory(models.Model):
+    apply = models.ForeignKey('projects.Apply')
+    status = models.CharField(
+        _('status'),
+        max_length=30,
+        choices=apply_status_choices
+    )
+    date = models.DateTimeField(
+        _("Status date"),
+        auto_now_add=True
+    )
