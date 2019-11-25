@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.dispatch import receiver
@@ -101,14 +101,6 @@ class Apply(ChannelRelationship):
 
         # Update original values
         self.__original_status = self.status
-
-        ## Updating project applied_count
-        #if self.role:
-        #    self.role.applied_count = self.role.get_volunteers_numbers()
-        #    self.role.save()
-        #self.project.applied_count = self.project.get_volunteers_numbers()
-        #self.project.save()
-
         return return_data
 
     def _save__set_canceled_status(self, creating):
@@ -124,17 +116,15 @@ class Apply(ChannelRelationship):
         verbose_name_plural = _('applies')
         unique_together = (("email", "project"), )
 
-#@receiver(pre_save, sender=Apply)
-#def set_canceled_date(sender, **kwargs):
-#    if not kwargs.get('raw', False):
-#        new = kwargs['instance'].project
-#        old = Apply.objects.get(pk=new.pk)
-#
-#        if old.status != ne.status:
-#            if self.status in ["unapplied-by-volunteer", "unapplied-by-organization"]:
-#                self.canceled_date = timezone.now()
-#            else:
-#                self.canceled_date = None
+@receiver(post_save, sender=Apply)
+def set_applied_count(sender, **kwargs):
+    if not kwargs.get('raw', False):
+        instance = kwargs['instance']
+        if instance.role:
+            instance.role.applied_count = instance.role.get_volunteers_numbers()
+            instance.role.save()
+        instance.project.applied_count = instance.project.get_volunteers_numbers()
+        instance.project.save()
 
 class ApplyStatusHistory(models.Model):
     apply = models.ForeignKey('projects.Apply')
