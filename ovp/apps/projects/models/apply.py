@@ -1,6 +1,8 @@
 from django.db import models
+from django.db.models.signals import pre_save
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.dispatch import receiver
 
 from ovp.apps.projects import emails
 
@@ -81,11 +83,7 @@ class Apply(ChannelRelationship):
         creating = self.id is None
 
         # Set canceled date if status is unapplied
-        if not creating and self.__original_status != self.status:
-            if self.status in ["unapplied-by-volunteer", "unapplied-by-organization"]:
-                self.canceled_date = timezone.now()
-            else:
-                self.canceled_date = None
+        self._save__set_canceled_status(creating)
 
         # Save
         return_data = super().save(*args, **kwargs)
@@ -104,20 +102,39 @@ class Apply(ChannelRelationship):
         # Update original values
         self.__original_status = self.status
 
-        # Updating project applied_count
-        if self.role:
-            self.role.applied_count = self.role.get_volunteers_numbers()
-            self.role.save()
-        self.project.applied_count = self.project.get_volunteers_numbers()
-        self.project.save()
+        ## Updating project applied_count
+        #if self.role:
+        #    self.role.applied_count = self.role.get_volunteers_numbers()
+        #    self.role.save()
+        #self.project.applied_count = self.project.get_volunteers_numbers()
+        #self.project.save()
 
         return return_data
+
+    def _save__set_canceled_status(self, creating):
+        if not creating and self.__original_status != self.status:
+            if self.status in ["unapplied-by-volunteer", "unapplied-by-organization"]:
+                self.canceled_date = timezone.now()
+            else:
+                self.canceled_date = None
 
     class Meta:
         app_label = 'projects'
         verbose_name = _('apply')
         verbose_name_plural = _('applies')
         unique_together = (("email", "project"), )
+
+#@receiver(pre_save, sender=Apply)
+#def set_canceled_date(sender, **kwargs):
+#    if not kwargs.get('raw', False):
+#        new = kwargs['instance'].project
+#        old = Apply.objects.get(pk=new.pk)
+#
+#        if old.status != ne.status:
+#            if self.status in ["unapplied-by-volunteer", "unapplied-by-organization"]:
+#                self.canceled_date = timezone.now()
+#            else:
+#                self.canceled_date = None
 
 class ApplyStatusHistory(models.Model):
     apply = models.ForeignKey('projects.Apply')
