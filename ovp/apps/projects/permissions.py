@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import permissions
 
 from ovp.apps.organizations.models import Organization
@@ -81,3 +82,31 @@ class ProjectApplyPermission(permissions.BasePermission):
                         or request.user == project.organization.owner):
                     return True
         return False
+
+class ReapplyPermission(permissions.BasePermission):
+    """
+    Permission that only allows a user to apply/reapply if the user was
+    not removed from project by organization.
+    """
+
+    def has_permission(self, request, view):
+        project = get_object_or_404(
+            Project,
+            slug=view.kwargs.get("project_slug")
+        )
+        email = request.data.get("email", None)
+        user = request.user if request.user.is_authenticated else None
+
+        q_obj = Q()
+        if email:
+          q_obj.add(Q(email=email), Q.OR)
+        if user:
+          q_obj.add(Q(user=user), Q.OR)
+
+
+        return not bool(
+            project.apply_set.filter(
+              q_obj,
+              status__in=["confirmed-volunteer", "unapplied-by-organization"]
+            ).count()
+        )

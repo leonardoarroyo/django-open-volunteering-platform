@@ -10,7 +10,8 @@ from ovp.apps.channels.content_flow import CFM
 
 from ovp.apps.projects.serializers import apply as serializers
 from ovp.apps.projects import models
-from ovp.apps.projects.permissions import ProjectApplyPermission
+from ovp.apps.projects.permissions import (ProjectApplyPermission,
+                                           ReapplyPermission)
 
 from rest_framework import decorators
 from rest_framework import viewsets
@@ -166,10 +167,10 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
             if int(channel_settings[0]):
                 self.permission_classes = ()
             else:
-                self.permission_classes = (permissions.IsAuthenticated, )
+                self.permission_classes = (permissions.IsAuthenticated, ReapplyPermission)
 
         if self.action == 'unapply':
-            self.permission_classes = (permissions.IsAuthenticated, )
+            self.permission_classes = (permissions.IsAuthenticated, ReapplyPermission)
 
         return super().get_permissions()
 

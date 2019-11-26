@@ -121,6 +121,52 @@ class ApplyAndUnapplyTestCase(TestCase):
         self.assertTrue(a.status == "applied")
         self.assertTrue(a.canceled_date is None)
 
+    def test_cant_reapply_to_project_depending_on_status(self):
+        """
+        Assert that user can't reapply to project if user
+        removed by organization or if status is confirmed-volunteer
+        """
+        # Apply
+        response = self.client.post(
+            reverse("project-applies-apply", ["test-project"]),
+            format="json"
+        )
+        self.assertTrue(response.status_code == 200)
+
+        project = Project.objects.get(slug="test-project")
+        a = Apply.objects.last()
+        self.assertTrue(project.applied_count == 1)
+        self.assertTrue(a.status == "applied")
+
+        # Unapply
+        a.status = "unapplied-by-organization"
+        a.save()
+
+        a = Apply.objects.last()
+        self.assertTrue(a.status == "unapplied-by-organization")
+        self.assertTrue(a.canceled_date)
+
+        project = Project.objects.get(slug="test-project")
+        self.assertTrue(project.applied_count == 0)
+
+        # Reapply removed
+        response = self.client.post(
+            reverse("project-applies-apply", ["test-project"]),
+            format="json"
+        )
+        self.assertEqual(response.status_code, 403)
+        a.status="confirmed-volunteer"
+        a.save()
+
+        # Reapply confirmed
+        a = Apply.objects.last()
+        self.assertEqual(a.status, "confirmed-volunteer")
+        response = self.client.post(
+            reverse("project-applies-apply", ["test-project"]),
+            format="json"
+        )
+        self.assertEqual(response.status_code, 403)
+
     def test_cant_unapply_if_not_apply_or_unauthenticated(self):
         """
         Assert that user can't unapply if not
