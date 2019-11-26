@@ -4,7 +4,7 @@ from django.core.cache import cache
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
-from ovp.apps.projects.models import Project, Apply
+from ovp.apps.projects.models import Project, Apply, ApplyStatusHistory
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
 
@@ -75,6 +75,8 @@ class ApplyAndUnapplyTestCase(TestCase):
             type(response.data["applies"][0]["user"]) in [dict, OrderedDict]
         )
         self.assertTrue(response.data["current_user_is_applied"] is True)
+
+        return Apply.objects.last().pk
 
     def test_can_reapply_to_project(self):
         """
@@ -274,7 +276,9 @@ class ApplyAndUnapplyTestCase(TestCase):
         self.assertTrue(response.status_code == 200)
 
     def test_first_apply_generates_history(self):
-        pass
+        pk = self.test_can_apply_to_project()
+        self.assertEqual(ApplyStatusHistory.objects.filter(apply__pk=pk).count(), 1)
+        self.assertEqual(ApplyStatusHistory.objects.get(apply__pk=pk).status, 'applied')
 
 class ProjectAppliesRetrievingTestCase(TestCase):
 
@@ -490,4 +494,10 @@ class ProjectApplyStatusUpdateTestCase(TestCase):
         )
 
     def test_updating_apply_generates_history(self):
-        pass
+        self.client.force_authenticate(user=self.project_owner)
+        self._assert_can_update_apply()
+        pk = Apply.objects.last().pk
+
+        self.assertEqual(ApplyStatusHistory.objects.filter(apply__pk=pk).count(), 2)
+        self.assertEqual(ApplyStatusHistory.objects.filter(apply__pk=pk).first().status, 'applied')
+        self.assertEqual(ApplyStatusHistory.objects.filter(apply__pk=pk).last().status, 'unapplied-by-volunteer')

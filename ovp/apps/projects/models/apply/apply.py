@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from ovp.apps.projects import emails
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
+from .status_history import ApplyStatusHistory
 
 
 apply_status_choices = (
@@ -88,6 +89,9 @@ class Apply(ChannelRelationship):
         # Save
         return_data = super().save(*args, **kwargs)
 
+        # Status history
+        self._save__save_status_history(creating)
+
         # Emails and history
         #if creating and self.project.closed is False:
         #    self.mailing().sendAppliedToVolunteer({'apply': self})
@@ -110,6 +114,15 @@ class Apply(ChannelRelationship):
             else:
                 self.canceled_date = None
 
+    def _save__save_status_history(self, creating):
+        if creating or self.__original_status != self.status:
+            ApplyStatusHistory.objects.create(
+                apply = self,
+                status = self.status,
+                object_channel = self.channel.slug
+            )
+
+
     class Meta:
         app_label = 'projects'
         verbose_name = _('apply')
@@ -125,15 +138,3 @@ def set_applied_count(sender, **kwargs):
             instance.role.save()
         instance.project.applied_count = instance.project.get_volunteers_numbers()
         instance.project.save()
-
-class ApplyStatusHistory(models.Model):
-    apply = models.ForeignKey('projects.Apply')
-    status = models.CharField(
-        _('status'),
-        max_length=30,
-        choices=apply_status_choices
-    )
-    date = models.DateTimeField(
-        _("Status date"),
-        auto_now_add=True
-    )

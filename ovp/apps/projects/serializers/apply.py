@@ -1,5 +1,5 @@
 from ovp.apps.projects import models
-from ovp.apps.projects.models.apply import apply_status_choices
+from ovp.apps.projects.models.apply.apply import apply_status_choices
 
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
 
