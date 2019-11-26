@@ -18,39 +18,38 @@ class ApplyAndUnapplyTestCase(TestCase):
     def setUp(self):
         cache.clear()
 
-    def test_can_apply_to_project(self):
-        """
-        Assert that authenticated user can apply to project
-        """
-        owner = User.objects.create_user(
+        self.owner = User.objects.create_user(
             email="owner_user@gmail.com",
             password="test_owner",
             object_channel="default"
         )
-        project = Project.objects.create(
+        self.project = Project.objects.create(
             name="test project",
             details="abc",
             description="abc",
-            owner=owner,
+            owner=self.owner,
             object_channel="default"
         )
-
-        user = User.objects.create_user(
+        self.user = User.objects.create_user(
             email="apply_user@gmail.com",
             password="apply_user",
             object_channel="default"
         )
 
-        client = APIClient()
-        client.force_authenticate(user=user)
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
 
-        response = client.get(
+    def test_can_apply_to_project(self):
+        """
+        Assert that authenticated user can apply to project
+        """
+        response = self.client.get(
             reverse("project-detail", ["test-project"]),
             format="json"
         )
         self.assertTrue(response.data["current_user_is_applied"] is False)
 
-        response = client.post(
+        response = self.client.post(
             reverse("project-applies-apply", ["test-project"]),
             data={"message": "test"},
             format="json"
@@ -58,7 +57,7 @@ class ApplyAndUnapplyTestCase(TestCase):
         self.assertTrue(response.status_code == 200)
         self.assertTrue(Apply.objects.last().message == "test")
 
-        response = client.post(
+        response = self.client.post(
             reverse("project-applies-apply", ["test-project"]),
             format="json"
         )
@@ -67,7 +66,7 @@ class ApplyAndUnapplyTestCase(TestCase):
             == "The fields email, project must make a unique set."
         )
 
-        response = client.get(
+        response = self.client.get(
             reverse("project-detail", ["test-project"]),
             format="json"
         )
@@ -82,30 +81,8 @@ class ApplyAndUnapplyTestCase(TestCase):
         """
         Assert that user can reapply to a project
         """
-        user = User.objects.create_user(
-            email="owner_user@gmail.com",
-            password="test_owner",
-            object_channel="default"
-        )
-        project = Project.objects.create(
-            name="test project",
-            details="abc",
-            description="abc",
-            owner=user,
-            object_channel="default"
-        )
-
-        user = User.objects.create_user(
-            email="apply_user@gmail.com",
-            password="apply_user",
-            object_channel="default"
-        )
-
-        client = APIClient()
-        client.force_authenticate(user=user)
-
         # Apply
-        response = client.post(
+        response = self.client.post(
             reverse("project-applies-apply", ["test-project"]),
             format="json"
         )
@@ -117,7 +94,7 @@ class ApplyAndUnapplyTestCase(TestCase):
         self.assertTrue(a.status == "applied")
 
         # Unapply
-        response = client.post(
+        response = self.client.post(
             reverse("project-applies-unapply", ["test-project"]),
             format="json"
         )
@@ -131,7 +108,7 @@ class ApplyAndUnapplyTestCase(TestCase):
         self.assertTrue(project.applied_count == 0)
 
         # Reapply
-        response = client.post(
+        response = self.client.post(
             reverse("project-applies-apply", ["test-project"]),
             format="json"
         )
@@ -149,25 +126,6 @@ class ApplyAndUnapplyTestCase(TestCase):
         Assert that user can't unapply if not
         already applied or unauthenticated
         """
-        user = User.objects.create_user(
-            email="owner_user@gmail.com",
-            password="test_owner",
-            object_channel="default"
-        )
-        project = Project.objects.create(
-            name="test project",
-            details="abc",
-            description="abc",
-            owner=user,
-            object_channel="default"
-        )
-
-        user = User.objects.create_user(
-            email="apply_user@gmail.com",
-            password="apply_user",
-            object_channel="default"
-        )
-
         client = APIClient()
 
         response = client.post(
@@ -180,7 +138,7 @@ class ApplyAndUnapplyTestCase(TestCase):
         )
         self.assertTrue(response.status_code == 401)
 
-        client.force_authenticate(user=user)
+        client.force_authenticate(user=self.user)
         response = client.post(
             reverse("project-applies-unapply", ["test-project"]),
             format="json"
@@ -195,17 +153,8 @@ class ApplyAndUnapplyTestCase(TestCase):
         """
         Assert that user can't apply to inexistent project
         """
-        user = User.objects.create_user(
-            email="apply_user@gmail.com",
-            password="apply_user",
-            object_channel="default"
-        )
-
-        client = APIClient()
-        client.force_authenticate(user=user)
-
-        response = client.post(
-            reverse("project-applies-apply", ["test-project"]),
+        response = self.client.post(
+            reverse("project-applies-apply", ["inexistent-program"]),
             format="json"
         )
         self.assertTrue(response.data["detail"] == "Not found.")
@@ -215,21 +164,7 @@ class ApplyAndUnapplyTestCase(TestCase):
         """
         Assert that unauthenticated user cant apply to project
         """
-        user = User.objects.create_user(
-            email="owner_user@gmail.com",
-            password="test_owner",
-            object_channel="default"
-        )
-        project = Project.objects.create(
-            name="test project",
-            details="abc",
-            description="abc",
-            owner=user,
-            object_channel="default"
-        )
-
         client = APIClient()
-
         response = client.post(
             reverse("project-applies-apply", ["test-project"]),
             {"email": "testemail@test.com"},
@@ -253,21 +188,7 @@ class ApplyAndUnapplyTestCase(TestCase):
         )
         cache.clear()
 
-        user = User.objects.create_user(
-            email="owner_user@gmail.com",
-            password="test_owner",
-            object_channel="default"
-        )
-        project = Project.objects.create(
-            name="test project",
-            details="abc",
-            description="abc",
-            owner=user,
-            object_channel="default"
-        )
-
         client = APIClient()
-
         response = client.post(
             reverse("project-applies-apply", ["test-project"]),
             {"email": "testemail@test.com"},
