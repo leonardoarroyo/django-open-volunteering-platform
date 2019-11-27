@@ -16,6 +16,7 @@ from jet.filters import DateRangeFilter
 
 
 class UserResource(CleanModelResource):
+
     id = Field(attribute='id', column_name='ID')
     name = Field(attribute='name', column_name='Nome')
     email = Field(attribute='email', column_name='Email')
@@ -25,10 +26,12 @@ class UserResource(CleanModelResource):
     causes = Field(column_name='Causas')
     joined_date = Field(
         attribute='joined_date',
-        column_name='Data do cadastro')
+        column_name='Data do cadastro'
+    )
     document = Field(attribute='document', column_name='Documento')
     has_done_volunteer_work_before = Field(
-        attribute='has_done_volunteer_work_before')
+        attribute='has_done_volunteer_work_before'
+    )
 
     class Meta:
         model = User
@@ -46,9 +49,14 @@ class UserResource(CleanModelResource):
         )
 
     def before_export(self, queryset, *args, **kwargs):
-        return queryset \
-            .prefetch_related('users_userprofile_profile__causes') \
-            .select_related('users_userprofile_profile', 'users_userprofile_profile__address')
+        queryset = queryset.prefetch_related(
+            'users_userprofile_profile__causes'
+        )
+        queryset = queryset.select_related(
+            'users_userprofile_profile',
+            'users_userprofile_profile__address'
+        )
+        return queryset
 
     def dehydrate_causes(self, user):
         if hasattr(user, 'users_userprofile_profile'):
@@ -65,8 +73,13 @@ class UserResource(CleanModelResource):
             if isinstance(profile.address, GoogleAddress):
                 return profile.address.address_line
             if isinstance(profile.address, SimpleAddress):
-                return profile.address.street + ', ' + profile.address.number + \
-                    ' - ' + profile.address.neighbourhood + ' - ' + profile.address.city
+                address = '{0}, {1} - {2} - {3}'.format(
+                    profile.address.street,
+                    profile.address.number,
+                    profile.address.neighbourhood,
+                    profile.address.city
+                )
+                return address
 
     def dehydrate_city_state(self, user):
         if hasattr(
@@ -82,7 +95,8 @@ class UserResource(CleanModelResource):
 
     def dehydrate_has_done_volunteer_work_before(self, user):
         if hasattr(user, 'users_userprofile_profile'):
-            return user.users_userprofile_profile.has_done_volunteer_work_before
+            userprofile = user.users_userprofile_profile
+            return userprofile.has_done_volunteer_work_before
         return None
 
 
@@ -92,7 +106,13 @@ class UserAdmin(
         ForeignKeyAutocompleteAdmin):
     fields = [
         ('id', 'name', 'email'), 'slug', 'phone', 'password', 'document',
-        ('is_staff', 'is_superuser', 'is_active', 'is_email_verified', 'public',),
+        (
+            'is_staff',
+            'is_superuser',
+            'is_active',
+            'is_email_verified',
+            'public'
+        ),
         'groups',
         'flairs',
         'has_done_volunteer_work_before'
@@ -107,7 +127,8 @@ class UserAdmin(
         'last_login',
         'is_active',
         'is_staff',
-        'is_email_verified']
+        'is_email_verified'
+    ]
 
     list_filter = [
         'is_active', 'is_staff', ('joined_date', DateRangeFilter)

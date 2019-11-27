@@ -2,6 +2,7 @@ from django.conf.urls import url, include
 from rest_framework import routers
 from ovp.apps.users import views
 
+
 router = routers.SimpleRouter()
 router.register(r'users', views.UserResourceViewSet, 'user')
 router.register(

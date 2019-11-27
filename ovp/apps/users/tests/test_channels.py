@@ -32,7 +32,9 @@ class UserChannelTestCase(TestCase):
             object_channel="test-channel")
 
     def test_users_with_same_email_on_different_channel(self):
-        """ Test users can be created with the same email but on different channel """
+        """
+        Test users can be created with the same email but on different channel
+        """
         self.assertEqual(User.objects.count(), 2)
 
         with self.assertRaises(IntegrityError) as raised:

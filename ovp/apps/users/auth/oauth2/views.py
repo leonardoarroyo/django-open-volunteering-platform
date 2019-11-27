@@ -1,8 +1,16 @@
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.decorators import (
+    api_view, authentication_classes, permission_classes
+)
 from rest_framework_social_oauth2.views import TokenView as BaseTokenView
-from rest_framework_social_oauth2.views import RevokeTokenView as BaseRevokeTokenView
-from rest_framework_social_oauth2.views import ConvertTokenView as BaseConvertTokenView
-from rest_framework_social_oauth2.views import invalidate_sessions as base_invalidate_sessions
+from rest_framework_social_oauth2.views import (
+    RevokeTokenView as BaseRevokeTokenView
+)
+from rest_framework_social_oauth2.views import (
+    ConvertTokenView as BaseConvertTokenView
+)
+from rest_framework_social_oauth2.views import (
+    invalidate_sessions as base_invalidate_sessions
+)
 from rest_framework_social_oauth2.oauth2_backends import KeepRequestCore
 from drf_yasg.utils import swagger_auto_schema
 from ovp.apps.users.auth.oauth2 import serializers
@@ -21,7 +29,7 @@ class TokenView(BaseTokenView):
             401: 'Unauthorized'})
     def post(self, *args, **kwargs):
         """ Exchange authentication credentials for authentication token. """
-        return super(TokenView, self).post(*args, **kwargs)
+        return super().post(*args, **kwargs)
 
 
 class RevokeTokenView(BaseRevokeTokenView):
@@ -31,7 +39,7 @@ class RevokeTokenView(BaseRevokeTokenView):
             204: "No content."})
     def post(self, *args, **kwargs):
         """ Revoke an access token. """
-        return super(RevokeTokenView, self).post(*args, **kwargs)
+        return super().post(*args, **kwargs)
 
 
 class ConvertTokenView(BaseConvertTokenView):
@@ -41,5 +49,8 @@ class ConvertTokenView(BaseConvertTokenView):
             200: serializers.ResponseConvertTokenViewSerializer,
             401: 'Unauthorized'})
     def post(self, *args, **kwargs):
-        """ Exchange social oauth token(Facebook or Google) for a local authentication token. """
-        return super(ConvertTokenView, self).post(*args, **kwargs)
+        """
+        Exchange social oauth token(Facebook or Google)
+        for a local authentication token.
+        """
+        return super().post(*args, **kwargs)

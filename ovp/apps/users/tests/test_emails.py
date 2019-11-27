@@ -1,7 +1,9 @@
 from django.test import TestCase
 from django.core import mail
 
-from ovp.apps.users.models import User, PasswordRecoveryToken, EmailVerificationToken
+from ovp.apps.users.models import (
+    User, PasswordRecoveryToken, EmailVerificationToken
+)
 
 
 class TestEmailTriggers(TestCase):
@@ -13,7 +15,10 @@ class TestEmailTriggers(TestCase):
         self.assertTrue(len(mail.outbox) == 2)
 
     def test_email_verification_token_creation_trigger_email(self):
-        """Assert that email is triggered when email verification token is created"""
+        """
+        Assert that email is triggered when email
+        verification token is created
+        """
         user = User(email="d@e.f", password="validpassword", name="valid name")
         user.save(object_channel="default")
 
@@ -23,7 +28,9 @@ class TestEmailTriggers(TestCase):
         self.assertTrue(len(mail.outbox) == 1)
 
     def test_token_creation_trigger_email(self):
-        """Assert that email is triggered when password recovery token is created"""
+        """
+        Assert that email is triggered when password recovery token is created
+        """
         user = User(email="d@e.f", password="validpassword", name="valid name")
         user.save(object_channel="default")
 

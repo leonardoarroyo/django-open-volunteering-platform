@@ -7,9 +7,7 @@ class UserMail(BaseMail):
     """
 
     def __init__(self, user, async_mail=None):
-        super(
-            UserMail,
-            self).__init__(
+        super().__init__(
             user.email,
             channel=user.channel.slug,
             async_mail=async_mail,

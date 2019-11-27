@@ -28,17 +28,19 @@ class BasePasswordReuse(object):
 
                 if matches:
                     raise serializers.ValidationError(
-                        "You cannot reuse the last {} used passwords.".format(amount))
+                        "You cannot reuse the last {} "
+                        "used passwords.".format(amount)
+                    )
 
 
 class PasswordReuse(BasePasswordReuse):
     def __call__(self, password):
         if self.request.user.is_authenticated():
-            super(PasswordReuse, self).check(self.request.user, password)
+            super().check(self.request.user, password)
 
 
 class PasswordReuseInRecovery(BasePasswordReuse):
     def __call__(self, password):
         token = PasswordRecoveryToken.objects.get(
             token=self.request.data.get("token", None))
-        super(PasswordReuseInRecovery, self).check(token.user, password)
+        super().check(token.user, password)

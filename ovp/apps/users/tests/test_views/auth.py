@@ -29,7 +29,9 @@ class OAuth2AuthTestCase(TestCase):
                 "error_description": "Invalid credentials given."})
 
     def test_can_login_two_users_same_email(self):
-        """ Assert that it's possible to login if two users have the same email on different channels.
+        """
+        Assert that it's possible to login if two users have
+        the same email on different channels.
         """
         Channel.objects.create(name="Test", slug="test-channel")
         user1 = User.objects.create(

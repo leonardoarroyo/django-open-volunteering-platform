@@ -57,22 +57,28 @@ class RecoverPasswordViewSet(viewsets.GenericViewSet):
 
         if (not rt) or rt.used_date or rt.created_date < day_ago:
             return response.Response(
-                {'message': 'Invalid token.'}, status=status.HTTP_401_UNAUTHORIZED)
+                {'message': 'Invalid token.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
         if not new_password:
             return response.Response(
-                {'message': 'Empty password not allowed.'}, status=status.HTTP_400_BAD_REQUEST)
+                {'message': 'Empty password not allowed.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             validate_password(new_password, user=rt.user)
         except ValidationError as e:
             errors = list(map(lambda x: [x.code, x.message], e.error_list))
             return response.Response(
-                {'message': 'Invalid password.', 'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
+                {'message': 'Invalid password.', 'errors': errors},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         serializers.RecoverPasswordSerializer(
             data=request.data,
-            context=self.get_serializer_context()).is_valid(
-            raise_exception=True)
+            context=self.get_serializer_context()
+        ).is_valid(raise_exception=True)
 
         rt.used_date = timezone.now()
         rt.save()

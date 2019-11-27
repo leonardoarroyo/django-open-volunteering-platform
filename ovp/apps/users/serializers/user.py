@@ -12,10 +12,16 @@ from ovp.apps.users.serializers.profile import get_profile_serializers
 from ovp.apps.users.serializers.profile import ProfileSearchSerializer
 from ovp.apps.users.validators import PasswordReuse
 from ovp.apps.users.decorators import expired_password
-from ovp.apps.organizations.serializers import OrganizationSearchSerializer, OrganizationOwnerRetrieveSerializer
+from ovp.apps.organizations.serializers import (
+    OrganizationSearchSerializer, OrganizationOwnerRetrieveSerializer
+)
 
-from ovp.apps.projects.serializers.apply_user import ApplyUserRetrieveSerializer
-from ovp.apps.projects.serializers.bookmark_user import BookmarkUserRetrieveSerializer
+from ovp.apps.projects.serializers.apply_user import (
+    ApplyUserRetrieveSerializer
+)
+from ovp.apps.projects.serializers.bookmark_user import (
+    BookmarkUserRetrieveSerializer
+)
 from ovp.apps.projects.models.apply import Apply
 
 from ovp.apps.uploads.serializers import UploadedImageSerializer
@@ -50,7 +56,8 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
             'public',
             'slug',
             'is_subscribed_to_newsletter',
-            'document']
+            'document'
+        ]
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate(self, data):
@@ -67,9 +74,11 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
         if data.get('email'):
             email = data.get('email', '')
             users = models.User.objects.filter(
-                email=email, channel__slug=self.context["request"].channel)
+                email=email, channel__slug=self.context["request"].channel
+            )
             if users.count():
-                errors['email'] = "An user with this email is already registered."
+                msg = "An user with this email is already registered."
+                errors['email'] = msg
 
         s = get_settings()
         validation_functions = s.get('USER_REGISTER_VALIDATION_FUNCTIONS', [])
@@ -83,13 +92,13 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
         if errors:
             raise serializers.ValidationError(errors)
 
-        return super(UserCreateSerializer, self).validate(data)
+        return super().validate(data)
 
     def create(self, validated_data):
         profile_data = validated_data.pop('profile', {})
 
         # Create user
-        user = super(UserCreateSerializer, self).create(validated_data)
+        user = super().create(validated_data)
 
         # Profile
         profile_data['user'] = user
@@ -119,7 +128,8 @@ class UserUpdateSerializer(UserCreateSerializer):
             'profile',
             'public',
             'is_subscribed_to_newsletter',
-            'document']
+            'document'
+        ]
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate(self, data):
@@ -144,7 +154,7 @@ class UserUpdateSerializer(UserCreateSerializer):
         if errors:
             raise serializers.ValidationError(errors)
 
-        return super(UserCreateSerializer, self).validate(data)
+        return super().validate(data)
 
     def update(self, instance, data):
         ProfileModel = get_profile_model()
@@ -171,7 +181,7 @@ class UserUpdateSerializer(UserCreateSerializer):
             profile_sr.is_valid(raise_exception=True)
             profile = profile_sr.update(profile, profile_sr.validated_data)
 
-        return super(UserUpdateSerializer, self).update(instance, data)
+        return super().update(instance, data)
 
 
 class CurrentUserSerializer(ChannelRelationshipSerializer):
@@ -206,13 +216,15 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
             'document',
             'is_email_verified',
             'is_staff',
-            'is_superuser']
+            'is_superuser'
+        ]
 
     def get_chat_enabled(self, obj):
         applies = Apply.objects.filter(
             project__published=True,
             project__chat_enabled=True,
-            user=obj)
+            user=obj
+        )
         return applies.count() > 0
 
     def get_rating_requests_user_count(self, obj):
@@ -239,12 +251,7 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
 
     @expired_password
     def to_representation(self, *args, **kwargs):
-        return super(
-            CurrentUserSerializer,
-            self).to_representation(
-            *
-            args,
-            **kwargs)
+        return super().to_representation(*args, **kwargs)
 
 
 class ShortUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
@@ -295,7 +302,10 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
 
                 try:
                     weeks = (last_time - a.date).days // 7
-                    project_hours = a.project.work.weekly_hours if a.project.work.weekly_hours is not None else 0
+                    if a.project.work.weekly_hours is not None:
+                        project_hours = a.project.work.weekly_hours
+                    else:
+                        project_hours = 0
                     project_hours = project_hours * (weeks + 1)
                     volunteer_hours += timezone.timedelta(hours=project_hours)
                 except BaseException:
@@ -305,11 +315,7 @@ class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
         return resp
 
     def to_representation(self, *args, **kwargs):
-        ret = super(
-            LongUserPublicRetrieveSerializer,
-            self).to_representation(
-            *args,
-            **kwargs)
+        ret = super().to_representation(*args, **kwargs)
         is_bookmarked_projects_on_user_enabled = int(
             get_channel_setting(
                 self.context['request'].channel,
@@ -335,7 +341,8 @@ class UserProjectRetrieveSerializer(ChannelRelationshipSerializer):
             'phone',
             'phone2',
             'slug',
-            'flairs']
+            'flairs'
+        ]
 
 
 class UserApplyRetrieveSerializer(ChannelRelationshipSerializer):
@@ -355,7 +362,8 @@ class UserApplyRetrieveSerializer(ChannelRelationshipSerializer):
             'email',
             'profile',
             'rating',
-            'flairs']
+            'flairs'
+        ]
 
 
 class UserSearchSerializer(ChannelRelationshipSerializer):

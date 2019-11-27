@@ -5,8 +5,12 @@ from ovp.apps.users.helpers import get_settings, import_from_string
 from ovp.apps.core.models import Skill
 from ovp.apps.core.models import Cause
 from ovp.apps.core.models.address import GoogleAddress
-from ovp.apps.core.serializers.skill import SkillSerializer, SkillAssociationSerializer
-from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
+from ovp.apps.core.serializers.skill import (
+    SkillSerializer, SkillAssociationSerializer
+)
+from ovp.apps.core.serializers.cause import (
+    CauseSerializer, CauseAssociationSerializer
+)
 from ovp.apps.core.serializers import GoogleAddressSerializer
 
 from ovp.apps.channels.serializers import ChannelRelationshipSerializer
@@ -33,7 +37,8 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
             'hidden_address',
             'birthday_date',
             'department',
-            'has_done_volunteer_work_before']
+            'has_done_volunteer_work_before'
+        ]
 
     def create(self, validated_data):
         skills = validated_data.pop('skills', [])
@@ -43,14 +48,13 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
         # Address
         if address_data:
             address_sr = GoogleAddressSerializer(
-                data=address_data, context=self.context)
+                data=address_data, context=self.context
+            )
             address = address_sr.create(address_data)
             validated_data['address'] = address
 
         # Create profile
-        profile = super(
-            ProfileCreateUpdateSerializer,
-            self).create(validated_data)
+        profile = super().create(validated_data)
 
         # Associate skills
         for skill in skills:
@@ -93,11 +97,7 @@ class ProfileCreateUpdateSerializer(ChannelRelationshipSerializer):
             address_sr.save(object_channel=instance.channel.slug)
             validated_data['address'] = address_sr
 
-        return super(
-            ProfileCreateUpdateSerializer,
-            self).update(
-            instance,
-            validated_data)
+        return super().update(instance, validated_data)
 
 
 class ProfileRetrieveSerializer(ChannelRelationshipSerializer):
@@ -117,7 +117,8 @@ class ProfileRetrieveSerializer(ChannelRelationshipSerializer):
             'address',
             'hidden_address',
             'birthday_date',
-            'has_done_volunteer_work_before']
+            'has_done_volunteer_work_before'
+        ]
 
 
 class ProfileSearchSerializer(ChannelRelationshipSerializer):

@@ -30,8 +30,10 @@ class ProfileTestCase(TestCase):
         self.assertTrue(response.data['profile']
                         ['about'] == self.profile['about'])
         self.assertTrue(response.data['profile']['gender'] == 'male')
-        self.assertTrue(response.data['profile']['address'][
-                        'typed_address'] == self.profile['address']['typed_address'])
+        self.assertTrue(
+            response.data['profile']['address']['typed_address']
+            == self.profile['address']['typed_address']
+        )
         self._assert_causes_and_skills_in_response(response)
         return response
 
@@ -48,8 +50,10 @@ class ProfileTestCase(TestCase):
         self.assertTrue(response.data['profile']
                         ['about'] == self.profile['about'])
         self.assertTrue(response.data['profile']['gender'] == 'male')
-        self.assertTrue(response.data['profile']['address'][
-                        'typed_address'] == self.profile['address']['typed_address'])
+        self.assertTrue(
+            response.data['profile']['address']['typed_address']
+            == self.profile['address']['typed_address']
+        )
         self._assert_causes_and_skills_in_response(response)
 
     def test_can_update_profile(self):
@@ -60,41 +64,63 @@ class ProfileTestCase(TestCase):
         self._test_can_update()
 
     def test_can_update_inexistent_profile(self):
-        """ Assert it's possible to update profile data even if profile is inexistent """
+        """
+        Assert it's possible to update profile data
+        even if profile is inexistent
+        """
         user = User.objects.create(
             email='test_user@email.com',
             password='test_password',
-            object_channel="default")
+            object_channel="default"
+        )
         self.client.force_authenticate(user)
         self._test_can_update()
 
     def test_skills_validation_on_create(self):
-        """ Assert it's impossible to associate with invalid skills on profile creation """
+        """
+        Assert it's impossible to associate with invalid
+        skills on profile creation
+        """
         profile = self.profile
         profile['skills'] = [{'id': 999}, {'id': 998}]
         response = create_user_with_profile(profile=profile)
         self.assertTrue(response.status_code == 400)
-        self.assertTrue(response.data['profile']['skills'][0]['id'] == [
-                        "Skill with 'id' 999 does not exist."])
-        self.assertTrue(response.data['profile']['skills'][1]['id'] == [
-                        "Skill with 'id' 998 does not exist."])
+        self.assertTrue(
+            response.data['profile']['skills'][0]['id']
+            == ["Skill with 'id' 999 does not exist."]
+        )
+        self.assertTrue(
+            response.data['profile']['skills'][1]['id']
+            == ["Skill with 'id' 998 does not exist."]
+        )
 
     def test_causes_validation_on_create(self):
-        """ Assert it's impossible to associate with invalid causes on profile creation"""
+        """
+        Assert it's impossible to associate with invalid
+        causes on profile creation
+        """
         profile = self.profile
         profile['causes'] = [{'id': 999}, {'id': 998}]
         response = create_user_with_profile(profile=profile)
         self.assertTrue(response.status_code == 400)
-        self.assertTrue(response.data['profile']['causes'][0]['id'] == [
-                        "Cause with 'id' 999 does not exist."])
-        self.assertTrue(response.data['profile']['causes'][1]['id'] == [
-                        "Cause with 'id' 998 does not exist."])
+        self.assertTrue(
+            response.data['profile']['causes'][0]['id']
+            == ["Cause with 'id' 999 does not exist."]
+        )
+        self.assertTrue(
+            response.data['profile']['causes'][1]['id']
+            == ["Cause with 'id' 998 does not exist."]
+        )
 
     def test_skills_validation_on_update(self):
-        """ Assert it's impossible to associate with invalid skills on profile update """
+        """
+        Assert it's impossible to associate with
+        invalid skills on profile update
+        """
         user = self.test_can_create_user_with_profile()
         self.client.force_authenticate(
-            User.objects.get(uuid=user.data['uuid']))
+            User.objects.get(uuid=user.data['uuid'])
+        )
 
         data = {
             'profile': {
@@ -105,13 +131,20 @@ class ProfileTestCase(TestCase):
         response = self.client.patch(
             reverse('user-current-user'), data, format="json")
         self.assertTrue(response.status_code == 400)
-        self.assertTrue(response.data['profile']['skills'][0]['id'] == [
-                        "Skill with 'id' 999 does not exist."])
-        self.assertTrue(response.data['profile']['skills'][1]['id'] == [
-                        "Skill with 'id' 998 does not exist."])
+        self.assertTrue(
+            response.data['profile']['skills'][0]['id']
+            == ["Skill with 'id' 999 does not exist."]
+        )
+        self.assertTrue(
+            response.data['profile']['skills'][1]['id']
+            == ["Skill with 'id' 998 does not exist."]
+        )
 
     def test_causes_validation_on_update(self):
-        """ Assert it's impossible to associate with invalid causes on profile update """
+        """
+        Assert it's impossible to associate with invalid
+        causes on profile update
+        """
         user = self.test_can_create_user_with_profile()
         self.client.force_authenticate(
             User.objects.get(uuid=user.data['uuid']))
@@ -125,10 +158,14 @@ class ProfileTestCase(TestCase):
         response = self.client.patch(
             reverse('user-current-user'), data, format="json")
         self.assertTrue(response.status_code == 400)
-        self.assertTrue(response.data['profile']['causes'][0]['id'] == [
-                        "Cause with 'id' 999 does not exist."])
-        self.assertTrue(response.data['profile']['causes'][1]['id'] == [
-                        "Cause with 'id' 998 does not exist."])
+        self.assertTrue(
+            response.data['profile']['causes'][0]['id']
+            == ["Cause with 'id' 999 does not exist."]
+        )
+        self.assertTrue(
+            response.data['profile']['causes'][1]['id']
+            == ["Cause with 'id' 998 does not exist."]
+        )
 
     def _assert_causes_and_skills_in_response(self, response):
         self.assertTrue(response.data['profile']['skills'][0]['id'] == 1)
@@ -155,9 +192,13 @@ class ProfileTestCase(TestCase):
         response = self.client.patch(
             reverse('user-current-user'), data, format="json")
         self.assertTrue(
-            response.data['profile']['full_name'] == data['profile']['full_name'])
-        self.assertTrue(response.data['profile']
-                        ['about'] == data['profile']['about'])
+            response.data['profile']['full_name']
+            == data['profile']['full_name']
+        )
+        self.assertTrue(
+            response.data['profile']['about']
+            == data['profile']['about']
+        )
         self.assertTrue(response.data['profile']['gender'] == 'female')
 
         self.assertTrue(response.data['profile']['skills'][0]['id'] == 3)

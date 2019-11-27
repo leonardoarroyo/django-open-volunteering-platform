@@ -9,7 +9,8 @@ class FacebookOAuth2(FacebookOAuth2Base):
         if not response.get("email", False):
             raise AuthenticationFailed({
                 "error": "access_denied",
-                "error_description": "Your email is not verified by the provider"
+                "error_description": "Your email is not verified by "
+                                     "the provider"
             })
         return super(FacebookOAuth2, self).auth_allowed(response, details)
 
