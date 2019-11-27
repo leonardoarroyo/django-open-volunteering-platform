@@ -18,7 +18,6 @@ class Response(object):
         self.rows = rows
         self.filename = filename
         self.sheet_name = sheet_name
-        return self._render_xls()
 
     def _render_xls(self):
         if self.filename is None:
