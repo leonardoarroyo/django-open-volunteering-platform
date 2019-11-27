@@ -101,7 +101,7 @@ class UserChannelTestCase(TestCase):
                                      "client_secret": client_secret},
                                     format="json",
                                     HTTP_X_OVP_CHANNEL="wrong-channel")
-        self.assertTrue(response.status_code == 401)
+        self.assertTrue(response.status_code == 400)
         self.assertTrue(
             response.data == {
                 "error": "invalid_grant",
