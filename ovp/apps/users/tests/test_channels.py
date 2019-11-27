@@ -32,7 +32,9 @@ class UserChannelTestCase(TestCase):
             object_channel="test-channel")
 
     def test_users_with_same_email_on_different_channel(self):
-        """ Test users can be created with the same email but on different channel """
+        """
+        Test users can be created with the same email but on different channel
+        """
         self.assertEqual(User.objects.count(), 2)
 
         with self.assertRaises(IntegrityError) as raised:
@@ -99,7 +101,7 @@ class UserChannelTestCase(TestCase):
                                      "client_secret": client_secret},
                                     format="json",
                                     HTTP_X_OVP_CHANNEL="wrong-channel")
-        self.assertTrue(response.status_code == 401)
+        self.assertTrue(response.status_code == 400)
         self.assertTrue(
             response.data == {
                 "error": "invalid_grant",

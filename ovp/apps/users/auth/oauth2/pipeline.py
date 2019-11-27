@@ -21,7 +21,9 @@ def get_avatar(backend, details, response, user=None, *args, **kwargs):
     if url:
         if not user.avatar:
             avatar = UploadedImage.objects.create(
-                absolute=True, object_channel=kwargs["strategy"].request.channel)
+                absolute=True,
+                object_channel=kwargs["strategy"].request.channel
+            )
             UploadedImage.objects.filter(
                 pk=avatar.pk).update(
                 image=url,

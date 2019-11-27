@@ -27,7 +27,7 @@ class PasswordRecoveryToken(ChannelRelationship, models.Model):
             self.token = uuid.uuid4()
             self.user.mailing().sendRecoveryToken({'token': self})
 
-        super(PasswordRecoveryToken, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'users'

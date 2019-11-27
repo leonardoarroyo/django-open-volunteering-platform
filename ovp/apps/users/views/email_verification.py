@@ -26,15 +26,12 @@ class RequestEmailVerificationViewSet(GenericUserTokenViewSet):
 
     @swagger_auto_schema(responses={200: 'OK', 429: 'Too many requests.'})
     def create(self, *args, **kwargs):
-        result = super(
-            RequestEmailVerificationViewSet,
-            self).create(
-            *args,
-            **kwargs)
+        result = super().create(*args, **kwargs)
 
         if result.status_code == 200:
             return response.Response(
-                {'success': True, 'message': 'Token requested successfully.'})
+                {'success': True, 'message': 'Token requested successfully.'}
+            )
 
         return result
 
@@ -68,12 +65,15 @@ class VerificateEmailViewSet(viewsets.GenericViewSet):
 
         if (not vt) or vt.used_date or vt.created_date < day_ago:
             return response.Response(
-                {'message': 'Invalid token.'}, status=status.HTTP_401_UNAUTHORIZED)
+                {'message': 'Invalid token.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
         serializers.EmailVerificationSerializer(
             data=request.data,
             context=self.get_serializer_context()).is_valid(
-            raise_exception=True)
+            raise_exception=True
+        )
 
         vt.used_date = timezone.now()
         vt.save()

@@ -61,9 +61,7 @@ class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
         # Shouldn't really be called for current implementation
         # but here as fail-safe for future updates
-        return super(
-            UserResourceViewSet,
-            self).get_object()  # pragma: no cover
+        return super().get_object()  # pragma: no cover
 
     # We need to override get_permissions and get_serializer_class to work
     # with multiple serializers and permissions
@@ -74,7 +72,7 @@ class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         elif self.action in ['current_user']:
             self.permission_classes = [permissions.IsAuthenticated, ]
 
-        return super(UserResourceViewSet, self).get_permissions()
+        return super().get_permissions()
 
     def get_serializer_class(self):
         request = self.get_serializer_context()['request']
@@ -113,7 +111,7 @@ class PublicUserResourceViewSet(
 
     def retrieve(self, *args, **kwargs):
         """ Retrieve an user profile. """
-        return super(PublicUserResourceViewSet, self).retrieve(*args, **kwargs)
+        return super().retrieve(*args, **kwargs)
 
     def mailing(self, async_mail=None):
         return emails.UserMail(self, async_mail)

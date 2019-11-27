@@ -39,8 +39,8 @@ class OVPDjangoStrategy(DjangoStrategy):
             return user
         except FieldError:
             # This happens because DjangoStorage is trying to .get the User
-            # passing object_channel which is a write only field. We try to fetch
-            # the user here instead
+            # passing object_channel which is a write only field.
+            # We try to fetch the user here instead
             exc_info = sys.exc_info()
             try:
                 return User.objects.get(*args, **get_kwargs)

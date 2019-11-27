@@ -15,7 +15,6 @@ class TestUserManager(TestCase):
         self.assertTrue(
             'The given email address must be set.' == str(
                 context.exception))
-        #self.assertTrue(user.id > 0)
 
     def test_create_user(self):
         """ Assert that UserManager can create user"""

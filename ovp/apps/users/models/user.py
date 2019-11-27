@@ -127,7 +127,7 @@ class User(
         unique_together = (('email', 'channel'), ('slug', 'channel'))
 
     def __init__(self, *args, **kwargs):
-        super(User, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.__original_password = self.password
         self.__original_email = self.email
 
@@ -146,14 +146,14 @@ class User(
             creating = True
         else:
             # checks if password has changed and if it was set by set_password
-            if self.__original_password != self.password and not self.check_password(
-                    self._password):
+            if (self.__original_password != self.password
+                    and not self.check_password(self._password)):
                 hash_password = True
             # checks if email has changed
             if self.__original_email != self.email:
                 update_email = True
 
-        if hash_password and self.LOGIN == False:
+        if hash_password and self.LOGIN is False:
             self.set_password(self.password)  # hash it
             self.__original_password = self.password
 
@@ -168,7 +168,7 @@ class User(
                 user=self, object_channel=self.channel.slug)
 
         no_email = kwargs.pop("no_email", False)
-        obj = super(User, self).save(*args, **kwargs)
+        obj = super().save(*args, **kwargs)
 
         if creating:
             if not no_email:
@@ -226,8 +226,8 @@ class User(
 
             profile_pks = list(
                 GPAUserProfile.objects.filter(
-                    collaborator_code__icontains=cleaned_data.get('q')).values_list(
-                    flat=True))
+                    collaborator_code__icontains=cleaned_data.get('q')
+                ).values_list(flat=True))
 
             qs = qs.filter(Q(name__icontains=cleaned_data.get('q')) | Q(
                 users_userprofile_profile__pk__in=profile_pks))
@@ -238,11 +238,8 @@ class User(
     def __str__(self):
         # TODO: Move this outside OVP, need to reimplement user model checking
         # everywhere
-        if hasattr(
-                self,
-                'profile') and hasattr(
-                self.profile,
-                'collaborator_code'):
+        if (hasattr(self, 'profile')
+                and hasattr(self.profile, 'collaborator_code')):
             return "#{} - {}".format(self.profile.collaborator_code, self.name)
         return self.name
 

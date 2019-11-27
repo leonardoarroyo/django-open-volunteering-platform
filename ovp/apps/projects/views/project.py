@@ -135,7 +135,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
             ])
 
         filename = '{}-applied-users.xls'.format(project.slug)
-        return XLSResponse(applied_users, filename, _('Applied Users'))
+        return XLSResponse(applied_users, filename, _('Applied Users'))._render_xls()
 
     @decorators.list_route(['GET'])
     def manageable(self, request, *args, **kwargs):

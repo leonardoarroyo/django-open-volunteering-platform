@@ -25,8 +25,7 @@ class ChannelJSONWebTokenSerializer(JSONWebTokenSerializer):
         """
         Dynamically add the USERNAME_FIELD to self.fields.
         """
-        super(ChannelJSONWebTokenSerializer, self).__init__(*args, **kwargs)
-        #self.fields['channel'] = serializers.CharField(write_only=True)
+        super().__init__(*args, **kwargs)
 
     def validate(self, attrs):
         credentials = {

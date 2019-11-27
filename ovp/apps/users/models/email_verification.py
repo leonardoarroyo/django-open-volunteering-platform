@@ -27,7 +27,7 @@ class EmailVerificationToken(ChannelRelationship, models.Model):
             self.token = uuid.uuid4()
             self.user.mailing().sendEmailVerification({'token': self})
 
-        super(EmailVerificationToken, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'users'

@@ -7,7 +7,8 @@ class GoogleOAuth2(GoogleOAuth2Base):
         if not response.get("email_verified", False):
             raise AuthenticationFailed({
                 "error": "access_denied",
-                "error_description": "Your email is not verified by the provider"
+                "error_description": "Your email is not verified "
+                                     "by the provider"
             })
         return super(GoogleOAuth2, self).auth_allowed(response, details)
 
