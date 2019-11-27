@@ -136,22 +136,22 @@ class TestEmailTriggers(TestCase):
         subjects = [x.subject for x in mail.outbox]
 
         # pragma: no cover
-        if is_email_enabled("default", "volunteerApplied-ToVolunteer"):
+        if is_email_enabled("default", "applyStatusChange-applied-ToVolunteer"):
             self.assertTrue(
                 get_email_subject(
                     "default",
-                    "volunteerApplied-ToVolunteer",
+                    "applyStatusChange-applied-ToVolunteer",
                     "Applied to project"
                 ) in subjects
             )
             self.assertTrue("test_project@project.com" in recipients)
 
         # pragma: no cover
-        if is_email_enabled("default", "volunteerApplied-ToOwner"):
+        if is_email_enabled("default", "applyStatusChange-applied-ToOwner"):
             self.assertTrue(
                 get_email_subject(
                     "default",
-                    "volunteerApplied-ToOwner",
+                    "applyStatusChange-applied-ToOwner",
                     "New volunteer"
                 ) in subjects
             )
@@ -184,30 +184,109 @@ class TestEmailTriggers(TestCase):
         mail.outbox = []  # Mails sent before applying don't matter
         apply = Apply(project=project, user=volunteer, email=volunteer.email)
         apply.save(object_channel="default")
-        apply.status = "unapplied"
+        apply.status = "unapplied-by-volunteer"
+        apply.save()
+
+        apply.status = "unapplied-by-organization"
         apply.save()
 
         recipients = [x.to[0] for x in mail.outbox]
         subjects = [x.subject for x in mail.outbox]
 
         # pragma: no cover
-        if is_email_enabled("default", "volunteerUnapplied-ToVolunteer"):
+        if is_email_enabled("default", "applyStatusChange-unapplied-by-volunteer-ToVolunteer"):
             self.assertTrue(
                 get_email_subject(
                     "default",
-                    "volunteerUnapplied-ToVolunteer",
+                    "applyStatusChange-unapplied-by-volunteer-ToVolunteer",
                     "Unapplied from project"
                 ) in subjects
             )
             self.assertTrue("test_project@project.com" in recipients)
 
         # pragma: no cover
-        if is_email_enabled("default", "volunteerUnapplied-ToOwner"):
+        if is_email_enabled("default", "applyStatusChange-unapplied-by-volunteer-ToOwner"):
             self.assertTrue(
                 get_email_subject(
                     "default",
-                    "volunteerUnapplied-ToOwner",
+                    "applyStatusChange-unapplied-by-volunteer-ToOwner",
                     "Volunteer unapplied from project"
+                ) in subjects
+            )
+            self.assertTrue("test_volunteer@project.com" in recipients)
+
+        # pragma: no cover
+        if is_email_enabled("default", "applyStatusChange-unapplied-by-organization-ToVolunteer"):
+            self.assertTrue(
+                get_email_subject(
+                    "default",
+                    "applyStatusChange-unapplied-by-organization-ToVolunteer",
+                    "Your application has been canceled",
+                ) in subjects
+            )
+            self.assertTrue("test_project@project.com" in recipients)
+
+        # pragma: no cover
+        if is_email_enabled("default", "applyStatusChange-unapplied-by-organization-ToOwner"):
+            self.assertTrue(
+                get_email_subject(
+                    "default",
+                    "applyStatusChange-unapplied-by-organization-ToOwner",
+                    "Volunteer removed from project",
+                ) in subjects
+            )
+            self.assertTrue("test_volunteer@project.com" in recipients)
+
+    def test_apply_status_change(self):
+        """
+        Assert that changing status to confirmed-volunteer triggers email.
+        """
+        user = User.objects.create_user(
+            email="test_project@project.com",
+            password="test_project",
+            object_channel="default"
+        )
+        volunteer = User.objects.create_user(
+            email="test_volunteer@project.com",
+            password="test_volunteer",
+            object_channel="default"
+        )
+        project = Project.objects.create(
+            name="test project",
+            slug="test project",
+            details="abc",
+            description="abc",
+            owner=user,
+            object_channel="default"
+        )
+
+        mail.outbox = []  # Mails sent before applying don't matter
+        apply = Apply(project=project, user=volunteer, email=volunteer.email)
+        apply.save(object_channel="default")
+        apply.status = "confirmed-volunteer"
+        apply.save()
+
+        recipients = [x.to[0] for x in mail.outbox]
+        subjects = [x.subject for x in mail.outbox]
+
+        # pragma: no cover
+        if is_email_enabled("default", "applyStatusChange-confirmed-volunteer-ToVolunteer"):
+            self.assertTrue(
+                get_email_subject(
+                    "default",
+                    "applyStatusChange-confirmed-volunteer-ToVolunteer",
+                    "Your application has been confirmed",
+                ) in subjects
+            )
+            self.assertTrue("test_project@project.com" in recipients)
+
+        # pragma: no cover
+        if is_email_enabled("default", "applyStatusChange-confirmed-volunteer-ToOwner"):
+            self.assertTrue(
+                get_email_subject(
+                    "default",
+                    "applyStatusChange-confirmed-volunteer-ToOwner",
+                    "Volunteer confirmed on project"
                 ) in subjects
             )
             self.assertTrue("test_volunteer@project.com" in recipients)

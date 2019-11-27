@@ -58,7 +58,7 @@ class ApplyMail(BaseMail):
         Sent to user when he applies to a project
         """
         return self.sendEmail(
-            'volunteerApplied-ToVolunteer',
+            'applyStatusChange-applied-ToVolunteer',
             'Applied to project',
             context
         )
@@ -74,22 +74,22 @@ class ApplyMail(BaseMail):
             locale=self.apply.project.owner.locale
         )
         return self.sendEmail(
-            'volunteerApplied-ToOwner',
+            'applyStatusChange-applied-ToOwner',
             'New volunteer',
             context
         )
 
-    def sendUnappliedToVolunteer(self, context={}):
+    def sendUnappliedByVolunteerToVolunteer(self, context={}):
         """
         Sent to user when he unapplies from a project
         """
         return self.sendEmail(
-            'volunteerUnapplied-ToVolunteer',
+            'applyStatusChange-unapplied-by-volunteer-ToVolunteer',
             'Unapplied from project',
             context
         )
 
-    def sendUnappliedToOwner(self, context={}):
+    def sendUnappliedByVolunteerToOwner(self, context={}):
         """
         Sent to project owner when user unapplies from a project
         """
@@ -100,8 +100,60 @@ class ApplyMail(BaseMail):
             locale=self.apply.project.owner.locale
         )
         return self.sendEmail(
-            'volunteerUnapplied-ToOwner',
+            'applyStatusChange-unapplied-by-volunteer-ToOwner',
             'Volunteer unapplied from project',
+            context
+        )
+
+    def sendUnappliedByOrganizationToVolunteer(self, context={}):
+        """
+        Sent to user when organization cancels application
+        """
+        return self.sendEmail(
+            'applyStatusChange-unapplied-by-organization-ToVolunteer',
+            'Your application has been canceled',
+            context
+        )
+
+    def sendUnappliedByOrganizationToOwner(self, context={}):
+        """
+        Sent to project owner when organization cancels application
+        """
+        super().__init__(
+            self.apply.project.owner.email,
+            channel=self.apply.channel.slug,
+            async_mail=self.async_obj,
+            locale=self.apply.project.owner.locale
+        )
+        return self.sendEmail(
+            'applyStatusChange-unapplied-by-organization-ToOwner',
+            'Volunteer removed from project',
+            context
+        )
+
+    def sendConfirmedVolunteerToVolunteer(self, context={}):
+        """
+        Sent to user when organization approves application
+        """
+        return self.sendEmail(
+            'applyStatusChange-confirmed-volunteer-ToVolunteer',
+            'Your application has been confirmed',
+            context
+        )
+
+    def sendConfirmedVolunteerToOwner(self, context={}):
+        """
+        Sent to project owner when organization approves application
+        """
+        super().__init__(
+            self.apply.project.owner.email,
+            channel=self.apply.channel.slug,
+            async_mail=self.async_obj,
+            locale=self.apply.project.owner.locale
+        )
+        return self.sendEmail(
+            'applyStatusChange-confirmed-volunteer-ToOwner',
+            'Volunteer confirmed on project',
             context
         )
 

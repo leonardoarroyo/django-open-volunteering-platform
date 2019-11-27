@@ -12,8 +12,6 @@ from .status_history import ApplyStatusHistory
 
 apply_status_choices = (
     ('applied', 'Applied'),
-    #('unapplied', 'Canceled'),
-    #('not-volunteer', 'Not a Volunteer'),
     ('unapplied-by-volunteer', 'Canceled by volunteer'),
     ('unapplied-by-organization', 'Canceled by organization'),
     ('confirmed-volunteer', 'Confirmed Volunteer'),
@@ -91,17 +89,6 @@ class Apply(ChannelRelationship):
 
         # Status history
         self._save__save_status_history(creating)
-
-        # Emails and history
-        #if creating and self.project.closed is False:
-        #    self.mailing().sendAppliedToVolunteer({'apply': self})
-        #    self.mailing().sendAppliedToOwner({'apply': self})
-        #else:
-        #    if (self.__original_status != self.status
-        #            and self.status == "unapplied"
-        #            and self.project.closed is False):
-        #        self.mailing().sendUnappliedToVolunteer({'apply': self})
-        #        self.mailing().sendUnappliedToOwner({'apply': self})
 
         # Update original values
         self.__original_status = self.status
