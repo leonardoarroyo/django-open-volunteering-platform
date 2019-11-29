@@ -16,7 +16,7 @@ import json
 from datetime import datetime
 
 #####################
-## ViewSet filters ##
+#  ViewSet filters  #
 #####################
 
 
@@ -33,10 +33,10 @@ class UserSkillsCausesFilter:
 
         try:
             if user.users_userprofile_profile:
-                output["skills"] = user.users_userprofile_profile.skills.values_list(
-                    'id', flat=True)
-                output["causes"] = user.users_userprofile_profile.causes.values_list(
-                    'id', flat=True)
+                skills = user.users_userprofile_profile.skills
+                causes = user.users_userprofile_profile.causes
+                output["skills"] = skills.values_list('id', flat=True)
+                output["causes"] = causes.values_list('id', flat=True)
         except UserProfile.DoesNotExist:
             pass
 
@@ -79,7 +79,10 @@ class ProjectRelevanceOrderingFilter(OrderingFilter):
 
         if ordering:
             if "relevance" in ordering or "-relevance" in ordering:
-                queryset = UserSkillsCausesFilter().annotate_queryset(queryset, request.user)
+                queryset = UserSkillsCausesFilter().annotate_queryset(
+                    queryset,
+                    request.user
+                )
 
         if ordering:
             return queryset.order_by(*ordering)
@@ -88,7 +91,7 @@ class ProjectRelevanceOrderingFilter(OrderingFilter):
 
 
 ######################
-## Haystack filters ##
+#  Haystack filters  #
 ######################
 
 def get_operator_and_items(string=''):
@@ -231,13 +234,17 @@ def by_address(queryset, address='', project=False):
         if u'address_components' in address:
             q_objs = []
 
-            if len(address[u'address_components']):
-                for component in address[u'address_components']:
+            if len(address['address_components']):
+                for component in address['address_components']:
                     q_obj = SQ()
 
-                    for component_type in component[u'types']:
+                    for component_type in component['types']:
                         type_string = helpers.whoosh_raw(
-                            u"{}-{}".format(component[u'long_name'], component_type).strip())
+                            u"{}-{}".format(
+                                component['long_name'],
+                                component_type
+                            ).strip()
+                        )
                         q_obj.add(SQ(address_components=type_string), SQ.OR)
                         q_obj.add(SQ(skip_address_filter=1), SQ.OR)
 

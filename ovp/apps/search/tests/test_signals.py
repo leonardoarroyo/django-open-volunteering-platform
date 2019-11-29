@@ -110,20 +110,35 @@ class AddressTestCase(TestCase):
             object_channel="default")
 
         self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
-        self.assertTrue(SearchQuerySet().models(Project).filter(
-            address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
+        self.assertTrue(
+            SearchQuerySet().models(Project).filter(
+                address_components__exact=whoosh_raw(
+                    "São Paulo-administrative_area_level_2")
+            ).count()
+            == 1
+        )
 
         project.address.typed_address = "Campinas, SP - Brazil"
         project.address.save()
 
         self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
-        self.assertTrue(SearchQuerySet().models(Project).filter(
-            address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 1)
+        self.assertTrue(
+            SearchQuerySet().models(Project).filter(
+                address_components__exact=whoosh_raw(
+                    "Campinas-administrative_area_level_2")
+            ).count()
+            == 1
+        )
 
         project.address.delete()
         self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
-        self.assertTrue(SearchQuerySet().models(Project).filter(
-            address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 0)
+        self.assertTrue(
+            SearchQuerySet().models(Project).filter(
+                address_components__exact=whoosh_raw(
+                    "Campinas-administrative_area_level_2")
+            ).count()
+            == 0
+        )
 
     def test_organization_index_on_address_update(self):
         """ Test organization index gets reindexed if address changes """
@@ -141,22 +156,37 @@ class AddressTestCase(TestCase):
 
         self.assertTrue(SearchQuerySet().models(
             Organization).all().count() == 1)
-        self.assertTrue(SearchQuerySet().models(Organization).filter(
-            address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
+        self.assertTrue(
+            SearchQuerySet().models(Organization).filter(
+                address_components__exact=whoosh_raw(
+                    "São Paulo-administrative_area_level_2")
+            ).count()
+            == 1
+        )
 
         organization.address.typed_address = "Campinas, SP - Brazil"
         organization.address.save()
 
         self.assertTrue(SearchQuerySet().models(
             Organization).all().count() == 1)
-        self.assertTrue(SearchQuerySet().models(Organization).filter(
-            address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 1)
+        self.assertTrue(
+            SearchQuerySet().models(Organization).filter(
+                address_components__exact=whoosh_raw(
+                    "Campinas-administrative_area_level_2")
+            ).count()
+            == 1
+        )
 
         organization.address.delete()
         self.assertTrue(SearchQuerySet().models(
             Organization).all().count() == 0)
-        self.assertTrue(SearchQuerySet().models(Organization).filter(
-            address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 0)
+        self.assertTrue(
+            SearchQuerySet().models(Organization).filter(
+                address_components__exact=whoosh_raw(
+                    "Campinas-administrative_area_level_2")
+            ).count()
+            == 0
+        )
 
 
 class ProjectIndexTestCase(TestCase):
@@ -174,7 +204,9 @@ class ProjectIndexTestCase(TestCase):
         self.address2.save(object_channel="default")
 
     def test_index_on_create_and_update(self):
-        """ Test project index gets updated when a project is created or updated """
+        """
+        Test project index gets updated when a project is created or updated
+        """
         self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
 
         project = Project.objects.create(
@@ -188,15 +220,25 @@ class ProjectIndexTestCase(TestCase):
             object_channel="default")
 
         self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
-        self.assertTrue(SearchQuerySet().models(Project).filter(
-            address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
+        self.assertTrue(
+            SearchQuerySet().models(Project).filter(
+                address_components__exact=whoosh_raw(
+                    "São Paulo-administrative_area_level_2")
+            ).count()
+            == 1
+        )
 
         project.address = self.address2
         project.save()
 
         self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
-        self.assertTrue(SearchQuerySet().models(Project).filter(
-            address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 1)
+        self.assertTrue(
+            SearchQuerySet().models(Project).filter(
+                address_components__exact=whoosh_raw(
+                    "Campinas-administrative_area_level_2")
+            ).count()
+            == 1
+        )
 
     def test_index_on_causes_update(self):
         """ Test project index gets updated when a cause is modified """
@@ -260,7 +302,10 @@ class OrganizationIndexTestCase(TestCase):
         self.address2.save(object_channel="default")
 
     def test_index_on_create_and_update(self):
-        """ Test organization index gets updated when a organization is created or updated """
+        """
+        Test organization index gets updated when a organization
+        is created or updated
+        """
         self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
 
         organization = Organization(
@@ -274,16 +319,26 @@ class OrganizationIndexTestCase(TestCase):
 
         self.assertTrue(SearchQuerySet().models(
             Organization).all().count() == 1)
-        self.assertTrue(SearchQuerySet().models(Organization).filter(
-            address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
+        self.assertTrue(
+            SearchQuerySet().models(Organization).filter(
+                address_components__exact=whoosh_raw(
+                    "São Paulo-administrative_area_level_2")
+            ).count()
+            == 1
+        )
 
         organization.address = self.address2
         organization.save()
 
         self.assertTrue(SearchQuerySet().models(
             Organization).all().count() == 1)
-        self.assertTrue(SearchQuerySet().models(Organization).filter(
-            address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 1)
+        self.assertTrue(
+            SearchQuerySet().models(Organization).filter(
+                address_components__exact=whoosh_raw(
+                    "Campinas-administrative_area_level_2")
+            ).count()
+            == 1
+        )
 
     def test_index_on_causes_update(self):
         """ Test organization index gets updated when a cause is modified """
@@ -313,7 +368,9 @@ class UserIndexTestCase(TestCase):
         call_command('clear_index', '--noinput', verbosity=0)
 
     def test_index_on_create_and_update(self):
-        """ Test user index gets updated when a project is created or updated """
+        """
+        Test user index gets updated when a project is created or updated
+        """
         cause = Cause.objects.all().order_by('pk').first()
         skill = Skill.objects.all().order_by('pk').first()
 
@@ -322,7 +379,8 @@ class UserIndexTestCase(TestCase):
         user = User.objects.create_user(
             email="testmail@test.com",
             password="test_returned",
-            object_channel="default")
+            object_channel="default"
+        )
         profile = get_profile_model()(user=user)
         profile.save(object_channel="default")
 
@@ -352,13 +410,16 @@ class UserIndexTestCase(TestCase):
                 causes=cause.pk).count() == 0)
 
     def test_index_on_delete(self):
-        """ Test user index gets updated when a project is created or updated """
+        """
+        Test user index gets updated when a project is created or updated
+        """
         self.assertTrue(SearchQuerySet().models(User).all().count() == 0)
 
         user = User.objects.create_user(
             email="testmail@test.com",
             password="test_returned",
-            object_channel="default")
+            object_channel="default"
+        )
         profile = get_profile_model()(user=user)
         profile.save(object_channel="default")
 

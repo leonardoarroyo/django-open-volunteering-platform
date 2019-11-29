@@ -3,9 +3,10 @@ from django.core.cache import cache
 
 
 def cached(func):
-    """ Used to decorate .get_queryset method on search viewsets.
+    """
+    Used to decorate .get_queryset method on search viewsets.
 
-        Caches a queryset.
+    Caches a queryset.
     """
     @wraps(func)
     def _impl(self, *args, **kwargs):

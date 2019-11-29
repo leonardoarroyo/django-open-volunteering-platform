@@ -8,7 +8,9 @@ from rest_framework.test import APIClient
 
 from ovp.apps.users.models import User
 from ovp.apps.users.models.profile import get_profile_model
-from ovp.apps.projects.models import Project, Job, Category, Work, ProjectBookmark
+from ovp.apps.projects.models import (
+    Project, Job, Category, Work, ProjectBookmark
+)
 from ovp.apps.organizations.models import Organization, OrganizationBookmark
 from ovp.apps.core.models import GoogleAddress, Cause, Skill
 from ovp.apps.channels.models import Channel
@@ -343,7 +345,8 @@ class ProjectSearchTestCase(TestCase):
 
     def test_publish_filter(self):
         """
-        Test searching with publish filter == "true", "false" and "both" return correct projects
+        Test searching with publish filter == "true", "false" and "both"
+        return correct projects
         """
         response = self.client.get(
             reverse("search-projects-list") +
@@ -365,7 +368,8 @@ class ProjectSearchTestCase(TestCase):
 
     def test_closed_filter(self):
         """
-        Test searching with closed filter == "true", "false" and "both" return correct projects
+        Test searching with closed filter == "true", "false" and "both"
+        return correct projects
         """
         response = self.client.get(
             reverse("search-projects-list") +
@@ -409,27 +413,34 @@ class ProjectSearchTestCase(TestCase):
 
     def test_address_filter(self):
         """
-        Test searching with address filter returns only results filtered by address
+        Test searching with address filter returns only
+        results filtered by address
         """
         # Filter by city
-        response = self.client.get(
-            reverse("search-projects-list") +
-            '?address={"address_components":[{"types":["locality", "administrative_area_level_2"], "long_name":"São Paulo"}]}',
-            format="json")
+        endpoint2 = '%s?address={"address_components": [{"types":%s, %s}]}' % (
+            reverse("search-projects-list"),
+            '["locality", "administrative_area_level_2"]',
+            '"long_name":"São Paulo"'
+        )
+        response = self.client.get(endpoint2, format="json")
         self.assertEqual(len(response.data["results"]), 1)
 
         # Filter by state
-        response = self.client.get(
-            reverse("search-projects-list") +
-            '?address={"address_components":[{"types":["administrative_area_level_1"], "long_name":"State of São Paulo"}]}',
-            format="json")
+        endpoint1 = '%s?address={"address_components": [{"types":%s, %s}]}' % (
+            reverse("search-projects-list"),
+            '["locality", "administrative_area_level_1"]',
+            '"long_name":"State of São Paulo"'
+        )
+        response = self.client.get(endpoint1, format="json")
         self.assertEqual(len(response.data["results"]), 2)
 
         # Filter by country
-        response = self.client.get(
-            reverse("search-projects-list") +
-            '?address={"address_components":[{"types":["country"], "long_name":"United States"}]}',
-            format="json")
+        endpoint = '%s?address={"address_components": [{"types":%s, %s}]}' % (
+            reverse("search-projects-list"),
+            '["country"]',
+            '"long_name":"United States"'
+        )
+        response = self.client.get(endpoint, format="json")
         self.assertEqual(len(response.data["results"]), 1)
 
         # Filter remote jobs
@@ -441,7 +452,8 @@ class ProjectSearchTestCase(TestCase):
 
     def test_causes_filter(self):
         """
-        Test searching with causes filter returns only results filtered by cause
+        Test searching with causes filter returns only results
+        filtered by cause
         """
         cause_id1 = Cause.objects.all().order_by('pk')[0].pk
         cause_id2 = Cause.objects.all().order_by('pk')[1].pk
@@ -474,7 +486,8 @@ class ProjectSearchTestCase(TestCase):
 
     def test_categories_filter(self):
         """
-        Test searching with categories filter returns only results filtered by category
+        Test searching with categories filter returns
+        only results filtered by category
         """
         category_id1 = Category.objects.all().order_by('pk')[0].pk
         category_id2 = Category.objects.all().order_by('pk')[1].pk
@@ -507,7 +520,8 @@ class ProjectSearchTestCase(TestCase):
 
     def test_project_disponibility_filter(self):
         """
-        Test searching with disponibility filter returns only results filtered by disponibility
+        Test searching with disponibility filter returns only results
+        filtered by disponibility
         """
         response = self.client.get(
             reverse("search-projects-list") +
@@ -574,7 +588,8 @@ class ProjectSearchTestCase(TestCase):
 
     def test_query_filter(self):
         """
-        Test searching with query filter returns only results filtered by text query
+        Test searching with query filter returns only results
+        filtered by text query
         """
         response = self.client.get(
             reverse("search-projects-list") +
@@ -688,7 +703,8 @@ class OrganizationSearchTestCase(TestCase):
 
     def test_channel_filter(self):
         """
-        Test searching with with channel header return all channel organizations
+        Test searching with with channel header return all
+        channel organizations
         """
         response = self.client.get(
             reverse("search-organizations-list"),
@@ -712,7 +728,8 @@ class OrganizationSearchTestCase(TestCase):
 
     def test_publish_filter(self):
         """
-        Test searching with publish filter == "true", "false" and "both" return correct organizations
+        Test searching with publish filter == "true", "false" and "both"
+        return correct organizations
         """
         response = self.client.get(
             reverse("search-organizations-list") +
@@ -734,7 +751,8 @@ class OrganizationSearchTestCase(TestCase):
 
     def test_name_filter(self):
         """
-        Test searching with name filter returns organizations filtered by name(ngram)
+        Test searching with name filter returns organizations
+        filtered by name(ngram)
         """
         response = self.client.get(
             reverse("search-organizations-list") +
@@ -749,39 +767,48 @@ class OrganizationSearchTestCase(TestCase):
         response = self.client.get(
             reverse("search-organizations-list") +
             "?highlighted=true",
-            format="json")
+            format="json"
+        )
         self.assertEqual(len(response.data["results"]), 1)
         self.assertEqual(
             str(response.data["results"][0]["name"]), "test organization2")
 
     def test_address_filter(self):
         """
-        Test searching with address filter returns only results filtered by address
+        Test searching with address filter returns only
+        results filtered by address
         """
         # Filter by city
-        response = self.client.get(
-            reverse("search-organizations-list") +
-            '?address={"address_components":[{"types":["locality"], "long_name":"São Paulo"}]}',
-            format="json")
+        endpoint = '%s?address={"address_components":[{%s, %s}]}' % (
+            reverse("search-organizations-list"),
+            '"types":["locality"]',
+            '"long_name":"São Paulo"',
+        )
+        response = self.client.get(endpoint, format="json")
         self.assertEqual(len(response.data["results"]), 1)
 
         # Filter by state
-        response = self.client.get(
-            reverse("search-organizations-list") +
-            '?address={"address_components":[{"types":["administrative_area_level_1"], "long_name":"State of São Paulo"}]}',
-            format="json")
+        endpoint1 = '%s?address={"address_components":[{%s, %s}]}' % (
+            reverse("search-organizations-list"),
+            '"types":["administrative_area_level_1"]',
+            '"long_name":"State of São Paulo"',
+        )
+        response = self.client.get(endpoint1, format="json")
         self.assertEqual(len(response.data["results"]), 2)
 
         # Filter by country
-        response = self.client.get(
-            reverse("search-organizations-list") +
-            '?address={"address_components":[{"types":["country"], "long_name":"United States"}]}',
-            format="json")
+        endpoint2 = '%s?address={"address_components":[{%s, %s}]}' % (
+            reverse("search-organizations-list"),
+            '"types":["country"]',
+            '"long_name":"United States"',
+        )
+        response = self.client.get(endpoint2, format="json")
         self.assertEqual(len(response.data["results"]), 1)
 
     def test_causes_filter(self):
         """
-        Test searching with causes filter returns only results filtered by cause
+        Test searching with causes filter returns
+        only results filtered by cause
         """
         cause_id1 = Cause.objects.all().order_by('pk')[0].pk
         cause_id2 = Cause.objects.all().order_by('pk')[1].pk
@@ -814,7 +841,8 @@ class OrganizationSearchTestCase(TestCase):
 
     def test_query_filter(self):
         """
-        Test searching with query filter returns only results filtered by text query
+        Test searching with query filter returns only
+        results filtered by text query
         """
         response = self.client.get(
             reverse("search-organizations-list") +
@@ -890,7 +918,8 @@ class UserSearchTestCase(TestCase):
 
     def test_causes_filter(self):
         """
-        Test searching with causes filter returns only results filtered by cause
+        Test searching with causes filter returns only
+        results filtered by cause
         """
         response = self.client.get(
             reverse("search-users-list") +
@@ -898,9 +927,13 @@ class UserSearchTestCase(TestCase):
             format="json")
         self.assertEqual(len(response.data["results"]), 2)
         self.assertEqual(
-            str(response.data["results"][0]["profile"]["full_name"]), "user two")
+            str(response.data["results"][0]["profile"]["full_name"]),
+            "user two"
+        )
         self.assertEqual(
-            str(response.data["results"][1]["profile"]["full_name"]), "user one")
+            str(response.data["results"][1]["profile"]["full_name"]),
+            "user one"
+        )
 
         response = self.client.get(
             reverse("search-users-list") +
@@ -908,9 +941,13 @@ class UserSearchTestCase(TestCase):
             format="json")
         self.assertEqual(len(response.data["results"]), 2)
         self.assertEqual(
-            str(response.data["results"][0]["profile"]["full_name"]), "user two")
+            str(response.data["results"][0]["profile"]["full_name"]),
+            "user two"
+        )
         self.assertEqual(
-            str(response.data["results"][1]["profile"]["full_name"]), "user one")
+            str(response.data["results"][1]["profile"]["full_name"]),
+            "user one"
+        )
 
         response = self.client.get(
             reverse("search-users-list") +
@@ -918,11 +955,14 @@ class UserSearchTestCase(TestCase):
             format="json")
         self.assertEqual(len(response.data["results"]), 1)
         self.assertEqual(
-            str(response.data["results"][0]["profile"]["full_name"]), "user one")
+            str(response.data["results"][0]["profile"]["full_name"]),
+            "user one"
+        )
 
     def test_skills_filter(self):
         """
-        Test searching with skills filter returns only results filtered by cause
+        Test searching with skills filter returns only results
+        filtered by cause
         """
         response = self.client.get(
             reverse("search-users-list") +
@@ -930,13 +970,18 @@ class UserSearchTestCase(TestCase):
             format="json")
         self.assertEqual(len(response.data["results"]), 2)
         self.assertEqual(
-            str(response.data["results"][0]["profile"]["full_name"]), "user two")
+            str(response.data["results"][0]["profile"]["full_name"]),
+            "user two"
+        )
         self.assertEqual(
-            str(response.data["results"][1]["profile"]["full_name"]), "user one")
+            str(response.data["results"][1]["profile"]["full_name"]),
+            "user one"
+        )
 
     def test_name_filter(self):
         """
-        Test searching with name filter returns organizations filtered by name(ngram)
+        Test searching with name filter returns organizations
+        filtered by name(ngram)
         """
         response = self.client.get(
             reverse("search-users-list") +
@@ -992,7 +1037,8 @@ class OrderingTestCase(TestCase):
         cache.clear()
 
     def test_ordering_descending(self):
-        """ Assert it's possible to order projects, users and organizations by fields ascending """
+        """ Assert it's possible to order projects, users and
+        organizations by fields ascending """
         response = self.client.get(
             reverse("search-projects-list") +
             "?ordering=-name",
@@ -1014,7 +1060,10 @@ class OrderingTestCase(TestCase):
         self.assertEqual(str(response.data["results"][0]["name"]), "z")
 
     def test_ordering_ascending(self):
-        """ Assert it's possible to order projects, users and organizations by fields descending """
+        """
+        Assert it's possible to order projects, users and
+        organizations by fields descending
+        """
         response = self.client.get(
             reverse("search-projects-list") +
             "?ordering=name",
@@ -1070,7 +1119,10 @@ class OrderingTestCase(TestCase):
             str(response.data["results"][2]["name"]), "test project2")
 
     def test_ordering_by_relevance_unauthenticated(self):
-        """ Assert it's not possible to order projects by relevance while unauthenticated """
+        """
+        Assert it's not possible to order projects by relevance
+        while unauthenticated
+        """
         response = self.client.get(
             reverse("search-projects-list") +
             "?ordering=-relevance",
@@ -1154,7 +1206,8 @@ class BookmarkTestCase(TestCase):
 
     def test_is_bookmarked_field_on_project(self):
         """
-        Test searching is_bookmarked_field on project along with correct caching
+        Test searching is_bookmarked_field on project
+        along with correct caching
         """
         user = User.objects.filter(channel__slug="default").first()
         user2 = User.objects.create_user(
@@ -1207,7 +1260,8 @@ class BookmarkTestCase(TestCase):
 
     def test_is_bookmarked_field_on_organization(self):
         """
-        Test searching is_bookmarked_field on organization along with correct caching
+        Test searching is_bookmarked_field on organization
+        along with correct caching
         """
         user = User.objects.filter(channel__slug="default").first()
         user2 = User.objects.create_user(
