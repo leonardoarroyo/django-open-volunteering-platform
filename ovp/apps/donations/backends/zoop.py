@@ -9,8 +9,8 @@ PATCH = "patch"
 PUT = "put"
 DELETE = "delete"
 
-
 class ZoopBackend(BaseBackend):
+    name = "zoop"
     def __init__(self):
         self.marketplace_id = getattr(settings, "ZOOP_MARKETPLACE_ID", None)
         self.pub_key = getattr(settings, "ZOOP_PUB_KEY", None)
@@ -25,23 +25,42 @@ class ZoopBackend(BaseBackend):
         return "https://api.zoop.ws/" + \
             resource.format(mpid=self.marketplace_id)
 
-    def call(self, http_method, resource, data):
+    def call(self, http_method, resource, data={}):
+        headers = {
+            'Content-type': 'application/json',
+            'Accept': 'text/plain'
+        }
+        kwargs = {
+            'auth': (self.pub_key, ''),
+            'headers': headers,
+        }
+
+        if data:
+            kwargs['json'] = data
+
         call_method = getattr(requests, http_method)
         url = self._build_url(resource)
-        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        return call_method(
-            url, json=data, auth=(
-                self.pub_key, ''), headers=headers)
+        response = call_method(url, **kwargs)
+        return response
 
-    def charge(self, token, amount):
+    def charge(self, token, receiver, amount):
         data = {
             "payment_type": "credit",
             "currency": "BRL",
             "description": "donation",
             "amount": 100,
-            "on_behalf_of": self.seller_id,
+            "on_behalf_of": receiver,
             "statement_descriptor": self.statement_descriptor,
-            "token": token
+            "token": token,
+            "split_rules": [
+              {
+                "recipient": self.seller_id,
+                "liable": 1,
+                "charge_processing_fee": 1,
+                "percentage": 10,
+                "amount": 0
+              },
+            ]
         }
         response = self.call(POST, "v1/marketplaces/{mpid}/transactions", data)
         try:
@@ -92,10 +111,10 @@ class ZoopBackend(BaseBackend):
                  "message": "An unexpected error occurred. This issue is being investigated."},
                 response)
 
-    def refund_transaction(self, transaction_id, amount):
+    def refund_transaction(self, transaction_id, seller_id, amount):
         data = {
             "amount": amount,
-            "on_behalf_of": self.seller_id,
+            "on_behalf_of": seller_id,
         }
         response = self.call(
             POST, "v1/marketplaces/{mpid}/transactions/{transaction_id}/void".format(
@@ -135,10 +154,14 @@ class ZoopBackend(BaseBackend):
         response = self.call(POST, "v1/marketplaces/{mpid}/cards", data)
         return (response.status_code, response)
 
+    def list_sellers(self):
+        response = self.call(GET, "v1/marketplaces/{mpid}/sellers")
+        return (response.status_code, response)
+
     """"
     The following methods are not used in production. They are only used in the test suite to
     These routes should be called from the front-end.
-  """
+    """
 
     def generate_card_token(self,
                             holder_name=None,
