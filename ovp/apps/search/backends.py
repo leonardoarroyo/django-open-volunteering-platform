@@ -11,19 +11,14 @@ class ConfigurableElasticBackend(ElasticsearchSearchBackend):
     DEFAULT_ANALYZER = "snowball"
 
     def __init__(self, connection_alias, **connection_options):
-        super(
-            ConfigurableElasticBackend,
-            self).__init__(
-            connection_alias,
-            **connection_options)
+        super().__init__(connection_alias, **connection_options)
 
         user_settings = get_settings('ELASTICSEARCH_INDEX_SETTINGS')
         if user_settings:
             setattr(self, 'DEFAULT_SETTINGS', user_settings)
 
     def build_schema(self, fields):
-        content_field_name, mapping = super(ConfigurableElasticBackend,
-                                            self).build_schema(fields)
+        content_field_name, mapping = super().build_schema(fields)
 
         for field_name, field_class in fields.items():
             field_mapping = mapping[field_class.index_fieldname]

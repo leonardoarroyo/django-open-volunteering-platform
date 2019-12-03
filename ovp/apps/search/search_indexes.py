@@ -16,7 +16,7 @@ Custom search field
 class ConfigurableFieldMixin(object):
     def __init__(self, **kwargs):
         self.analyzer = kwargs.pop('analyzer', None)
-        super(ConfigurableFieldMixin, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
 
 class CustomCharField(ConfigurableFieldMixin, EdgeNgramField):
@@ -84,7 +84,11 @@ class AddressComponentsMixin:
                 for component in obj.address.address_components.all():
                     for component_type in component.types.all():
                         types.append(
-                            u'{}-{}'.format(component.long_name, component_type.name))
+                            u'{}-{}'.format(
+                                component.long_name,
+                                component_type.name
+                            )
+                        )
 
             if isinstance(obj.address, SimpleAddress):
                 if obj.address.city:

@@ -3,12 +3,16 @@ from django.core.exceptions import PermissionDenied
 from ovp.apps.core.pagination import NoPagination
 
 from ovp.apps.projects.serializers.project import ProjectSearchSerializer
-from ovp.apps.projects.serializers.project import ProjectMapDataSearchRetrieveSerializer
+from ovp.apps.projects.serializers.project import (
+    ProjectMapDataSearchRetrieveSerializer
+)
 from ovp.apps.projects.models import Project
 
 from ovp.apps.organizations.models import Organization
 from ovp.apps.organizations.serializers import OrganizationSearchSerializer
-from ovp.apps.organizations.serializers import OrganizationMapDataSearchRetrieveSerializer
+from ovp.apps.organizations.serializers import (
+    OrganizationMapDataSearchRetrieveSerializer
+)
 
 from ovp.apps.users.models.user import User
 from ovp.apps.users.serializers.user import get_user_search_serializer
@@ -44,7 +48,8 @@ organization_params = [
     openapi.Parameter(
         'cause',
         openapi.IN_QUERY,
-        description="List of causes(OR filter applied). Must be a string formatted as array. Eg: '[1, 3, 7]'",
+        description="List of causes(OR filter applied). Must be a string "
+        "formatted as array. Eg: '[1, 3, 7]'",
         type=openapi.TYPE_STRING),
     openapi.Parameter(
         'address',
@@ -59,12 +64,14 @@ organization_params = [
     openapi.Parameter(
         'highlighted',
         openapi.IN_QUERY,
-        description="Wether project is highlighted or not. Must be a string, either 'false', 'true' or 'both'.",
+        description="Wether project is highlighted or not. Must be a string, "
+        "either 'false', 'true' or 'both'.",
         type=openapi.TYPE_STRING),
     openapi.Parameter(
         'published',
         openapi.IN_QUERY,
-        description="Wether project is published or not. Must be a string, either 'false', 'true' or 'both'.",
+        description="Wether project is published or not. Must be a string, "
+        "either 'false', 'true' or 'both'.",
         type=openapi.TYPE_STRING),
 ]
 
@@ -146,17 +153,20 @@ project_params = [
     openapi.Parameter(
         'cause',
         openapi.IN_QUERY,
-        description="List of causes(OR filter applied). Must be a string formatted as array. Eg: '[1, 3, 7]'",
+        description="List of causes(OR filter applied). Must be a string "
+        "formatted as array. Eg: '[1, 3, 7]'",
         type=openapi.TYPE_STRING),
     openapi.Parameter(
         'skill',
         openapi.IN_QUERY,
-        description="List of skills(OR filter applied). Must be a string formatted as array. Eg: '[1, 3, 7]'",
+        description="List of skills(OR filter applied). Must be a string "
+        "formatted as array. Eg: '[1, 3, 7]'",
         type=openapi.TYPE_STRING),
     openapi.Parameter(
         'category',
         openapi.IN_QUERY,
-        description="List of categories(OR filter applied). Must be a string formatted as array. Eg: '[1, 2, 3]'",
+        description="List of categories(OR filter applied). Must be a string "
+        "formatted as array. Eg: '[1, 2, 3]'",
         type=openapi.TYPE_STRING),
     openapi.Parameter(
         'address',
@@ -171,27 +181,33 @@ project_params = [
     openapi.Parameter(
         'highlighted',
         openapi.IN_QUERY,
-        description="Wether project is highlighted or not. Must be a string, either 'false', 'true' or 'both'.",
+        description="Wether project is highlighted or not. Must be a string, "
+        "either 'false', 'true' or 'both'.",
         type=openapi.TYPE_STRING),
     openapi.Parameter(
         'published',
         openapi.IN_QUERY,
-        description="Wether project is published or not. Must be a string, either 'false', 'true' or 'both'.",
+        description="Wether project is published or not. Must be a string, "
+        "either 'false', 'true' or 'both'.",
         type=openapi.TYPE_STRING),
     openapi.Parameter(
         'closed',
         openapi.IN_QUERY,
-        description="Wether project is closed or not. Must be a string, either 'false', 'true' or 'both'.",
+        description="Wether project is closed or not. Must be a string, "
+        "either 'false', 'true' or 'both'.",
         type=openapi.TYPE_STRING),
     openapi.Parameter(
         'organization',
         openapi.IN_QUERY,
-        description="List of organization ids to search in(OR filter applied). Must be a string formatted as array. Eg: '[1, 3, 7]",
+        description="List of organization ids to search in(OR filter applied)."
+        " Must be a string formatted as array. Eg: '[1, 3, 7]",
         type=openapi.TYPE_STRING),
     openapi.Parameter(
         'disponibility',
         openapi.IN_QUERY,
-        description="List of disponibility types(OR filter applied). Available types are 'work', 'job' and 'remotely'. Must be a string formatted as array. Eg: '['job', 'remotely']",
+        description="List of disponibility types(OR filter applied). Available"
+        " types are 'work', 'job' and 'remotely'. Must be a string formatted "
+        "as array. Eg: '['job', 'remotely']",
         type=openapi.TYPE_STRING),
 ]
 
@@ -214,7 +230,8 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
         'relevance',
         'closed',
         'published',
-        'job__end_date')
+        'job__end_date'
+    )
     serializer_class = ProjectSearchSerializer
 
     @swagger_auto_schema(manual_parameters=project_params)
@@ -223,8 +240,10 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def get_cache_key(self):
         if self.request.user.is_anonymous():
-            return 'projects-{}-{}'.format(self.request.channel,
-                                           hash(frozenset(self.request.GET.items())))
+            return 'projects-{}-{}'.format(
+                self.request.channel,
+                hash(frozenset(self.request.GET.items()))
+            )
         return None
 
     @cached
@@ -268,8 +287,11 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
             pk__in=result_keys)
 
         if manageable == 'true' and self.request.user.is_authenticated:
-            result = result.filter(Q(organization__members=self.request.user) | Q(
-                organization__owner=self.request.user) | Q(owner=self.request.user))
+            result = result.filter(
+                Q(organization__members=self.request.user) |
+                Q(organization__owner=self.request.user) |
+                Q(owner=self.request.user)
+            )
 
         if organization:
             org = [o for o in organization.split(',')]
@@ -331,7 +353,8 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
         queryset = queryset.filter(channel=self.request.channel)
 
         result_keys = [q.pk for q in queryset]
-        related_field_name = get_profile_model()._meta.get_field('user').related_query_name()
+        related_field_name = get_profile_model()._meta.get_field('user')
+        related_field_name = related_field_name.related_query_name()
 
         result = User.objects.order_by('-pk').filter(
             pk__in=result_keys,
@@ -365,7 +388,10 @@ class CountryCities(views.APIView):
         projects = helpers.get_cities(queryset)
 
         queryset = SearchQuerySet().models(Organization).filter(
-            address_components__exact=search_term, published=1, channel=self.request.channel)
+            address_components__exact=search_term,
+            published=1,
+            channel=self.request.channel
+        )
         organizations = helpers.get_cities(queryset)
 
         common = projects & organizations

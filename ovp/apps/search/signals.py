@@ -10,16 +10,19 @@ from ovp.apps.users.models.profile import get_profile_model
 
 class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
     """
-      TiedModelRealTimeSignalProcessor handles updates to a index tied to a model
+    TiedModelRealTimeSignalProcessor handles updates to a index tied to a model
 
-      We need to be able to detect changes to a model a rebuild another index,
-      such as detecting changes to GoogleAddress and updating the index
-      for projects and organizations.
+    We need to be able to detect changes to a model a rebuild another index,
+    such as detecting changes to GoogleAddress and updating the index
+    for projects and organizations.
 
     """
     attach_to = {
         Project: ('handle_project_save', 'handle_project_delete'),
-        Organization: ('handle_organization_save', 'handle_organization_delete'),
+        Organization: (
+            'handle_organization_save',
+            'handle_organization_delete'
+        ),
         User: ('handle_save', 'handle_delete'),
         get_profile_model(): ('handle_profile_save', 'handle_profile_delete'),
         GoogleAddress: ('handle_address_save', 'handle_address_delete'),
@@ -155,7 +158,10 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
         self.handle_save(instance.user.__class__, instance.user)
 
     def find_associated_with_address(self, instance):
-        """ Returns list with projects and organizations associated with given address """
+        """
+        Returns list with projects and organizations associated
+        with given address
+        """
         objects = []
         objects += list(Project.objects.filter(address=instance))
         objects += list(Organization.objects.filter(address=instance))
