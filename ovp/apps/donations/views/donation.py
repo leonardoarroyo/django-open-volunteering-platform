@@ -18,7 +18,6 @@ from rest_framework import decorators
 from rest_framework import response
 from rest_framework import permissions
 
-
 @ChannelViewSet
 class DonationViewSet(viewsets.GenericViewSet):
     # POST /subscribe/
@@ -78,8 +77,21 @@ class DonationViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
+
+        organization = get_object_or_404(
+            Organization.objects,
+            pk=data["organization_id"],
+            channel__slug=self.request.channel
+        )
+        seller = organization.get_seller_object(self.backend.name)
+        if not organization.allow_donations or not seller:
+            return response.Response(
+                {"success": False,
+                 "message": "Organization is not enabled for donations."},
+                status=400)
+
         charge_data = self.backend.charge(
-            token=data["token"], amount=data["amount"])
+            token=data["token"], receiver=seller.seller_id, amount=data["amount"])
         backend_response_data = charge_data[2].json()
 
         Transaction.objects.create(
@@ -123,9 +135,10 @@ class DonationViewSet(viewsets.GenericViewSet):
             queryset,
             uuid=serializer.data["uuid"],
             status="succeeded")
+        seller = obj.organization.get_seller_object(self.backend.name)
 
         status, backend_response = self.backend.refund_transaction(
-            obj.backend_transaction_id, obj.amount)
+            obj.backend_transaction_id, seller.seller_id, obj.amount)
         if status != 200:
             return response.Response(
                 {"success": False, "message": "Internal error ocurred."}, status=500)
@@ -168,6 +181,7 @@ class DonationViewSet(viewsets.GenericViewSet):
         return response.Response(response_data, status=status)
 
        # TODO: finish, check for errors
+       # TODO: Integrate seller_id and splitting
 
     @decorators.action(methods=["GET"], detail=False)
     def subscriptions(self, request):

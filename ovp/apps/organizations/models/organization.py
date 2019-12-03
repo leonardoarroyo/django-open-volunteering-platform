@@ -11,6 +11,8 @@ from ovp.apps.organizations.emails import OrganizationMail
 from ovp.apps.organizations.emails import OrganizationAdminMail
 from ovp.apps.organizations.validators import validate_CNPJ, format_CNPJ
 
+from ovp.apps.donations.models import Seller
+
 from ovp.apps.ratings.mixins import RatedModelMixin
 
 from django.utils.translation import ugettext_lazy as _
@@ -227,6 +229,13 @@ class Organization(ChannelRelationship, RatedModelMixin):
                 flat=True))
         qs = User.objects.filter(id__in=user_pks)
         return qs.distinct('pk')
+
+    def get_seller_object(self, backend):
+        try:
+            return Seller.objects.get(backend=backend, organization=self)
+        except Seller.DoesNotExist:
+            pass
+        return None
 
     class Meta:
         app_label = 'organizations'

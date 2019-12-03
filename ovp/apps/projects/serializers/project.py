@@ -576,6 +576,7 @@ class ProjectManageableSerializer(ProjectRetrieveSerializer):
             'rating',
             'type',
             'canceled'
+            'max_applies_from_roles',
         ]
 
 

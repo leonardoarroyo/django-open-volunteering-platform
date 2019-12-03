@@ -12,6 +12,7 @@ from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
 from ovp.apps.donations.models import Transaction
 from ovp.apps.donations.models import Subscription
+from ovp.apps.donations.models import Seller
 from ovp.apps.donations.backends.zoop import ZoopBackend
 from ovp.apps.donations.tests.helpers import card_token
 
@@ -46,6 +47,13 @@ class TestDonationsViewSet(TestCase):
             "amount": 100,
             "token": "invalid"
         }
+
+        Seller.objects.create(
+            object_channel="default",
+            organization=self.organization,
+            backend="zoop",
+            seller_id="feb6882b8e7b4b5cb59bf1e839555f25"
+        )
 
     def test_cant_donate_unauthenticated(self):
         response = self.client.post(reverse("donation-donate"), format="json")
@@ -469,6 +477,20 @@ class TestPublicUserDonationListing(TestCase):
             object_channel="default",
             allow_donations=True)
 
+        Seller.objects.create(
+            object_channel="default",
+            organization=self.organization,
+            backend="zoop",
+            seller_id="feb6882b8e7b4b5cb59bf1e839555f25"
+        )
+
+        Seller.objects.create(
+            object_channel="default",
+            organization=self.organization_received_anonymously,
+            backend="zoop",
+            seller_id="feb6882b8e7b4b5cb59bf1e839555f25"
+        )
+
         self.data = {
             "organization_id": self.organization.id,
             "amount": 100,
@@ -506,6 +528,7 @@ class TestPublicUserDonationListing(TestCase):
         response = client.get(
             reverse('public-users-detail', [self.donator.slug]), format="json")
 
+
         self.assertEqual(
             self.organization_received_anonymously.transaction_set.count(), 1)
         self.assertEqual(len(response.data['donated_to_organizations']), 0)
@@ -535,6 +558,12 @@ class TestOrganizationDonationListing(TestCase):
             owner=self.user,
             object_channel="default",
             allow_donations=True)
+        Seller.objects.create(
+            object_channel="default",
+            organization=self.organization,
+            backend="zoop",
+            seller_id="feb6882b8e7b4b5cb59bf1e839555f25"
+        )
 
         self.data = {
             "organization_id": self.organization.id,
@@ -544,7 +573,7 @@ class TestOrganizationDonationListing(TestCase):
 
     def test_donators_are_shown_at_organization_route(self):
         self.client.force_authenticate(user=self.donator)
-        self.client.post(
+        c=self.client.post(
             reverse("donation-donate"),
             data=self.data,
             format="json")
