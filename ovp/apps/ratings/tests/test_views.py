@@ -46,13 +46,20 @@ class RatingViewsTest(TestCase):
             requested_user=self.user,
             rated_object=self.user,
             initiator_object=self.user,
-            object_channel="default")
-        r2 = RatingRequest.objects.create(requested_user=self.user, rated_object=self.organization, initiator_object=self, user, object_channel="default")
+            object_channel="default"
+        )
+        r2 = RatingRequest.objects.create(
+            requested_user=self.user,
+            rated_object=self.organization,
+            initiator_object=self.user,
+            object_channel="default"
+        )
         r3 = RatingRequest.objects.create(
             requested_user=self.user,
             rated_object=self.project,
             initiator_object=self.user,
-            object_channel="default")
+            object_channel="default"
+        )
 
         r1.rating_parameters.add(rp3)
         r3.rating_parameters.add(rp1)
@@ -62,7 +69,8 @@ class RatingViewsTest(TestCase):
         self.client.login(
             username="testmail@test.com",
             password="test_returned",
-            channel="default")
+            channel="default"
+        )
 
     def test_current_user_returns_rating_requests(self):
         response = self.client.get(
@@ -75,7 +83,11 @@ class RatingViewsTest(TestCase):
         self.assertEqual(response.data["rating_requests_count"], 0)
 
     def test_retrieve_rating_requests(self):
-        response = APIClient().get(reverse("rating-request-list"), {}, format="json")
+        response = APIClient().get(
+            reverse("rating-request-list"),
+            {},
+            format="json"
+        )
         self.assertEqual(response.status_code, 401)
 
         response = self.client.get(
@@ -87,7 +99,10 @@ class RatingViewsTest(TestCase):
 
         self.client.force_authenticate(self.user2)
         response = self.client.get(
-            reverse("user-current-user"), {}, format="json")
+            reverse("user-current-user"),
+            {},
+            format="json"
+        )
         self.assertEqual(response.data["rating_requests_count"], 0)
 
     def test_retrieve_rating_request_parameters(self):
@@ -131,8 +146,14 @@ class RatingViewsTest(TestCase):
         data = {
             "answers": [
                 {"parameter_slug": "project-score", "value_quantitative": 1},
-                {"parameter_slug": "project-how-was-it", "value_qualitative": "test"},
-                {"parameter_slug": "project-dont-exist", "value_quantitative": 1}
+                {
+                    "parameter_slug": "project-how-was-it",
+                    "value_qualitative": "test"
+                },
+                {
+                    "parameter_slug": "project-dont-exist",
+                    "value_quantitative": 1
+                }
             ]
         }
         uuid = str(RatingRequest.objects.last().uuid)
@@ -165,7 +186,9 @@ class RatingViewsTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.json()["non_field_errors"][0],
-            "You have sent multiple answers for a parameter. Check you request body.")
+            "You have sent multiple answers for a parameter."
+            " Check you request body."
+        )
 
         # Missing parameters
         data = {
@@ -182,7 +205,9 @@ class RatingViewsTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.json()["non_field_errors"][0],
-            "The following parameters are missing: project-score, project-how-was-it.")
+            "The following parameters are missing: "
+            "project-score, project-how-was-it."
+        )
 
     def test_can_rate(self):
         data = {
@@ -246,8 +271,14 @@ class RatingViewsTest(TestCase):
     def test_quantitative(self):
         data = {
             "answers": [
-                {"parameter_slug": "project-score", "value_quantitative": 2},
-                {"parameter_slug": "project-how-was-it", "value_qualitative": "Minha resposta :-)"}
+                {
+                    "parameter_slug": "project-score",
+                    "value_quantitative": 2
+                },
+                {
+                    "parameter_slug": "project-how-was-it",
+                    "value_qualitative": "Minha resposta :-)"
+                }
             ]
         }
         uuid = str(RatingRequest.objects.last().uuid)
@@ -260,12 +291,17 @@ class RatingViewsTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data['answers'][0]['non_field_errors'][0],
-            "'value_quantitative' must be between 0 and 1 for qualitative parameters.")
+            "'value_quantitative' must be between 0 and 1 for "
+            "qualitative parameters."
+        )
 
         data = {
             "answers": [
                 {"parameter_slug": "project-score", "value_quantitative": -1},
-                {"parameter_slug": "project-how-was-it", "value_qualitative": "Minha resposta :-)"}
+                {
+                    "parameter_slug": "project-how-was-it",
+                    "value_qualitative": "Minha resposta :-)"
+                }
             ]
         }
         uuid = str(RatingRequest.objects.last().uuid)
@@ -280,7 +316,10 @@ class RatingViewsTest(TestCase):
         data = {
             "answers": [
                 {"parameter_slug": "project-score", "value_quantitative": 0.5},
-                {"parameter_slug": "project-how-was-it", "value_qualitative": "Minha resposta :-)"}
+                {
+                    "parameter_slug": "project-how-was-it",
+                    "value_qualitative": "Minha resposta :-)"
+                }
             ]
         }
         uuid = str(RatingRequest.objects.last().uuid)
@@ -295,7 +334,10 @@ class RatingViewsTest(TestCase):
     def test_boolean(self):
         data = {
             "answers": [
-                {"parameter_slug": "user-has-shown", "value_quantitative": 0.5},
+                {
+                    "parameter_slug": "user-has-shown",
+                    "value_quantitative": 0.5
+                },
             ]
         }
         uuid = str(RatingRequest.objects.first().uuid)

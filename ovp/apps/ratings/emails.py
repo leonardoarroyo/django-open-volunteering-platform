@@ -59,8 +59,9 @@ class OrganizationMail(BaseMail):
         """
         Sent when user is invited to organization
         """
-        organization, invited, invitator = context['invite'].organization, context[
-            'invite'].invited, context['invite'].invitator
+        organization = context['invite'].organization
+        invited = context['invite'].invited
+        invitator = context['invite'].invitator
 
         # invited user email
         self.__init__(
@@ -108,8 +109,10 @@ class OrganizationMail(BaseMail):
         """
         Sent when user is invitation is revoked
         """
-        organization, invited, invitator = context['invite'].organization, context[
-            'invite'].invited, context['invite'].invitator
+        organization = context['invite'].organization
+        invited = context['invite'].invited
+        invitator = context['invite'].invitator
+
         # invited user email
         self.__init__(
             organization,
@@ -227,18 +230,18 @@ class OrganizationMail(BaseMail):
 
 class OrganizationAdminMail(BaseMail):
     """
-    This class is responsible for firing emails for Organization related actions
+    This class is responsible for firing emails for
+    Organization related actions
     """
 
     def __init__(self, organization, async_mail=None, locale=None):
         email = get_channel_setting(organization.channel.slug, "ADMIN_MAIL")[0]
-        super(
-            OrganizationAdminMail,
-            self).__init__(
+        super().__init__(
             email,
             channel=organization.channel.slug,
             async_mail=async_mail,
-            locale=locale)
+            locale=locale
+        )
 
     def sendOrganizationCreated(self, context={}):
         """
@@ -247,4 +250,5 @@ class OrganizationAdminMail(BaseMail):
         return self.sendEmail(
             'organizationCreatedToAdmin',
             'Organization created',
-            context)
+            context
+        )

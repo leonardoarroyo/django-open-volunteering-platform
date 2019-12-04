@@ -7,7 +7,9 @@ router = routers.SimpleRouter()
 router.register(
     r'ratings',
     views.RatingRequestResourceViewSet,
-    'rating-request')
+    'rating-request'
+)
+
 
 urlpatterns = [
     url(r'^', include(router.urls)),

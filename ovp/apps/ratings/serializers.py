@@ -30,9 +30,15 @@ def get_object_type(obj):
 
 class RatedObject(RelatedField):
     def to_representation(self, obj):
-        from ovp.apps.projects.serializers.project import ProjectRetrieveSerializer
-        from ovp.apps.organizations.serializers import OrganizationRetrieveSerializer
-        from ovp.apps.users.serializers import ShortUserPublicRetrieveSerializer
+        from ovp.apps.projects.serializers.project import (
+            ProjectRetrieveSerializer
+        )
+        from ovp.apps.organizations.serializers import (
+            OrganizationRetrieveSerializer
+        )
+        from ovp.apps.users.serializers import (
+            ShortUserPublicRetrieveSerializer
+        )
 
         obj_type = get_object_type(obj)
         if obj_type == 'user':
@@ -116,7 +122,9 @@ class RatingAnswerCreateSerializer(Serializer):
             if value is not None:
                 if value < 0 or value > 1:
                     raise ValidationError(
-                        '\'value_quantitative\' must be between 0 and 1 for qualitative parameters.')
+                        '\'value_quantitative\' must be between 0 and 1 '
+                        'for qualitative parameters.'
+                    )
 
         if parameter.type == 3:
             value = data.get('value_quantitative', None)
@@ -124,13 +132,10 @@ class RatingAnswerCreateSerializer(Serializer):
             if value is not None:
                 if value != 0 and value != 1:
                     raise ValidationError(
-                        '\'value_quantitative\' must be 0 or 1 for boolean parameters.')
-        return super(
-            RatingAnswerCreateSerializer,
-            self).validate(
-            data,
-            *args,
-            **kwargs)
+                        '\'value_quantitative\' must be 0 or 1 '
+                        'for boolean parameters.'
+                    )
+        return super().validate(data, *args, **kwargs)
 
 
 class RatingCreateSerializer(ChannelRelationshipSerializer):
@@ -188,7 +193,9 @@ class RatingCreateSerializer(ChannelRelationshipSerializer):
 
         if len(slugs) != len(set(slugs)):
             raise ValidationError(
-                "You have sent multiple answers for a parameter. Check you request body.")
+                "You have sent multiple answers for a parameter."
+                " Check you request body."
+            )
 
     def validate_missing_parameters(self, data, request_parameter_slugs):
         sent_slugs = [answer["parameter_slug"] for answer in data["answers"]]

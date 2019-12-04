@@ -2,7 +2,9 @@ from ovp.apps.core import pagination
 from django.utils import timezone
 
 from ovp.apps.projects.models import Project
-from ovp.apps.projects.serializers.project import ProjectManageableRetrieveSerializer
+from ovp.apps.projects.serializers.project import (
+    ProjectManageableRetrieveSerializer
+)
 from ovp.apps.ratings import models
 from ovp.apps.ratings import serializers
 from ovp.apps.ratings.permissions import UserCanRateRequest
@@ -59,7 +61,8 @@ class RatingRequestResourceViewSet(
         # Request
         request.data['request'] = ctx['rating_request'].pk
 
-        serializer = self.get_serializer_class()(data=request.data, context=ctx)
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(data=request.data, context=ctx)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return response.Response({"success": True}, status=200)
@@ -110,4 +113,4 @@ class RatingRequestResourceViewSet(
             self.permission_classes = (
                 permissions.IsAuthenticated, UserCanRateRequest)
 
-        return super(RatingRequestResourceViewSet, self).get_permissions()
+        return super().get_permissions()
