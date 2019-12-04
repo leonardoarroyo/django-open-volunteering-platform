@@ -227,7 +227,7 @@ class Organization(ChannelRelationship, RatedModelMixin):
                 anonymous=False).values_list(
                 'user',
                 flat=True))
-        qs = User.objects.filter(id__in=user_pks)
+        qs = User.objects.filter(id__in=user_pks, is_active=True)
         return qs.distinct('pk')
 
     def get_seller_object(self, backend):

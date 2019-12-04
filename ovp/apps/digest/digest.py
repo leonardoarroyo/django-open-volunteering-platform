@@ -177,13 +177,14 @@ class DigestCampaign():
 
     def _get_email_list(self):
         return set(
-            User.objects .select_related(
-                'channel',
-                'users_userprofile_profile') .filter(
-                channel__slug=self.channel,
-                is_subscribed_to_newsletter=True) .values_list(
-                'email',
-                flat=True))
+            User.objects
+                .select_related('channel', 'users_userprofile_profile')
+                .filter(
+                    is_active=True,
+                    channel__slug=self.channel,
+                    is_subscribed_to_newsletter=True)
+                .values_list('email', flat=True)
+        )
 
     def _pre_filter(self, email_list):
         sent_recently = set(

@@ -357,6 +357,7 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
         related_field_name = related_field_name.related_query_name()
 
         result = User.objects.order_by('-pk').filter(
+            is_active=True,
             pk__in=result_keys,
             public=True).prefetch_related(
             related_field_name +

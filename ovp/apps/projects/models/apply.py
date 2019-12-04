@@ -12,6 +12,7 @@ apply_status_choices = (
     ('unapplied', 'Canceled'),
     ('confirmed-volunteer', 'Confirmed Volunteer'),
     ('not-volunteer', 'Not a Volunteer'),
+    ('unapplied-by-deactivation', 'Unapplied by deactivation'),
 )
 
 
