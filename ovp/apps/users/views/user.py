@@ -3,6 +3,8 @@ from ovp.apps.users import serializers
 from ovp.apps.users import models
 from ovp.apps.users import emails
 
+from ovp.apps.projects.models import Apply
+
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 
 from rest_framework import decorators
@@ -19,7 +21,7 @@ class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
     UserResourceViewSet resource endpoint
     """
-    queryset = models.User.objects.all()
+    queryset = models.User.objects.filter(is_active=True)
     lookup_field = 'slug'
     # default is [^/.]+ - here we're allowing dots in the url slug field
     lookup_value_regex = '[^/]+'
@@ -54,6 +56,19 @@ class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         if request.method == 'PATCH':
             return self.current_user_patch(request, *args, **kwargs)
 
+    @decorators.list_route(url_path="deactivate-account", methods=['POST'])
+    def deactivate_account(self, request, *args, **kwargs):
+        """ Deactivate user account """
+        user = request.user
+
+        (Apply.objects
+             .filter(user=user, status__in=['applied', 'confirmed-volunteer'])
+             .update(status='unapplied-by-deactivation'))
+
+        user.is_active = False
+        user.save()
+        return response.Response({'success': True})
+
     def get_object(self):
         request = self.get_serializer_context()['request']
         if self.action == 'current_user':
@@ -69,7 +84,7 @@ class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         request = self.get_serializer_context()['request']
         if self.action == 'create':
             self.permission_classes = []
-        elif self.action in ['current_user']:
+        elif self.action in ['current_user', 'deactivate_account']:
             self.permission_classes = [permissions.IsAuthenticated, ]
 
         return super().get_permissions()
@@ -102,7 +117,7 @@ class PublicUserResourceViewSet(
     locale = ''
 
     def get_queryset(self, *args, **kwargs):
-        q = Q(public=True)
+        q = Q(public=True, is_active=True)
 
         if self.request.user.is_authenticated:
             q = q | Q(pk=self.request.user.pk)

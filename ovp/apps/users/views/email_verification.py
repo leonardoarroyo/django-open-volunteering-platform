@@ -20,7 +20,7 @@ class RequestEmailVerificationViewSet(GenericUserTokenViewSet):
     """
     RecoveryToken resource endpoint
     """
-    queryset = models.User.objects.all()
+    queryset = models.User.objects.filter(is_active=True)
     serializer_class = serializers.RecoveryTokenSerializer
     Token = models.EmailVerificationToken
 

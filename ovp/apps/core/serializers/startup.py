@@ -23,6 +23,7 @@ class StartupData(object):
             distinct=True
         )
         self.volunteer_count = User.objects.filter(
+            is_active=True,
             channel__slug=request.channel
         ).count()
         self.nonprofit_count = CFM.filter_queryset(

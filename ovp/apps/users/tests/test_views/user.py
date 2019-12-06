@@ -10,6 +10,9 @@ from ovp.apps.users import models
 from ovp.apps.users.tests.helpers import authenticate
 from ovp.apps.users.tests.helpers import create_user
 
+from ovp.apps.projects.models import Project
+from ovp.apps.projects.models import Apply
+
 from ovp.apps.channels.models.channel_setting import ChannelSetting
 
 
@@ -269,6 +272,28 @@ class UserResourceViewSetTestCase(TestCase):
             response.data['detail']
             == 'Authentication credentials were not provided.'
         )
+
+    def test_can_deactivate_account(self):
+        """
+        Assert that it's possible to deactivate user account
+        """
+        response = create_user('test_can_patch_password@test.com', 'abcabcabc')
+        u = models.User.objects.get(uuid=response.data['uuid'])
+        p = Project.objects.create(name='test', owner=u, object_channel='default')
+        Apply.objects.create(project=p, user=u, object_channel='default')
+
+        self.assertEqual(Apply.objects.first().status, 'applied')
+        data = {'password': 'pwpw12341234'}
+        client = APIClient()
+        client.force_authenticate(user=u)
+        response = client.post(
+            reverse('user-deactivate-account'),
+            format="json"
+        )
+        u = models.User.objects.get(pk=u.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Apply.objects.first().status, 'unapplied-by-deactivation')
+        self.assertEqual(u.is_active, False)
 
 
 class UserPasswordHistoryTestCase(TestCase):

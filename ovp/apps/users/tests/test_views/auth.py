@@ -19,6 +19,13 @@ class OAuth2AuthTestCase(TestCase):
         response = authenticate()
         self.assertTrue(response.data['access_token'] is not None)
 
+    def test_cant_login_deactivated(self):
+        """ Assert that it's not possible to login with deactivated account """
+        create_user('test_can_login@test.com', 'validpassword')
+        u = User.objects.filter(email='test_can_login@test.com').update(is_active=False)
+        response = authenticate()
+        self.assertEqual(response.status_code, 400)
+
     def test_cant_login_wrong_password(self):
         """ Assert that it's not possible to login with wrong password """
         user = create_user('test_can_login@test.com', 'invalidpassword')

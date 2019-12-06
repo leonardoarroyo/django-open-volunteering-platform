@@ -19,7 +19,7 @@ class GenericUserTokenViewSet(viewsets.GenericViewSet):
     Generates generic tokens for users.
     Used by password recovery and email verification.
     """
-    queryset = models.User.objects.all()
+    queryset = models.User.objects.filter(is_active=True)
 
     @swagger_auto_schema(responses={200: 'OK', 429: 'Too many requests.'})
     def create(self, request, *args, **kwargs):
