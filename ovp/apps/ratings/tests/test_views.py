@@ -75,12 +75,12 @@ class RatingViewsTest(TestCase):
     def test_current_user_returns_rating_requests(self):
         response = self.client.get(
             reverse("user-current-user"), {}, format="json")
-        self.assertEqual(response.data["rating_requests_count"], 3)
+        self.assertEqual(response.data["rating_requests_user_count"], 1)
 
         self.client.force_authenticate(self.user2)
         response = self.client.get(
             reverse("user-current-user"), {}, format="json")
-        self.assertEqual(response.data["rating_requests_count"], 0)
+        self.assertEqual(response.data["rating_requests_user_count"], 0)
 
     def test_retrieve_rating_requests(self):
         response = APIClient().get(
@@ -103,7 +103,7 @@ class RatingViewsTest(TestCase):
             {},
             format="json"
         )
-        self.assertEqual(response.data["rating_requests_count"], 0)
+        self.assertEqual(response.data["rating_requests_user_count"], 0)
 
     def test_retrieve_rating_request_parameters(self):
         response = self.client.get(
@@ -260,13 +260,13 @@ class RatingViewsTest(TestCase):
         response = self.client.post(
             reverse(
                 "rating-request-rate",
-                [uuid]),
+                [uuid]
+            ),
             data,
-            format="json")
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(
-            response.json()["non_field_errors"][0],
-            "This request has already been rated.")
+            format="json"
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["detail"], "Not found.")
 
     def test_quantitative(self):
         data = {
