@@ -8,7 +8,8 @@ router = routers.DefaultRouter()
 router.register(
     r'organizations',
     views.OrganizationResourceViewSet,
-    'organization')
+    'organization'
+)
 
 urlpatterns = [
     url(r'^', include(router.urls)),

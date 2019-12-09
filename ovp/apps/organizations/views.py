@@ -11,7 +11,9 @@ from ovp.apps.organizations import models
 from ovp.apps.organizations import permissions as organization_permissions
 from ovp.apps.organizations.validators import format_CNPJ, validate_CNPJ
 
-from ovp.apps.projects.serializers.project import ProjectOnOrganizationRetrieveSerializer
+from ovp.apps.projects.serializers.project import (
+    ProjectOnOrganizationRetrieveSerializer
+)
 from ovp.apps.projects.serializers.apply import OrganizationAppliesSerializer
 from ovp.apps.projects.models import Project, Apply
 
@@ -87,7 +89,11 @@ class OrganizationResourceViewSet(
             validate_CNPJ(formatted_doc)
         except ValidationError as validation_error:
             return response.Response(
-                {"invalid": True, "message": validation_error.message}, status=400)
+                {
+                    "invalid": True, "message": validation_error.message
+                },
+                status=400
+            )
         except BaseException:
             return response.Response({"invalid": True}, status=400)
 
@@ -110,7 +116,10 @@ class OrganizationResourceViewSet(
             200: 'OK', 400: 'Invalid invite'})
     @decorators.detail_route(methods=["POST"])
     def invite_user(self, request, *args, **kwargs):
-        """ Invite user to manage organization. The supplied email address must be registered. """
+        """
+        Invite user to manage organization.
+        The supplied email address must be registered.
+        """
         organization = self.get_object()
 
         serializer = self.get_serializer_class()(
@@ -123,7 +132,13 @@ class OrganizationResourceViewSet(
 
         if organization.members.filter(pk=invited.pk).count():
             return response.Response(
-                {"email": ["This user is already part of this organization."]}, status=400)
+                {
+                    "email": [
+                        "This user is already part of this organization."
+                    ]
+                },
+                status=400
+            )
 
         # Check if user was already invited recently
         t = timezone.now() - relativedelta(hours=1)
@@ -135,8 +150,15 @@ class OrganizationResourceViewSet(
             revoked_date=None,
             channel__slug=request.channel)
         if invites.count():
-            return response.Response({"email": [
-                                     "This user was already invited to this organization in the last 60 minutes."]}, status=400)
+            return response.Response(
+                {
+                    "email": [
+                        "This user was already invited to "
+                        "this organization in the last 60 minutes."
+                    ]
+                },
+                status=400
+            )
 
         # Revoke old invites
         models.OrganizationInvite.objects.filter(
@@ -206,7 +228,12 @@ class OrganizationResourceViewSet(
                     {"email": ["This user is not valid."]}, status=400)
         except models.OrganizationInvite.DoesNotExist:
             return response.Response(
-                {"detail": "There is no pending invites for this user in this organization."}, status=400)
+                {
+                    "detail": "There is no pending invites "
+                              "for this user in this organization."
+                },
+                status=400
+            )
 
         invite.revoked_date = timezone.now()
         invite.save()

@@ -6,7 +6,9 @@ from ovp.apps.users.models.user import User
 
 from ovp.apps.core.models import Cause
 from ovp.apps.core.helpers import get_address_serializers
-from ovp.apps.core.serializers.cause import CauseSerializer, CauseAssociationSerializer
+from ovp.apps.core.serializers.cause import (
+    CauseSerializer, CauseAssociationSerializer
+)
 from ovp.apps.core.serializers.flair import FlairSerializer
 
 from ovp.apps.organizations import models
@@ -15,7 +17,9 @@ from ovp.apps.organizations.decorators import hide_address
 
 from ovp.apps.projects.models import Project
 
-from ovp.apps.channels.serializers import ChannelRelationshipSerializer, ChannelRetrieveSerializer
+from ovp.apps.channels.serializers import (
+    ChannelRelationshipSerializer, ChannelRetrieveSerializer
+)
 
 from ovp.apps.gallery.models import Gallery
 from ovp.apps.gallery.serializers import (GalleryAssociationSerializer,

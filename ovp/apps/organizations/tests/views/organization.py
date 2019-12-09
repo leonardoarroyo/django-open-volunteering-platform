@@ -19,17 +19,23 @@ from ovp.apps.core.models import Skill
 
 import copy
 
-base_organization = {"name": "test organization",
-                     "slug": "test-override-slug",
-                     "description": "test description",
-                     "details": "test details",
-                     "type": 0,
-                     "address": {"typed_address": "r. tecainda, 81, sao paulo"},
-                     "causes": [{"id": 1},
-                                {"id": 2}],
-                     "contact_name": "test contact name",
-                     "contact_phone": "+551112345678",
-                     "contact_email": "test@contact.com"}
+base_organization = {
+    "name": "test organization",
+    "slug": "test-override-slug",
+    "description": "test description",
+    "details": "test details",
+    "type": 0,
+    "address": {
+        "typed_address": "r. tecainda, 81, sao paulo"
+    },
+    "causes": [
+        {"id": 1},
+        {"id": 2}
+    ],
+    "contact_name": "test contact name",
+    "contact_phone": "+551112345678",
+    "contact_email": "test@contact.com"
+}
 
 
 class OrganizationResourceViewSetTestCase(TestCase):
@@ -37,26 +43,35 @@ class OrganizationResourceViewSetTestCase(TestCase):
         self.client = APIClient()
 
     def test_cant_create_organization_unauthenticated(self):
-        """Assert that it's not possible to create an organization while unauthenticated"""
+        """
+        Assert that it's not possible to create an
+        organization while unauthenticated
+        """
         response = self.client.post(
             reverse("organization-list"), {}, format="json")
 
         self.assertTrue(
-            response.data["detail"] == "Authentication credentials were not provided.")
+            response.data["detail"]
+            == "Authentication credentials were not provided."
+        )
         self.assertTrue(response.status_code == 401)
 
     def test_can_create_organization(self):
-        """Assert that it's possible to create a organization while authenticated"""
+        """
+        Assert that it's possible to create a organization while authenticated
+        """
         user = User.objects.create_user(
             email="test_can_create_organization@gmail.com",
             password="testcancreate",
-            object_channel="default")
+            object_channel="default"
+        )
         data = copy.deepcopy(base_organization)
 
         Channel.objects.create(slug="test-channel")
         c = Cause.objects.create(
             name="other-channel",
-            object_channel="test-channel")
+            object_channel="test-channel"
+        )
         data["causes"].append({"id": c.id})
 
         g1 = Gallery.objects.create(
@@ -129,7 +144,9 @@ class OrganizationResourceViewSetTestCase(TestCase):
                 ["test-organization"]),
             format="json")
         self.assertTrue(
-            response.data["address"]["typed_address"] == data["address"]["typed_address"])
+            response.data["address"]["typed_address"]
+            == data["address"]["typed_address"]
+        )
         self.assertTrue(response.data["hidden_address"])
 
         # Retrieving as organization member
@@ -140,7 +157,9 @@ class OrganizationResourceViewSetTestCase(TestCase):
                 ["test-organization"]),
             format="json")
         self.assertTrue(
-            response.data["address"]["typed_address"] == data["address"]["typed_address"])
+            response.data["address"]["typed_address"]
+            == data["address"]["typed_address"]
+        )
         self.assertTrue(response.data["hidden_address"])
 
         # Retrieving as volunteer
@@ -154,7 +173,9 @@ class OrganizationResourceViewSetTestCase(TestCase):
         self.assertTrue(response.data["hidden_address"])
 
     def test_cant_create_organization_empty_name(self):
-        """Assert that it's not possible to create a organization with empty name"""
+        """
+        Assert that it's not possible to create a organization with empty name
+        """
         user = User.objects.create_user(
             email="test_can_create_organization@gmail.com",
             password="testcancreate",
@@ -203,7 +224,7 @@ class OrganizationResourceViewSetTestCase(TestCase):
             response.data["contact_phone"] == data["contact_phone"])
         self.assertTrue(
             response.data["contact_email"] == data["contact_email"])
-        self.assertTrue(response.data["published"] == False)
+        self.assertTrue(response.data["published"] is False)
         self.assertTrue(len(response.data["causes"]) == 2)
         self.assertTrue(len(response.data["galleries"]) == 0)
         self.assertTrue("image" in response.data)
@@ -363,8 +384,13 @@ class OrganizationInviteTestCase(TestCase):
                 "email": "valid@user.com"},
             format="json")
         self.assertTrue(response.status_code == 400)
-        self.assertTrue(response.data["email"] == [
-                        "This user was already invited to this organization in the last 60 minutes."])
+        self.assertTrue(
+            response.data["email"]
+            == [
+                "This user was already invited to this organization"
+                " in the last 60 minutes."
+            ]
+        )
 
         i = OrganizationInvite.objects.first()
         i.created_date = timezone.now() - relativedelta(hours=2)
@@ -475,10 +501,14 @@ class OrganizationInviteTestCase(TestCase):
                                format="json")
         self.assertTrue(response.status_code == 401)
         self.assertTrue(
-            response.data["detail"] == "Authentication credentials were not provided.")
+            response.data["detail"]
+            == "Authentication credentials were not provided."
+        )
 
     def test_cant_invite_if_not_owner_or_member(self):
-        """ Test it's not possible to invite user if not a member of organization """
+        """
+        Test it's not possible to invite user if not a member of organization
+        """
         client = APIClient()
         client.force_authenticate(self.user2)
         response = client.post(reverse("organization-invite-user",
@@ -487,10 +517,14 @@ class OrganizationInviteTestCase(TestCase):
                                format="json")
         self.assertTrue(response.status_code == 403)
         self.assertTrue(
-            response.data["detail"] == "You do not have permission to perform this action.")
+            response.data["detail"]
+            == "You do not have permission to perform this action."
+        )
 
     def test_cant_join_unauthenticated(self):
-        """ Test it's not possible to join organization if not authenticated """
+        """
+        Test it's not possible to join organization if not authenticated
+        """
         client = APIClient()
         response = client.post(
             reverse(
@@ -500,7 +534,9 @@ class OrganizationInviteTestCase(TestCase):
             format="json")
         self.assertTrue(response.status_code == 401)
         self.assertTrue(
-            response.data["detail"] == "Authentication credentials were not provided.")
+            response.data["detail"]
+            == "Authentication credentials were not provided."
+        )
 
     def test_cant_join_if_not_invited(self):
         """ Test it's not possible to join organization if not invited """
@@ -514,7 +550,9 @@ class OrganizationInviteTestCase(TestCase):
             format="json")
         self.assertTrue(response.status_code == 403)
         self.assertTrue(
-            response.data["detail"] == "You do not have permission to perform this action.")
+            response.data["detail"]
+            == "You do not have permission to perform this action."
+        )
 
     def test_can_join_if_invited(self):
         """ Test it's possible to join organization if invited """
@@ -584,10 +622,14 @@ class OrganizationInviteTestCase(TestCase):
             format="json")
         self.assertTrue(response.status_code == 401)
         self.assertTrue(
-            response.data["detail"] == "Authentication credentials were not provided.")
+            response.data["detail"]
+            == "Authentication credentials were not provided."
+        )
 
     def test_cant_revoke_if_not_owner_or_member(self):
-        """ Test it's not possible to revoke invitation if not owner or member """
+        """
+        Test it's not possible to revoke invitation if not owner or member
+        """
         client = APIClient()
         client.force_authenticate(self.user2)
         response = client.post(
@@ -598,10 +640,14 @@ class OrganizationInviteTestCase(TestCase):
             format="json")
         self.assertTrue(response.status_code == 403)
         self.assertTrue(
-            response.data["detail"] == "You do not have permission to perform this action.")
+            response.data["detail"]
+            == "You do not have permission to perform this action."
+        )
 
     def test_cant_revoke_if_user_does_not_exist(self):
-        """ Test it's not possible to revoke invitation if user does not exist """
+        """
+        Test it's not possible to revoke invitation if user does not exist
+        """
         response = self.client.post(
             reverse(
                 "organization-revoke-invite",
@@ -613,7 +659,10 @@ class OrganizationInviteTestCase(TestCase):
         self.assertTrue(response.data["email"] == ["This user is not valid."])
 
     def test_cant_revoke_if_invite_does_not_exist(self):
-        """ Test it's not possible to revoke invitation if invitation does not exist """
+        """
+        Test it's not possible to revoke invitation
+        if invitation does not exist
+        """
         response = self.client.post(
             reverse(
                 "organization-revoke-invite",
@@ -623,7 +672,10 @@ class OrganizationInviteTestCase(TestCase):
             format="json")
         self.assertTrue(response.status_code == 400)
         self.assertTrue(
-            response.data["detail"] == "There is no pending invites for this user in this organization.")
+            response.data["detail"]
+            == "There is no pending invites "
+            "for this user in this organization."
+        )
 
     def test_can_revoke_invite(self):
         """ Test it's possible to revoke invitation """
@@ -686,15 +738,17 @@ class OrganizationInviteTestCase(TestCase):
                     "userInvitedRevoked-toUser",
                     "Your invitation to an organization has been revoked"))
         if is_email_enabled(
-            "default",
+                "default",
                 "userInvitedRevoked-toOwner"):  # pragma: no cover
             self.assertTrue(
                 get_email_subject(
                     "default",
                     "userInvitedRevoked-toOwner",
-                    "An invitation to join your organization has been revoked"))
+                    "An invitation to join your organization has been revoked"
+                )
+            )
         if is_email_enabled(
-            "default",
+                "default",
                 "userInvitedRevoked-toMemberInviter"):  # pragma: no cover
             self.assertTrue(
                 get_email_subject(
@@ -703,7 +757,10 @@ class OrganizationInviteTestCase(TestCase):
                     "You have revoked an user invitation"))
 
     def test_pending_invites_permission_class(self):
-        """ Test it's not possible to retrieve pending invites if unauthenticated or not in organization """
+        """
+        Test it's not possible to retrieve pending invites
+        if unauthenticated or not in organization
+        """
         response = APIClient().get(
             reverse(
                 "organization-pending-invites",
@@ -795,7 +852,10 @@ class OrganizationLeaveTestCase(TestCase):
         self.client = APIClient()
 
     def test_cant_leave_organization_if_unauthenticated(self):
-        """ Test it's not possible to leave the organization if user is not authenticated """
+        """
+        Test it's not possible to leave the organization
+        if user is not authenticated
+        """
         response = self.client.post(
             reverse(
                 "organization-leave",
@@ -805,10 +865,14 @@ class OrganizationLeaveTestCase(TestCase):
 
         self.assertTrue(response.status_code == 401)
         self.assertTrue(
-            response.data["detail"] == "Authentication credentials were not provided.")
+            response.data["detail"]
+            == "Authentication credentials were not provided."
+        )
 
     def test_cant_leave_organization_if_not_member(self):
-        """ Test it's not possible to leave the organization if user is not member """
+        """
+        Test it's not possible to leave the organization if user is not member
+        """
         user = User.objects.create_user(
             email="not@member.com",
             password="test_returned",
@@ -823,10 +887,14 @@ class OrganizationLeaveTestCase(TestCase):
 
         self.assertTrue(response.status_code == 403)
         self.assertTrue(
-            response.data["detail"] == "You do not have permission to perform this action.")
+            response.data["detail"]
+            == "You do not have permission to perform this action."
+        )
 
     def test_cant_leave_organization_if_owner(self):
-        """ Test it's not possible to leave the organization if user is not owner """
+        """
+        Test it's not possible to leave the organization if user is not owner
+        """
         self.client.force_authenticate(self.user)
         response = self.client.post(
             reverse(
@@ -837,7 +905,9 @@ class OrganizationLeaveTestCase(TestCase):
 
         self.assertTrue(response.status_code == 403)
         self.assertTrue(
-            response.data["detail"] == "You do not have permission to perform this action.")
+            response.data["detail"]
+            == "You do not have permission to perform this action."
+        )
 
     def test_can_leave_organization(self):
         """ Test it's possible to leave the organization """
@@ -883,7 +953,9 @@ class OrganizationLeaveTestCase(TestCase):
 
         self.assertTrue(response.status_code == 401)
         self.assertTrue(
-            response.data["detail"] == "Authentication credentials were not provided.")
+            response.data["detail"]
+            == "Authentication credentials were not provided."
+        )
 
     def test_cant_remove_member_if_not_owner(self):
         """ Test it's not possible to remove a member if not the owner """
@@ -898,10 +970,14 @@ class OrganizationLeaveTestCase(TestCase):
 
         self.assertTrue(response.status_code == 403)
         self.assertTrue(
-            response.data["detail"] == "You do not have permission to perform this action.")
+            response.data["detail"]
+            == "You do not have permission to perform this action."
+        )
 
     def test_cant_remove_member_if_not_member(self):
-        """ Test it's not possible to remove a member if the user is not a member """
+        """
+        Test it's not possible to remove a member if the user is not a member
+        """
         self.client.force_authenticate(self.user)
         response = self.client.post(
             reverse(

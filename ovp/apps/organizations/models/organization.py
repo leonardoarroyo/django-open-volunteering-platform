@@ -160,7 +160,7 @@ class Organization(ChannelRelationship, RatedModelMixin):
         return 'name',
 
     def __init__(self, *args, **kwargs):
-        super(Organization, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.__orig_deleted = self.deleted
         self.__orig_published = self.published
 
@@ -204,7 +204,7 @@ class Organization(ChannelRelationship, RatedModelMixin):
             else:
                 self.description = self.details
 
-        obj = super(Organization, self).save(*args, **kwargs)
+        obj = super().save(*args, **kwargs)
 
         if creating:
             self.mailing().sendOrganizationCreated({"organization": self})

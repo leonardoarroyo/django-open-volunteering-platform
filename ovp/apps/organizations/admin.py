@@ -112,8 +112,13 @@ class OrganizationResource(CleanModelResource):
             if isinstance(organization.address, GoogleAddress):
                 return organization.address.address_line
             if isinstance(organization.address, SimpleAddress):
-                return organization.address.street + ', ' + organization.address.number + \
-                    ' - ' + organization.address.neighbourhood + ' - ' + organization.address.city
+                address = '{0}, {1} - {2} - {3}'.format(
+                    organization.address.street,
+                    organization.address.number,
+                    organization.address.neighbourhood,
+                    organization.address.city
+                )
+                return address
 
     def dehydrate_neighborhood(self, organization):
         # TODO: FIX
@@ -195,9 +200,11 @@ class StateListFilter(admin.SimpleListFilter):
 
         if state:
             if address_model == GoogleAddress:
+                area_key = "administrative_area_level_1"
                 return queryset.filter(
                     address__address_components__short_name=state,
-                    address__address_components__types__name="administrative_area_level_1")
+                    address__address_components__types__name=area_key
+                )
 
             if address_model == SimpleAddress:
                 return queryset.filter(address__state=state)
@@ -231,9 +238,11 @@ class CityListFilter(admin.SimpleListFilter):
 
         if city:
             if address_model == GoogleAddress:
+                area_key = "administrative_area_level_2"
                 return queryset.filter(
                     address__address_components__long_name=city,
-                    address__address_components__types__name="administrative_area_level_2")
+                    address__address_components__types__name=area_key
+                )
 
             if address_model == SimpleAddress:
                 return queryset.filter(address__city=city)
