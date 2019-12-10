@@ -99,7 +99,9 @@ class BookmarkMixin(object):
         queryset = self.get_queryset().filter(
             bookmarks__user=request.user,
             bookmarks__channel__slug=request.channel
-        ).order_by("-bookmarks__pk")
+        )
+        queryset = queryset.distinct('bookmarks__pk')
+        queryset = queryset.order_by('-bookmarks__pk')
 
         page = self.paginate_queryset(queryset)
         if page is not None:

@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.test import TestCase
 from django.core import mail
 from django.utils import timezone
@@ -268,9 +270,23 @@ class OrganizationResourceViewSetTestCase(TestCase):
             response.data["contact_email"] == data["contact_email"])
 
         self.assertTrue(len(response.data["causes"]) == 3)
-        self.assertTrue(response.data["causes"][0]["id"] == 3)
-        self.assertTrue(response.data["causes"][1]["id"] == 4)
-        self.assertTrue(response.data["causes"][2]["name"] == "other-channel")
+
+        self.assertTrue(
+            OrderedDict({"id": 3, "name": "Conscious consumption"})
+            in response.data["causes"]
+        )
+        self.assertTrue(
+            OrderedDict({"id": 4, "name": "Culture, Sport and Art"})
+            in response.data["causes"]
+        )
+        self.assertTrue(
+            OrderedDict({"id": 81, "name": "other-channel"})
+            in response.data["causes"]
+        )
+
+        # self.assertTrue(response.data["causes"][0]["id"] == 3)
+        # self.assertTrue(response.data["causes"][1]["id"] == 4)
+        # self.assertTrue(response.data["causes"][2]["name"] == "other-channel")
 
     def test_can_retrieve_projects(self):
         """ Assert it's possible to retrieve organization projects """
