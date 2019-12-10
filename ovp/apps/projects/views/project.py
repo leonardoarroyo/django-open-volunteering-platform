@@ -137,47 +137,6 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
         filename = '{}-applied-users.xls'.format(project.slug)
         return XLSResponse(applied_users, filename, _('Applied Users'))._render_xls()
 
-    @decorators.list_route(['GET'])
-    def manageable(self, request, *args, **kwargs):
-        """ Retrieve a list of projects the authenticated user can manage. """
-        paginator = StandardResultsSetPagination()
-        projects = self.get_queryset().filter(
-            Q(owner=request.user) |
-            Q(organization__owner=request.user) |
-            Q(organization__members=request.user)
-        )
-        projects = projects.order_by('pk')
-
-        params = request.query_params
-        if params.get('no_organization') == 'true':
-            projects = projects.filter(organization=None)
-        if params.get('published'):
-            published = params.get('published') == 'true'
-            projects = projects.filter(published=published)
-        if params.get('closed'):
-            closed = params.get('closed') == 'true'
-            projects = projects.filter(closed=closed)
-        if params.get('query'):
-            query = params.get('query')
-            projects = projects.filter(content=query)
-
-        page = paginator.paginate_queryset(projects, request)
-        if page is not None:
-            serializer_class = self.get_serializer_class()
-            serializer = serializer_class(
-                page,
-                many=True,
-                context=self.get_serializer_context()
-            )
-            return paginator.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer_class()(
-            projects,
-            many=True,
-            context=self.get_serializer_context()
-        )
-        return response.Response(serializer.data)
-
     ###################
     # ViewSet methods #
     ###################
@@ -209,9 +168,6 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
 
         if self.action == 'retrieve':
             self.permission_classes = ()
-
-        if self.action == 'manageable':
-            self.permission_classes = (permissions.IsAuthenticated, )
 
         if self.action == 'close':
             self.permission_classes = (
@@ -245,8 +201,6 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
     def get_serializer_class(self):
         if self.action in ['create', 'partial_update']:
             return serializers.ProjectCreateUpdateSerializer
-        if self.action == 'manageable':
-            return serializers.ProjectManageableSerializer
         if self.action == 'close':
             return EmptySerializer
         if self.action == 'bookmarked':
