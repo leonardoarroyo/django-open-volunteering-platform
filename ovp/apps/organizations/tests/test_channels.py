@@ -9,17 +9,23 @@ from ovp.apps.organizations.models import Organization
 from ovp.apps.channels.models import Channel
 from ovp.apps.users.models import User
 
-base_organization = {"name": "test organization",
-                     "slug": "test-override-slug",
-                     "description": "test description",
-                     "details": "test details",
-                     "type": 0,
-                     "address": {"typed_address": "r. tecainda, 81, sao paulo"},
-                     "causes": [{"id": 1},
-                                {"id": 2}],
-                     "contact_name": "test contact name",
-                     "contact_phone": "+551112345678",
-                     "contact_email": "test@contact.com"}
+base_organization = {
+    "name": "test organization",
+    "slug": "test-override-slug",
+    "description": "test description",
+    "details": "test details",
+    "type": 0,
+    "address": {
+        "typed_address": "r. tecainda, 81, sao paulo"
+    },
+    "causes": [
+        {"id": 1},
+        {"id": 2}
+    ],
+    "contact_name": "test contact name",
+    "contact_phone": "+551112345678",
+    "contact_email": "test@contact.com"
+}
 
 
 class OrganizationChannelTestCase(TestCase):
@@ -62,7 +68,10 @@ class OrganizationChannelTestCase(TestCase):
         self.assertTrue(organization.channel.slug == "test-channel")
 
     def test_cant_modify_organizations_on_another_channel(self):
-        """ Make sure users from an organization can't modify the same organization on another channel """
+        """
+        Make sure users from an organization can't modify
+        the same organization on another channel
+        """
         self.test_organizations_are_created_on_correct_channel()
 
         client = APIClient()

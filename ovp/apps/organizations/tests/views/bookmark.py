@@ -84,7 +84,10 @@ class OrganizationBookmarkTestCase(TestCase):
         self.assertEqual(OrganizationBookmark.objects.count(), 0)
 
     def test_cant_unbookmark_unbookmarked(self):
-        """ Assert it's possible to unbookmark a organization that is not bookmarked """
+        """
+        Assert it's possible to unbookmark a organization
+        that is not bookmarked
+        """
         self.assertEqual(OrganizationBookmark.objects.count(), 0)
         response = self.client.post(
             reverse(
@@ -112,7 +115,9 @@ class OrganizationBookmarkTestCase(TestCase):
         self.assertEqual(response.data["count"], 1)
 
     def test_cant_access_bookmark_routes_logged_out(self):
-        """ Assert it's not possible to access bookmark routes if unauthenticated """
+        """
+        Assert it's not possible to access bookmark routes if unauthenticated
+        """
         client = APIClient()
 
         response = client.post(
@@ -135,7 +140,9 @@ class OrganizationBookmarkTestCase(TestCase):
         self.assertTrue(response.status_code == 401)
 
     def test_organization_include_is_bookmarked_info(self):
-        """ Assert organization includes information if it's bookmarked or not """
+        """
+        Assert organization includes information if it's bookmarked or not
+        """
         response = self.client.get(
             reverse(
                 "organization-detail",

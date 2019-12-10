@@ -10,7 +10,8 @@ from ovp.apps.projects.models import Project
 
 
 class Command(BaseCommand):
-    help = "Reminder for organizations that do not create projects for more than 3 months"
+    help = "Reminder for organizations that do not \
+            create projects for more than 3 months"
 
     def handle(self, *args, **options):
         today = timezone.now()

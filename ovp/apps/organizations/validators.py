@@ -18,7 +18,8 @@ class InviteEmailValidator():
         try:
             validate_email(email)
         except ValidationError as e:
-            return True  # we let serializers.EmailField validation handle invalid emails
+            # we let serializers.EmailField validation handle invalid emails
+            return True
 
         try:
             User.objects.get(email=email, channel__slug=self.channel)
@@ -32,7 +33,10 @@ class InviteEmailValidator():
 error_messages = {
     'invalid': ("Invalid CNPJ number."),
     'digits_only': ("This field requires only numbers."),
-    'max_digits': ("This field requires exactly 14 digits in the format XXXXXXXXXXXXXX without '. / -'"),
+    'max_digits': (
+        "This field requires exactly 14 digits "
+        "in the format XXXXXXXXXXXXXX without '. / -'"
+    ),
 }
 
 
@@ -63,12 +67,20 @@ def validate_CNPJ(value):
         raise ValidationError(error_messages['max_digits'])
     orig_dv = value[-2:]
 
-    new_1dv = sum([i * int(value[idx]) for idx,
-                   i in enumerate(list(range(5, 1, -1)) + list(range(9, 1, -1)))])
+    new_1dv = sum(
+        [
+            i * int(value[idx]) for idx,
+            i in enumerate(list(range(5, 1, -1)) + list(range(9, 1, -1)))
+        ]
+    )
     new_1dv = DV_maker(new_1dv % 11)
     value = value[:-2] + str(new_1dv) + value[-1]
-    new_2dv = sum([i * int(value[idx]) for idx,
-                   i in enumerate(list(range(6, 1, -1)) + list(range(9, 1, -1)))])
+    new_2dv = sum(
+        [
+            i * int(value[idx]) for idx,
+            i in enumerate(list(range(6, 1, -1)) + list(range(9, 1, -1)))
+        ]
+    )
     new_2dv = DV_maker(new_2dv % 11)
     value = value[:-1] + str(new_2dv)
     if value[-2:] != orig_dv:

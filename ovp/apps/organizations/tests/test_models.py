@@ -22,31 +22,35 @@ class OrganizationModelTestCase(TestCase):
         self.organization = organization
 
     def test_str_method_returns_organization_name(self):
-        """ Assert that Organization.__str__() method returns organization name """
+        """
+        Assert that Organization.__str__() method returns organization name
+        """
 
         self.assertTrue(self.organization.__str__() == "test organization")
 
     def test_organization_delete(self):
         """ Assert that Organization.delete() method sets .deleted=True """
 
-        self.assertTrue(self.organization.deleted == False)
+        self.assertTrue(self.organization.deleted is False)
         self.assertTrue(self.organization.published)
         self.assertTrue(self.organization.deleted_date is None)
 
         self.organization.delete()
 
         self.assertTrue(self.organization.deleted)
-        self.assertTrue(self.organization.published == False)
+        self.assertTrue(self.organization.published is False)
         self.assertTrue(self.organization.deleted_date)
 
     def test_organization_publish(self):
-        """ Assert that setting Organization.published=True updates published_date """
+        """
+        Assert that setting Organization.published=True updates published_date
+        """
 
         organization = Organization(
             name="test organization", owner=self.user, type=0)
         organization.save(object_channel="default")
 
-        self.assertTrue(organization.published == False)
+        self.assertTrue(organization.published is False)
         self.assertTrue(organization.published_date is None)
 
         organization.published = True
@@ -56,7 +60,10 @@ class OrganizationModelTestCase(TestCase):
         self.assertTrue(organization.published_date)
 
     def test_excerpt_from_details(self):
-        """ Assert that if an organization has no .description, it will use 100 chars from .details as an excerpt """
+        """
+        Assert that if an organization has no .description,
+        it will use 100 chars from .details as an excerpt
+        """
         small_details = ("a" * 100)
         details = ("a" * 100) + "b"
         expected_description = "a" * 100
