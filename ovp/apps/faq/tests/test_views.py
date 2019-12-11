@@ -206,3 +206,53 @@ class FaqResourceViewSetTestCase(TestCase):
             )
             in response.data
         )
+
+    def test_list_check_queryset_filters(self):
+        # Opening get request with faq listing applying filters
+        data_1 = {
+            'category': "7",  # Institucionais
+            'language': 'pt-BR',
+        }
+        response_1 = self.client.get(self.endpoint, data_1, format="json")
+
+        data_2 = {
+            'category': "8",  # Comerciais
+            'language': 'pt-BR',
+        }
+        response_2 = self.client.get(self.endpoint, data_2, format="json")
+
+        # Ensuring the right number of questions applied filters
+        self.assertEqual(len(response_1.data), 1)
+        self.assertFalse(
+            OrderedDict(
+                {
+                    "id": 1,
+                    "question": "Quem é o Atados?",
+                    "answer": "O Atados é uma plataforma social online que "
+                              "conecta pessoas à oportunidades de "
+                              "voluntariado em causas sociais.",
+                    "language": "pt-BR",
+                    "category": OrderedDict(
+                        {"id": 7, "name": "Institucionais"}
+                    )
+                }
+            )
+            in response_1.data
+        )
+
+        self.assertEqual(len(response_2.data), 1)
+        self.assertFalse(
+            OrderedDict(
+                {
+                    "id": 2,
+                    "question": "Há quanto tempo a atados está no mercado?",
+                    "answer": "A Atados está atuando no mercado "
+                              "há mais de 7 anos.",
+                    "language": "pt-BR",
+                    "category": OrderedDict(
+                        {"id": 8, "name": "Comerciais"}
+                    )
+                }
+            )
+            in response_2.data
+        )
