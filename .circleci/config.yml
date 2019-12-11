@@ -37,6 +37,38 @@ jobs:
           name: Run tests core with Postgres
           command: python test/runtests.py ovp.apps.core
 
+      - run:
+          name: Run tests faq with Postgres
+          command: python test/runtests.py ovp.apps.faq
+
+      - run:
+          name: Run tests gallery with Postgres
+          command: python test/runtests.py ovp.apps.gallery
+
+      - run:
+          name: Run tests organizations with Postgres
+          command: python test/runtests.py ovp.apps.organizations
+
+      - run:
+          name: Run tests projects with Postgres
+          command: python test/runtests.py ovp.apps.projects
+
+      - run:
+          name: Run tests ratings with Postgres
+          command: python test/runtests.py ovp.apps.ratings
+  
+      - run:
+          name: Run tests search with Postgres
+          command: python test/runtests.py ovp.apps.search
+
+      - run:
+          name: Run tests uploads with Postgres
+          command: python test/runtests.py ovp.apps.uploads
+    
+      - run:
+          name: Run tests users with Postgres
+          command: python test/runtests.py ovp.apps.users
+
       - persist_to_workspace:
           root: .
           paths:
