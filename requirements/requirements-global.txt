@@ -1,4 +1,4 @@
--r api/django-ovp/requirements/requirements-dev.txt
+-r requirements-dev.txt
 django-git-submodules
 django-debug-toolbar
 dj-database-url
