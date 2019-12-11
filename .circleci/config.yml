@@ -27,7 +27,7 @@ jobs:
 
       - run:
           name: Install dependencies
-          command: pip install -r requirements/requirements-dev.txt --user
+          command: pip install -r requirements/requirements-global.txt --user
 
       # - save_cache:
       #     paths:
