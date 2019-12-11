@@ -20,24 +20,22 @@ jobs:
     steps:
       - checkout
 
-      # - restore_cache:
-      #     keys:
-      #       - v1-dependencies-{{ checksum "requirements/requirements-dev.txt" }}-{{ checksum "requirements/requirements-project.txt" }}
-      #       - v1-dependencies-
-
       - run:
           name: Install dependencies
-          # Arquivo para importar os demais requirements
           command: pip install -r requirements/requirements-global.txt --user
-
-      # - save_cache:
-      #     paths:
-      #       - node_modules
-      #     key: - v1-dependencies-{{ checksum "requirements/requirements-dev.txt" }}-{{ checksum "requirements/requirements-project.txt" }}
+      
+      # Executando testes por Apps
+      - run:
+          name: Run tests catalogue with Postgres
+          command: python test/runtests.py ovp.apps.catalogue
 
       - run:
-          name: Run tests with Postgres
-          command: python test/runtests.py
+          name: Run tests channels with Postgres
+          command: python test/runtests.py ovp.apps.channels
+
+      - run:
+          name: Run tests core with Postgres
+          command: python test/runtests.py ovp.apps.core
 
       - persist_to_workspace:
           root: .

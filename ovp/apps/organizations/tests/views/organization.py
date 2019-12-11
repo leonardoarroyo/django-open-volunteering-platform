@@ -18,6 +18,7 @@ from ovp.apps.projects.models import Project
 from ovp.apps.gallery.models import Gallery
 from ovp.apps.core.models import Cause
 from ovp.apps.core.models import Skill
+from ovp.apps.core.utils import present_in_list
 
 import copy
 
@@ -272,21 +273,26 @@ class OrganizationResourceViewSetTestCase(TestCase):
         self.assertTrue(len(response.data["causes"]) == 3)
 
         self.assertTrue(
-            OrderedDict({"id": 3, "name": "Conscious consumption"})
-            in response.data["causes"]
+            present_in_list(
+                response.data["causes"],
+                "name",
+                "Conscious consumption"
+            )
         )
         self.assertTrue(
-            OrderedDict({"id": 4, "name": "Culture, Sport and Art"})
-            in response.data["causes"]
+            present_in_list(
+                response.data["causes"],
+                "name",
+                "Culture, Sport and Art"
+            )
         )
         self.assertTrue(
-            OrderedDict({"id": 81, "name": "other-channel"})
-            in response.data["causes"]
+            present_in_list(
+                response.data["causes"],
+                "name",
+                "other-channel"
+            )
         )
-
-        # self.assertTrue(response.data["causes"][0]["id"] == 3)
-        # self.assertTrue(response.data["causes"][1]["id"] == 4)
-        # self.assertTrue(response.data["causes"][2]["name"] == "other-channel")
 
     def test_can_retrieve_projects(self):
         """ Assert it's possible to retrieve organization projects """
