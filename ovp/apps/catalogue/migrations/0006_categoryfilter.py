@@ -18,12 +18,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CategoryFilter',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('channel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='categoryfilter_channel', to='channels.Channel')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('channel',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='categoryfilter_channel',
+                     to='channels.Channel')),
             ],
             options={
                 'abstract': False,
             },
-            bases=(ovp.apps.channels.models.mixins.ChannelCreatorMixin, models.Model),
+            bases=(
+                ovp.apps.channels.models.mixins.ChannelCreatorMixin,
+                models.Model),
         ),
     ]

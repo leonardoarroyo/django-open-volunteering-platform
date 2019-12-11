@@ -15,7 +15,18 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='type',
-            field=models.PositiveSmallIntegerField(choices=[(0, 'Organization'), (1, 'School'), (2, 'Company'), (3, 'Group of volunteers')], default=0, verbose_name='Type'),
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (0,
+                     'Organization'),
+                    (1,
+                     'School'),
+                    (2,
+                     'Company'),
+                    (3,
+                     'Group of volunteers')],
+                default=0,
+                verbose_name='Type'),
             preserve_default=False,
         ),
     ]

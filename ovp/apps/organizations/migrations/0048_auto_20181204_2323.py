@@ -16,11 +16,19 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='organization',
             name='address',
-            field=models.OneToOneField(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.SimpleAddress', verbose_name='address'),
+            field=models.OneToOneField(
+                blank=True,
+                db_constraint=False,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='core.SimpleAddress',
+                verbose_name='address'),
         ),
         migrations.AlterField(
             model_name='organization',
             name='name',
-            field=models.CharField(max_length=300, verbose_name='Name'),
+            field=models.CharField(
+                max_length=300,
+                verbose_name='Name'),
         ),
     ]

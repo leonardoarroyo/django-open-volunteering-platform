@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='chat_enabled',
-            field=models.BooleanField(default=False, verbose_name='Chat Enabled'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Chat Enabled'),
         ),
     ]

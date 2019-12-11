@@ -17,16 +17,27 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='image',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='uploads.UploadedImage'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='uploads.UploadedImage'),
         ),
         migrations.AddField(
             model_name='organization',
             name='slug',
-            field=models.SlugField(blank=True, max_length=100, null=True, unique=True),
+            field=models.SlugField(
+                blank=True,
+                max_length=100,
+                null=True,
+                unique=True),
         ),
         migrations.AlterField(
             model_name='organization',
             name='facebook_page',
-            field=models.CharField(blank=True, default=None, max_length=255, null=True),
+            field=models.CharField(
+                blank=True,
+                default=None,
+                max_length=255,
+                null=True),
         ),
     ]

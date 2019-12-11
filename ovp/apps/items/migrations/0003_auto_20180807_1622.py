@@ -20,11 +20,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='item',
             name='about',
-            field=ckeditor.fields.RichTextField(blank=True, max_length=3000, null=True, verbose_name='About'),
+            field=ckeditor.fields.RichTextField(
+                blank=True,
+                max_length=3000,
+                null=True,
+                verbose_name='About'),
         ),
         migrations.AlterField(
             model_name='item',
             name='name',
-            field=models.CharField(blank=True, max_length=100, null=True, verbose_name='Item name'),
+            field=models.CharField(
+                blank=True,
+                max_length=100,
+                null=True,
+                verbose_name='Item name'),
         ),
     ]

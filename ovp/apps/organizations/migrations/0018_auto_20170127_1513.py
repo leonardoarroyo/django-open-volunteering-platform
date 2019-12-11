@@ -19,6 +19,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='hidden_address',
-            field=models.BooleanField(default=False, verbose_name='Hidden address'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Hidden address'),
         ),
     ]

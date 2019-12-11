@@ -18,12 +18,34 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OrganizationInvite',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('accepted_date', models.DateTimeField(blank=True, null=True, verbose_name='Deleted date')),
-                ('created_date', models.DateTimeField(auto_now_add=True)),
-                ('invitator', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='has_invited', to=settings.AUTH_USER_MODEL)),
-                ('invited', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='been_invited', to=settings.AUTH_USER_MODEL)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='organizations.Organization')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('accepted_date',
+                 models.DateTimeField(
+                     blank=True,
+                     null=True,
+                     verbose_name='Deleted date')),
+                ('created_date',
+                 models.DateTimeField(
+                     auto_now_add=True)),
+                ('invitator',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='has_invited',
+                     to=settings.AUTH_USER_MODEL)),
+                ('invited',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='been_invited',
+                     to=settings.AUTH_USER_MODEL)),
+                ('organization',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to='organizations.Organization')),
             ],
         ),
     ]

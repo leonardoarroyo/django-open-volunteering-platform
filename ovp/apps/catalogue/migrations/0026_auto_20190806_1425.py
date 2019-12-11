@@ -18,18 +18,46 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HighlightedFilter',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('highlighted', models.IntegerField(choices=[(1, 'True'), (0, 'False')], default=1, verbose_name='Highlighted')),
-                ('channel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='highlightedfilter_channel', to='channels.Channel')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('highlighted',
+                 models.IntegerField(
+                     choices=[
+                         (1,
+                          'True'),
+                         (0,
+                          'False')],
+                     default=1,
+                     verbose_name='Highlighted')),
+                ('channel',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='highlightedfilter_channel',
+                     to='channels.Channel')),
             ],
             options={
                 'abstract': False,
             },
-            bases=(ovp.apps.channels.models.mixins.ChannelCreatorMixin, models.Model),
+            bases=(
+                ovp.apps.channels.models.mixins.ChannelCreatorMixin,
+                models.Model),
         ),
         migrations.AlterField(
             model_name='sectionfilter',
             name='type',
-            field=models.CharField(choices=[('CATEGORY', 'Category'), ('DATEDELTA', 'Date delta'), ('HIGHLIGHTED', 'Highlighted')], max_length=30, verbose_name='Filter type'),
+            field=models.CharField(
+                choices=[
+                    ('CATEGORY',
+                     'Category'),
+                    ('DATEDELTA',
+                     'Date delta'),
+                    ('HIGHLIGHTED',
+                     'Highlighted')],
+                max_length=30,
+                verbose_name='Filter type'),
         ),
     ]

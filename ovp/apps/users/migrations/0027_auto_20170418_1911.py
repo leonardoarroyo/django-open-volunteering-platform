@@ -19,6 +19,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userprofile',
             name='gender',
-            field=models.CharField(blank=True, choices=[('male', 'Male'), ('female', 'Female')], default=None, max_length=10, null=True, verbose_name='gender'),
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ('male',
+                     'Male'),
+                    ('female',
+                     'Female')],
+                default=None,
+                max_length=10,
+                null=True,
+                verbose_name='gender'),
         ),
     ]

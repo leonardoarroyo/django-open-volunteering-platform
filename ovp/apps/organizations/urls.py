@@ -5,8 +5,12 @@ from ovp.apps.organizations import views
 
 
 router = routers.DefaultRouter()
-router.register(r'organizations', views.OrganizationResourceViewSet, 'organization')
+router.register(
+    r'organizations',
+    views.OrganizationResourceViewSet,
+    'organization'
+)
 
 urlpatterns = [
-  url(r'^', include(router.urls)),
+    url(r'^', include(router.urls)),
 ]

@@ -17,16 +17,55 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='uploadedimage',
             name='image_large',
-            field=django_resized.forms.ResizedImageField(blank=True, crop=None, default=None, force_format=None, keep_meta=True, max_length=300, null=True, quality=0, size=[1260, 936], upload_to=ovp.apps.uploads.models.ImageName('-large'), verbose_name='Image large'),
+            field=django_resized.forms.ResizedImageField(
+                blank=True,
+                crop=None,
+                default=None,
+                force_format=None,
+                keep_meta=True,
+                max_length=300,
+                null=True,
+                quality=0,
+                size=[
+                    1260,
+                    936],
+                upload_to=ovp.apps.uploads.models.ImageName('-large'),
+                verbose_name='Image large'),
         ),
         migrations.AlterField(
             model_name='uploadedimage',
             name='image_medium',
-            field=django_resized.forms.ResizedImageField(blank=True, crop=None, default=None, force_format=None, keep_meta=True, max_length=300, null=True, quality=0, size=[420, 312], upload_to=ovp.apps.uploads.models.ImageName('-medium'), verbose_name='Image medium'),
+            field=django_resized.forms.ResizedImageField(
+                blank=True,
+                crop=None,
+                default=None,
+                force_format=None,
+                keep_meta=True,
+                max_length=300,
+                null=True,
+                quality=0,
+                size=[
+                    420,
+                    312],
+                upload_to=ovp.apps.uploads.models.ImageName('-medium'),
+                verbose_name='Image medium'),
         ),
         migrations.AlterField(
             model_name='uploadedimage',
             name='image_small',
-            field=django_resized.forms.ResizedImageField(blank=True, crop=None, default=None, force_format=None, keep_meta=True, max_length=300, null=True, quality=0, size=[350, 260], upload_to=ovp.apps.uploads.models.ImageName('-small'), verbose_name='Image small'),
+            field=django_resized.forms.ResizedImageField(
+                blank=True,
+                crop=None,
+                default=None,
+                force_format=None,
+                keep_meta=True,
+                max_length=300,
+                null=True,
+                quality=0,
+                size=[
+                    350,
+                    260],
+                upload_to=ovp.apps.uploads.models.ImageName('-small'),
+                verbose_name='Image small'),
         ),
     ]

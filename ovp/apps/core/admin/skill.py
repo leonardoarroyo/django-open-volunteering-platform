@@ -8,23 +8,17 @@ from ovp.apps.core.models import Skill
 
 
 class SkillInline(TabularInline):
-  model = Skill
+    model = Skill
 
 
 class SkillAdmin(ChannelModelAdmin):
-	fields = ['id', 'name', 'slug']
-
-	list_display = ['id', 'name']
-
-	list_filter = []
-
-	list_editable = []
-
-	search_fields = ['id', 'name']
-
-	readonly_fields = ['id']
-
-	raw_id_fields = []
+    fields = ['id', 'name', 'slug']
+    list_display = ['id', 'name']
+    list_filter = []
+    list_editable = []
+    search_fields = ['id', 'name']
+    readonly_fields = ['id']
+    raw_id_fields = []
 
 
 admin_site.register(Skill, SkillAdmin)

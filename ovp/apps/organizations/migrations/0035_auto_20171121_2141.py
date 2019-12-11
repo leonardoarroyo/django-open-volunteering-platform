@@ -16,6 +16,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='organization',
             name='members',
-            field=models.ManyToManyField(blank=True, related_name='organizations_member', to=settings.AUTH_USER_MODEL, verbose_name='members'),
+            field=models.ManyToManyField(
+                blank=True,
+                related_name='organizations_member',
+                to=settings.AUTH_USER_MODEL,
+                verbose_name='members'),
         ),
     ]

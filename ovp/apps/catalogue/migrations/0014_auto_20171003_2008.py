@@ -15,6 +15,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='sectionfilter',
             name='type',
-            field=models.CharField(choices=[('CATEGORY', 'Category'), ('DATEDELTA', 'Date delta')], max_length=30, verbose_name='Filter type'),
+            field=models.CharField(
+                choices=[
+                    ('CATEGORY',
+                     'Category'),
+                    ('DATEDELTA',
+                     'Date delta')],
+                max_length=30,
+                verbose_name='Filter type'),
         ),
     ]

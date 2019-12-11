@@ -1,3 +1,4 @@
+import ovp.apps.channels.tests.helpers.urls
 from django.conf.urls import url, include
 from ovp.apps.channels.admin import admin_site
 
@@ -11,51 +12,54 @@ import ovp.apps.faq.urls
 import ovp.apps.catalogue.urls
 import ovp.apps.ratings.urls
 import ovp.apps.gallery.urls
+import ovp.apps.donations.urls
 import ovp.apps.digest.urls
 
 urlpatterns = [
-  # Admin
-  url(r'^jet/', include('jet.urls', 'jet')),
-  url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
-  url(r'^admin/', admin_site.urls),
+    # Admin
+    url(r'^jet/', include('jet.urls', 'jet')),
+    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
+    url(r'^admin/', admin_site.urls),
 
-  # Core
-  url(r'^', include(ovp.apps.core.urls)),
+    # Core
+    url(r'^', include(ovp.apps.core.urls)),
 
-  # Uploads
-  url(r'^', include(ovp.apps.uploads.urls)),
+    # Uploads
+    url(r'^', include(ovp.apps.uploads.urls)),
 
-  # Users
-  url(r'^', include(ovp.apps.users.urls)),
+    # Users
+    url(r'^', include(ovp.apps.users.urls)),
 
-  # Projects
-  url(r'^', include(ovp.apps.projects.urls)),
+    # Projects
+    url(r'^', include(ovp.apps.projects.urls)),
 
-  # Organizations
-  url(r'^', include(ovp.apps.organizations.urls)),
+    # Organizations
+    url(r'^', include(ovp.apps.organizations.urls)),
 
-  # Search
-  url(r'^', include(ovp.apps.search.urls)),
+    # Search
+    url(r'^', include(ovp.apps.search.urls)),
 
-  # FAQ
-  url(r'^', include(ovp.apps.faq.urls)),
+    # FAQ
+    url(r'^', include(ovp.apps.faq.urls)),
 
-  # Catalogue
-  url(r'^', include(ovp.apps.catalogue.urls)),
+    # Catalogue
+    url(r'^', include(ovp.apps.catalogue.urls)),
 
-  # Catalogue
-  url(r'^', include(ovp.apps.ratings.urls)),
+    # Catalogue
+    url(r'^', include(ovp.apps.ratings.urls)),
 
-  # Gallery
-  url(r'^', include(ovp.apps.gallery.urls)),
+    # Gallery
+    url(r'^', include(ovp.apps.gallery.urls)),
 
-  # Digest
-  url(r'^', include(ovp.apps.digest.urls)),
+    # Donations
+    url(r'^', include(ovp.apps.donations.urls)),
+
+    # Digest
+    url(r'^', include(ovp.apps.digest.urls)),
 ]
 
 # Test urls
 # These should not be used in production
-import ovp.apps.channels.tests.helpers.urls
 urlpatterns += [
-  url(r'^', include(ovp.apps.channels.tests.helpers.urls))
+    url(r'^', include(ovp.apps.channels.tests.helpers.urls))
 ]

@@ -6,15 +6,19 @@ from django.db import migrations
 
 
 def foward_func(apps, schema_editor):
-  VolunteerRole = apps.get_model('projects', 'VolunteerRole')
-  Apply = apps.get_model('projects', 'Apply')
+    VolunteerRole = apps.get_model('projects', 'VolunteerRole')
+    Apply = apps.get_model('projects', 'Apply')
 
-  for vr in VolunteerRole.objects.all():
-    vr.applied_count = Apply.objects.filter(role=vr, status__in=["applied", "confirmed-volunteer"]).count()
-    vr.save()
+    for vr in VolunteerRole.objects.all():
+        vr.applied_count = Apply.objects.filter(
+            role=vr, status__in=[
+                "applied", "confirmed-volunteer"]).count()
+        vr.save()
+
 
 def rewind_func():
-  pass
+    pass
+
 
 class Migration(migrations.Migration):
 

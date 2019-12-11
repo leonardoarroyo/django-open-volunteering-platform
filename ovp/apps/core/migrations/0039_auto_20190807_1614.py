@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='flair',
             name='value',
-            field=models.CharField(blank=True, max_length=100, null=True, verbose_name='value'),
+            field=models.CharField(
+                blank=True,
+                max_length=100,
+                null=True,
+                verbose_name='value'),
         ),
     ]

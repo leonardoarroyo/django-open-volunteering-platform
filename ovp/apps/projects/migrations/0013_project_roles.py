@@ -15,6 +15,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='roles',
-            field=models.ManyToManyField(blank=True, to='projects.VolunteerRole', verbose_name='Volunteer Roles'),
+            field=models.ManyToManyField(
+                blank=True,
+                to='projects.VolunteerRole',
+                verbose_name='Volunteer Roles'),
         ),
     ]

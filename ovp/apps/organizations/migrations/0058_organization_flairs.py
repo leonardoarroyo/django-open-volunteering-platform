@@ -16,6 +16,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='flairs',
-            field=models.ManyToManyField(blank=True, related_name='organizations', to='core.Flair', verbose_name='flairs'),
+            field=models.ManyToManyField(
+                blank=True,
+                related_name='organizations',
+                to='core.Flair',
+                verbose_name='flairs'),
         ),
     ]

@@ -15,11 +15,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='post',
             name='deleted',
-            field=models.BooleanField(default=False, verbose_name='Deleted'),
+            field=models.BooleanField(
+                default=False,
+                verbose_name='Deleted'),
         ),
         migrations.AddField(
             model_name='post',
             name='deleted_date',
-            field=models.DateTimeField(editable=False, null=True, verbose_name='Deleted date'),
+            field=models.DateTimeField(
+                editable=False,
+                null=True,
+                verbose_name='Deleted date'),
         ),
     ]

@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='channel',
             name='subchannels',
-            field=models.ManyToManyField(to='channels.Channel', verbose_name='subchannel'),
+            field=models.ManyToManyField(
+                to='channels.Channel',
+                verbose_name='subchannel'),
         ),
     ]

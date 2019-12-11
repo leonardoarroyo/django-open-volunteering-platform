@@ -6,25 +6,30 @@ from django.utils.translation import ugettext as _
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
+
 class Filter(ChannelRelationship):
-  """
-  This base class can be extended to create custom catalogue filters.
-  """
-  def __str__(self):
-    return "Base filter"
-
-  class Meta:
-    abstract = True
-
-  def get_filter_kwargs(self):
     """
-    This should return a dictionary. This dictionary will be passed as
-    **kwargs to Project.filter() when building a catalogue.
-
-    Unfortunately we cannot operate on the queryset directly as catalogues
-    get cached for performance reasons and we can't pickle functions.
+    This base class can be extended to create custom catalogue filters.
     """
-    raise NotImplementedError("You must override .get_filter_kwargs when implementing your custom catalogue filter.")
+
+    def __str__(self):
+        return "Base filter"
+
+    class Meta:
+        abstract = True
+
+    def get_filter_kwargs(self):
+        """
+        This should return a dictionary. This dictionary will be passed as
+        **kwargs to Project.filter() when building a catalogue.
+
+        Unfortunately we cannot operate on the queryset directly as catalogues
+        get cached for performance reasons and we can't pickle functions.
+        """
+        raise NotImplementedError(
+            "You must override .get_filter_kwargs when \
+            implementing your custom catalogue filter."
+        )
 
 
 ###################
@@ -32,20 +37,20 @@ class Filter(ChannelRelationship):
 ###################
 
 class CategoryFilter(Filter):
-  categories = models.ManyToManyField("projects.Category")
+    categories = models.ManyToManyField("projects.Category")
 
-  def __str__(self):
-    return _("Category Filter")
+    def __str__(self):
+        return _("Category Filter")
 
-  def filter_information(self):
-    categories_str = ""
-    for category in self.categories.all():
-      categories_str += "%s\n" % category.name
-    return categories_str
+    def filter_information(self):
+        categories_str = ""
+        for category in self.categories.all():
+            categories_str += "%s\n" % category.name
+        return categories_str
 
-  def get_filter_kwargs(self):
-    pks = list(self.categories.all().values_list("pk", flat=True))
-    return {"categories__pk__in": pks}
+    def get_filter_kwargs(self):
+        pks = list(self.categories.all().values_list("pk", flat=True))
+        return {"categories__pk__in": pks}
 
 
 ####################
@@ -53,30 +58,49 @@ class CategoryFilter(Filter):
 ####################
 
 DATEDELTA_OPERATORS = (
-  ("exact", _("Exact")),
-  ("gt", _("Greater than")),
-  ("gte", _("Greater than or equal to")),
-  ("lt", _("Lesser than")),
-  ("lte", _("Lesser than or equal to")),
+    ("exact", _("Exact")),
+    ("gt", _("Greater than")),
+    ("gte", _("Greater than or equal to")),
+    ("lt", _("Lesser than")),
+    ("lte", _("Lesser than or equal to")),
 )
 
+
 class DateDeltaFilter(Filter):
-  days = models.IntegerField(_("Days"), default=0)
-  weeks = models.IntegerField(_("Weeks"), default=0)
-  months = models.IntegerField(_("Months"), default=0)
-  years = models.IntegerField(_("Years"), default=0)
-  operator = models.CharField(_("Operator"), choices=DATEDELTA_OPERATORS, default="exact", max_length=30)
+    days = models.IntegerField(_("Days"), default=0)
+    weeks = models.IntegerField(_("Weeks"), default=0)
+    months = models.IntegerField(_("Months"), default=0)
+    years = models.IntegerField(_("Years"), default=0)
+    operator = models.CharField(
+        _("Operator"),
+        choices=DATEDELTA_OPERATORS,
+        default="exact",
+        max_length=30
+    )
 
-  def __str__(self):
-    return _("DateDelta Filter")
+    def __str__(self):
+        return _("DateDelta Filter")
 
-  def filter_information(self):
-    return  "{} {} days, {} weeks, {} months, {} years".format(self.get_operator_display(), self.days, self.weeks, self.months, self.years)
+    def filter_information(self):
+        result_str = "{} {} days, {} weeks, {} months, {} years".format(
+            self.get_operator_display(),
+            self.days,
+            self.weeks,
+            self.months,
+            self.years
+        )
+        return result_str
 
-  def get_filter_kwargs(self):
-    k = "published_date__{}".format(self.operator)
-    v = timezone.now() + relativedelta(days=self.days, weeks=self.weeks, months=self.months, years=self.years)
-    return {k: v}
+    def get_filter_kwargs(self):
+        k = "published_date__{}".format(self.operator)
+        delta = relativedelta(
+            days=self.days,
+            weeks=self.weeks,
+            months=self.months,
+            years=self.years
+        )
+        v = timezone.now() + delta
+        return {k: v}
 
 
 ####################
@@ -84,18 +108,23 @@ class DateDeltaFilter(Filter):
 ####################
 
 HIGHLIGHTED_OPTIONS = (
-  (1, _("True")),
-  (0, _("False")),
+    (1, _("True")),
+    (0, _("False")),
 )
 
+
 class HighlightedFilter(Filter):
-  highlighted = models.IntegerField(_("Highlighted"), choices=HIGHLIGHTED_OPTIONS, default=1)
+    highlighted = models.IntegerField(
+        _("Highlighted"),
+        choices=HIGHLIGHTED_OPTIONS,
+        default=1
+    )
 
-  def __str__(self):
-    return _("Highlighted Filter")
+    def __str__(self):
+        return _("Highlighted Filter")
 
-  def filter_information(self):
-    return  "Highlighted: {}".format(self.get_highlighted_display())
+    def filter_information(self):
+        return "Highlighted: {}".format(self.get_highlighted_display())
 
-  def get_filter_kwargs(self):
-    return {"highlighted": self.highlighted}
+    def get_filter_kwargs(self):
+        return {"highlighted": self.highlighted}

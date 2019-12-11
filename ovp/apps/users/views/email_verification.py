@@ -14,52 +14,71 @@ from rest_framework import viewsets
 from rest_framework import filters
 from drf_yasg.utils import swagger_auto_schema
 
+
 @ChannelViewSet
 class RequestEmailVerificationViewSet(GenericUserTokenViewSet):
-  """
-  RecoveryToken resource endpoint
-  """
-  queryset = models.User.objects.all()
-  serializer_class = serializers.RecoveryTokenSerializer
-  Token = models.EmailVerificationToken
+    """
+    RecoveryToken resource endpoint
+    """
+    queryset = models.User.objects.filter(is_active=True)
+    serializer_class = serializers.RecoveryTokenSerializer
+    Token = models.EmailVerificationToken
 
-  @swagger_auto_schema(responses={200: 'OK', 429: 'Too many requests.'})
-  def create(self, *args, **kwargs):
-    result = super(RequestEmailVerificationViewSet, self).create(*args, **kwargs)
+    @swagger_auto_schema(responses={200: 'OK', 429: 'Too many requests.'})
+    def create(self, *args, **kwargs):
+        result = super().create(*args, **kwargs)
 
-    if result.status_code == 200:
-      return response.Response({'success': True, 'message': 'Token requested successfully.'})
+        if result.status_code == 200:
+            return response.Response(
+                {'success': True, 'message': 'Token requested successfully.'}
+            )
 
-    return result
+        return result
+
 
 @ChannelViewSet
 class VerificateEmailViewSet(viewsets.GenericViewSet):
-  """
-  Verificate email resource endpoint
-  """
-  queryset = models.EmailVerificationToken.objects.all()
-  serializer_class = serializers.EmailVerificationSerializer
+    """
+    Verificate email resource endpoint
+    """
+    queryset = models.EmailVerificationToken.objects.all()
+    serializer_class = serializers.EmailVerificationSerializer
 
-  @swagger_auto_schema(responses={200: 'OK', 400: 'Bad request', 401: 'Unauthorized'})
-  def create(self, request, *args, **kwargs):
-    """ Update user password using recovery token. """
-    token = request.data.get('token', None)
-    day_ago = (timezone.now() - relativedelta(hours=24)).replace(tzinfo=timezone.utc)
+    @swagger_auto_schema(
+        responses={
+            200: 'OK',
+            400: 'Bad request',
+            401: 'Unauthorized'})
+    def create(self, request, *args, **kwargs):
+        """ Update user password using recovery token. """
+        token = request.data.get('token', None)
+        day_ago = (
+            timezone.now() -
+            relativedelta(
+                hours=24)).replace(
+            tzinfo=timezone.utc)
 
-    try:
-      vt = self.get_queryset().get(token=token)
-    except:
-      vt = None
+        try:
+            vt = self.get_queryset().get(token=token)
+        except BaseException:
+            vt = None
 
-    if (not vt) or vt.used_date or vt.created_date < day_ago:
-      return response.Response({'message': 'Invalid token.'}, status=status.HTTP_401_UNAUTHORIZED)
+        if (not vt) or vt.used_date or vt.created_date < day_ago:
+            return response.Response(
+                {'message': 'Invalid token.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
-    serializers.EmailVerificationSerializer(data=request.data, context=self.get_serializer_context()).is_valid(raise_exception=True)
+        serializers.EmailVerificationSerializer(
+            data=request.data,
+            context=self.get_serializer_context()).is_valid(
+            raise_exception=True
+        )
 
-    vt.used_date=timezone.now()
-    vt.save()
+        vt.used_date = timezone.now()
+        vt.save()
 
-    vt.user.is_email_verified = True
-    vt.user.save()
+        vt.user.is_email_verified = True
+        vt.user.save()
 
-    return response.Response({'message': 'Email is now verified.'})
+        return response.Response({'message': 'Email is now verified.'})

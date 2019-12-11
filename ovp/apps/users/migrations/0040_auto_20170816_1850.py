@@ -17,19 +17,31 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='passwordhistory',
             name='channel',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='passwordhistory_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='passwordhistory_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='passwordrecoverytoken',
             name='channel',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='passwordrecoverytoken_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='passwordrecoverytoken_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='userprofile',
             name='channel',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='userprofile_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='userprofile_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
     ]

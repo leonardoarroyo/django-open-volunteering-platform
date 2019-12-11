@@ -20,15 +20,37 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DigestLog',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('recipient', models.CharField(max_length=300, verbose_name='Recipient email')),
-                ('context', django.contrib.postgres.fields.jsonb.JSONField(blank=True, null=True, verbose_name='Context')),
-                ('campaign', models.IntegerField(blank=True, null=True, verbose_name='Campaign')),
-                ('channel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='digestlog_channel', to='channels.Channel')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('recipient',
+                 models.CharField(
+                     max_length=300,
+                     verbose_name='Recipient email')),
+                ('context',
+                 django.contrib.postgres.fields.jsonb.JSONField(
+                     blank=True,
+                     null=True,
+                     verbose_name='Context')),
+                ('campaign',
+                 models.IntegerField(
+                     blank=True,
+                     null=True,
+                     verbose_name='Campaign')),
+                ('channel',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='digestlog_channel',
+                     to='channels.Channel')),
             ],
             options={
                 'abstract': False,
             },
-            bases=(ovp.apps.channels.models.mixins.ChannelCreatorMixin, models.Model),
+            bases=(
+                ovp.apps.channels.models.mixins.ChannelCreatorMixin,
+                models.Model),
         ),
     ]

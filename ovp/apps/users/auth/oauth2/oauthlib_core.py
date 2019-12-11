@@ -12,7 +12,9 @@ class KeepRequestChannel(KeepRequestCore):
     This is a hack similar to rest_framework_social_oauth2 KeepRequestCore
     which should have suficed, but the header ends up empty for some reason.
     """
+
     def _extract_params(self, request):
-        uri, http_method, body, headers = super(KeepRequestChannel, self)._extract_params(request)
+        uri, http_method, body, headers = super(
+            KeepRequestChannel, self)._extract_params(request)
         headers["Django-request-channel"] = request.channel
         return uri, http_method, body, headers

@@ -12,21 +12,22 @@ from ovp.apps.search.tests.test_views import create_sample_projects
 from ovp.apps.search.tests.test_views import create_sample_users
 from ovp.apps.users.models import User
 
+
 class SMTPBackendTestCase(TestCase):
-  def setUp(self):
-    Channel.objects.create(name="Test channel", slug="test-channel")
-    create_sample_projects()
-    create_sample_users()
-    DigestLog.objects.all().delete()
+    def setUp(self):
+        Channel.objects.create(name="Test channel", slug="test-channel")
+        create_sample_projects()
+        create_sample_users()
+        DigestLog.objects.all().delete()
 
-  def test_send_campaign(self):
-    users = ["testmail1@test.com"]
+    def test_send_campaign(self):
+        users = ["testmail1@test.com"]
 
-    mail.outbox = []
-    self.assertEqual(len(mail.outbox), 0)
+        mail.outbox = []
+        self.assertEqual(len(mail.outbox), 0)
 
-    campaign = DigestCampaign()
-    campaign.cg = ContentGenerator(threaded=False)
-    campaign.send_campaign(email_list=users)
+        campaign = DigestCampaign()
+        campaign.cg = ContentGenerator(threaded=False)
+        campaign.send_campaign(email_list=users)
 
-    self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 1)

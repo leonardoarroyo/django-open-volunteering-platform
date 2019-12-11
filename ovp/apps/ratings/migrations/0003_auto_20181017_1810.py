@@ -18,20 +18,37 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='RatingRequest',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('rating_parameters', models.ManyToManyField(to='ratings.RatingParameter')),
-                ('requested_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rating_requests', to=settings.AUTH_USER_MODEL)),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('rating_parameters',
+                 models.ManyToManyField(
+                     to='ratings.RatingParameter')),
+                ('requested_user',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='rating_requests',
+                     to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.AlterField(
             model_name='rating',
             name='owner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ratings_posted', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='ratings_posted',
+                to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='rating',
             name='request',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='ratings.RatingRequest'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='ratings.RatingRequest'),
             preserve_default=False,
         ),
     ]

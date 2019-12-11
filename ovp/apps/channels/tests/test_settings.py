@@ -8,11 +8,12 @@ from ovp.apps.channels.cache import get_channel
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
+
 class ChannelSettingsTestCase(TestCase):
-  def setUp(self):
-    Channel.objects.create(slug="test-one", name="Test one")
-    Channel.objects.create(slug="test-two", name="Test two")
-    cache.clear()
+    def setUp(self):
+        Channel.objects.create(slug="test-one", name="Test one")
+        Channel.objects.create(slug="test-two", name="Test two")
+        cache.clear()
 
 #  This test is commented out. Please check ovp.apps.channels.signals for more information.
 #  def test_cors(self):

@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='post',
             name='title',
-            field=models.CharField(blank=True, max_length=300, null=True, verbose_name='title'),
+            field=models.CharField(
+                blank=True,
+                max_length=300,
+                null=True,
+                verbose_name='title'),
         ),
     ]

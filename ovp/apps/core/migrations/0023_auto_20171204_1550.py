@@ -14,36 +14,60 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='googleaddress',
-            options={'verbose_name': 'google address', 'verbose_name_plural': 'google addresses'},
+            options={
+                'verbose_name': 'google address',
+                'verbose_name_plural': 'google addresses'},
         ),
         migrations.AlterField(
             model_name='googleaddress',
             name='address_line',
-            field=models.CharField(blank=True, max_length=400, null=True, verbose_name='Address line'),
+            field=models.CharField(
+                blank=True,
+                max_length=400,
+                null=True,
+                verbose_name='Address line'),
         ),
         migrations.AlterField(
             model_name='googleaddress',
             name='city_state',
-            field=models.CharField(blank=True, max_length=400, null=True, verbose_name='City/state'),
+            field=models.CharField(
+                blank=True,
+                max_length=400,
+                null=True,
+                verbose_name='City/state'),
         ),
         migrations.AlterField(
             model_name='googleaddress',
             name='lat',
-            field=models.FloatField(blank=True, null=True, verbose_name='Latitude'),
+            field=models.FloatField(
+                blank=True,
+                null=True,
+                verbose_name='Latitude'),
         ),
         migrations.AlterField(
             model_name='googleaddress',
             name='lng',
-            field=models.FloatField(blank=True, null=True, verbose_name='Longitude'),
+            field=models.FloatField(
+                blank=True,
+                null=True,
+                verbose_name='Longitude'),
         ),
         migrations.AlterField(
             model_name='googleaddress',
             name='typed_address',
-            field=models.CharField(blank=True, max_length=400, null=True, verbose_name='Typed address'),
+            field=models.CharField(
+                blank=True,
+                max_length=400,
+                null=True,
+                verbose_name='Typed address'),
         ),
         migrations.AlterField(
             model_name='googleaddress',
             name='typed_address2',
-            field=models.CharField(blank=True, max_length=400, null=True, verbose_name='Typed address 2'),
+            field=models.CharField(
+                blank=True,
+                max_length=400,
+                null=True,
+                verbose_name='Typed address 2'),
         ),
     ]

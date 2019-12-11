@@ -15,16 +15,28 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='contact_email',
-            field=models.EmailField(blank=True, max_length=150, null=True, verbose_name='Responsible email'),
+            field=models.EmailField(
+                blank=True,
+                max_length=150,
+                null=True,
+                verbose_name='Responsible email'),
         ),
         migrations.AddField(
             model_name='organization',
             name='contact_name',
-            field=models.CharField(blank=True, max_length=150, null=True, verbose_name='Responsible name'),
+            field=models.CharField(
+                blank=True,
+                max_length=150,
+                null=True,
+                verbose_name='Responsible name'),
         ),
         migrations.AddField(
             model_name='organization',
             name='contact_phone',
-            field=models.CharField(blank=True, max_length=150, null=True, verbose_name='Responsible phone'),
+            field=models.CharField(
+                blank=True,
+                max_length=150,
+                null=True,
+                verbose_name='Responsible phone'),
         ),
     ]

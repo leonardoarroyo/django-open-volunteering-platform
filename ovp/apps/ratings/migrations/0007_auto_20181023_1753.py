@@ -17,25 +17,41 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rating',
             name='channel',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='rating_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='rating_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='ratinganswer',
             name='channel',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='ratinganswer_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='ratinganswer_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='ratingparameter',
             name='channel',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='ratingparameter_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='ratingparameter_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='ratingrequest',
             name='channel',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='ratingrequest_channel', to='channels.Channel'),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='ratingrequest_channel',
+                to='channels.Channel'),
             preserve_default=False,
         ),
     ]
