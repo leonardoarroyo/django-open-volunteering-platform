@@ -104,11 +104,15 @@ class AWSBackend(BaseBackend):
                 'SubjectPart': get_email_subject(
                     self.channel,
                     'userDigest-aws',
-                    'New digest'),
+                    'New digest'
+                ),
                 'TextPart': '',
-                'HtmlPart': m._render(
+                'HtmlPart': m.render(
                     'userDigest-aws',
-                    template_context)[1]})
+                    template_context
+                )[1]
+            }
+        )
         return uuid
 
     def _delete_template(self, uuid):

@@ -122,6 +122,9 @@ class BaseMail:
         translation.activate(self.__active_locale)
         self.__active_locale = None
 
+    def render(self, template_name, ctx):
+        return self.__render(template_name, ctx)
+
 
 class ContactFormMail(BaseMail):
     """
