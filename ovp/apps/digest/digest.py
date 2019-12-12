@@ -105,11 +105,6 @@ class ContentGenerator():
         if len(projects) < config["projects"]["minimum"]:
             return None
 
-        if p.image and p.image.image_small:
-            projects_image = p.image.image_small
-        else:
-            projects_image = ""
-
         return {
             "email": user.email,
             "channel": user.channel.slug,
@@ -120,7 +115,10 @@ class ContentGenerator():
                     "name": p.name,
                     "slug": p.slug,
                     "description": p.description,
-                    "image": projects_image,
+                    "image": (
+                        p.image.image_small if (p.image
+                                                and p.image.image_small) else ""
+                    ),
                     "image_absolute": p.image.absolute if p.image else False,
                     "disponibility": p.job if hasattr(
                         p,

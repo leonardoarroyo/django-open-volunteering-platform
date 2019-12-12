@@ -57,6 +57,17 @@ class AWSBackend(BaseBackend):
             else:
                 pass  # TODO: Log?
 
+    def _disponibility(self, project):
+        disponibility = project["disponibility"]
+        if (isinstance(disponibility, Job)
+                and disponibility.start_date is not None):
+            start_date = disponibility.start_date
+            return start_date.strftime('%d/%m/%y às %H:%M')
+        elif isinstance(disponibility, Work):
+            return 'Recorrente'
+        else:
+            return ""
+
     def _generate_aws_destinations(self, content):
         aws_destinations = []
         for message in content:
@@ -64,12 +75,17 @@ class AWSBackend(BaseBackend):
 
             # Fix instance to str
             for i, project in enumerate(message["projects"]):
-                message["projects"][i]["disponibility"] = project["disponibility"].start_date.strftime('%d/%m/%y às %H:%M') if isinstance(
-                    project["disponibility"], Job) and project["disponibility"].start_date is not None else (
-                    'Recorrente' if isinstance(
-                        project["disponibility"], Work) else "")
-                message["projects"][i]["image"] = project["image"] if project[
-                    "image_absolute"] else "https://atados-v3.storage.googleapis.com/{}".format(project["image"])
+                uri = "https://atados-v3.storage.googleapis.com/{}"
+                message["projects"][i]["disponibility"] = self._disponibility(
+                    project
+                )
+
+                if project["image_absolute"]:
+                    message["projects"][i]["image"] = project["image"]
+                else:
+                    message["projects"][i]["image"] = uri.format(
+                        project["image"]
+                    )
 
             aws_destinations.append({
                 'Destination': {
