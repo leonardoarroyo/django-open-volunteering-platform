@@ -173,7 +173,10 @@ settings.configure(
     ZOOP_MARKETPLACE_ID=os.environ.get('ZOOP_MARKETPLACE_ID', None),
     ZOOP_PUB_KEY=os.environ.get('ZOOP_PUB_KEY', None),
     ZOOP_SELLER_ID=os.environ.get('ZOOP_SELLER_ID', None),
-    ZOOP_STATEMENT_DESCRIPTOR='Test OVP donation'
+    ZOOP_STATEMENT_DESCRIPTOR='Test OVP donation',
+    AWS_DEFAULT_REGION=os.getenv('AWS_DEFAULT_REGION'),
+    AWS_ACCESS_KEY_ID=os.getenv('AWS_ACCESS_KEY_ID'),
+    AWS_SECRET_ACCESS_KEY=os.getenv('AWS_SECRET_ACCESS_KEY'),
 )
 
 django.setup()
