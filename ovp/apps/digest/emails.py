@@ -7,12 +7,11 @@ class DigestEmail(BaseMail):
     """
 
     def __init__(self, email, channel, async_mail=None):
-        super(
-            DigestEmail,
-            self).__init__(
+        super().__init__(
             email,
             channel=channel,
-            async_mail=async_mail)
+            async_mail=async_mail
+        )
 
     def sendDigest(self, context={}):
         """

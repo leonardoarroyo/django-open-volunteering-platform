@@ -32,4 +32,5 @@ class DigestViewSet(viewsets.GenericViewSet):
         user.is_subscribed_to_newsletter = False
         user.save()
         return response.Response(
-            {"detail": "User unsubscribed from newsletter."})
+            {"detail": "User unsubscribed from newsletter."}
+        )

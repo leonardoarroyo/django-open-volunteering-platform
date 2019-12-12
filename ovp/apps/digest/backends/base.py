@@ -17,7 +17,8 @@ class BaseBackend():
         dlog = DigestLog.objects.create(
             recipient=recipient,
             campaign=campaign,
-            object_channel=channel)
+            object_channel=channel
+        )
         objs = [
             DigestLogContent(
                 channel=channel_obj,

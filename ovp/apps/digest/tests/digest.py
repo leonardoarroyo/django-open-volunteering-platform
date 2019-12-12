@@ -21,9 +21,9 @@ class DigestTestCase(TestCase):
         DigestLog.objects.all().delete()
 
     def test_num_queries_generate_content(self):
-        user = User.objects.annotate(campaign=Value(0, IntegerField())) \
-            .select_related('channel', 'users_userprofile_profile') \
-            .get(email="testmail1@test.com")
+        user = User.objects.annotate(campaign=Value(0, IntegerField()))
+        user = user.select_related('channel', 'users_userprofile_profile')
+        user = user.get(email="testmail1@test.com")
 
         cg = ContentGenerator()
         with self.assertNumQueries(2):

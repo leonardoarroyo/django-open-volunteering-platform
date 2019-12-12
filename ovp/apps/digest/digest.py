@@ -57,15 +57,14 @@ class ContentGenerator():
         content_dict = {}
 
         print("fetching users")
-        users = list(
-            User.objects .prefetch_related(
-                'users_userprofile_profile__causes',
-                'users_userprofile_profile__skills') .select_related('channel') .filter(
-                channel__slug=channel,
-                email__in=email_list) .annotate(
-                campaign=Value(
-                    campaign,
-                    IntegerField())))
+        users = User.objects.prefetch_related(
+            'users_userprofile_profile__causes',
+            'users_userprofile_profile__skills'
+        )
+        users = users.select_related('channel')
+        users = users.filter(channel__slug=channel, email__in=email_list)
+        users = users.annotate(campaign=Value(campaign, IntegerField()))
+        users = list(users)
 
         print("fetched users")
         if self.threaded:
@@ -80,28 +79,36 @@ class ContentGenerator():
             DigestLogContent.objects.filter(
                 digest_log__recipient=user.email,
                 content_type=PROJECT,
-                channel=user.channel).values_list(
+                channel=user.channel
+            ).values_list(
                 'content_id',
-                flat=True))
-        projects = Project.objects .filter(
+                flat=True
+            )
+        )
+        projects = Project.objects.filter(
             channel__slug=user.channel.slug,
             deleted=False,
             closed=False,
             published=True,
-            published_date__gte=timezone.now() -
-            relativedelta(
-                seconds=config['projects']['max_age'])) .exclude(
-            pk__in=not_projects) .select_related(
-                'image',
-                'job',
-            'work')
+            published_date__gte=timezone.now() - relativedelta(
+                seconds=config['projects']['max_age']
+            )
+        )
+        projects = projects.exclude(pk__in=not_projects)
+        projects = projects.select_related('image', 'job', 'work')
         projects = self.filter_by_address(projects, user)
-        projects = UserSkillsCausesFilter() \
-            .annotate_queryset(projects, user, no_check=True, append_assumed=True) \
-            .order_by("-relevance")[:config["projects"]["maximum"]]
+        projects = UserSkillsCausesFilter().annotate_queryset(
+            projects, user, no_check=True, append_assumed=True
+        ).order_by("-relevance")
+        projects = projects[:config["projects"]["maximum"]]
 
         if len(projects) < config["projects"]["minimum"]:
             return None
+
+        if p.image and p.image.image_small:
+            projects_image = p.image.image_small
+        else:
+            projects_image = ""
 
         return {
             "email": user.email,
@@ -113,7 +120,7 @@ class ContentGenerator():
                     "name": p.name,
                     "slug": p.slug,
                     "description": p.description,
-                    "image": p.image.image_small if p.image and p.image.image_small else "",
+                    "image": projects_image,
                     "image_absolute": p.image.absolute if p.image else False,
                     "disponibility": p.job if hasattr(
                         p,
@@ -133,27 +140,46 @@ class ContentGenerator():
         if not user.profile or not user.profile.address:
             return qs
         state = user.profile.address.address_components.filter(
-            types__name="administrative_area_level_1").first()
+            types__name="administrative_area_level_1"
+        ).first()
 
         if not state:
             return qs
+
         state = state.short_name
+        area_level = "administrative_area_level_1"
         filtered_qs = qs.filter(
             address__address_components__short_name=state,
-            address__address_components__types__name="administrative_area_level_1")
+            address__address_components__types__name=area_level
+        )
 
         return filtered_qs if filtered_qs.count() > 0 else qs
 
     def get_blog_posts(self):
         response = requests.get(
-            "https://blog.atados.com.br/wp-json/wp/v2/posts?per_page=2")
+            "https://blog.atados.com.br/wp-json/wp/v2/posts?per_page=2"
+        )
         return {
-            "posts": [{
-                "url": x["link"],
-                "title": BeautifulSoup(x["title"]["rendered"], features="html.parser").get_text(),
-                "excerpt": BeautifulSoup(x["excerpt"]["rendered"], features="html.parser").get_text(),
-                "image": x["better_featured_image"]["media_details"]["sizes"]["medium"]["source_url"]
-            } for x in response.json()]
+            "posts": [
+                {
+                    "url": x["link"],
+                    "title": BeautifulSoup(
+                        x["title"]["rendered"],
+                        features="html.parser"
+                    ).get_text(),
+                    "excerpt": BeautifulSoup(
+                        x["excerpt"]["rendered"],
+                        features="html.parser"
+                    ).get_text(),
+                    "image": (
+                        x["better_featured_image"]
+                         ["media_details"]
+                         ["sizes"]
+                         ["medium"]
+                         ["source_url"]
+                    )
+                } for x in response.json()
+            ]
         }
         return posts
 
