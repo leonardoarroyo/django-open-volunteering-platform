@@ -34,7 +34,7 @@ class TokenView(BaseTokenView):
         try:
             return super().post(*args, **kwargs)
         except UserDeactivatedException as e:
-            return response.Response(e.response, status=400)
+            return response.Response(e.response, status=401)
 
 
 
@@ -62,4 +62,4 @@ class ConvertTokenView(BaseConvertTokenView):
         try:
             return super().post(*args, **kwargs)
         except UserDeactivatedException as e:
-            return response.Response(e.response, status=400)
+            return response.Response(e.response, status=401)
