@@ -156,6 +156,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
             'disponibility',
             'roles',
             'max_applies',
+            'max_applies_from_roles',
             'minimum_age',
             'hidden_address',
             'crowdfunding',
@@ -215,13 +216,13 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
 
         # Roles
         for role_data in roles:
+            role_data['project_id'] = project.id
             role_sr = VolunteerRoleProjectCreateSerializer(
                 data=role_data,
                 context=self.context
             )
             role_sr.is_valid(raise_exception=True)
             role = role_sr.create(role_sr.validated_data)
-            project.roles.add(role)
 
         # Disponibility
         if disp['type'] == 'work':
@@ -261,7 +262,8 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
             d = UploadedDocument.objects.get(pk=document['id'])
             project.documents.add(d)
 
-        return project
+        # Refetch project as signals alter some fields
+        return models.Project.objects.get(pk=project.pk)
 
     def update(self, instance, validated_data):
         causes = validated_data.pop('causes', [])
@@ -272,17 +274,9 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
         address_data = validated_data.pop('address', None)
         roles = validated_data.pop('roles', None)
         disp = validated_data.pop('disponibility', None)
-
-        instance.item_id = validated_data.get('item_id', None)
+        item_id = validated_data.get('item_id', None)
 
         # Save related resources
-        if address_data:
-            address_sr = address_serializers[0](
-                data=address_data,
-                context=self.context
-            )
-            address = address_sr.create(address_data)
-            instance.address = address
 
         if roles:
             current_roles = list(
@@ -291,6 +285,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
             instance.roles.clear()
             for role_data in roles:
                 identifier = role_data.pop("id") if "id" in role_data else None
+                role_data['project_id'] = instance.id
 
                 role_sr = VolunteerRoleProjectUpdateSerializer(
                     data=role_data,
@@ -302,7 +297,6 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
                     role = role_sr.update(role_instance, role_data)
                 else:
                     role = role_sr.create(role_data)
-                instance.roles.add(role)
 
         if disp:
             models.Work.objects.filter(project=instance).delete()
@@ -374,6 +368,19 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
             for document in documents:
                 d = UploadedDocument.objects.get(pk=document['id'])
                 instance.documents.add(d)
+
+        # Refetch project as signals alter some fields
+        instance = models.Project.objects.get(pk=instance.pk)
+
+        instance.item_id = item_id
+
+        if address_data:
+            address_sr = address_serializers[0](
+                data=address_data,
+                context=self.context
+            )
+            address = address_sr.create(address_data)
+            instance.address = address
 
         return super().update(instance, validated_data)
 
