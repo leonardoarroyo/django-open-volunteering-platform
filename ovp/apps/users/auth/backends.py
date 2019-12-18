@@ -5,6 +5,9 @@ from ovp.apps.channels.exceptions import NoChannelSupplied
 UserModel = get_user_model()
 
 
+class UserDeactivatedException(Exception):
+    response = {'success': False, 'error': 'User is deactivated'}
+
 class ChannelBasedAuthentication(ModelBackend):
     def authenticate(
             self,
@@ -30,3 +33,13 @@ class ChannelBasedAuthentication(ModelBackend):
             if user.check_password(
                     password) and self.user_can_authenticate(user):
                 return user
+
+    def user_can_authenticate(self, user):
+        """
+        Reject users with is_active=False.
+        Instead of returning None, raise an exception if user is deactivated
+        """
+        is_active = getattr(user, 'is_active', None)
+        if is_active == False:
+            raise UserDeactivatedException
+        return is_active or is_active is None

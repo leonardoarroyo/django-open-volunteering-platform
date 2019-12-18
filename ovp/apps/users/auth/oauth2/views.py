@@ -1,3 +1,4 @@
+from rest_framework import response
 from rest_framework.decorators import (
     api_view, authentication_classes, permission_classes
 )
@@ -14,6 +15,7 @@ from rest_framework_social_oauth2.views import (
 from rest_framework_social_oauth2.oauth2_backends import KeepRequestCore
 from drf_yasg.utils import swagger_auto_schema
 from ovp.apps.users.auth.oauth2 import serializers
+from ovp.apps.users.auth.backends import UserDeactivatedException
 from .validators import OAuth2Validator
 from .oauthlib_core import KeepRequestChannel
 
@@ -29,7 +31,11 @@ class TokenView(BaseTokenView):
             401: 'Unauthorized'})
     def post(self, *args, **kwargs):
         """ Exchange authentication credentials for authentication token. """
-        return super().post(*args, **kwargs)
+        try:
+            return super().post(*args, **kwargs)
+        except UserDeactivatedException as e:
+            return response.Response(e.response, status=400)
+
 
 
 class RevokeTokenView(BaseRevokeTokenView):
@@ -53,4 +59,7 @@ class ConvertTokenView(BaseConvertTokenView):
         Exchange social oauth token(Facebook or Google)
         for a local authentication token.
         """
-        return super().post(*args, **kwargs)
+        try:
+            return super().post(*args, **kwargs)
+        except UserDeactivatedException as e:
+            return response.Response(e.response, status=400)
