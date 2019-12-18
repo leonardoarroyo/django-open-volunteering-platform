@@ -1085,7 +1085,7 @@ class ProjectResourceUpdateTestCase(TestCase):
                     "name": "test",
                     "prerequisites": "test2",
                     "details": "test3",
-                    "vacancies": 5
+                    "vacancies": 10
                 }
             ]
         }
@@ -1099,6 +1099,7 @@ class ProjectResourceUpdateTestCase(TestCase):
         )
 
         self.assertTrue(response.status_code == 200)
+        self.assertTrue(response.data["max_applies_from_roles"], 10)
         self.assertTrue(
             response.data["roles"][0]["name"] == updated_project["roles"][0]["name"])
         self.assertTrue(response.data["roles"][0]["prerequisites"]
@@ -1402,6 +1403,7 @@ class VolunteerRoleTestCase(TestCase):
             format="json"
         )
         self.assertTrue(response.status_code == 201)
+        self.assertTrue(response.data["max_applies_from_roles"] == 5)
         self.assertTrue(response.data["roles"][0]["name"] == "test")
         self.assertTrue(response.data["roles"][0]["prerequisites"] == "test2")
         self.assertTrue(response.data["roles"][0]["details"] == "test3")

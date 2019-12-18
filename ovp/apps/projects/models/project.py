@@ -371,9 +371,7 @@ def update_max_applies_from_roles(sender, **kwargs):
             queryset = VolunteerRole.objects.filter(project=project)
             vacancies = queryset.aggregate(Sum('vacancies'))
             vacancies = vacancies.get('vacancies__sum')
-            project.max_applies_from_roles = vacancies if vacancies else 0
-            project.save()
-
+            Project.objects.filter(pk=project.pk).update(max_applies_from_roles=vacancies if vacancies else 0)
 
 @receiver(post_delete, sender=Apply)
 def update_applied_count_on_apply_delete(sender, **kwargs):

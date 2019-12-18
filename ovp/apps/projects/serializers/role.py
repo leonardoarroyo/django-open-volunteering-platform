@@ -9,6 +9,7 @@ class VolunteerRoleProjectCreateSerializer(ChannelRelationshipSerializer):
         model_field=VolunteerRole()._meta.get_field("id"),
         read_only=True
     )
+    project_id = serializers.IntegerField(required=False)
 
     class Meta:
         model = VolunteerRole
@@ -18,17 +19,17 @@ class VolunteerRoleProjectCreateSerializer(ChannelRelationshipSerializer):
             'details',
             'vacancies',
             'applied_count',
+            'project_id',
             'id'
         ]
 
 
 class VolunteerRoleProjectUpdateSerializer(
-        VolunteerRoleProjectCreateSerializer):
+    VolunteerRoleProjectCreateSerializer):
     id = serializers.ModelField(
         model_field=VolunteerRole()._meta.get_field("id"),
         required=False
     )
-
 
 class VolunteerRoleApplySerializer(ChannelRelationshipSerializer):
     class Meta:
