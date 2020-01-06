@@ -6,7 +6,13 @@ UserModel = get_user_model()
 
 
 class UserDeactivatedException(Exception):
-    response = {'success': False, 'error': 'User is deactivated'}
+    response = {
+        'success': False,
+        'error': {
+            'name': 'UserDeactivated',
+            'detail': 'This user is deactivated and can not login anymore.'
+        }
+    }
 
 class ChannelBasedAuthentication(ModelBackend):
     def authenticate(
