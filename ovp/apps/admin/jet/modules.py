@@ -107,6 +107,7 @@ class Indicators(DashboardModule):
             "joined_date")
         applies = self.date_filter(
             Apply.objects.filter(
+                status__in=['confirmed-volunter', 'applied'],
                 channel=channel),
             date_min,
             date_max,
