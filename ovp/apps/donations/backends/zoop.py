@@ -18,14 +18,16 @@ class ZoopBackend(BaseBackend):
         self.statement_descriptor = getattr(
             settings, "ZOOP_STATEMENT_DESCRIPTOR", None)
 
-        assert (self.marketplace_id and self.pub_key and
-                self.seller_id and self.statement_descriptor)
-
     def _build_url(self, resource):
         return "https://api.zoop.ws/" + \
             resource.format(mpid=self.marketplace_id)
 
+    def _assert_keys(self):
+        assert (self.marketplace_id and self.pub_key and
+                self.seller_id and self.statement_descriptor)
+
     def call(self, http_method, resource, data={}):
+        self._assert_keys()
         headers = {
             'Content-type': 'application/json',
             'Accept': 'text/plain'
