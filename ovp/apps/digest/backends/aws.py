@@ -17,8 +17,11 @@ class AWSBackend(BaseBackend):
         self.client = boto3.client('ses')
 
     def send_chunk(self, content, template_context):
-        template_uuid = self._create_template(template_context)
         content = list(content)
+        if not len(content):
+            print("0 users to send in chunk")
+            return
+        template_uuid = self._create_template(template_context)
 
         response = self.client.send_bulk_templated_email(
             Source='Atados <noreply@atados.email>',
