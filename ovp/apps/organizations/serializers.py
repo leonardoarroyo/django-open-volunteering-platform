@@ -320,6 +320,7 @@ class OrganizationOwnerRetrieveSerializer(ChannelRelationshipSerializer):
             'description',
             'image',
             'id',
+            'owner',
             'causes',
             'address']
 
