@@ -308,6 +308,7 @@ class MemberListRetrieveSerializer(ChannelRelationshipSerializer):
 
 class OrganizationOwnerRetrieveSerializer(ChannelRelationshipSerializer):
     image = UploadedImageSerializer()
+    owner = UserOrganizationRetrieveSerializer()
     causes = CauseSerializer(many=True)
     address = address_serializers[1]()
 
