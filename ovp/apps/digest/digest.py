@@ -114,6 +114,8 @@ class ContentGenerator():
                     "pk": p.pk,
                     "name": p.name,
                     "slug": p.slug,
+                    "organization_name": p.organization.name,
+                    "organization_slug": p.organization.slug,
                     "description": p.description,
                     "image": (
                         p.image.image_small if (p.image
@@ -131,7 +133,9 @@ class ContentGenerator():
                         'job') else (
                         'work' if hasattr(
                             p,
-                            'work') else None)} for p in projects],
+                            'work') else None)
+                } for p in projects
+            ],
             "posts": self.get_blog_posts()}
 
     def filter_by_address(self, qs, user):
