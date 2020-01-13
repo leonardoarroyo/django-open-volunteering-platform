@@ -99,7 +99,7 @@ def move(old_pk, new_pk, dry_run=True):
     if not dry_run:
         User.objects.filter(pk=old_pk).update(email=email, is_active=False)
 
-    old = User.objects.filter(pk=old_pk)
+    old = User.objects.get(pk=old_pk)
     logging.info(f"New email: {old.email}. Activated: {old.is_active}")
 
 def dedup(email, channel, dry_run=True):
