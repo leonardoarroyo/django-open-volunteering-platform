@@ -53,5 +53,5 @@ class AdminInlineFormSet(BaseInlineFormSet):
         # form.save_m2m() can be called via
         # the formset later on if commit=False
         if commit and hasattr(form, 'save_m2m'):
-            sform.save_m2m()
+            form.save_m2m()
         return obj
