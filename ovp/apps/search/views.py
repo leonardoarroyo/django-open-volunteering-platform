@@ -1,3 +1,5 @@
+import requests
+import json
 from django.core.exceptions import PermissionDenied
 
 from ovp.apps.core.pagination import NoPagination
@@ -26,7 +28,9 @@ from ovp.apps.search.decorators import cached
 from ovp.apps.channels.cache import get_channel_setting
 
 from django.core.cache import cache
+from django.conf import settings
 
+from rest_framework.reverse import reverse
 from rest_framework import viewsets
 from rest_framework import views
 from rest_framework import mixins
@@ -309,6 +313,38 @@ class ProjectMapDataResource(ProjectSearchResource):
     pagination_class = NoPagination
     serializer_class = ProjectMapDataSearchRetrieveSerializer
     swagger_schema = None
+
+
+class SearchAllResource(views.APIView):
+
+    def get(self, request):
+        """ Retrieve list of available projects and organizations. """
+        resp = self.get_object_lists()
+        return response.Response(resp)
+
+    @cached
+    def get_object_lists(self):
+        result = {"projects": [], "organizations": []}
+
+        project_view = ProjectSearchResource.as_view({'get': 'list'})
+        projects = project_view(self.request._request)
+        projects = json.loads(json.dumps(projects.data))
+
+        organization_view = OrganizationSearchResource.as_view({'get': 'list'})
+        organizations = organization_view(self.request._request)
+        organizations = json.loads(json.dumps(organizations.data))
+
+        result["projects"] = projects
+        result["organizations"] = organizations
+        return result
+
+    def get_cache_key(self):
+        if self.request.user.is_anonymous():
+            return 'organizations-projects-{}-{}'.format(
+                self.request.channel,
+                hash(frozenset(self.request.GET.items()))
+            )
+        return None
 
 
 class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
