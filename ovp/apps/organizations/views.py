@@ -127,7 +127,7 @@ class OrganizationResourceViewSet(
         serializer.is_valid(raise_exception=True)
 
         invited = User.objects.get(
-            email=request.data["email"],
+            email__iexact=request.data["email"],
             channel__slug=request.channel)
 
         if organization.members.filter(pk=invited.pk).count():
@@ -215,7 +215,7 @@ class OrganizationResourceViewSet(
 
         try:
             try:
-                user = User.objects.get(email=request.data.get(
+                user = User.objects.get(email__iexact=request.data.get(
                     "email", ""), channel__slug=request.channel)
                 invite = models.OrganizationInvite.objects.get(
                     invited=user,

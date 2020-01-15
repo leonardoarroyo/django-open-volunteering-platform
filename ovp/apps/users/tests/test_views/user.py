@@ -32,6 +32,18 @@ class UserResourceViewSetTestCase(TestCase):
         """
         response = create_user()
         self.assertTrue(response.data['uuid'])
+        response = create_user()
+        self.assertTrue(response.json(), {'email': ['An user with this email is already registered.']})
+
+    def test_cant_create_user_duplicated_email_different_cases(self):
+        """
+        Assert that it's not possible to create an user with a repeated email
+        even with different cases
+        """
+        response = create_user(email="validemail@email.com")
+        self.assertTrue(response.data['uuid'])
+        response = create_user(email="VALIDEMAIL@EMAIL.com")
+        self.assertEqual(response.json(), {'email': ['An user with this email is already registered.']})
 
     def test_cant_create_user_invalid_password(self):
         """

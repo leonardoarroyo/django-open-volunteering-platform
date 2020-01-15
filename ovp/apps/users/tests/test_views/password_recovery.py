@@ -59,8 +59,9 @@ class RecoverPasswordViewSetTestCase(TestCase):
             email_content).group(0)
 
         # recover password
+        # We use a different cased email to make sure password recovery is case insensitive
         data = {
-            'email': 'test_can_recover@password.com',
+            'email': 'TEST_CAN_recover@password.com',
             'token': token,
             'new_password': 'newpwvalidpw*'
         }
