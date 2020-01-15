@@ -22,7 +22,7 @@ class InviteEmailValidator():
             return True
 
         try:
-            User.objects.get(email=email, channel__slug=self.channel)
+            User.objects.get(email__iexact=email, channel__slug=self.channel)
         except User.DoesNotExist:
             raise serializers.ValidationError("This user is not valid.")
 

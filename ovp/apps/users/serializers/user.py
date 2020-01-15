@@ -34,6 +34,7 @@ from ovp.apps.ratings.serializers import RatingRequestRetrieveSerializer
 from rest_framework import serializers
 from rest_framework import permissions
 from rest_framework import fields
+from rest_framework import validators
 
 
 class UserCreateSerializer(ChannelRelationshipSerializer):
@@ -72,9 +73,9 @@ class UserCreateSerializer(ChannelRelationshipSerializer):
                     map(lambda x: [x.code, x.message], e.error_list))
 
         if data.get('email'):
-            email = data.get('email', '')
+            data['email'] = data.get('email', '').lower()
             users = models.User.objects.filter(
-                email=email, channel__slug=self.context["request"].channel
+                email__iexact=data['email'], channel__slug=self.context["request"].channel
             )
             if users.count():
                 msg = "An user with this email is already registered."

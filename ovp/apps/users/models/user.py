@@ -159,10 +159,10 @@ class User(
 
         if update_email:
             context = {"name": self.name, "email": self.email}
-            self.email = self.__original_email
+            self.email = self.__original_email.lower()
             self.mailing().sendUpdateEmail(context)
 
-            self.email = context['email']
+            self.email = context['email'].lower()
             self.is_email_verified = False
             EmailVerificationToken.objects.create(
                 user=self, object_channel=self.channel.slug)
