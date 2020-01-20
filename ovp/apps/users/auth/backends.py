@@ -29,7 +29,7 @@ class ChannelBasedAuthentication(ModelBackend):
             raise NoChannelSupplied()
 
         try:
-            user = UserModel.objects.get(email=username, channel__slug=channel)
+            user = UserModel.objects.get(email__iexact=username.lower(), channel__slug=channel)
             user.LOGIN = True
         except UserModel.DoesNotExist:
             # Run the default password hasher once to reduce the timing

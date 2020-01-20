@@ -25,7 +25,14 @@ class OAuth2AuthTestCase(TestCase):
         u = User.objects.filter(email='test_can_login@test.com').update(is_active=False)
         response = authenticate()
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.data, {'success': False, 'error': 'User is deactivated'})
+        expected_response = {
+            'error': {
+                'detail': 'This user is deactivated and can not login anymore.',
+                'name': 'UserDeactivated'
+            },
+            'success': False
+        }
+        self.assertEqual(response.data, expected_response)
 
     def test_cant_login_wrong_password(self):
         """ Assert that it's not possible to login with wrong password """
@@ -67,3 +74,21 @@ class OAuth2AuthTestCase(TestCase):
             HTTP_AUTHORIZATION="Bearer {}".format(token),
             HTTP_X_OVP_CHANNEL="test-channel")
         self.assertEqual(response.data["uuid"], str(user2.uuid))
+
+    def test_can_login_with_wrong_email_case(self):
+        """
+        Assert it's possible to login even if the email case is wrong
+        """
+        user1 = User.objects.create(
+            email="test_can_login@test.com",
+            password="validpassword",
+            object_channel="default")
+
+        response = authenticate(email="TEST_CAN_LOGIN@TEST.com", password="validpassword")
+        self.assertTrue(response.data['access_token'] is not None)
+
+    def test_cant_register_same_email_with_different_cases(self):
+        """
+        Assert it's not possible to register the same email with different cases
+        """
+        pass
