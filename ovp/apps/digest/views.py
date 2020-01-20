@@ -21,7 +21,7 @@ class DigestViewSet(viewsets.GenericViewSet):
     def cancel(self, request, *args, **kwargs):
         obj = self.get_object()
         try:
-            user = User.objects.get(email=obj.recipient, channel=obj.channel)
+            user = User.objects.get(email__iexact=obj.recipient, channel=obj.channel)
         except User.DoesNotExist:
             return response.Response({"detail": "Invalid user."}, status=400)
 
