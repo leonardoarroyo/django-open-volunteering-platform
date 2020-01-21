@@ -95,7 +95,7 @@ class ContentGenerator():
             )
         )
         projects = projects.exclude(pk__in=not_projects)
-        projects = projects.select_related('image', 'job', 'work')
+        projects = projects.select_related('image', 'job', 'work', 'organization')
         projects = self.filter_by_address(projects, user)
         projects = UserSkillsCausesFilter().annotate_queryset(
             projects, user, no_check=True, append_assumed=True
@@ -115,6 +115,8 @@ class ContentGenerator():
                     "name": p.name,
                     "slug": p.slug,
                     "description": p.description,
+                    "organization_name": p.organization.name,
+                    "organization_slug": p.organization.slug,
                     "image": (
                         p.image.image_small if (p.image
                                                 and p.image.image_small) else ""
