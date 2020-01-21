@@ -7,13 +7,21 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        campaign_number = self.get_current_campaign()
         campaign = DigestCampaign(backend=AWSBackend)
         sent = set(
             DigestLog.objects.filter(
-                campaign__gte=6).values_list(
+                campaign__gte=campaign_number).values_list(
                 'recipient',
                 flat=True))
         all_emails = campaign._get_email_list()
         to_send = filter(lambda x: x not in sent, all_emails)
+        to_send = filter(lambda x: x, ['contato@leonardoarroyo.com', 'arroyo@atados.com.br'])
         campaign.cg = ContentGenerator(threaded=False)
         campaign.send_campaign(chunk_size=50, email_list=to_send)
+
+    def get_current_campaign(self):
+        last_log = DigestLog.objects.last()
+        if last_log:
+            return last_log.campaign
+        return 1
