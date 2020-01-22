@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.contrib.postgres.fields import JSONField
 from ovp.apps.channels.models import ChannelRelationship
 
 
@@ -17,6 +18,7 @@ class Transaction(ChannelRelationship):
     backend_transaction_number = models.CharField(
         max_length=80, blank=True, null=True)
     anonymous = models.BooleanField('Anonymous subscription', default=False)
+    meta = JSONField('Metadata', blank=True, null=True)
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)

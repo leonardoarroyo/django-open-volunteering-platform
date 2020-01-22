@@ -12,6 +12,8 @@ from ovp.apps.donations.serializers import RefundTransactionSerializer
 from ovp.apps.donations.serializers import SubscribeSerializer
 from ovp.apps.donations.serializers import SubscriptionRetrieveSerializer
 from ovp.apps.donations.serializers import CancelSubscriptionSerializer
+from ovp.apps.donations.serializers import OrganizationTransactionsRetrieveSerializer
+from ovp.apps.donations.filters import filter_public_transactions
 
 from rest_framework import viewsets
 from rest_framework import decorators
@@ -20,10 +22,6 @@ from rest_framework import permissions
 
 @ChannelViewSet
 class DonationViewSet(viewsets.GenericViewSet):
-    # POST /subscribe/
-    # GET /subscriptions/
-    # DELETE /subscription/
-
     def __init__(self, *args, **kwargs):
         self.backend = ZoopBackend()
         return super(DonationViewSet, self).__init__()
@@ -32,10 +30,17 @@ class DonationViewSet(viewsets.GenericViewSet):
         if self.action in ["transactions", "refund_transaction"]:
             return Transaction.objects.filter(
                 user=self.request.user).order_by("-pk")
+        if self.action == "public_transactions":
+            return filter_public_transactions(
+                Transaction.objects.filter(
+                    organization__slug=self.kwargs['organization_slug']
+                ).order_by("-pk"),
+                self.request.query_params
+            )
         if self.action in [
             "subscribe",
             "subscriptions",
-                "cancel_subscription"]:
+            "cancel_subscription"]:
             return Subscription.objects.filter(
                 user=self.request.user).order_by("-pk")
         return None
@@ -45,6 +50,8 @@ class DonationViewSet(viewsets.GenericViewSet):
             return DonateSerializer
         if self.action == "transactions":
             return TransactionRetrieveSerializer
+        if self.action == "public_transactions":
+            return OrganizationTransactionsRetrieveSerializer
         if self.action == "refund_transaction":
             return RefundTransactionSerializer
         if self.action == "subscribe":
@@ -67,6 +74,8 @@ class DonationViewSet(viewsets.GenericViewSet):
             self.permission_classes = (permissions.IsAuthenticated,)
         if self.action == "cancel_subscription":
             self.permission_classes = (permissions.IsAuthenticated,)
+        if self.action == "public_transactions":
+            self.permission_classes = ()
         return super(DonationViewSet, self).get_permissions()
 
     ##################
@@ -116,6 +125,29 @@ class DonationViewSet(viewsets.GenericViewSet):
 
     @decorators.action(methods=["GET"], detail=False)
     def transactions(self, request):
+        """ Returns transactions the user has made """
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return response.Response(serializer.data)
+
+    @decorators.action(
+        methods=["GET"],
+        detail=False,
+        url_path='public-transactions/(?P<organization_slug>[^/.]+)'
+    )
+    def public_transactions(self, request, *args, **kwargs):
+        """ Returns public transactions for the organization """
+        get_object_or_404(
+            Organization.objects,
+            slug=kwargs.get('organization_slug', None),
+            channel__slug=self.request.channel
+        )
         queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)

@@ -17,7 +17,8 @@ class TransactionAdmin(ChannelModelAdmin):
         'backend_transaction_id',
         'backend_transaction_number',
         'date_created',
-        'date_modified'
+        'date_modified',
+        'meta'
     ]
 
     list_display = [
@@ -52,7 +53,8 @@ class TransactionAdmin(ChannelModelAdmin):
         'backend_transaction_id',
         'backend_transaction_number',
         'date_created',
-        'date_modified'
+        'date_modified',
+        'meta'
     ]
 
 

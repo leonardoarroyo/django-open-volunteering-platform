@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from collections import OrderedDict
 
@@ -544,7 +545,7 @@ class TestOrganizationDonationListing(TestCase):
             password="test_returned",
             object_channel="default")
         self.donator = User.objects.create_user(
-            name="a",
+            name="donator",
             email="donator@test.com",
             password="test_returned",
             object_channel="default")
@@ -555,6 +556,11 @@ class TestOrganizationDonationListing(TestCase):
             object_channel="default")
         self.organization = Organization.objects.create(
             name="test org",
+            owner=self.user,
+            object_channel="default",
+            allow_donations=True)
+        self.dummy_organization = Organization.objects.create(
+            name="another organization",
             owner=self.user,
             object_channel="default",
             allow_donations=True)
@@ -602,3 +608,150 @@ class TestOrganizationDonationListing(TestCase):
         self.assertTrue("donators" in response.data)
         self.assertEqual(len(response.data['donators']), 0)
         self.assertEqual(self.organization.transaction_set.count(), 1)
+
+    def test_retrieve_organization_donations(self):
+        # Donate
+        self.client.force_authenticate(user=self.donator)
+        self.client.post(
+            reverse("donation-donate"),
+            data=self.data,
+            format="json")
+
+        # Check donations
+        client = APIClient()
+        response = client.get(
+            reverse("donation-public-transactions", [self.organization.slug]),
+            format="json")
+
+        # Assert result is included
+        self.assertEqual(response.data['count'], 1)
+
+        # Assert all fields are included
+        self.assertTrue('amount' in response.data['results'][0])
+        self.assertTrue('status' in response.data['results'][0])
+        self.assertTrue('date_created' in response.data['results'][0])
+        self.assertTrue('date_modified' in response.data['results'][0])
+        self.assertTrue(type(response.data['results'][0]['user']) is OrderedDict)
+        self.assertTrue('name' in response.data['results'][0]['user'])
+        self.assertTrue('slug' in response.data['results'][0]['user'])
+        self.assertTrue('avatar' in response.data['results'][0]['user'])
+
+    def test_retrieve_organization_donations_filters_by_organization(self):
+        # Donate
+        self.assertEqual(Transaction.objects.all().count(), 0)
+        self.client.force_authenticate(user=self.donator)
+        self.client.post(
+            reverse("donation-donate"),
+            data=self.data,
+            format="json")
+        self.assertEqual(Transaction.objects.all().count(), 1)
+
+        # Check donations
+        client = APIClient()
+        response = client.get(
+            reverse("donation-public-transactions", ['another-organization']),
+            format="json")
+
+        # Assert no results
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 0)
+
+        # Check donations
+        response = client.get(
+            reverse("donation-public-transactions", ['another-organization2']),
+            format="json")
+
+        # Assert 404 because there's no 'another-organization2'
+        self.assertEqual(response.status_code, 404)
+
+    def test_retrieve_organization_donations_filters_anonymous_donation_user_info(self):
+        self.client.force_authenticate(user=self.donator)
+        self.data['anonymous'] = True
+        self.client.post(
+            reverse("donation-donate"),
+            data=self.data,
+            format="json")
+
+        # Check donations
+        client = APIClient()
+        response = client.get(
+            reverse("donation-public-transactions", [self.organization.slug]),
+            format="json")
+
+        # Assert anonymous donation doesn't show user info
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['results'][0]['user'], None)
+
+    def test_retrive_organization_donations_query_filters(self):
+        self.client.force_authenticate(user=self.donator)
+        self.client.post(
+            reverse("donation-donate"),
+            data=self.data,
+            format="json")
+
+        transaction = Transaction.objects.last()
+        created_at = int(datetime.timestamp(transaction.date_created))
+        url = reverse("donation-public-transactions", [self.organization.slug])
+        client = APIClient()
+
+        # Test date filters
+        # Should return the object as dates include it
+        response = client.get(
+            url +
+            '?start_date={}'.format(created_at - 10) +
+            '&end_date={}'.format(created_at + 10),
+            format="json")
+        self.assertEqual(response.data['count'], 1)
+
+        # Should not return the object as end_date is before object date
+        response = client.get(
+            url +
+            '?end_date={}'.format(created_at - 10),
+            format="json")
+        self.assertEqual(response.data['count'], 0)
+
+        # Should not return the object as start_date is after object date
+        response = client.get(
+            url +
+            '?start_date={}'.format(created_at + 10),
+            format="json")
+        self.assertEqual(response.data['count'], 0)
+
+        # Test query filters
+        # Should return 1 as query is included in name
+        response = client.get(
+            url + '?query=dona',
+            format="json")
+        self.assertEqual(response.data['count'], 1)
+
+        # Should return 0 as query is not included in name
+        response = client.get(
+            url + '?query=test',
+            format="json")
+        self.assertEqual(response.data['count'], 0)
+
+        # Should return 1 as donated amount is 1
+        response = client.get(
+            url + '?query=1',
+            format="json")
+        self.assertEqual(response.data['count'], 1)
+
+        # Should return 0 as query is larger than amount
+        response = client.get(
+            url + '?query=20',
+            format="json")
+        self.assertEqual(response.data['count'], 0)
+
+        Transaction.objects.all().update(amount=3500)
+
+        # Should return 1 as donated amount is 35
+        response = client.get(
+            url + '?query=3',
+            format="json")
+        self.assertEqual(response.data['count'], 1)
+
+        # Should return 1 as donated amount is 35
+        response = client.get(
+            url + '?query=35',
+            format="json")
+        self.assertEqual(response.data['count'], 1)

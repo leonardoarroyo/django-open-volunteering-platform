@@ -3,6 +3,7 @@ from ovp.apps.donations.validators import organization_accepts_donations
 from ovp.apps.donations.models import Transaction
 from ovp.apps.donations.models import Subscription
 from ovp.apps.organizations.serializers import OrganizationRetrieveSerializer
+from ovp.apps.users.serializers import ShortUserPublicRetrieveSerializer
 from django.core.validators import MinValueValidator
 
 
@@ -33,6 +34,27 @@ class TransactionRetrieveSerializer(serializers.ModelSerializer):
             "date_modified",
             "anonymous"]
         model = Transaction
+
+class OrganizationTransactionsRetrieveSerializer(serializers.ModelSerializer):
+    user = ShortUserPublicRetrieveSerializer()
+
+    class Meta:
+        fields = [
+            "amount",
+            "status",
+            "user",
+            "date_created",
+            "date_modified"]
+        model = Transaction
+
+    def to_representation(self, obj, *args, **kwargs):
+        representation = super().to_representation(obj, *args, **kwargs)
+
+        # Hide user if donation is anonymous
+        if obj.anonymous:
+            representation["user"] = None
+
+        return representation
 
 
 class UUIDInputSerializer(serializers.Serializer):
