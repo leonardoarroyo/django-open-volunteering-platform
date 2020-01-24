@@ -263,13 +263,11 @@ def filter_out(queryset, setting_name, channel):
     """
     Remove unwanted results from queryset
     """
-    kwargs = {}
     excluded_list = get_channel_setting(channel, setting_name)
     for excluded in excluded_list:
         key, value = excluded.split(":")
         key = key.strip().strip("\"").strip("''")
         value = value.strip().strip("\"").strip("''")
-        kwargs[key] = value
+        queryset = queryset.exclude(**{key: value})
 
-    queryset = queryset.exclude(**kwargs)
     return queryset

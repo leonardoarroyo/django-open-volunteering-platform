@@ -173,6 +173,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None,
                 address, closed, channel, skip_address_filter=section["skip_address_filter"])
             qs = get_project_queryset(request=request).filter(
                 pk__in=project_keys).order_by("-created_date")
+            qs = filters.filter_out(qs, "FILTER_OUT_PROJECTS", channel)
 
         # Filter queryset
         for kwargs in section["filters"]:
