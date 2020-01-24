@@ -27,6 +27,10 @@ def get_project_keys(address, closed, channel, skip_address_filter=False):
         queryset,
         address,
         project=False) if not skip_address_filter else queryset
+    queryset = filters.filter_out(
+        queryset,
+        "FILTER_OUT_PROJECTS",
+        channel)
     queryset = filters.by_channel_content_flow(queryset, channel)
 
     return [q.pk for q in queryset]
