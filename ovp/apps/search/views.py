@@ -93,7 +93,7 @@ class OrganizationSearchResource(
 
     @swagger_auto_schema(manual_parameters=organization_params)
     def list(self, *args, **kwargs):
-        return super(OrganizationSearchResource, self).list(*args, **kwargs)
+        return super().list(*args, **kwargs)
 
     def get_cache_key(self):
         if self.request.user.is_anonymous():
@@ -117,7 +117,8 @@ class OrganizationSearchResource(
 
         queryset = SearchQuerySet().models(Organization)
         queryset = queryset.filter(highlighted=1) if highlighted else queryset
-        queryset = queryset.filter(content=query) if query else queryset
+        # Added 'startswith' filter (django haystack version 2.8.1).
+        queryset = queryset.filter(content__startswith=query) if query else queryset
         queryset = filters.by_name(queryset, name) if name else queryset
         queryset = filters.by_published(queryset, published)
         queryset = filters.by_address(
@@ -266,7 +267,8 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
         queryset = SearchQuerySet().models(Project)
         queryset = queryset.filter(highlighted=1) if highlighted else queryset
-        queryset = queryset.filter(content=query) if query else queryset
+        # Added 'startswith' filter (django haystack version 2.8.1).
+        queryset = queryset.filter(content__startswith=query) if query else queryset
         queryset = filters.by_published(queryset, published)
         queryset = filters.by_closed(queryset, closed)
         queryset = filters.by_address(queryset, address, project=True)
