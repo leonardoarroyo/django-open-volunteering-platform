@@ -1,4 +1,3 @@
-import requests
 import json
 from django.core.exceptions import PermissionDenied
 
@@ -328,14 +327,12 @@ class SearchAllResource(views.APIView):
 
         project_view = ProjectSearchResource.as_view({'get': 'list'})
         projects = project_view(self.request._request)
-        projects = json.loads(json.dumps(projects.data))
 
         organization_view = OrganizationSearchResource.as_view({'get': 'list'})
         organizations = organization_view(self.request._request)
-        organizations = json.loads(json.dumps(organizations.data))
 
-        result["projects"] = projects
-        result["organizations"] = organizations
+        result["projects"] = projects.data
+        result["organizations"] = organizations.data
         return result
 
     def get_cache_key(self):
