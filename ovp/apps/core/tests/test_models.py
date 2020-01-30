@@ -33,27 +33,27 @@ class GoogleAddressModelTestCase(TestCase):
         self.assertTrue(a.typed_address2 == "Casa")
 
         address_line = "Rua Teçaindá, 81, Pinheiros, São Paulo, SP, Brazil"
-        self.assertTrue(a.address_line == address_line)
-        self.assertTrue(a.__str__() == address_line)
+        self.assertEqual(a.address_line, address_line)
+        self.assertEqual(a.__str__(), address_line)
         self.assertTrue(a.lat)
         self.assertTrue(a.lng)
 
         a.typed_address = "Rua Capote Valente, 701, SP"
         a.save()
         a = GoogleAddress.objects.get(pk=a.pk)
-        self.assertTrue(a.typed_address == "Rua Capote Valente, 701, SP")
-        self.assertTrue(a.typed_address2 == "Casa")
+        self.assertEqual(a.typed_address, "Rua Capote Valente, 701, SP")
+        self.assertEqual(a.typed_address2, "Casa")
 
         address_line_2 = "Rua Capote Valente, 701, " \
                          "Pinheiros, São Paulo, SP, Brazil"
-        self.assertTrue(a.address_line == address_line_2)
-        self.assertTrue(a.__str__() == address_line_2)
+        self.assertEqual(a.address_line, address_line_2)
+        self.assertEqual(a.__str__(), address_line_2)
         self.assertTrue(a.lat)
         self.assertTrue(a.lng)
 
         a.address_line = None
         a.typed_address = 'Rua Teste'
-        self.assertTrue(a.__str__() == "Rua Teste")
+        self.assertEqual(a.__str__(), "Rua Teste")
 
     def test_locality(self):
         """
