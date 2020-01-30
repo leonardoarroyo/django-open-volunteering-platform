@@ -29,8 +29,8 @@ class GoogleAddressModelTestCase(TestCase):
         a.save(object_channel="default")
 
         a = GoogleAddress.objects.get(pk=a.pk)
-        self.assertTrue(a.typed_address == "Rua Teçaindá, 81, SP")
-        self.assertTrue(a.typed_address2 == "Casa")
+        self.assertEqual(a.typed_address, "Rua Teçaindá, 81, SP")
+        self.assertEqual(a.typed_address2, "Casa")
 
         address_line = "Rua Teçaindá, 81, Pinheiros, São Paulo, SP, Brazil"
         self.assertEqual(a.address_line, address_line)
