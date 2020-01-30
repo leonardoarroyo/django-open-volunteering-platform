@@ -12,6 +12,7 @@ from ovp.apps.digest.backends.smtp import SMTPBackend
 from ovp.apps.users.models import User
 from ovp.apps.search.filters import UserSkillsCausesFilter
 from ovp.apps.uploads import helpers
+from django.db import connections
 from django.db.models import Value, IntegerField
 
 import math
@@ -29,7 +30,6 @@ config = {
         'max_age': 60 * 60 * 24 * 7 * 2,
     }
 }
-
 
 class ContentGenerator():
     def __init__(self, threaded=True):
@@ -56,7 +56,6 @@ class ContentGenerator():
         print("generating content")
         content_dict = {}
 
-        print("fetching users")
         users = User.objects.prefetch_related(
             'users_userprofile_profile__causes',
             'users_userprofile_profile__skills'
@@ -66,7 +65,6 @@ class ContentGenerator():
         users = users.annotate(campaign=Value(campaign, IntegerField()))
         users = list(users)
 
-        print("fetched users")
         if self.threaded:
             content = self.generate_content_threaded(users)
         else:
@@ -115,8 +113,8 @@ class ContentGenerator():
                     "name": p.name,
                     "slug": p.slug,
                     "description": p.description,
-                    "organization_name": p.organization.name,
-                    "organization_slug": p.organization.slug,
+                    "organization_name": p.organization.name if p.organization else "",
+                    "organization_slug": p.organization.slug if p.organization else "",
                     "image": (
                         p.image.image_small if (p.image
                                                 and p.image.image_small) else ""
@@ -185,9 +183,9 @@ class ContentGenerator():
 
 
 class DigestCampaign():
-    def __init__(self, channel="default", backend=SMTPBackend, campaign=None):
+    def __init__(self, channel="default", backend=SMTPBackend, campaign=None, backend_kwargs={}):
         self.channel = channel
-        self.backend = backend(channel=channel)
+        self.backend = backend(channel=channel, **backend_kwargs)
         self.cg = ContentGenerator()
         self._set_campaign(campaign)
 

@@ -1,5 +1,6 @@
 import ovp.apps.channels.tests.helpers.urls
 from django.conf.urls import url, include
+from django.conf.urls.i18n import i18n_patterns
 from ovp.apps.channels.admin import admin_site
 
 import ovp.apps.core.urls
@@ -19,7 +20,6 @@ urlpatterns = [
     # Admin
     url(r'^jet/', include('jet.urls', 'jet')),
     url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
-    url(r'^admin/', admin_site.urls),
 
     # Core
     url(r'^', include(ovp.apps.core.urls)),
@@ -56,7 +56,7 @@ urlpatterns = [
 
     # Digest
     url(r'^', include(ovp.apps.digest.urls)),
-]
+] + i18n_patterns(url(r'^admin/', include(admin_site.urls)))
 
 # Test urls
 # These should not be used in production

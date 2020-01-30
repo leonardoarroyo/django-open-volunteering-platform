@@ -5,20 +5,27 @@ from django.utils import translation
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
+from ovp.apps.channels.content_flow import CFM
 from ovp.apps.channels.models import Channel
 from ovp.apps.core import models
 from ovp.apps.core import serializers
 
 
 class TestStartupView(TestCase):
-
     def setUp(self):
-        self.skills_data = serializers.SkillSerializer(
-            models.Skill.objects.all(), many=True
-        ).data
-        self.causes_data = serializers.FullCauseSerializer(
-            models.Cause.objects.all(), many=True
-        ).data
+        with translation.override('en'):
+            self.skills_data = serializers.SkillSerializer(
+                CFM.filter_queryset(
+                    "default",
+                    models.Skill.objects.all().order_by('pk')
+                ), many=True
+            ).data
+            self.causes_data = serializers.FullCauseSerializer(
+                CFM.filter_queryset(
+                    "default",
+                    models.Cause.objects.all().order_by('pk')
+                ), many=True
+            ).data
 
     def test_returns_startup_data(self):
         """
@@ -40,12 +47,16 @@ class TestStartupView(TestCase):
 
         with translation.override('pt-br'):
             skills_data = serializers.SkillSerializer(
-                models.Skill.objects.all(),
-                many=True
+                CFM.filter_queryset(
+                    "default",
+                    models.Skill.objects.all().order_by('pk')
+                ), many=True
             ).data
             causes_data = serializers.FullCauseSerializer(
-                models.Cause.objects.all(),
-                many=True
+                CFM.filter_queryset(
+                    "default",
+                    models.Cause.objects.all().order_by('pk')
+                ), many=True
             ).data
             self.assertTrue(response.status_code == 200)
             self.assertTrue(response.data["skills"] == skills_data)
@@ -69,6 +80,7 @@ class TestStartupView(TestCase):
         from ovp.apps.channels.content_flow import NoContentFlow
         from ovp.apps.channels.content_flow import CFM
         from django.db.models import Q
+        from haystack.query import SQ
 
         class Flow:
             source = "test-channel"
@@ -77,6 +89,12 @@ class TestStartupView(TestCase):
             def get_filter_queryset_q_obj(self, model_class):
                 if model_class in [models.Cause, models.Skill]:
                     return Q()
+
+                raise NoContentFlow
+
+            def get_filter_searchqueryset_q_obj(self, model_class):
+                if model_class in [models.Cause, models.Skill]:
+                    return SQ()
 
                 raise NoContentFlow
 

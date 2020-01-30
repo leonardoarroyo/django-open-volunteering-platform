@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.core.cache import cache
+from django.conf import settings
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -329,6 +330,12 @@ class ProjectAppliesRetrievingTestCase(TestCase):
     def test_retrieving_applies_as_csv(self):
         """Assert it's possible to retrieve applies in CSV format"""
         # Read applies in csv format
+        rest_framework_settings = getattr(settings, 'REST_FRAMEWORK', {})
+        renderer_classes = rest_framework_settings.get('DEFAULT_RENDERER_CLASSES', [])
+
+        if 'rest_framework_csv.renderers.CSVRenderer' not in renderer_classes:
+            return True
+
         self.client.force_authenticate(user=self.owner)
         response = self.client.get(
             reverse("project-applies-list", ["test-project", "csv"]),
