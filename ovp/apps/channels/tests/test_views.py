@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
+from django.urls.exceptions import NoReverseMatch
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -20,6 +21,15 @@ class ChannelCreateViewsetTestCase(TestCase):
         self.client = APIClient()
         Channel(name="Test", slug="test-channel").save()
 
+        # Attempt to test with a test route
+        # If the test sandbox does not include an test url(as
+        # in when testing with actual production settings), then
+        # use an actual route that is known to implement channels
+        try:
+            self.test_route = reverse("test-users-list")
+        except NoReverseMatch:
+            self.test_route = reverse("user-list")
+
     def test_requests_create_objects_on_default_channel(self):
         """
         Assert object defaults to default channel
@@ -31,7 +41,7 @@ class ChannelCreateViewsetTestCase(TestCase):
             "password": "123456789abcdefg"
         }
         response = self.client.post(
-            reverse("test-users-list"),
+            self.test_route,
             data,
             format="json"
         )
@@ -50,7 +60,7 @@ class ChannelCreateViewsetTestCase(TestCase):
             "password": "123456789abcdefg"
         }
         response = self.client.post(
-            reverse("test-users-list"),
+            self.test_route,
             data,
             format="json",
             HTTP_X_OVP_CHANNEL="test-channel"
@@ -96,6 +106,15 @@ class ChannelPermissionsTestCase(TestCase):
         self.client = APIClient()
         Channel(name="Test", slug="test-channel").save()
 
+        # Attempt to test with a test route
+        # If the test sandbox does not include an test url(as
+        # in when testing with actual production settings), then
+        # use an actual route that is known to implement channels
+        try:
+            self.test_route = reverse("test-projects-list")
+        except NoReverseMatch:
+            self.test_route = reverse("project-list")
+
     def test_accessing_another_channel_resource(self):
         """
         Assert it's impossible to access another
@@ -122,7 +141,7 @@ class ChannelPermissionsTestCase(TestCase):
             HTTP_X_OVP_CHANNEL="default"
         ).data["access_token"]
         response = self.client.post(
-            reverse("test-projects-list"),
+            self.test_route,
             self.data,
             format="json",
             HTTP_X_OVP_CHANNEL="test-channel",
@@ -141,7 +160,7 @@ class ChannelPermissionsTestCase(TestCase):
             channel="default"
         )
         response = self.client.post(
-            reverse("test-projects-list"),
+            self.test_route,
             self.data,
             format="json",
             HTTP_X_OVP_CHANNEL="test-channel"
@@ -154,7 +173,7 @@ class ChannelPermissionsTestCase(TestCase):
 
         # Correct request
         response = self.client.post(
-            reverse("test-projects-list"),
+            self.test_route,
             self.data,
             format="json",
             HTTP_X_OVP_CHANNEL="default"

@@ -36,11 +36,11 @@ class RatingViewsTest(TestCase):
             object_channel="default")
 
         rp1 = RatingParameter.objects.create(
-            slug="project-score", type=2, object_channel="default")
+            slug="test-project-score", type=2, object_channel="default")
         rp2 = RatingParameter.objects.create(
-            slug="project-how-was-it", type=1, object_channel="default")
+            slug="test-project-how-was-it", type=1, object_channel="default")
         rp3 = RatingParameter.objects.create(
-            slug="user-has-shown", type=3, object_channel="default")
+            slug="test-user-has-shown", type=3, object_channel="default")
 
         r1 = RatingRequest.objects.create(
             requested_user=self.user,
@@ -111,7 +111,7 @@ class RatingViewsTest(TestCase):
         self.assertEqual(len(response.data[0]["rating_parameters"]), 1)
         self.assertEqual(
             response.data[0]["rating_parameters"][0]["slug"],
-            "user-has-shown")
+            "test-user-has-shown")
         self.assertEqual(
             response.data[0]["rating_parameters"][0]["type"],
             "Boolean")
@@ -119,13 +119,13 @@ class RatingViewsTest(TestCase):
         self.assertEqual(len(response.data[2]["rating_parameters"]), 2)
         self.assertEqual(
             response.data[2]["rating_parameters"][0]["slug"],
-            "project-score")
+            "test-project-score")
         self.assertEqual(
             response.data[2]["rating_parameters"][0]["type"],
             "Quantitative")
         self.assertEqual(
             response.data[2]["rating_parameters"][1]["slug"],
-            "project-how-was-it")
+            "test-project-how-was-it")
         self.assertEqual(
             response.data[2]["rating_parameters"][1]["type"],
             "Qualitative")
@@ -145,9 +145,9 @@ class RatingViewsTest(TestCase):
         # Extra parameters
         data = {
             "answers": [
-                {"parameter_slug": "project-score", "value_quantitative": 1},
+                {"parameter_slug": "test-project-score", "value_quantitative": 1},
                 {
-                    "parameter_slug": "project-how-was-it",
+                    "parameter_slug": "test-project-how-was-it",
                     "value_qualitative": "test"
                 },
                 {
@@ -171,9 +171,9 @@ class RatingViewsTest(TestCase):
         # Duplicated parameters
         data = {
             "answers": [
-                {"parameter_slug": "project-score", "value": 1},
-                {"parameter_slug": "project-score", "value": 0.5},
-                {"parameter_slug": "project-how-was-it", "value": "test"}
+                {"parameter_slug": "test-project-score", "value": 1},
+                {"parameter_slug": "test-project-score", "value": 0.5},
+                {"parameter_slug": "test-project-how-was-it", "value": "test"}
             ]
         }
         uuid = str(RatingRequest.objects.last().uuid)
@@ -206,18 +206,18 @@ class RatingViewsTest(TestCase):
         self.assertEqual(
             response.json()["non_field_errors"][0],
             "The following parameters are missing: "
-            "project-score, project-how-was-it."
+            "test-project-score, test-project-how-was-it."
         )
 
     def test_can_rate(self):
         data = {
             "answers": [
                 {
-                    "parameter_slug": "project-score",
+                    "parameter_slug": "test-project-score",
                     "value_quantitative": 1
                 },
                 {
-                    "parameter_slug": "project-how-was-it",
+                    "parameter_slug": "test-project-how-was-it",
                     "value_qualitative": "Minha resposta :-)"
                 }
             ]
@@ -239,22 +239,22 @@ class RatingViewsTest(TestCase):
 
         self.assertEqual(
             Rating.objects.first().answers.first().parameter.slug,
-            "project-score")
+            "test-project-score")
         self.assertEqual(
             Rating.objects.first().answers.first().value_quantitative, 1)
 
         self.assertEqual(
             Rating.objects.first().answers.last().parameter.slug,
-            "project-how-was-it")
+            "test-project-how-was-it")
         self.assertEqual(
             Rating.objects.first().answers.last().value_qualitative,
             "Minha resposta :-)")
 
     def test_cant_re_rate(self):
         self.test_can_rate()
-        data = {"answers": [{"parameter_slug": "project-score",
+        data = {"answers": [{"parameter_slug": "test-project-score",
                              "value_quantitative": 1},
-                            {"parameter_slug": "project-how-was-it",
+                            {"parameter_slug": "test-project-how-was-it",
                              "value_qualitative": "Minha resposta :-)"}]}
         uuid = str(RatingRequest.objects.last().uuid)
         response = self.client.post(
@@ -272,11 +272,11 @@ class RatingViewsTest(TestCase):
         data = {
             "answers": [
                 {
-                    "parameter_slug": "project-score",
+                    "parameter_slug": "test-project-score",
                     "value_quantitative": 2
                 },
                 {
-                    "parameter_slug": "project-how-was-it",
+                    "parameter_slug": "test-project-how-was-it",
                     "value_qualitative": "Minha resposta :-)"
                 }
             ]
@@ -297,9 +297,9 @@ class RatingViewsTest(TestCase):
 
         data = {
             "answers": [
-                {"parameter_slug": "project-score", "value_quantitative": -1},
+                {"parameter_slug": "test-project-score", "value_quantitative": -1},
                 {
-                    "parameter_slug": "project-how-was-it",
+                    "parameter_slug": "test-project-how-was-it",
                     "value_qualitative": "Minha resposta :-)"
                 }
             ]
@@ -315,9 +315,9 @@ class RatingViewsTest(TestCase):
 
         data = {
             "answers": [
-                {"parameter_slug": "project-score", "value_quantitative": 0.5},
+                {"parameter_slug": "test-project-score", "value_quantitative": 0.5},
                 {
-                    "parameter_slug": "project-how-was-it",
+                    "parameter_slug": "test-project-how-was-it",
                     "value_qualitative": "Minha resposta :-)"
                 }
             ]
@@ -335,7 +335,7 @@ class RatingViewsTest(TestCase):
         data = {
             "answers": [
                 {
-                    "parameter_slug": "user-has-shown",
+                    "parameter_slug": "test-user-has-shown",
                     "value_quantitative": 0.5
                 },
             ]
@@ -354,7 +354,7 @@ class RatingViewsTest(TestCase):
 
         data = {
             "answers": [
-                {"parameter_slug": "user-has-shown", "value_quantitative": 1},
+                {"parameter_slug": "test-user-has-shown", "value_quantitative": 1},
             ]
         }
         uuid = str(RatingRequest.objects.first().uuid)

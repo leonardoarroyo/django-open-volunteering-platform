@@ -489,8 +489,8 @@ class ProjectSearchTestCase(TestCase):
         Test searching with categories filter returns
         only results filtered by category
         """
-        category_id1 = Category.objects.all().order_by('pk')[0].pk
-        category_id2 = Category.objects.all().order_by('pk')[1].pk
+        category_id1 = Category.objects.get(slug='cat1').pk
+        category_id2 = Category.objects.get(slug='cat2').pk
 
         response = self.client.get(
             reverse("search-projects-list") +
