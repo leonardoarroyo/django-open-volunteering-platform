@@ -12,6 +12,7 @@ from ovp.apps.digest.backends.smtp import SMTPBackend
 from ovp.apps.users.models import User
 from ovp.apps.search.filters import UserSkillsCausesFilter
 from ovp.apps.uploads import helpers
+from django.db import connections
 from django.db.models import Value, IntegerField
 
 import math
@@ -29,7 +30,6 @@ config = {
         'max_age': 60 * 60 * 24 * 7 * 2,
     }
 }
-
 
 class ContentGenerator():
     def __init__(self, threaded=True):
@@ -183,9 +183,9 @@ class ContentGenerator():
 
 
 class DigestCampaign():
-    def __init__(self, channel="default", backend=SMTPBackend, campaign=None):
+    def __init__(self, channel="default", backend=SMTPBackend, campaign=None, backend_kwargs={}):
         self.channel = channel
-        self.backend = backend(channel=channel)
+        self.backend = backend(channel=channel, **backend_kwargs)
         self.cg = ContentGenerator()
         self._set_campaign(campaign)
 

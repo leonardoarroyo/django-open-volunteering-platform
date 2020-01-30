@@ -13,7 +13,7 @@ from ovp.apps.search.tests.test_views import create_sample_users
 from ovp.apps.users.models import User
 
 
-class SMTPBackendTestCase(TestCase):
+class SMTPBackendTestCase(TransactionTestCase):
     def setUp(self):
         Channel.objects.create(name="Test channel", slug="test-channel")
         create_sample_projects()
@@ -26,7 +26,7 @@ class SMTPBackendTestCase(TestCase):
         mail.outbox = []
         self.assertEqual(len(mail.outbox), 0)
 
-        campaign = DigestCampaign()
+        campaign = DigestCampaign(backend_kwargs={'threaded': False})
         campaign.cg = ContentGenerator(threaded=False)
         campaign.send_campaign(email_list=users)
 
