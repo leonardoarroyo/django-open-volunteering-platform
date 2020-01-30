@@ -56,7 +56,6 @@ class ContentGenerator():
         print("generating content")
         content_dict = {}
 
-        print("fetching users")
         users = User.objects.prefetch_related(
             'users_userprofile_profile__causes',
             'users_userprofile_profile__skills'
@@ -66,7 +65,6 @@ class ContentGenerator():
         users = users.annotate(campaign=Value(campaign, IntegerField()))
         users = list(users)
 
-        print("fetched users")
         if self.threaded:
             content = self.generate_content_threaded(users)
         else:
@@ -115,8 +113,8 @@ class ContentGenerator():
                     "name": p.name,
                     "slug": p.slug,
                     "description": p.description,
-                    "organization_name": p.organization.name,
-                    "organization_slug": p.organization.slug,
+                    "organization_name": p.organization.name if p.organization else "",
+                    "organization_slug": p.organization.slug if p.organization else "",
                     "image": (
                         p.image.image_small if (p.image
                                                 and p.image.image_small) else ""

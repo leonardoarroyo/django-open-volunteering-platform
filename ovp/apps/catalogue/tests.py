@@ -264,15 +264,28 @@ class CategoryFilterTestCase(TestCase):
             reverse("catalogue", ["home"]),
             format="json"
         )
-        self.assertEqual(len(response.data["sections"][1]["projects"]), 1)
+
+        test_section = list(
+            filter(
+                lambda x: x['name'] == 'Get your hands dirty',
+                response.data["sections"]
+            )
+        )[0]
+        self.assertEqual(len(test_section["projects"]), 1)
         self.assertEqual(
-            response.data["sections"][1]["projects"][0]["name"],
+            test_section["projects"][0]["name"],
             "sample 2"
         )
 
-        self.assertEqual(len(response.data["sections"][2]["projects"]), 1)
+        test_section = list(
+            filter(
+                lambda x: x['name'] == 'Hot',
+                response.data["sections"]
+            )
+        )[0]
+        self.assertEqual(len(test_section["projects"]), 1)
         self.assertEqual(
-            response.data["sections"][2]["projects"][0]["name"],
+            test_section["projects"][0]["name"],
             "sample 1"
         )
 

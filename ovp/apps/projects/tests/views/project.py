@@ -1,3 +1,4 @@
+import dateutil.parser
 from django.test import TestCase
 from django.test import override_settings
 
@@ -6,6 +7,7 @@ from django.core.cache import cache
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
+from ovp.apps.core.helpers.tests import result_contains
 from ovp.apps.projects.models import Project
 from ovp.apps.projects.models import VolunteerRole
 from ovp.apps.projects.models import Category
@@ -22,6 +24,7 @@ from ovp.apps.channels.models.channel_setting import ChannelSetting
 
 from collections import OrderedDict
 
+import pytz
 import copy
 
 
@@ -968,8 +971,12 @@ class ProjectResourceUpdateTestCase(TestCase):
         # Don't erase associations with other channel objects
         self.assertTrue(len(response.data["causes"]) == 2)
         self.assertTrue(len(response.data["skills"]) == 4)
-        self.assertEqual(response.data["causes"][0]["name"], "other-channel")
-        self.assertEqual(response.data["skills"][0]["name"], "other-channel")
+        self.assertTrue(
+            result_contains(response.data["causes"], "name", "other-channel")
+        )
+        self.assertTrue(
+            result_contains(response.data["skills"], "name", "other-channel")
+        )
         self.assertTrue(len(response.data["galleries"]) == 1)
         self.assertTrue(len(response.data["documents"]) == 1)
         self.assertTrue(len(response.data["categories"]) == 1)
@@ -1300,6 +1307,14 @@ class DisponibilityTestCase(TestCase):
 
     def test_job_returns_success(self):
         """Test correct job returns success"""
+        def treat_date(date: str):
+            return dateutil \
+                    .parser \
+                    .parse(date) \
+                    .astimezone(pytz.utc) \
+                    .isoformat() \
+                    .replace('+00:00', 'Z')
+
         self.data["disponibility"] = {
             "type": "job",
             "job": {
@@ -1324,28 +1339,28 @@ class DisponibilityTestCase(TestCase):
         )
         self.assertTrue(response.status_code == 201)
         self.assertTrue(
-            response.data["disponibility"]["job"]["dates"][0]["start_date"]
+            treat_date(response.data["disponibility"]["job"]["dates"][0]["start_date"])
             == "2013-01-29T12:34:56.123000Z"
         )
         self.assertTrue(
-            response.data["disponibility"]["job"]["dates"][0]["end_date"]
+            treat_date(response.data["disponibility"]["job"]["dates"][0]["end_date"])
             == "2013-01-29T13:34:56.123000Z"
         )
         self.assertTrue(
-            response.data["disponibility"]["job"]["dates"][1]["start_date"]
+            treat_date(response.data["disponibility"]["job"]["dates"][1]["start_date"])
             == "2013-02-01T12:34:56.123000Z"
         )
         self.assertTrue(
-            response.data["disponibility"]["job"]["dates"][1]["end_date"]
+            treat_date(response.data["disponibility"]["job"]["dates"][1]["end_date"])
             == "2013-02-01T13:34:56.123000Z"
         )
 
         self.assertTrue(
-            response.data["disponibility"]["job"]["start_date"]
+            treat_date(response.data["disponibility"]["job"]["start_date"])
             == "2013-01-29T12:34:56.123000Z"
         )
         self.assertTrue(
-            response.data["disponibility"]["job"]["end_date"]
+            treat_date(response.data["disponibility"]["job"]["end_date"])
             == "2013-02-01T13:34:56.123000Z"
         )
 

@@ -16,6 +16,7 @@ class ChannelCacheTestCase(TestCase):
             channel = get_channel("default")
 
     def test_channel_cache_settings(self):
+        ChannelSetting.objects.all().delete()
         ChannelSetting.objects.create(
             key="test-setting",
             value="test-val",

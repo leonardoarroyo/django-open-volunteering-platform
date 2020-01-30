@@ -7,10 +7,12 @@ from ovp.apps.channels.middlewares.channel import ChannelProcessorMiddleware
 from ovp.apps.channels.models.channel import Channel
 from ovp.apps.core.views import startup
 from ovp.apps.users.models import User
+from rest_framework.reverse import reverse
 
 
 class ChannelMiddlewareTestCase(TestCase):
     def setUp(self):
+        self.admin_url = reverse('channeladmin:index').replace('en-us', 'en')
         Channel.objects.create(name="Test channel", slug="test-channel-1")
         self.crm = ChannelRecognizerMiddleware(
             ChannelProcessorMiddleware(startup)
@@ -72,27 +74,27 @@ class ChannelMiddlewareTestCase(TestCase):
         without an admin subdomain triggers 404
         """
         client = Client()
-        response = client.get("/admin")
+        response = client.get(self.admin_url.rstrip("/"))
         self.assertEqual(response.status_code, 301)
 
-        response = client.get("/admin/")
+        response = client.get(f"{self.admin_url}")
         self.assertEqual(response.status_code, 404)
 
-        response = client.get("/admin/abc")
+        response = client.get(f"{self.admin_url}abc")
         self.assertEqual(response.status_code, 404)
 
         response = client.get("/jet/add_bookmark/")
         self.assertEqual(response.status_code, 404)
 
         response = client.get(
-            "/admin/",
+            f"{self.admin_url}",
             SERVER_NAME="default.admin.localhost"
         )
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response["location"], "/admin/login/?next=/admin/")
+        self.assertEqual(response["location"], f"{self.admin_url}login/?next={self.admin_url}")
 
         response = client.get(
-            "/admin/login/",
+            f"{self.admin_url}login/",
             SERVER_NAME="default.admin.localhost"
         )
         self.assertEqual(response.status_code, 200)
@@ -110,7 +112,7 @@ class ChannelMiddlewareTestCase(TestCase):
         """
         client = Client()
         response = client.get(
-            "/admin/login/",
+            f"{self.admin_url}login/",
             SERVER_NAME="default.admin.localhost"
         )
         self.assertEqual(response.status_code, 200)
@@ -140,7 +142,7 @@ class ChannelMiddlewareTestCase(TestCase):
         )
 
         response = client.get(
-            "/admin/",
+            self.admin_url,
             SERVER_NAME="default.admin.localhost"
         )
         self.assertEqual(response.status_code, 200)

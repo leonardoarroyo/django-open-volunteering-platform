@@ -191,18 +191,24 @@ class ChannelProcessorMiddleware():
 
         return False
 
+    @property
+    def _enabled_languages_regex(self):
+        return "|".join(
+            ["{}/".format(x[0]) for x in settings.LANGUAGES]
+        )
+
     def _404_admin(self, request):
         path = request.get_full_path()
-        if path.startswith("/admin") or path.startswith("/jet"):
+        if re.match(r'^/({})?admin'.format(self._enabled_languages_regex), path) \
+            or path.startswith("/admin") \
+            or path.startswith("/jet"):
             raise Http404
         return False
 
     def _admin_should_redirect_to_admin_page(self, request):
         path = request.get_full_path()
-        enabled_languages_regex = "|".join(
-            ["{}/".format(x[0]) for x in settings.LANGUAGES])
 
-        if not re.match(r'^/({})?admin'.format(enabled_languages_regex), path) \
+        if not re.match(r'^/({})?admin'.format(self._enabled_languages_regex), path) \
            and not path.startswith("/jet") \
            and not path.startswith("/static") \
            and not path.startswith("/martor"):
