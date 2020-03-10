@@ -77,6 +77,8 @@ class ProjectResource(CleanModelResource):
     image = Field(column_name='Imagem')
     start_date = Field(column_name='Data de início')
     end_date = Field(column_name='Data de Encerramento')
+    created_date = Field(column_name='Data de criação')
+    closed_date = Field(column_name='Data de fechamento')
     benefited_people = Field(
         attribute='benefited_people',
         column_name='Pessoas beneficiadas'
@@ -119,6 +121,8 @@ class ProjectResource(CleanModelResource):
             'published',
             'closed',
             'bookmark',
+            'created_date',
+            'closed_date'
         )
 
     def before_export(self, qs, *args, **kwargs):
@@ -164,6 +168,16 @@ class ProjectResource(CleanModelResource):
                     return project.image.image_large.url
         except ValueError:
             pass
+
+    def dehydrate_created_date(self, project):
+        if project.created_date:
+            return project.created_date.strftime("%d/%m/%Y %H:%M:%S")
+        return ""
+
+    def dehydrate_closed_date(self, project):
+        if project.closed_date:
+            return project.closed_date.strftime("%d/%m/%Y %H:%M:%S")
+        return ""
 
     def dehydrate_start_date(self, project):
         if hasattr(project, 'job'):
