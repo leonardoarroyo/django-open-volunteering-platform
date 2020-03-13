@@ -1,6 +1,7 @@
 from dateutil.relativedelta import relativedelta
 
 from django.db import models
+from django.contrib.postgres.fields import JSONField
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
@@ -128,3 +129,45 @@ class HighlightedFilter(Filter):
 
     def get_filter_kwargs(self):
         return {"highlighted": self.highlighted}
+
+##################
+# Address Filter #
+##################
+COMPONENT_TYPE_CHOICES = (
+    ('administrative_area_level_1', 'administrative_area_level_1'),
+    ('administrative_area_level_2', 'administrative_area_level_2'),
+    ('county', 'county'),
+    ('locality', 'locality'),
+    ('sublocality', 'sublocality'),
+    ('country', 'country'),
+)
+class AddressFilter(Filter):
+    filter_json = JSONField(
+        _("Filter parameters"),
+        null=True,
+        blank=True
+    )
+    component_type = models.CharField(
+        _("Component type"),
+        choices=COMPONENT_TYPE_CHOICES,
+        blank=True,
+        null=True,
+        max_length=100
+    )
+    name = models.CharField(
+        _("Component name"),
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    def __str__(self):
+        return _("Address filter")
+
+    def filter_information(self):
+        return "Address: {}".format(self.name)
+
+    def get_filter_kwargs(self):
+        if self.name and self.component_type:
+            return {"address__address_components__long_name": self.name, "address__address_components__types__name": self.component_type}
+        return self.filter_json

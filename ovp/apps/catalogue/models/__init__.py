@@ -4,3 +4,4 @@ from .section import SectionFilter
 from .filter import CategoryFilter
 from .filter import DateDeltaFilter
 from .filter import HighlightedFilter
+from .filter import AddressFilter

@@ -12,6 +12,7 @@ from ovp.apps.catalogue.models import SectionFilter
 from ovp.apps.catalogue.models import CategoryFilter
 from ovp.apps.catalogue.models import DateDeltaFilter
 from ovp.apps.catalogue.models import HighlightedFilter
+from ovp.apps.catalogue.models import AddressFilter
 
 
 ##################################
@@ -120,7 +121,14 @@ class HighlightedFilterAdmin(ChannelModelAdmin):
     def get_model_perms(self, request):
         return {'change': False, 'add': False, 'delete': False}
 
+class AddressFilterAdmin(ChannelModelAdmin):
+    fields = ["filter_json", "component_type", "name"]
+
+    def get_model_perms(self, request):
+        return {'change': False, 'add': False, 'delete': False}
+
 
 admin_site.register(CategoryFilter, CategoryFilterAdmin)
 admin_site.register(DateDeltaFilter, DateDeltaFilterAdmin)
 admin_site.register(HighlightedFilter, HighlightedFilterAdmin)
+admin_site.register(AddressFilter, AddressFilterAdmin)

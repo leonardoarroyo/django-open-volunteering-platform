@@ -8,15 +8,18 @@ from ovp.apps.channels.models.abstract import ChannelRelationship
 from ovp.apps.catalogue.models.filter import CategoryFilter
 from ovp.apps.catalogue.models.filter import DateDeltaFilter
 from ovp.apps.catalogue.models.filter import HighlightedFilter
+from ovp.apps.catalogue.models.filter import AddressFilter
 
 CATEGORY = "CATEGORY"
 DATEDELTA = "DATEDELTA"
 HIGHLIGHTED = "HIGHLIGHTED"
+ADDRESS = "ADDRESS"
 
 FILTER_TYPES = (
     (CATEGORY, _("Category")),
     (DATEDELTA, _("Date delta")),
     (HIGHLIGHTED, _("Highlighted")),
+    (ADDRESS, _("Address")),
 )
 
 SECTION_TYPES = (
@@ -97,3 +100,5 @@ class SectionFilter(ChannelRelationship):
             self.filter = DateDeltaFilter.objects.create(**params)
         if self.type == HIGHLIGHTED:
             self.filter = HighlightedFilter.objects.create(**params)
+        if self.type == ADDRESS:
+            self.filter = AddressFilter.objects.create(**params)
