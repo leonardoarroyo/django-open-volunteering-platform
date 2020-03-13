@@ -237,14 +237,12 @@ def by_address(queryset, address='', project=False):
             if len(address['address_components']):
                 for component in address['address_components']:
                     q_obj = SQ()
+                    names = component['long_name']
+                    names = names if type(names) is list else [names]
+                    strs = [u"{}-{}".format(x, y) for x in names for y in component['types']]
 
-                    for component_type in component['types']:
-                        type_string = helpers.whoosh_raw(
-                            u"{}-{}".format(
-                                component['long_name'],
-                                component_type
-                            ).strip()
-                        )
+                    for component_type in strs:
+                        type_string = helpers.whoosh_raw(component_type)
                         q_obj.add(SQ(address_components=type_string), SQ.OR)
                         q_obj.add(SQ(skip_address_filter=1), SQ.OR)
 
