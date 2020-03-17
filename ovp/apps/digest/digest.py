@@ -100,39 +100,41 @@ class ContentGenerator():
         ).order_by("-relevance")
         projects = projects[:config["projects"]["maximum"]]
 
-        if len(projects) < config["projects"]["minimum"]:
-            return None
+        # if len(projects) < config["projects"]["minimum"]:
+        #     return None
 
         return {
             "email": user.email,
             "channel": user.channel.slug,
             "campaign": user.campaign,
             "projects": [
-                {
-                    "pk": p.pk,
-                    "name": p.name,
-                    "slug": p.slug,
-                    "description": p.description,
-                    "organization_name": p.organization.name if p.organization else "",
-                    "organization_slug": p.organization.slug if p.organization else "",
-                    "image": (
-                        p.image.image_small if (p.image
-                                                and p.image.image_small) else ""
-                    ),
-                    "image_absolute": p.image.absolute if p.image else False,
-                    "disponibility": p.job if hasattr(
-                        p,
-                        'job') else (
-                        p.work if hasattr(
-                            p,
-                            'work') else None),
-                    "disponibility_type": 'job' if hasattr(
-                        p,
-                        'job') else (
-                        'work' if hasattr(
-                            p,
-                            'work') else None)} for p in projects],
-            "posts": self.get_blog_posts()}
+        #        {
+        #            "pk": p.pk,
+        #            "name": p.name,
+        #            "slug": p.slug,
+        #            "description": p.description,
+        #            "organization_name": p.organization.name if p.organization else "",
+        #            "organization_slug": p.organization.slug if p.organization else "",
+        #            "image": (
+        #                p.image.image_small if (p.image
+        #                                        and p.image.image_small) else ""
+        #            ),
+        #            "image_absolute": p.image.absolute if p.image else False,
+        #            "disponibility": p.job if hasattr(
+        #                p,
+        #                'job') else (
+        #                p.work if hasattr(
+        #                    p,
+        #                    'work') else None),
+        #            "disponibility_type": 'job' if hasattr(
+        #                p,
+        #                'job') else (
+        #                'work' if hasattr(
+        #                    p,
+        #                    'work') else None)} for p in projects],
+            ],
+            "posts": []}
+        #    "posts": self.get_blog_posts()}
 
     def filter_by_address(self, qs, user):
         if not user.profile or not user.profile.address:
