@@ -93,7 +93,11 @@ class Apply(ChannelRelationship):
 
         # Emails
         if creating and self.project.closed is False:
-            self.mailing().sendAppliedToVolunteer({'apply': self})
+            project = self.project
+
+            vizinhoamigo = any(category.id === 20 for category in project.categories)
+
+            self.mailing().sendAppliedToVolunteer({'apply': self, 'vizinhoamigo': vizinhoamigo })
             self.mailing().sendAppliedToOwner({'apply': self})
         else:
             if (self.__original_status != self.status
