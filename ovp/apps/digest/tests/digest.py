@@ -29,7 +29,7 @@ class DigestTestCase(TestCase):
         with self.assertNumQueries(1):
             content = cg.generate_content_for_user(user)
 
-        self.assertEqual(len(content['projects']), 2)
+        self.assertEqual(len(content['projects']), 0)
 
     def test_digest_log(self):
         """ Assert sending a email register digest log """
