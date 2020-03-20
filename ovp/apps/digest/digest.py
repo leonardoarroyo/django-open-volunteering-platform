@@ -220,7 +220,8 @@ class DigestCampaign():
                     seconds=config['interval']['minimum'])) .values_list(
                 'recipient',
                 flat=True))
-        return set(filter(lambda x: x not in sent_recently, email_list))
+        #return set(filter(lambda x: x not in sent_recently, email_list))
+        return set(email_list)
 
     def send_campaign(self, chunk_size=0, channel="default", email_list=None):
         if not email_list:
