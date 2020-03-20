@@ -68,6 +68,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
         data.pop('user', None)
 
         project = self.get_project_object(**kwargs)
+
         data['project'] = project.id
 
         if request.user.is_authenticated():
@@ -177,6 +178,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
         slug = kwargs.get('project_slug')
         qs = CFM.filter_queryset(
             self.request.channel,
-            models.Project.objects.all()
+            models.Project.objects.all(),
+            distinct=True
         )
         return get_object_or_404(qs, slug=slug)
