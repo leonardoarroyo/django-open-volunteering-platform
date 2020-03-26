@@ -22,9 +22,10 @@ class Apply(ChannelRelationship):
         'users.User',
         blank=True,
         null=True,
-        verbose_name=_('user')
+        verbose_name=_('user'),
+        on_delete=models.DO_NOTHING
     )
-    project = models.ForeignKey('projects.Project', verbose_name=_('project'))
+    project = models.ForeignKey('projects.Project', verbose_name=_('project'), on_delete=models.DO_NOTHING)
     status = models.CharField(
         _('status'),
         max_length=30,
@@ -35,7 +36,8 @@ class Apply(ChannelRelationship):
         'projects.VolunteerRole',
         verbose_name=_('role'),
         blank=False,
-        null=True
+        null=True,
+        on_delete=models.DO_NOTHING
     )
     date = models.DateTimeField(
         _('created date'),

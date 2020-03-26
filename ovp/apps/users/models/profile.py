@@ -16,7 +16,9 @@ class UserProfile(ChannelRelationship, models.Model):
         "User",
         blank=True,
         null=True,
-        related_name="%(app_label)s_%(class)s_profile")
+        related_name="%(app_label)s_%(class)s_profile",
+        on_delete=models.DO_NOTHING
+    )
     full_name = models.CharField(
         _("Full name"),
         max_length=300,
@@ -40,7 +42,9 @@ class UserProfile(ChannelRelationship, models.Model):
         blank=True,
         null=True,
         verbose_name=_('address'),
-        db_constraint=False)
+        db_constraint=False,
+        on_delete=models.DO_NOTHING
+        )
     hidden_address = models.BooleanField(_('Hidden address'), default=False)
     birthday_date = models.DateField(blank=True, null=True)
     has_done_volunteer_work_before = models.NullBooleanField(

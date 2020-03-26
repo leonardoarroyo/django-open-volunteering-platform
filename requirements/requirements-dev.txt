@@ -1,5 +1,5 @@
 -r requirements-project.txt
-django >= 1.11.3, < 2
+django
 pudb
 django-extensions
 coverage
@@ -8,5 +8,5 @@ tblib
 mock
 sphinx
 sphinx_rtd_theme
-drf-yasg==1.11.0
+drf-yasg
 dj-database-url

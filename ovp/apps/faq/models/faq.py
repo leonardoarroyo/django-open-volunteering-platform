@@ -16,7 +16,8 @@ class Faq(ChannelRelationship):
         verbose_name=_('Category'),
         null=False,
         blank=True,
-        default=0)
+        default=0,
+        on_delete=models.DO_NOTHING)
     language = models.CharField(
         _('Language'),
         null=True,

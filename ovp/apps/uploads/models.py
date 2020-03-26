@@ -33,7 +33,8 @@ class UploadedImage(ChannelRelationship):
         settings.AUTH_USER_MODEL,
         default=None,
         null=True,
-        blank=True
+        blank=True,
+        on_delete=models.DO_NOTHING
     )
     image = models.ImageField(
         _('Image 350x260'),
@@ -131,7 +132,8 @@ class UploadedDocument(ChannelRelationship):
         settings.AUTH_USER_MODEL,
         default=None,
         null=True,
-        blank=True
+        blank=True,
+        on_delete=models.DO_NOTHING
     )
     document = models.FileField(upload_to=document)
     created_date = models.DateTimeField(auto_now_add=True)

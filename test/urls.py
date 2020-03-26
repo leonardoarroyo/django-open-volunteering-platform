@@ -56,7 +56,9 @@ urlpatterns = [
 
     # Digest
     url(r'^', include(ovp.apps.digest.urls)),
-] + i18n_patterns(url(r'^admin/', include(admin_site.urls)))
+]
+# To do: pegar estrutura da nova inclusão de urls do django e aplicar aqui
+# + i18n_patterns(url(r'^admin/', include(admin_site.urls)))
 
 # Test urls
 # These should not be used in production

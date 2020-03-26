@@ -22,15 +22,15 @@ class RatingParameter(ChannelRelationship):
 
 class Rating(ChannelRelationship):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    owner = models.ForeignKey('users.User', related_name='ratings_posted')
+    owner = models.ForeignKey('users.User', related_name='ratings_posted', on_delete=models.DO_NOTHING)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
-    request = models.ForeignKey('ratings.RatingRequest')
+    request = models.ForeignKey('ratings.RatingRequest', on_delete=models.DO_NOTHING)
 
 
 class RatingAnswer(ChannelRelationship):
-    rating = models.ForeignKey('ratings.Rating', related_name="answers")
-    parameter = models.ForeignKey('ratings.RatingParameter')
+    rating = models.ForeignKey('ratings.Rating', related_name="answers", on_delete=models.DO_NOTHING)
+    parameter = models.ForeignKey('ratings.RatingParameter', on_delete=models.DO_NOTHING)
     value_quantitative = models.FloatField('quantitative value', null=True)
     value_qualitative = models.TextField(
         'qualitative value', blank=True, null=True)
@@ -39,7 +39,7 @@ class RatingAnswer(ChannelRelationship):
 class RatingRequest(ChannelRelationship):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     requested_user = models.ForeignKey(
-        'users.User', related_name='rating_requests')
+        'users.User', related_name='rating_requests', on_delete=models.DO_NOTHING)
     rating_parameters = models.ManyToManyField('ratings.RatingParameter')
     deleted_date = models.DateTimeField(blank=True, null=True, default=None)
     created_date = models.DateTimeField(auto_now_add=True)

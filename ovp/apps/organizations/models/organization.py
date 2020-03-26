@@ -30,24 +30,29 @@ class Organization(ChannelRelationship, RatedModelMixin):
     owner = models.ForeignKey(
         'users.User',
         verbose_name=_('owner'),
-        related_name="organizations")
+        related_name="organizations",
+        on_delete=models.DO_NOTHING
+    )
     address = models.OneToOneField(
         get_address_model(),
         blank=True,
         null=True,
         verbose_name=_('address'),
-        db_constraint=False)
+        db_constraint=False,
+        on_delete=models.DO_NOTHING)
     image = models.ForeignKey(
         'uploads.UploadedImage',
         blank=True,
         null=True,
-        verbose_name=_('image'))
+        verbose_name=_('image'),
+        on_delete=models.DO_NOTHING)
     cover = models.ForeignKey(
         'uploads.UploadedImage',
         blank=True,
         null=True,
         related_name="+",
-        verbose_name=_('cover'))
+        verbose_name=_('cover'),
+        on_delete=models.DO_NOTHING)
     causes = models.ManyToManyField(
         'core.Cause',
         verbose_name=_('causes'),
