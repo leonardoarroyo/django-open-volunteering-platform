@@ -24,7 +24,8 @@ class ChannelRelationship(ChannelCreatorMixin, models.Model):
         Channel,
         related_name="%(class)s_channel",
         blank=False,
-        null=False
+        null=False,
+        on_delete=models.DO_NOTHING
     )
 
     # Manager
