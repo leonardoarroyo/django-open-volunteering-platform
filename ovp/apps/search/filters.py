@@ -163,10 +163,10 @@ def by_date(queryset, date_string=None):
     if date_string:
         operator, items = get_operator_and_items(date_string)
         q_obj = SQ()
-        date = datetime.strptime(items[0] + ' 00:00:00', '%Y-%m-%d %H:%M:%S')
+        date = datetime.strptime(items[0], '%Y-%m-%d').strftime('%Y-%m-%d')
         q_obj.add(SQ(start_date=date) | SQ(end_date=date), operator)
 
-        queryset = queryset.filter(q_obj)
+        queryset = queryset.filter(start_date=date)
 
     return queryset
 
