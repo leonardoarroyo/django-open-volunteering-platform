@@ -16,7 +16,6 @@ class Command(BaseCommand):
                 flat=True))
         all_emails = campaign._get_email_list()
         to_send = filter(lambda x: x not in sent, all_emails)
-        to_send = ['contato@leonardoarroyo.com']
         campaign.cg = ContentGenerator(threaded=False)
         campaign.send_campaign(chunk_size=1, email_list=to_send)
 
