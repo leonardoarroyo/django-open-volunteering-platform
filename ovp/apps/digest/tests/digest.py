@@ -26,10 +26,10 @@ class DigestTestCase(TestCase):
         user = user.get(email="testmail1@test.com")
 
         cg = ContentGenerator()
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             content = cg.generate_content_for_user(user)
 
-        self.assertEqual(len(content['projects']), 0)
+        self.assertEqual(len(content['projects']), 2)
 
     def test_digest_log(self):
         """ Assert sending a email register digest log """

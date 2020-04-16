@@ -79,7 +79,7 @@ def create_sample_projects():
     work.save(object_channel="default")
 
     project = Project(
-        name="test project2",
+        name="test project2 abc",
         slug="test-slug2",
         details="abc",
         description="abc",
@@ -182,7 +182,7 @@ def create_sample_organizations():
     organization.causes.add(Cause.objects.all().order_by('pk')[0])
 
     organization = Organization(
-        name="test organization2",
+        name="test organization2 abc",
         details="abc",
         owner=user1,
         address=address2,
@@ -395,7 +395,7 @@ class ProjectSearchTestCase(TestCase):
         """
         response = self.client.get(
             reverse("search-projects-list") +
-            "?name=project2",
+            "?name=project2 abc",
             format="json")
         self.assertEqual(len(response.data["results"]), 1)
 
@@ -409,7 +409,7 @@ class ProjectSearchTestCase(TestCase):
             format="json")
         self.assertEqual(len(response.data["results"]), 1)
         self.assertEqual(
-            str(response.data["results"][0]["name"]), "test project2")
+            str(response.data["results"][0]["name"]), "test project2 abc")
 
     def test_address_filter(self):
         """
@@ -474,7 +474,7 @@ class ProjectSearchTestCase(TestCase):
             format="json")
         self.assertEqual(len(response.data["results"]), 1)
         self.assertEqual(
-            str(response.data["results"][0]["name"]), "test project2")
+            str(response.data["results"][0]["name"]), "test project2 abc")
 
         response = self.client.get(
             reverse("search-projects-list") +
@@ -508,7 +508,7 @@ class ProjectSearchTestCase(TestCase):
             format="json")
         self.assertEqual(len(response.data["results"]), 1)
         self.assertEqual(
-            str(response.data["results"][0]["name"]), "test project2")
+            str(response.data["results"][0]["name"]), "test project2 abc")
 
         response = self.client.get(
             reverse("search-projects-list") +
@@ -551,7 +551,7 @@ class ProjectSearchTestCase(TestCase):
             format="json")
         self.assertEqual(len(response.data["results"]), 1)
         self.assertEqual(
-            str(response.data["results"][0]["name"]), "test project2")
+            str(response.data["results"][0]["name"]), "test project2 abc")
 
     def test_skills_filter(self):
         """
@@ -756,7 +756,7 @@ class OrganizationSearchTestCase(TestCase):
         """
         response = self.client.get(
             reverse("search-organizations-list") +
-            "?name=organization2",
+            "?name=organization2 abc",
             format="json")
         self.assertEqual(len(response.data["results"]), 1)
 
@@ -771,7 +771,7 @@ class OrganizationSearchTestCase(TestCase):
         )
         self.assertEqual(len(response.data["results"]), 1)
         self.assertEqual(
-            str(response.data["results"][0]["name"]), "test organization2")
+            str(response.data["results"][0]["name"]), "test organization2 abc")
 
     def test_address_filter(self):
         """
@@ -829,7 +829,7 @@ class OrganizationSearchTestCase(TestCase):
             format="json")
         self.assertEqual(len(response.data["results"]), 1)
         self.assertEqual(
-            str(response.data["results"][0]["name"]), "test organization2")
+            str(response.data["results"][0]["name"]), "test organization2 abc")
 
         response = self.client.get(
             reverse("search-organizations-list") +
@@ -1116,7 +1116,7 @@ class OrderingTestCase(TestCase):
         self.assertEqual(
             str(response.data["results"][1]["name"]), "test project")
         self.assertEqual(
-            str(response.data["results"][2]["name"]), "test project2")
+            str(response.data["results"][2]["name"]), "test project2 abc")
 
     def test_ordering_by_relevance_unauthenticated(self):
         """
@@ -1270,7 +1270,7 @@ class BookmarkTestCase(TestCase):
             password="test_returned",
             object_channel="default")
         organization = Organization.objects.get(
-            name="test organization2", channel__slug="default")
+            name="test organization2 abc", channel__slug="default")
 
         # Logged out
         cache.clear()

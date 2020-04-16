@@ -13,7 +13,7 @@ from ovp.apps.users.models import User
 from ovp.apps.search.filters import UserSkillsCausesFilter
 from ovp.apps.uploads import helpers
 from django.db import connections
-from django.db.models import Value, IntegerField
+from django.db.models import Value, IntegerField, Q
 
 import math
 import time
@@ -90,7 +90,7 @@ class ContentGenerator():
             published=True,
             published_date__gte=timezone.now() - relativedelta(
                 seconds=config['projects']['max_age']
-            )
+            ),
         )
         projects = projects.exclude(pk__in=not_projects)
         projects = projects.select_related('image', 'job', 'work', 'organization')
@@ -100,41 +100,42 @@ class ContentGenerator():
         ).order_by("-relevance")
         projects = projects[:config["projects"]["maximum"]]
 
-        # if len(projects) < config["projects"]["minimum"]:
-        #     return None
+        if len(projects) < config["projects"]["minimum"]:
+            return None
 
         return {
             "email": user.email,
             "channel": user.channel.slug,
             "campaign": user.campaign,
             "projects": [
-        #        {
-        #            "pk": p.pk,
-        #            "name": p.name,
-        #            "slug": p.slug,
-        #            "description": p.description,
-        #            "organization_name": p.organization.name if p.organization else "",
-        #            "organization_slug": p.organization.slug if p.organization else "",
-        #            "image": (
-        #                p.image.image_small if (p.image
-        #                                        and p.image.image_small) else ""
-        #            ),
-        #            "image_absolute": p.image.absolute if p.image else False,
-        #            "disponibility": p.job if hasattr(
-        #                p,
-        #                'job') else (
-        #                p.work if hasattr(
-        #                    p,
-        #                    'work') else None),
-        #            "disponibility_type": 'job' if hasattr(
-        #                p,
-        #                'job') else (
-        #                'work' if hasattr(
-        #                    p,
-        #                    'work') else None)} for p in projects],
+                {
+                    "pk": p.pk,
+                    "name": p.name,
+                    "slug": p.slug,
+                    "description": p.description,
+                    "organization_name": p.organization.name if p.organization else "",
+                    "organization_slug": p.organization.slug if p.organization else "",
+                    "image": (
+                        p.image.image_small if (p.image
+                                                and p.image.image_small) else ""
+                    ),
+                    "image_absolute": p.image.absolute if p.image else False,
+                    "disponibility": p.job if hasattr(
+                        p,
+                        'job') else (
+                        p.work if hasattr(
+                            p,
+                            'work') else None),
+                    "disponibility_type": 'job' if hasattr(
+                        p,
+                        'job') else (
+                        'work' if hasattr(
+                            p,
+                            'work') else None)} for p in projects
             ],
-            "posts": []}
-        #    "posts": self.get_blog_posts()}
+            "posts": []
+            #"posts": self.get_blog_posts()
+        }
 
     def filter_by_address(self, qs, user):
         if not user.profile or not user.profile.address:
@@ -148,17 +149,27 @@ class ContentGenerator():
 
         state = state.short_name
         area_level = "administrative_area_level_1"
-        filtered_qs = qs.filter(
+        address_filter = Q(
             address__address_components__short_name=state,
-            address__address_components__types__name=area_level
+            address__address_components__types__name=area_level,
+            categories__id=21
+        )
+        remote_filter = Q(
+            Q(work__can_be_done_remotely=True) | Q(job__can_be_done_remotely=True)
+        )
+        filtered_qs = qs.filter(
+            address_filter | remote_filter
         )
 
         return filtered_qs if filtered_qs.count() > 0 else qs
 
     def get_blog_posts(self):
-        response = requests.get(
-            "https://blog.atados.com.br/wp-json/wp/v2/posts?per_page=2"
-        )
+        try:
+            response = requests.get(
+                "https://blog.atados.com.br/wp-json/wp/v2/posts?per_page=2"
+            )
+        except requests.exceptions.ConnectionError:
+            return { "posts": [] }
         return {
             "posts": [
                 {
@@ -181,7 +192,6 @@ class ContentGenerator():
                 } for x in response.json()
             ]
         }
-        return posts
 
 
 class DigestCampaign():
@@ -220,8 +230,7 @@ class DigestCampaign():
                     seconds=config['interval']['minimum'])) .values_list(
                 'recipient',
                 flat=True))
-        #return set(filter(lambda x: x not in sent_recently, email_list))
-        return set(email_list)
+        return set(filter(lambda x: x not in sent_recently, email_list))
 
     def send_campaign(self, chunk_size=0, channel="default", email_list=None):
         if not email_list:
@@ -249,7 +258,8 @@ class DigestCampaign():
                 chunks))
 
         out = []
-        template_context = self.cg.get_blog_posts()
+        # template_context = self.cg.get_blog_posts()
+        template_context = {}
         for i in range(0, len(user_list), chunk_size):
             chunk_i = math.ceil(i / chunk_size) + 1
 
