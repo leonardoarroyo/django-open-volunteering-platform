@@ -117,6 +117,7 @@ class OrganizationSearchResource(
         cause = params.get('cause', None)
         address = params.get('address', None)
         name = params.get('name', None)
+        category = params.get('category', None)
 
         queryset = SearchQuerySet().models(Organization)
         queryset = queryset.filter(highlighted=1) if highlighted else queryset
@@ -127,6 +128,7 @@ class OrganizationSearchResource(
         queryset = filters.by_address(
             queryset, address) if address else queryset
         queryset = filters.by_causes(queryset, cause) if cause else queryset
+        queryset = filters.by_categories(queryset, category) if category else queryset
         queryset = filters.by_channel_content_flow(
             queryset, self.request.channel)
 
