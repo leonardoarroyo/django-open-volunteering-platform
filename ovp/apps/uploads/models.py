@@ -47,6 +47,7 @@ class UploadedImage(ChannelRelationship):
         blank=True,
         null=True,
         default=None,
+        quality=90,
         max_length=300
     )
     image_medium = ResizedImageField(
@@ -55,6 +56,7 @@ class UploadedImage(ChannelRelationship):
         blank=True,
         null=True,
         default=None,
+        quality=90,
         max_length=300
     )
     image_large = ResizedImageField(
@@ -63,6 +65,7 @@ class UploadedImage(ChannelRelationship):
         blank=True,
         null=True,
         default=None,
+        quality=90,
         max_length=300
     )
     created_date = models.DateTimeField(auto_now_add=True)

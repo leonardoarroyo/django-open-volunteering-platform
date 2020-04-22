@@ -859,6 +859,49 @@ class OrganizationSearchTestCase(TestCase):
         self.assertEqual(len(response.data["results"]), 0)
 
 
+class SearchAllTestCase(TestCase):
+
+    def setUp(self):
+        call_command('clear_index', '--noinput', verbosity=0)
+        Channel.objects.create(name="Test channel", slug="test-channel")
+        create_sample_projects()
+        create_sample_organizations()
+        self.client = APIClient()
+
+        cache.clear()
+
+    def test_keys_in_response(self):
+        """
+        Test if search contains keys "projects" and "organizations"
+        """
+        response = self.client.get(reverse("search-all"), format="json")
+        self.assertTrue("projects" in response.data)
+        self.assertTrue("organizations" in response.data)
+
+    def test_query_organizations_filter(self):
+        """
+        Test searching with query filter returns only
+        results filtered by text query
+        """
+        response = self.client.get(
+            reverse("search-all") +
+            "?query=organization3",
+            format="json"
+        )
+        self.assertEqual(len(response.data["organizations"]["results"]), 1)
+        self.assertEqual(
+            str(response.data["organizations"]["results"][0]["name"]),
+            "test organization3"
+        )
+
+        response = self.client.get(
+            reverse("search-all") +
+            "?query=organization4",
+            format="json"
+        )
+        self.assertEqual(len(response.data["organizations"]["results"]), 0)
+
+
 class UserSearchTestCase(TestCase):
     def setUp(self):
         call_command('clear_index', '--noinput', verbosity=0)

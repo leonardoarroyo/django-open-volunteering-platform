@@ -27,13 +27,26 @@ user_search = routers.SimpleRouter()
 user_search.register(r'users', views.UserSearchResource, 'search-users')
 
 urlpatterns = [
-    url(r'^search/',
-        include(project_search.urls)),
-    url(r'^search/',
-        include(organization_search.urls)),
-    url(r'^search/',
-        include(user_search.urls)),
-    url(r'^search/available-cities/(?P<country>[^/]+)/',
+    url(
+        r'^search/',
+        include(project_search.urls)
+    ),
+    url(
+        r'^search/',
+        include(organization_search.urls)
+    ),
+    url(
+        r'^search/',
+        include(user_search.urls)
+    ),
+    url(
+        r'^search/all/',
+        views.SearchAllResource.as_view(),
+        name='search-all'
+    ),
+    url(
+        r'^search/available-cities/(?P<country>[^/]+)/',
         views.CountryCities.as_view(),
-        name='available-country-cities'),
+        name='available-country-cities'
+    ),
 ]
