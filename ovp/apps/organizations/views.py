@@ -79,8 +79,9 @@ class OrganizationResourceViewSet(
         return response.Response(serializer.data)
 
     @swagger_auto_schema(method="GET", responses={200: 'OK', 400: 'Invalid'})
-    @decorators.list_route(
+    @decorators.action(
         methods=["GET"],
+        detail=False,
         url_path='check-doc/(?P<doc>[0-9]+)')
     def check_doc(self, request, doc):
         """ Check if there is an organization with a given document. """
@@ -101,7 +102,7 @@ class OrganizationResourceViewSet(
             document=formatted_doc, channel__slug=request.channel).count() > 0
         return response.Response({"taken": taken})
 
-    @decorators.detail_route(methods=["GET"])
+    @decorators.action(methods=["GET"], detail=True)
     def pending_invites(self, request, *args, **kwargs):
         """ Retrieve list of pending invites for organization. """
         organization = self.get_object()
@@ -114,7 +115,7 @@ class OrganizationResourceViewSet(
     @swagger_auto_schema(
         method="POST", responses={
             200: 'OK', 400: 'Invalid invite'})
-    @decorators.detail_route(methods=["POST"])
+    @decorators.action(methods=["POST"], detail=True)
     def invite_user(self, request, *args, **kwargs):
         """
         Invite user to manage organization.
@@ -127,7 +128,7 @@ class OrganizationResourceViewSet(
         serializer.is_valid(raise_exception=True)
 
         invited = User.objects.get(
-            email__iexact=request.data["email"],
+            email=request.data["email"],
             channel__slug=request.channel)
 
         if organization.members.filter(pk=invited.pk).count():
@@ -183,7 +184,7 @@ class OrganizationResourceViewSet(
     @swagger_auto_schema(
         method="POST", responses={
             200: 'OK', 403: 'Forbidden'})
-    @decorators.detail_route(methods=["POST"])
+    @decorators.action(methods=["POST"], detail=True)
     def join(self, request, *args, **kwargs):
         """ Join an organization you have been invited to manage. """
         organization = self.get_object()
@@ -208,14 +209,14 @@ class OrganizationResourceViewSet(
     @swagger_auto_schema(
         method="POST", responses={
             200: 'OK', 400: 'Invalid invite'})
-    @decorators.detail_route(methods=["POST"])
+    @decorators.action(methods=["POST"], detail=True)
     def revoke_invite(self, request, *args, **kwargs):
         """ Revoke an invite made to another user. """
         organization = self.get_object()
 
         try:
             try:
-                user = User.objects.get(email__iexact=request.data.get(
+                user = User.objects.get(email=request.data.get(
                     "email", ""), channel__slug=request.channel)
                 invite = models.OrganizationInvite.objects.get(
                     invited=user,
@@ -245,7 +246,7 @@ class OrganizationResourceViewSet(
     @swagger_auto_schema(
         method="POST", responses={
             200: 'OK', 403: 'Forbidden'})
-    @decorators.detail_route(methods=["POST"])
+    @decorators.action(methods=["POST"], detail=True)
     def leave(self, request, *args, **kwargs):
         """ Leave an organization you are member of. """
         organization = self.get_object()
@@ -264,7 +265,7 @@ class OrganizationResourceViewSet(
             200: 'OK',
             400: 'Invalid user',
             403: 'Forbidden'})
-    @decorators.detail_route(methods=["POST"])
+    @decorators.action(methods=["POST"], detail=True)
     def remove_member(self, request, *args, **kwargs):
         """ Remove another user from organization. """
         organization = self.get_object()
@@ -284,7 +285,7 @@ class OrganizationResourceViewSet(
 
         return response.Response({"detail": "Member was removed."})
 
-    @decorators.detail_route(methods=["GET"])
+    @decorators.action(methods=["GET"], detail=True)
     def applies(self, request, *args, **kwargs):
         organization = self.get_object()
         projects = Project.objects.filter(organization=organization).all()
@@ -294,7 +295,7 @@ class OrganizationResourceViewSet(
         serializer = self.get_serializer(response_data)
         return response.Response(serializer.data)
 
-    @decorators.detail_route(methods=["GET"])
+    @decorators.action(methods=["GET"], detail=True)
     def members(self, request, *args, **kwargs):
         """ Retrieve list of members in an organization. """
         organization = self.get_object()
@@ -302,7 +303,7 @@ class OrganizationResourceViewSet(
         serializer = self.get_serializer(members, many=True)
         return response.Response(serializer.data)
 
-    @decorators.detail_route(methods=['GET'])
+    @decorators.action(methods=['GET'], detail=True)
     def projects(self, request, slug, pk=None):
         """ Retrieve a list of projects an organization manages. """
         organization = self.get_object()

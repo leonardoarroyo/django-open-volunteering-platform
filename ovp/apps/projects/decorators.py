@@ -59,7 +59,7 @@ def add_current_user_is_applied_representation(func):
 
         user = self.context["request"].user
         applied = False
-        if not user.is_anonymous():
+        if not user.is_anonymous:
             try:
                 applied = models.Apply.objects.exclude(
                     status="unapplied"

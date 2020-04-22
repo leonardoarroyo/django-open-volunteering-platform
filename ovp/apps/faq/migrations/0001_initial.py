@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import redactor.fields
 
 
 class Migration(migrations.Migration):
@@ -27,7 +26,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('question', models.CharField(max_length=100, verbose_name='question')),
-                ('answer', redactor.fields.RedactorField(default='', max_length=3000, verbose_name='answer')),
+                ('answer', models.CharField(default='', max_length=3000, verbose_name='answer')),
                 ('category', models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='faq.Category', verbose_name='category')),
             ],
         ),

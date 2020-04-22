@@ -12,7 +12,7 @@ from rest_framework import mixins
 from rest_framework import response
 from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
 
 
@@ -48,7 +48,7 @@ class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
         return response.Response(serializer.data)
 
-    @decorators.list_route(url_path="current-user", methods=['GET', 'PATCH'])
+    @decorators.action(url_path="current-user", detail=False, methods=['GET', 'PATCH'])
     def current_user(self, request, *args, **kwargs):
         """ Retrieve and update current user. """
         if request.method == 'GET':
@@ -56,7 +56,7 @@ class UserResourceViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         if request.method == 'PATCH':
             return self.current_user_patch(request, *args, **kwargs)
 
-    @decorators.list_route(url_path="deactivate-account", methods=['POST'])
+    @decorators.action(url_path="deactivate-account", detail=False, methods=['POST'])
     def deactivate_account(self, request, *args, **kwargs):
         """ Deactivate user account """
         user = request.user
@@ -132,7 +132,7 @@ class PublicUserResourceViewSet(
         return emails.UserMail(self, async_mail)
 
     @swagger_auto_schema(auto_schema=None)
-    @detail_route(methods=['post'], url_path='send-message')
+    @action(methods=['post'], detail=True, url_path='send-message')
     def send_message(self, request, slug, pk=None):
         """ This route is deprecated """
         self.email = self.get_queryset().get(slug=slug)

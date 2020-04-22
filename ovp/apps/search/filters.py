@@ -26,7 +26,7 @@ class UserSkillsCausesFilter:
             user,
             no_check=False,
             append_assumed=False):
-        if not no_check and not user.is_authenticated():
+        if not no_check and not user.is_authenticated:
             raise NotAuthenticated()
 
         output = {"skills": [], "causes": []}

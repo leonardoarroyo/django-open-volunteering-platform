@@ -100,7 +100,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
         return response.Response(serializer.data)
 
     @swagger_auto_schema(method="POST", responses={200: "OK"})
-    @decorators.detail_route(['POST'])
+    @decorators.action(['POST'], detail=True)
     def close(self, request, *args, **kwargs):
         """ Close a project. """
         project = self.get_object()
@@ -114,7 +114,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
         return response.Response(serializer.data)
 
     @swagger_auto_schema(method="GET", responses={200: "OK"})
-    @decorators.detail_route(['GET'])
+    @decorators.action(['GET'], detail=True)
     def export_applied_users(self, request, *args, **kwargs):
         """ Export a list of applied volunteers in xls format. """
         project = self.get_object()

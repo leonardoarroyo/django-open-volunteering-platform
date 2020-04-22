@@ -428,7 +428,7 @@ class ProjectPostTestCase(TestCase):
 
         response = self.client.patch(
             reverse(
-                r"project-post/(?P<post-id>[\w-]+)",
+                "project-post-patch-delete",
                 [
                     "test-project",
                     Post.objects.last().pk + 1
@@ -441,7 +441,7 @@ class ProjectPostTestCase(TestCase):
 
         response = self.client.patch(
             reverse(
-                r"project-post/(?P<post-id>[\w-]+)",
+                "project-post-patch-delete",
                 [
                     "test-project",
                     Post.objects.last().pk
@@ -476,7 +476,7 @@ class ProjectPostTestCase(TestCase):
         # Unauthenticated
         response = self.client.patch(
             reverse(
-                r"project-post/(?P<post-id>[\w-]+)",
+                "project-post-patch-delete",
                 [
                     "test-project",
                     Post.objects.last().pk
@@ -496,7 +496,7 @@ class ProjectPostTestCase(TestCase):
         self.client.force_authenticate(user=testuser)
         response = self.client.patch(
             reverse(
-                r"project-post/(?P<post-id>[\w-]+)",
+                "project-post-patch-delete",
                 [
                     "test-project",
                     Post.objects.last().pk
@@ -518,7 +518,7 @@ class ProjectPostTestCase(TestCase):
         )
         response = self.client.patch(
             reverse(
-                r"project-post/(?P<post-id>[\w-]+)",
+                "project-post-patch-delete",
                 [
                     "test-project",
                     Post.objects.last().pk
@@ -539,7 +539,7 @@ class ProjectPostTestCase(TestCase):
         organization.members.add(testuser2)
         response = self.client.patch(
             reverse(
-                r"project-post/(?P<post-id>[\w-]+)",
+                "project-post-patch-delete",
                 [
                     "test-project",
                     Post.objects.last().pk
@@ -558,7 +558,7 @@ class ProjectPostTestCase(TestCase):
         # Unauthenticated
         response = self.client.delete(
             reverse(
-                r"project-post/(?P<post-id>[\w-]+)",
+                "project-post-patch-delete",
                 [
                     "test-project",
                     Post.objects.last().pk
@@ -577,7 +577,7 @@ class ProjectPostTestCase(TestCase):
         self.client.force_authenticate(user=testuser)
         response = self.client.delete(
             reverse(
-                r"project-post/(?P<post-id>[\w-]+)",
+                "project-post-patch-delete",
                 ["test-project", Post.objects.last().pk]
             ),
             format="json"
@@ -595,7 +595,7 @@ class ProjectPostTestCase(TestCase):
         )
         response = self.client.delete(
             reverse(
-                r"project-post/(?P<post-id>[\w-]+)",
+                "project-post-patch-delete",
                 ["test-project", Post.objects.last().pk]
             ),
             format="json"
