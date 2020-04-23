@@ -23,7 +23,7 @@ class ProjectBookmarkRetrieveSerializer(ChannelRelationshipSerializer):
     image = UploadedImageSerializer()
     address = address_serializers[1]()
     organization = OrganizationSearchSerializer()
-    disponibility = DisponibilitySerializer()
+    disponibility = DisponibilitySerializer(required=False)
 
     class Meta:
         model = models.Project
