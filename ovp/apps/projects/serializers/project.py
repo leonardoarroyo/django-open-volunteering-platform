@@ -118,10 +118,9 @@ def project_owner_is_organization_member_or_self(request, organization_pk):
 #  Serializers
 ###############
 
-
 class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     address = address_serializers[0]()
-    disponibility = DisponibilitySerializer()
+    disponibility = DisponibilitySerializer(write_only=True)
     roles = VolunteerRoleProjectUpdateSerializer(many=True, required=False)
     causes = CauseAssociationSerializer(many=True, required=False)
     skills = SkillAssociationSerializer(many=True, required=False)
@@ -393,7 +392,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
     image = UploadedImageSerializer()
     address = address_serializers[1]()
     organization = OrganizationSearchSerializer()
-    disponibility = DisponibilitySerializer()
+    disponibility = DisponibilitySerializer(required=False)
     roles = VolunteerRoleProjectCreateSerializer(many=True)
     owner = UserProjectRetrieveSerializer()
     applies = ProjectAppliesSerializer(many=True, source="active_apply_set")
@@ -599,7 +598,7 @@ class ProjectOnOrganizationRetrieveSerializer(ChannelRelationshipSerializer):
 
     image = UploadedImageSerializer()
     address = address_serializers[1]()
-    disponibility = DisponibilitySerializer()
+    disponibility = DisponibilitySerializer(required=False)
     causes = CauseSerializer(many=True)
     flairs = FlairSerializer(many=True)
     skills = SkillSerializer(many=True)
@@ -648,7 +647,7 @@ class ProjectSearchSerializer(ChannelRelationshipSerializer):
     address = address_serializers[1]()
     organization = CompactOrganizationSerializer()
     owner = ShortUserPublicRetrieveSerializer()
-    disponibility = DisponibilitySerializer()
+    disponibility = DisponibilitySerializer(required=False)
     categories = CategoryRetrieveSerializer(many=True)
     is_bookmarked = serializers.BooleanField()
     causes = FullCauseSerializer(many=True)

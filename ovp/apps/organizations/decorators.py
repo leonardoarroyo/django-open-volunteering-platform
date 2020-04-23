@@ -10,12 +10,7 @@ def hide_address(func):
     @wraps(func)
     def _impl(self, instance):
         if instance.hidden_address:
-            for i, field in enumerate(self._readable_fields):
-                if field.field_name == "address":
-                    address = self._readable_fields.pop(i)
-
             ret = func(self, instance)
-            self._readable_fields.insert(i, address)  # Put address back
 
             # Add address representation
             request = self.context["request"]
