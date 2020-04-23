@@ -26,7 +26,7 @@ class ProjectApplyRetrieveSerializer(ChannelRelationshipSerializer):
     image = UploadedImageSerializer()
     address = address_serializers[1]()
     organization = OrganizationSearchSerializer()
-    disponibility = DisponibilitySerializer(many=True)
+    disponibility = DisponibilitySerializer(many=True, required=False)
 
     class Meta:
         model = models.Project
