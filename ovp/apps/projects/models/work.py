@@ -6,7 +6,7 @@ from ovp.apps.channels.models.abstract import ChannelRelationship
 
 class Work(ChannelRelationship):
 
-    project = models.OneToOneField('Project', blank=True, null=True)
+    project = models.OneToOneField('Project', blank=True, null=True, on_delete=models.DO_NOTHING)
     weekly_hours = models.PositiveSmallIntegerField(
         _('Weekly hours'),
         blank=True,

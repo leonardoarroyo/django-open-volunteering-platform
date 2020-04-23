@@ -14,7 +14,7 @@ class Gallery(ChannelRelationship):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField(max_length=3000, blank=True, null=True)
-    owner = models.ForeignKey('users.User', verbose_name=_('owner'))
+    owner = models.ForeignKey('users.User', verbose_name=_('owner'), on_delete=models.DO_NOTHING)
     images = models.ManyToManyField('uploads.UploadedImage')
 
     # Meta

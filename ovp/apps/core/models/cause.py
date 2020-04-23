@@ -35,7 +35,8 @@ class Cause(ChannelRelationship):
         'uploads.UploadedImage',
         blank=True,
         null=True,
-        verbose_name=_('image')
+        verbose_name=_('image'),
+        on_delete=models.DO_NOTHING
     )
     slug = models.SlugField(_('slug'), max_length=100, blank=True, null=True)
 

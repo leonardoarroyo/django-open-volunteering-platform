@@ -46,7 +46,7 @@ class BookmarkMixin(object):
 
     """
     @swagger_auto_schema(method="POST", responses=RESPONSES_DICT)
-    @decorators.detail_route(["POST"])
+    @decorators.action(["POST"], detail=True)
     def bookmark(self, request, *args, **kwargs):
         """
         Bookmark an object.
@@ -70,7 +70,7 @@ class BookmarkMixin(object):
         return response.Response(resp)
 
     @swagger_auto_schema(method="POST", responses=RESPONSES_DICT)
-    @decorators.detail_route(["POST"])
+    @decorators.action(["POST"], detail=True)
     def unbookmark(self, request, *args, **kwargs):
         """
         Unbookmark an object.
@@ -91,7 +91,7 @@ class BookmarkMixin(object):
         return response.Response(resp)
 
     @swagger_auto_schema(method="GET", responses={200: 'OK'})
-    @decorators.list_route(["GET"])
+    @decorators.action(["GET"], detail=False)
     def bookmarked(self, request, *args, **kwargs):
         """
         Retrieve a list of bookmarked objects.

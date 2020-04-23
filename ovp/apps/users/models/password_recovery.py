@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class PasswordRecoveryToken(ChannelRelationship, models.Model):
-    user = models.ForeignKey('User', blank=True, null=True)
+    user = models.ForeignKey('User', blank=True, null=True, on_delete=models.DO_NOTHING)
     token = models.CharField(
         _('Token'),
         max_length=128,

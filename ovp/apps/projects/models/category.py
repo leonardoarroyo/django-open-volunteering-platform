@@ -21,7 +21,8 @@ class Category(ChannelRelationship):
         blank=True,
         null=True,
         verbose_name=_('image'),
-        related_name="category_image"
+        related_name="category_image",
+        on_delete=models.DO_NOTHING
     )
     highlighted = models.BooleanField(
         _("Highlighted"),

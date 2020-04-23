@@ -47,7 +47,8 @@ class ItemImage(ChannelRelationship):
         'uploads.UploadedImage',
         blank=True,
         null=True,
-        verbose_name=_('image'))
+        verbose_name=_('image'),
+        on_delete=models.DO_NOTHING)
     item = models.ForeignKey(
         'Item',
         models.CASCADE,
@@ -84,7 +85,8 @@ class ItemDocument(ChannelRelationship):
         'uploads.UploadedDocument',
         blank=True,
         null=True,
-        verbose_name=_('document'))
+        verbose_name=_('document'),
+        on_delete=models.DO_NOTHING)
     item = models.ForeignKey(
         'Item',
         models.CASCADE,

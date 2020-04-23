@@ -2,7 +2,7 @@ from django.http import Http404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import response
 from rest_framework import status
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action
 from ovp.apps.core.models import Post
 
 
@@ -13,7 +13,7 @@ class PostCreateMixin:
     .get_permissions() and .get_serializer_class()
     """
     @swagger_auto_schema(method="POST", responses={200: "OK"})
-    @detail_route(['POST'], url_path='post')
+    @action(['POST'], detail=True, url_path='post')
     def post(self, request, slug, pk=None):
         """
         Create a post for an object.
@@ -36,7 +36,7 @@ class PostCreateMixin:
 
         return response.Response(serializer.data)
 
-    @detail_route(['PATCH', 'DELETE'], url_path=r'post/(?P<post_id>[\w-]+)')
+    @action(['PATCH', 'DELETE'], detail=True, url_path=r'post/(?P<post_id>[\w-]+)')
     def post_patch_delete(self, request, slug, post_id):
         """
         Update and delete a post for an object.

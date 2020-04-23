@@ -36,14 +36,16 @@ class Project(ChannelRelationship, RatedModelMixin):
         'uploads.UploadedImage',
         blank=True,
         null=True,
-        verbose_name=_('image')
+        verbose_name=_('image'),
+        on_delete=models.DO_NOTHING
     )
     address = models.ForeignKey(
         get_address_model(),
         blank=True,
         null=True,
         verbose_name=_('address'),
-        db_constraint=False
+        db_constraint=False,
+        on_delete=models.DO_NOTHING
     )
     skills = models.ManyToManyField(
         'core.Skill',
@@ -77,19 +79,22 @@ class Project(ChannelRelationship, RatedModelMixin):
     )
     owner = models.ForeignKey(
         'users.User',
-        verbose_name=_('owner')
+        verbose_name=_('owner'),
+        on_delete=models.DO_NOTHING
     )
     organization = models.ForeignKey(
         'organizations.Organization',
         blank=True,
         null=True,
-        verbose_name=_('organization')
+        verbose_name=_('organization'),
+        on_delete=models.DO_NOTHING
     )
     item = models.ForeignKey(
         'items.Item',
         blank=True,
         null=True,
-        verbose_name=_('item')
+        verbose_name=_('item'),
+        on_delete=models.DO_NOTHING
     )
     rating_requests = GenericRelation(
         RatingRequest,
@@ -328,7 +333,8 @@ class VolunteerRole(ChannelRelationship):
         blank=True,
         null=True,
         related_name='roles',
-        verbose_name=_('Project')
+        verbose_name=_('Project'),
+        on_delete=models.DO_NOTHING
     )
     applied_count = models.IntegerField(
         _('Applied count'),

@@ -35,7 +35,7 @@ class BasePasswordReuse(object):
 
 class PasswordReuse(BasePasswordReuse):
     def __call__(self, password):
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             super().check(self.request.user, password)
 
 

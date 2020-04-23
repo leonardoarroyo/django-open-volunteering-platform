@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class EmailVerificationToken(ChannelRelationship, models.Model):
-    user = models.ForeignKey('User')
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
     token = models.CharField(
         _('Token'),
         max_length=128,

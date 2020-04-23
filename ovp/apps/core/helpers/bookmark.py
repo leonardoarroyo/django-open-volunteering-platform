@@ -8,7 +8,7 @@ def annotate_bookmark(queryset, request=None):
 
     Used on search viewsets.
     """
-    if request and request.user.is_authenticated():
+    if request and request.user.is_authenticated:
         qs = queryset.annotate(
             is_bookmarked=Count(
                 Case(

@@ -8,12 +8,13 @@ from ovp.apps.channels.models.abstract import ChannelRelationship
 class Post(ChannelRelationship):
     title = models.CharField(_('title'), max_length=300, blank=True, null=True)
     content = models.TextField(_('content'), max_length=3000)
-    user = models.ForeignKey('users.User', verbose_name=_('user'))
+    user = models.ForeignKey('users.User', verbose_name=_('user'), on_delete=models.DO_NOTHING)
     reply_to = models.ForeignKey(
         'Post',
         verbose_name=_('reply'),
         blank=True,
-        null=True
+        null=True,
+        on_delete=models.DO_NOTHING
     )
     published = models.BooleanField('Published', default=True)
     deleted = models.BooleanField('Deleted', default=False)
@@ -28,7 +29,8 @@ class Post(ChannelRelationship):
         'gallery.Gallery',
         verbose_name=_('gallery'),
         blank=True,
-        null=True
+        null=True,
+        on_delete=models.DO_NOTHING
     )
 
     def save(self, *args, **kwargs):

@@ -85,7 +85,8 @@ class User(
         blank=False,
         null=True,
         related_name='avatar_user',
-        verbose_name=_('avatar'))
+        verbose_name=_('avatar'),
+        on_delete=models.DO_NOTHING)
     phone = models.CharField(_('Phone'), max_length=30, null=True, blank=True)
     phone2 = models.CharField(
         _('Phone 2'),

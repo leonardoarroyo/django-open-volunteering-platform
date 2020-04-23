@@ -56,7 +56,7 @@ urlpatterns = [
 
     # Digest
     url(r'^', include(ovp.apps.digest.urls)),
-] + i18n_patterns(url(r'^admin/', include(admin_site.urls)))
+] + i18n_patterns(url(r'^admin/', admin_site.urls))
 
 # Test urls
 # These should not be used in production

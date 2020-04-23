@@ -15,7 +15,7 @@ class JobDate(ChannelRelationship):
         blank=True,
         null=True,
         related_name='dates',
-        verbose_name=_('job')
+        verbose_name=_('job'),
     )
 
     def save(self, *args, **kwargs):
@@ -40,7 +40,7 @@ class JobDate(ChannelRelationship):
 
 class Job(ChannelRelationship):
 
-    project = models.OneToOneField('Project', blank=True, null=True)
+    project = models.OneToOneField('Project', blank=True, null=True, on_delete=models.DO_NOTHING)
     start_date = models.DateTimeField(_('Start date'), blank=True, null=True)
     end_date = models.DateTimeField(_('End date'), blank=True, null=True)
     can_be_done_remotely = models.BooleanField(

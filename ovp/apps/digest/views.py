@@ -4,7 +4,7 @@ from ovp.apps.users.models import User
 
 from rest_framework import viewsets
 from rest_framework import response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
 
 
@@ -17,7 +17,7 @@ class DigestViewSet(viewsets.GenericViewSet):
     queryset = DigestLog.objects.all()
 
     @swagger_auto_schema(responses={200: 'OK'})
-    @detail_route(methods=['POST'], url_path='cancel')
+    @action(methods=['POST'], detail=True, url_path='cancel')
     def cancel(self, request, *args, **kwargs):
         obj = self.get_object()
         try:

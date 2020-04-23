@@ -137,7 +137,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None,
     by passing a serializer argument.
     """
     # Base queryset
-    if catalogue_dict["fetched"] and not request.user.is_authenticated():
+    if catalogue_dict["fetched"] and not request.user.is_authenticated:
         return catalogue_dict
 
     params = request.GET
@@ -152,7 +152,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None,
         request=request).filter(
         pk__in=project_keys).order_by("-created_date")
 
-    if catalogue_dict["fetched"] and request.user.is_authenticated():
+    if catalogue_dict["fetched"] and request.user.is_authenticated:
         catalogue_dict = fetch_user_relevance_catalogue(
             catalogue_dict,
             queryset=project_base_queryset,
@@ -213,7 +213,7 @@ def fetch_catalogue(catalogue_dict, serializer=False, request=None,
     cache_ttl = 360
     cache.set(key, catalogue_dict, cache_ttl)
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         catalogue_dict = fetch_user_relevance_catalogue(
             catalogue_dict,
             queryset=project_base_queryset,

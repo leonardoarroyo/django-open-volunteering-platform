@@ -7,9 +7,9 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class OrganizationInvite(ChannelRelationship):
-    organization = models.ForeignKey("organizations.Organization")
-    invitator = models.ForeignKey("users.User", related_name="has_invited")
-    invited = models.ForeignKey("users.User", related_name="been_invited")
+    organization = models.ForeignKey("organizations.Organization", on_delete=models.DO_NOTHING)
+    invitator = models.ForeignKey("users.User", related_name="has_invited", on_delete=models.DO_NOTHING)
+    invited = models.ForeignKey("users.User", related_name="been_invited", on_delete=models.DO_NOTHING)
     created_date = models.DateTimeField(
         _('Joined date'),
         auto_now_add=True,

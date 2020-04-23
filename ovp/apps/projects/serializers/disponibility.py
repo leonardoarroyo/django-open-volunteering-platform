@@ -3,6 +3,7 @@ from ovp.apps.projects.serializers.job import JobSerializer
 from ovp.apps.projects.serializers.work import WorkSerializer
 
 from rest_framework import serializers
+from rest_framework.fields import SkipField
 
 from collections import OrderedDict
 from functools import wraps
@@ -43,14 +44,7 @@ def disponibility_object_validate(d, k):
 def add_disponibility_representation(func):
     @wraps(func)
     def _impl(self, instance):
-        # We pop disponibility field to avoid
-        # AttributeError on default Serializer.to_representation
-        for i, field in enumerate(self._readable_fields):
-            if field.field_name == "disponibility":
-                disponibility = self._readable_fields.pop(i)
-
         ret = func(self, instance)
-        self._readable_fields.insert(i, disponibility)  # Put disp back
 
         # Add disponibility representation
         obj = None

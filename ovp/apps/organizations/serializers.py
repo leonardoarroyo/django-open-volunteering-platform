@@ -245,7 +245,7 @@ class OrganizationRetrieveSerializer(ChannelRelationshipSerializer):
 
     def get_is_bookmarked(self, instance):
         user = self.context['request'].user
-        if user.is_authenticated():
+        if user.is_authenticated:
             return instance.is_bookmarked(user)
         return False
 

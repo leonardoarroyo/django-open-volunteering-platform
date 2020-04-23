@@ -20,6 +20,6 @@ CT_CHOICES = (
 
 
 class DigestLogContent(ChannelRelationship):
-    digest_log = models.ForeignKey('DigestLog')
+    digest_log = models.ForeignKey('DigestLog', on_delete=models.DO_NOTHING)
     content_type = models.IntegerField('Content type', choices=CT_CHOICES)
     content_id = models.IntegerField('Content id')
