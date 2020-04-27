@@ -99,7 +99,7 @@ class GoogleAddress(ChannelRelationship):
 
         return s
 
-    def get_address(self):
+    def address_dict(self):
         # Components types for address
         address = {
             'route': '',
@@ -107,7 +107,8 @@ class GoogleAddress(ChannelRelationship):
             'administrative_area_level_2': '',
             'administrative_area_level_1': '',
             'country': '',
-            'street_number': ''
+            'street_number': '',
+            'postal_code': ''
         }
 
         # Fill address dict
@@ -118,6 +119,11 @@ class GoogleAddress(ChannelRelationship):
                         'short_name': component.short_name,
                         'long_name': component.long_name
                     }
+
+        return address
+
+    def get_address(self):
+        address = self.address_dict()
 
         # Build address string
         string_address = ''

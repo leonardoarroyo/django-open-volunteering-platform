@@ -1,3 +1,4 @@
+import pytz
 from rest_framework import response
 from rest_framework import decorators
 from rest_framework import status
@@ -8,10 +9,13 @@ from ovp.apps.core import emails
 
 from ovp.apps.users.models.user import User
 from ovp.apps.organizations.models.organization import Organization
+from ovp.apps.projects.models.project import Project
 
 from drf_yasg.utils import swagger_auto_schema
 
+from django.shortcuts import render
 from django.utils import translation
+from django.utils import timezone
 
 
 @swagger_auto_schema(methods=["GET"],
@@ -96,3 +100,24 @@ def record_lead(request):
     serializer.save()
 
     return response.Response({"success": True}, status=status.HTTP_200_OK)
+
+@swagger_auto_schema(responses={200: 'OK'})
+def footprint(request):
+    """
+    Subscribe to periodic newsletter.
+    """
+    timezone.activate(pytz.utc)
+    organizations = (Organization.objects
+            .filter(published=True, channel__slug=request.channel)
+            .select_related('image', 'address')
+            .prefetch_related('address__address_components', 'address__address_components__types'))
+    projects = (Project.objects
+            .filter(published=True, closed=False, channel__slug=request.channel)
+            .select_related('image', 'address', 'organization', 'job', 'work', 'owner')
+            .prefetch_related('skills', 'causes', 'address__address_components', 'address__address_components__types', 'job__dates'))
+
+    ctx = {
+        'organizations': organizations,
+        'projects': projects,
+    }
+    return render(request, 'footprint.html', ctx)
