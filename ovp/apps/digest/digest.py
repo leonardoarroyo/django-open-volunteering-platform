@@ -22,7 +22,7 @@ import requests
 config = {
     'interval': {
         #'minimum': 60 * 60 * 24 * 5,
-        'minimum': 60 * 60 * 24 * 0,
+        'minimum': 60 * 60 * 24 * 1,
         'maximum': 0
     },
     'projects': {
