@@ -1,3 +1,4 @@
+import json
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 
@@ -17,12 +18,15 @@ class InvalidAuth(Exception):
     pass
 
 class NotifyBoxApi:
-    def __init__(self, access_key, secret_key):
+    endpoint = 'http://hasura-notifications-api_graphql-engine_1:8080/v1/graphql'
+    def __init__(self, access_key = None, secret_key = None, token=None, admin_secret=None):
         self.access_key = access_key
         self.secret_key = secret_key
-        self.token = None
-        self._create_client()
-        self._authenticate()
+        self.token = token
+        self.admin_secret = admin_secret
+        self.client = self._create_client()
+        if not token and not admin_secret:
+            self._authenticate()
 
     def _create_client(self):
         headers = {
@@ -30,15 +34,17 @@ class NotifyBoxApi:
         }
         if self.token:
             headers['Authorization'] = f'Bearer {self.token}'
+        elif self.admin_secret:
+            headers['X-Hasura-Admin-Secret'] = self.admin_secret
 
         sample_transport=RequestsHTTPTransport(
-            url='http://localhost:8080/v1/graphql',
+            url=self.endpoint,
             use_json=True,
             headers=headers,
             verify=False
         )
 
-        self.client = GQLClient(
+        return GQLClient(
             retries=3,
             transport=sample_transport,
             fetch_schema_from_transport=True,
@@ -46,7 +52,7 @@ class NotifyBoxApi:
 
     def _authenticate(self):
         self.token = self.createToken()['createToken']
-        self._create_client()
+        self.client = self._create_client()
 
     def createToken(self):
         data = {
@@ -66,6 +72,69 @@ class NotifyBoxApi:
                 raise InvalidAuth()
 
             raise
+
+        return result
+
+    def createApp(self, name):
+        data = {
+            "name": name
+        }
+        query = gql('''
+            mutation CreateApp($name: String!) {
+              createApp(name: $name) {
+                access_key
+                secret
+              }
+            }
+        ''')
+
+        try:
+            result = self.client.execute(query, variable_values=data)
+        except Exception as e:
+            if e.args[0]['message'] == 'invalid x-hasura-admin-secret/x-hasura-access-key':
+                raise InvalidAuth('Invalid hasura admin secret')
+
+            raise
+
+        return result
+
+    def setAwsCredentials(self, access_key, secret_key, region):
+        data = {
+            "access_key": access_key,
+            "secret_key": secret_key,
+            "region": region
+        }
+        query = gql('''
+            mutation SetCredential($access_key: String!, $region: String!, $secret_key: String!){
+              set_awsCredential(access_key: $access_key, region: $region, secret_key: $secret_key) {
+                affected_rows
+              }
+            }
+        ''')
+
+        result = self.client.execute(query, variable_values=data)
+        return result
+
+    ########################
+    # Trigger notification #
+    ########################
+
+    def triggerNotifications(self, kind, data, meta, recipients):
+        data = {
+            "data": json.dumps(data),
+            "meta": json.dumps(meta),
+            "recipients": recipients,
+            "kind": kind
+        }
+        query = gql('''
+            mutation TriggerNotification($data: TriggerNotificationJsonb!, $kind: String!, $meta: TriggerNotificationJsonb!, $recipients: [RecipientInput]!){
+              trigger_notification(data: $data, kind: $kind, meta: $meta, recipients: $recipients) {
+                errors
+                triggered_count
+              }
+            }
+        ''')
+        result = self.client.execute(query, variable_values=data)
 
         return result
 

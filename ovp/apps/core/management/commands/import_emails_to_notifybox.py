@@ -13,6 +13,7 @@ from ovp.apps.core.notifybox import NotifyBoxApi
 from ovp.apps.users.models.profile import get_profile_model
 from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
+from ovp.apps.channels.models import ChannelSetting
 
 def get_email_template_dirs(channel: str) -> str:
     channel_filtered = [ x for x in get_app_template_dirs('templates')
@@ -118,8 +119,8 @@ def insert_template(email_sender, kind, recipient_type, subject, body, client):
 def import_all(channel: str, email_sender: str, dry_run: bool = True):
     """ Import email templates to notifybox
     """
-    access_key = os.environ.get("NOTIFYBOX_ACCESS_KEY")
-    secret_key = os.environ.get("NOTIFYBOX_SECRET_KEY")
+    access_key = ChannelSetting.objects.get(channel__slug = channel, key="NOTIFYBOX_ACCESS_KEY").value
+    secret_key = ChannelSetting.objects.get(channel__slug = channel, key="NOTIFYBOX_SECRET_KEY").value
     client = NotifyBoxApi(access_key, secret_key)
 
     unwanted = [ 'base', 'userDigest', 'userDigest-aws', 'newsletter' ]
