@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 class Command(BaseCommand):
     def handle(self, *args, **options):
         campaign_number = self.get_current_campaign()
-        campaign = DigestCampaign(backend=AWSBackend)
+        campaign = DigestCampaign(backend=AWSBackend, campaign=125)
         sent = set(
             DigestLog.objects.filter(
                 campaign__gte=campaign_number).values_list(
