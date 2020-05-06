@@ -85,25 +85,26 @@ class ContentGenerator():
                 flat=True
             )
         )
-        projects = Project.objects.filter(
-            channel__slug=user.channel.slug,
-            deleted=False,
-            closed=False,
-            published=True,
-            published_date__gte=timezone.now() - relativedelta(
-                seconds=config['projects']['max_age']
-            ),
-        )
-        projects = projects.exclude(pk__in=not_projects)
-        projects = projects.select_related('image', 'job', 'work', 'organization')
-        projects = self.filter_by_address(projects, user)
-        projects = UserSkillsCausesFilter().annotate_queryset(
-            projects, user, no_check=True, append_assumed=True
-        ).order_by("-relevance")
-        projects = projects[:config["projects"]["maximum"]]
+       # projects = Project.objects.filter(
+       #     channel__slug=user.channel.slug,
+       #     deleted=False,
+       #     closed=False,
+       #     published=True,
+       #     published_date__gte=timezone.now() - relativedelta(
+       #         seconds=config['projects']['max_age']
+       #     ),
+       # )
+       # projects = projects.exclude(pk__in=not_projects)
+       # projects = projects.select_related('image', 'job', 'work', 'organization')
+       # projects = self.filter_by_address(projects, user)
+       # projects = UserSkillsCausesFilter().annotate_queryset(
+       #     projects, user, no_check=True, append_assumed=True
+       # ).order_by("-relevance")
+       # projects = projects[:config["projects"]["maximum"]]
 
-        if len(projects) < config["projects"]["minimum"]:
-            return None
+       # if len(projects) < config["projects"]["minimum"]:
+       #     return None
+        projects = []
 
         return {
             "email": user.email,
