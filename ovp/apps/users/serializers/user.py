@@ -266,7 +266,7 @@ class ShortUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
 class LongUserPublicRetrieveSerializer(ChannelRelationshipSerializer):
     avatar = UploadedImageSerializer()
     profile = get_profile_serializers()[1]()
-    applies = ApplyUserRetrieveSerializer(many=True, source="apply_set")
+    applies = ApplyUserRetrieveSerializer(many=True, source="active_applies")
     flairs = FlairSerializer(many=True)
     bookmarked_projects = BookmarkUserRetrieveSerializer(
         many=True, source="projectbookmark_set")

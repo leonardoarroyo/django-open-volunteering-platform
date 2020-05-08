@@ -236,6 +236,9 @@ class User(
             pass
         return qs
 
+    def active_applies(self):
+        return self.apply_set.filter(status__in=['applied', 'confirmed-volunteer'])
+
     def __str__(self):
         # TODO: Move this outside OVP, need to reimplement user model checking
         # everywhere
