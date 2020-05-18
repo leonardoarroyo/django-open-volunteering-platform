@@ -22,5 +22,5 @@ class Command(BaseCommand):
     def get_current_campaign(self):
         last_log = DigestLog.objects.last()
         if last_log:
-            return last_log.campaign
+            return last_log.campaign+1
         return 1
