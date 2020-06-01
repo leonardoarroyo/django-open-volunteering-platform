@@ -111,6 +111,7 @@ class UserAdmin(
             'is_superuser',
             'is_active',
             'is_email_verified',
+            'is_subscribed_to_newsletter',
             'public'
         ),
         'groups',
