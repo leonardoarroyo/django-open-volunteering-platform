@@ -79,6 +79,7 @@ class ProjectResource(CleanModelResource):
     end_date = Field(column_name='Data de Encerramento')
     created_date = Field(column_name='Data de criação')
     closed_date = Field(column_name='Data de fechamento')
+    published_date = Field(column_name='Data de publicação')
     benefited_people = Field(
         attribute='benefited_people',
         column_name='Pessoas beneficiadas'
@@ -122,7 +123,8 @@ class ProjectResource(CleanModelResource):
             'closed',
             'bookmark',
             'created_date',
-            'closed_date'
+            'closed_date',
+            'published_date'
         )
 
     def before_export(self, qs, *args, **kwargs):

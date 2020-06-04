@@ -63,6 +63,7 @@ class OrganizationResource(CleanModelResource):
     benefited_people = Field(
         attribute='benefited_people',
         column_name='Pessoas beneficiadas')
+    published_date = Field(column_name='Data de publicação')
     rating = Field(attribute='rating', column_name='Avaliação')
 
     class Meta:
@@ -276,7 +277,7 @@ class OrganizationAdmin(
         'categories',
         'flairs',
         'members',
-
+        'published_date',
         'facebook_page', 'website', 'instagram_user',
 
         'description', 'details',
