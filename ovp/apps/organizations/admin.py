@@ -91,6 +91,7 @@ class OrganizationResource(CleanModelResource):
             'document',
             'causes',
             'published',
+            'published_date',
             'deleted',
             'created_date',
             'created_project',
@@ -277,7 +278,6 @@ class OrganizationAdmin(
         'categories',
         'flairs',
         'members',
-        'published_date',
         'facebook_page', 'website', 'instagram_user',
 
         'description', 'details',
