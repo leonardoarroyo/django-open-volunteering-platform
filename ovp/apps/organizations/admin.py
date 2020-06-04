@@ -167,6 +167,11 @@ class OrganizationResource(CleanModelResource):
 
         return "Não"
 
+    def dehydrate_published_date(self, project):
+        if project.published_date:
+            return project.published_date.strftime("%d/%m/%Y %H:%M:%S")
+        return ""
+
     def dehydrate_city_state(self, organization):
         if organization.address is not None:
             if isinstance(organization.address, GoogleAddress):

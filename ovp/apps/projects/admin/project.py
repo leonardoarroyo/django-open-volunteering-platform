@@ -181,6 +181,11 @@ class ProjectResource(CleanModelResource):
             return project.closed_date.strftime("%d/%m/%Y %H:%M:%S")
         return ""
 
+    def dehydrate_published_date(self, project):
+        if project.published_date:
+            return project.published_date.strftime("%d/%m/%Y %H:%M:%S")
+        return ""
+
     def dehydrate_start_date(self, project):
         if hasattr(project, 'job'):
             if project.job.start_date:
