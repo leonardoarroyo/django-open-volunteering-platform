@@ -32,6 +32,10 @@ class UserResource(CleanModelResource):
     has_done_volunteer_work_before = Field(
         attribute='has_done_volunteer_work_before'
     )
+    is_active = Field(
+        column_name='Ativo',
+        attribute='is_active'
+    )
 
     class Meta:
         model = User
@@ -43,7 +47,8 @@ class UserResource(CleanModelResource):
             'document',
             'address',
             'city_state',
-            'has_done_volunteer_work_before'
+            'has_done_volunteer_work_before',
+            'is_active',
             'causes',
             'joined_date',
         )
@@ -98,6 +103,9 @@ class UserResource(CleanModelResource):
             userprofile = user.users_userprofile_profile
             return userprofile.has_done_volunteer_work_before
         return None
+
+    def dehydrate_is_active(self, user):
+        return "Sim" if user.is_active else "Não"
 
 
 class UserAdmin(
