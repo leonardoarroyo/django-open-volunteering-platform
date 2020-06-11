@@ -29,7 +29,8 @@ class PostCreateSerializer(ChannelRelationshipSerializer):
 
     class Meta:
         model = models.Post
-        fields = ['content', 'title', 'reply_to', 'user', 'gallery']
+        fields = ['id', 'content', 'title', 'reply_to', 'user', 'gallery']
+        read_only_fields = ['id']
 
 
 class PostUpdateSerializer(ChannelRelationshipSerializer):
