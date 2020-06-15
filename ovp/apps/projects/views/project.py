@@ -9,6 +9,8 @@ from ovp.apps.projects.permissions import (
     ProjectRetrieveOwnsOrIsOrganizationMember
 )
 
+from ovp.apps.users.models import User
+
 from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 from ovp.apps.channels.cache import get_channel_setting
 
@@ -63,8 +65,13 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
 
     def create(self, request, *args, **kwargs):
         """ Create a project. """
-        user = request.user
-        request.data['owner'] = request.data.get('owner', None) or user.pk
+        owner = request.user.pk
+        if request.data.get('owner_id'):
+            try:
+                owner = User.objects.get(uuid=request.data.get('owner_id'))
+            except User.DoesNotExists:
+                pass
+        request.data['owner'] = owner.pk
 
         serializer = self.get_serializer(
             data=request.data,
@@ -82,6 +89,14 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
 
     def partial_update(self, request, *args, **kwargs):
         """ Partially update an organization object. """
+        owner = request.user.pk
+        if request.data.get('owner_id'):
+            try:
+                owner = User.objects.get(uuid=request.data.get('owner_id'))
+            except User.DoesNotExists:
+                pass
+        request.data['owner'] = owner.pk
+
         instance = self.get_object()
         serializer = self.get_serializer(
             instance,
