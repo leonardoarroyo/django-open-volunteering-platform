@@ -65,7 +65,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
 
     def create(self, request, *args, **kwargs):
         """ Create a project. """
-        owner = request.user.pk
+        owner = request.user
         if request.data.get('owner_id'):
             try:
                 owner = User.objects.get(uuid=request.data.get('owner_id'))
@@ -89,7 +89,7 @@ class ProjectResourceViewSet(BookmarkMixin, PostCreateMixin,
 
     def partial_update(self, request, *args, **kwargs):
         """ Partially update an organization object. """
-        owner = request.user.pk
+        owner = request.user
         if request.data.get('owner_id'):
             try:
                 owner = User.objects.get(uuid=request.data.get('owner_id'))
