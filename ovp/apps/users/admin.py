@@ -36,6 +36,10 @@ class UserResource(CleanModelResource):
         column_name='Ativo',
         attribute='is_active'
     )
+    is_subscribed_to_newsletter = Field(
+        column_name='Inscrito na news',
+        attribute='is_subscribed_to_newsletter'
+    )
 
     class Meta:
         model = User
@@ -51,6 +55,7 @@ class UserResource(CleanModelResource):
             'is_active',
             'causes',
             'joined_date',
+            'is_subscribed_to_newsletter',
         )
 
     def before_export(self, queryset, *args, **kwargs):
