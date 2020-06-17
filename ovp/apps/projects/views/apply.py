@@ -75,7 +75,7 @@ class ApplyResourceViewSet(viewsets.GenericViewSet):
             user = request.user
             data['username'] = user.name
             data['email'] = user.email
-            data['phone'] = data['phone'] or user.phone
+            data['phone'] = data.get('phone', user.phone)
             data['user'] = user.id
 
         try:

@@ -30,6 +30,7 @@ def get_core_apps(disable_external=False):
         "ovp.apps.gallery",
         "ovp.apps.donations",
         "ovp.apps.digest",
+        "ovp.apps.salesforce",
     ]
 
     if disable_external:

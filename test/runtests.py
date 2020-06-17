@@ -39,6 +39,7 @@ CUSTOM_INSTALLED_APPS = (
     'ovp.apps.gallery',
     'ovp.apps.digest',
     'ovp.apps.donations',
+    'ovp.apps.salesforce',
     'django.contrib.admin',
     'jet',
     'jet.dashboard',
@@ -191,6 +192,11 @@ settings.configure(
     AWS_DEFAULT_REGION=os.getenv('AWS_DEFAULT_REGION'),
     AWS_ACCESS_KEY_ID=os.getenv('AWS_ACCESS_KEY_ID'),
     AWS_SECRET_ACCESS_KEY=os.getenv('AWS_SECRET_ACCESS_KEY'),
+    SALESFORCE_INTEGRATION={
+        "default": {
+
+        }
+    }
 )
 
 django.setup()
@@ -208,6 +214,7 @@ test_cases = [
     'ovp.apps.ratings',
     'ovp.apps.gallery',
     'ovp.apps.digest',
+    'ovp.apps.salesforce',
 ]
 
 # Allow accessing test options from the command line.
