@@ -808,7 +808,7 @@ class ProjectWithOrganizationTestCase(TestCase):
         client.force_authenticate(user=self.user)
 
         data = copy.deepcopy(base_project)
-        data["owner"] = self.second_user.pk
+        data["owner_id"] = self.second_user.uuid
 
         # Without organization
         response = client.post(reverse("project-list"), data, format="json")
