@@ -367,9 +367,9 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
             for document in documents:
                 try:
                     d = UploadedDocument.objects.get(pk=document.get('id', None))
+                    instance.documents.add(d)
                 except UploadedDocument.DoesNotExist:
                     pass
-                instance.documents.add(d)
 
         # Refetch project as signals alter some fields
         instance = models.Project.objects.get(pk=instance.pk)
