@@ -1,22 +1,24 @@
-
+from django.utils import timezone
+from ovp.apps.organizations.models import Organization
+from django.db.models.signals import post_save
+from django.conf import settings
+from .tasks import push_organization
 
 def store_on_sf(sender, *args, **kwargs):
-  """
-  Schedule task for 7 days after apply asking if user has received contact from organization
-  """
-  instance = kwargs["instance"]
+    print("Store on sf")
+    instance = kwargs["instance"]
+    channel = instance.channel.slug
+    integration_data = getattr(settings, 'SALESFORCE_INTEGRATION',{})
+    channel_integration = integration_data.get(channel, None)
 
-  if instance.channel.slug == "gdd" and kwargs["created"] and not kwargs["raw"]:
-    if not instance.address:
+    if kwargs["raw"] or not channel_integration or not channel_integration.get('enabled', False):
         return None
-    address = GoogleAddress.objects.get(pk=instance.address.pk)
-    country = address.address_components.filter(types__name='country').first()
-    if country:
-        country = country.short_name
-    else:
-        return None
-    managers = User.objects.filter(groups__name="mng-{}".format(country.lower()))
 
-    for manager in managers:
-      GDDMail(manager, async_mail=True).sendProjectCreatedToCountryManager({'project': instance})
-post_save.connect(send_email_to_manager, sender=Project)
+    # Only store published organizations
+    if not instance.published:
+        return None
+
+    push_organization.apply_async(
+        kwargs={"organization_pk": instance.pk},
+    )
+post_save.connect(store_on_sf, sender=Organization)

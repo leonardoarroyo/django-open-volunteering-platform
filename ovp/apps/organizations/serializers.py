@@ -125,24 +125,24 @@ class OrganizationCreateSerializer(ChannelRelationshipSerializer):
             instance.address = address
 
         # Associate causes
-        if causes:
-            instance.causes.remove(
-                *
-                Cause.objects.filter(
-                    channel__slug=self.context["request"].channel))
-            for cause in causes:
-                c = Cause.objects.get(pk=cause['id'])
-                instance.causes.add(c)
+        #if causes:
+        #    instance.causes.remove(
+        #        *
+        #        Cause.objects.filter(
+        #            channel__slug=self.context["request"].channel))
+        #    for cause in causes:
+        #        c = Cause.objects.get(pk=cause['id'])
+        #        instance.causes.add(c)
 
-        # Associate galleries
-        if galleries:
-            instance.galleries.remove(
-                *
-                Gallery.objects.filter(
-                    channel__slug=self.context["request"].channel))
-            for gallery in galleries:
-                g = Gallery.objects.get(pk=gallery['id'])
-                instance.galleries.add(g)
+        ## Associate galleries
+        #if galleries:
+        #    instance.galleries.remove(
+        #        *
+        #        Gallery.objects.filter(
+        #            channel__slug=self.context["request"].channel))
+        #    for gallery in galleries:
+        #        g = Gallery.objects.get(pk=gallery['id'])
+        #        instance.galleries.add(g)
 
         instance.save()
 
