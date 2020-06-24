@@ -67,7 +67,7 @@ def create_client(channel):
     auth_data = get_auth_data(channel)
     return Salesforce(**auth_data)
 
-@task(name='ovp.salesforce.push_organization')
+@task(name='ovp.apps.salesforce.push_organization')
 def push_organization(organization_pk):
     organization = Organization.objects.get(pk=organization_pk)
     sf = create_client(organization.channel.slug)
