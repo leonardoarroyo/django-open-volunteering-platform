@@ -24,6 +24,13 @@ ORGANIZATION_TYPES = (
     (3, _('Group of volunteers')),
 )
 
+NOT_PUBLISHED_REASON = (
+    (0, _('Duplicated')),
+    (1, _('Unfit(religion/government)')),
+    (2, _('Incomplete information')),
+    (3, _('Other')),
+)
+
 
 class Organization(ChannelRelationship, RatedModelMixin):
     # Relationships
@@ -159,6 +166,13 @@ class Organization(ChannelRelationship, RatedModelMixin):
         _('Reminder'), default=False, blank=False)
     reminder_sent_date = models.DateTimeField(
         _('Reminder sent date'), blank=True, null=True)
+    not_published_reason = models.PositiveSmallIntegerField(
+        _('Reason it\'s not published'), choices=NOT_PUBLISHED_REASON, blank=True, null=True)
+    salesforce_id = models.CharField(
+        _('Salesforce ID'),
+        max_length=100,
+        blank=True,
+        null=True)
 
     @staticmethod
     def autocomplete_search_fields():

@@ -266,11 +266,12 @@ class OrganizationAdmin(
     }
 
     fields = [
-        ('id', 'highlighted'), ('name', 'slug'),
+        ('id', 'salesforce_id', 'highlighted'), ('name', 'slug'),
         ('owner'),  # - 'type'
 
         ('published', 'deleted', 'verified'),
         ('published_date', 'deleted_date'),
+        'not_published_reason',
         'rating',
         'benefited_people',
         'address',
