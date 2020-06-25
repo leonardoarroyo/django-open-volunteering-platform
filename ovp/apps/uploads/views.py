@@ -11,6 +11,7 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework import response
 from rest_framework import status
+from rest_framework.parsers import FormParser, MultiPartParser
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -24,11 +25,10 @@ image_param = openapi.Parameter(
     type=openapi.TYPE_FILE
 )
 
-
 @ChannelViewSet
 class UploadedImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
-
     queryset = UploadedImage.objects.all()
+    parser_classes = [FormParser, MultiPartParser]
 
     @swagger_auto_schema(manual_parameters=[image_param],
                          responses={201: UploadedImageSerializer})
