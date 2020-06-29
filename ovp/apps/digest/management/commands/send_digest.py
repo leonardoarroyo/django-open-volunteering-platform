@@ -1,6 +1,7 @@
 from ovp.apps.digest.digest import ContentGenerator
 from ovp.apps.digest.digest import DigestCampaign
 from ovp.apps.digest.models import DigestLog
+from ovp.apps.digest.models import DigestLogContent
 from ovp.apps.digest.backends.aws import AWSBackend
 from django.core.management.base import BaseCommand
 

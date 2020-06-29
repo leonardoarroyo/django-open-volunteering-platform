@@ -21,13 +21,11 @@ import requests
 
 config = {
     'interval': {
-        #'minimum': 60 * 60 * 24 * 5,
-        'minimum': 60 * 60 * 24 * 0,
+        'minimum': 60 * 60 * 24 * 5,
         'maximum': 0
     },
     'projects': {
-        #'minimum': 3,
-        'minimum': 0,
+        'minimum': 3,
         'maximum': 6,
         'max_age': 60 * 60 * 24 * 7 * 2,
     }
@@ -85,26 +83,25 @@ class ContentGenerator():
                 flat=True
             )
         )
-       # projects = Project.objects.filter(
-       #     channel__slug=user.channel.slug,
-       #     deleted=False,
-       #     closed=False,
-       #     published=True,
-       #     published_date__gte=timezone.now() - relativedelta(
-       #         seconds=config['projects']['max_age']
-       #     ),
-       # )
-       # projects = projects.exclude(pk__in=not_projects)
-       # projects = projects.select_related('image', 'job', 'work', 'organization')
-       # projects = self.filter_by_address(projects, user)
-       # projects = UserSkillsCausesFilter().annotate_queryset(
-       #     projects, user, no_check=True, append_assumed=True
-       # ).order_by("-relevance")
-       # projects = projects[:config["projects"]["maximum"]]
+        projects = Project.objects.filter(
+            channel__slug=user.channel.slug,
+            deleted=False,
+            closed=False,
+            published=True,
+            published_date__gte=timezone.now() - relativedelta(
+                seconds=config['projects']['max_age']
+            ),
+        )
+        projects = projects.exclude(pk__in=not_projects)
+        projects = projects.select_related('image', 'job', 'work', 'organization')
+        projects = self.filter_by_address(projects, user)
+        projects = UserSkillsCausesFilter().annotate_queryset(
+            projects, user, no_check=True, append_assumed=True
+        ).order_by("-relevance")
+        projects = projects[:config["projects"]["maximum"]]
 
-       # if len(projects) < config["projects"]["minimum"]:
-       #     return None
-        projects = []
+        if len(projects) < config["projects"]["minimum"]:
+            return None
 
         return {
             "email": user.email,
@@ -136,7 +133,6 @@ class ContentGenerator():
                             p,
                             'work') else None)} for p in projects
             ],
-            "posts": []
             #"posts": self.get_blog_posts()
         }
 
@@ -261,8 +257,8 @@ class DigestCampaign():
                 chunks))
 
         out = []
-        # template_context = self.cg.get_blog_posts()
-        template_context = {}
+        template_context = self.cg.get_blog_posts()
+        #template_context = {}
         for i in range(0, len(user_list), chunk_size):
             chunk_i = math.ceil(i / chunk_size) + 1
 
