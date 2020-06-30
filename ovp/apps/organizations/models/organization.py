@@ -26,8 +26,8 @@ ORGANIZATION_TYPES = (
 
 NOT_PUBLISHED_REASON = (
     (0, _('Duplicated')),
-    (1, _('Unfit(religion/government)')),
-    (2, _('Incomplete information')),
+    (1, _('Unfit')),
+    (2, _('No response from organization')),
     (3, _('Other')),
 )
 
