@@ -131,6 +131,8 @@ class Organization(ChannelRelationship, RatedModelMixin):
     benefited_people = models.IntegerField(
         _('Benefited people'), blank=True, null=True, default=0)
     allow_donations = models.BooleanField(_('Allow donations'), default=False)
+    order = models.PositiveSmallIntegerField(
+        _('Order'), default=0)
 
     # Organization contact
     contact_name = models.CharField(

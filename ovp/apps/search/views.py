@@ -91,6 +91,7 @@ class OrganizationSearchResource(
         'details',
         'description',
         'type',
+        'order',
         'hidden_address')
     serializer_class = OrganizationSearchSerializer
 
