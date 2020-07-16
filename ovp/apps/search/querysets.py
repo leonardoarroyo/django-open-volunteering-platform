@@ -7,8 +7,8 @@ from ovp.apps.users.models.user import User
 
 def get_organization_queryset(request=None):
     queryset = Organization.objects.filter(deleted=False) \
-        .prefetch_related('causes') \
-        .select_related('address', 'channel') \
+        .prefetch_related('causes', 'causes__image') \
+        .select_related('address', 'channel', 'image') \
         .order_by('-highlighted')
     queryset = annotate_bookmark(queryset, request=request)
     return queryset
@@ -16,8 +16,8 @@ def get_organization_queryset(request=None):
 
 def get_project_queryset(request=None):
     queryset = Project.objects \
-        .prefetch_related('skills', 'causes', 'categories', 'job__dates') \
-        .select_related('address', 'owner', 'work', 'job', 'channel') \
+        .prefetch_related('skills', 'causes', 'categories', 'job__dates', 'causes__image') \
+        .select_related('address', 'organization__address', 'owner', 'work', 'job', 'channel', 'organization', 'image',  'organization__image') \
         .filter(deleted=False) \
         .order_by('-pk')
     queryset = annotate_bookmark(queryset, request=request)
