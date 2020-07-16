@@ -1,3 +1,5 @@
+import os
+import time
 import re
 from ovp.apps.channels.cache import get_channel
 
@@ -215,3 +217,20 @@ class ChannelProcessorMiddleware():
             return True
 
         return False
+
+class StatsMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.path = os.path.join(os.path.expanduser('~'), 'timelog')
+
+    def __call__(self, request):
+        start_time = time.time()
+
+        response = self.get_response(request)
+
+        now = time.time()
+        duration = now - start_time
+
+        with open(self.path, 'a+') as f:
+            f.write(f"{now} - {request.path} - {int(duration * 1000)}ms")
+        return response
