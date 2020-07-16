@@ -232,5 +232,5 @@ class StatsMiddleware:
         duration = now - start_time
 
         with open(self.path, 'a+') as f:
-            f.write(f"{now} - {request.path} - {int(duration * 1000)}ms")
+            f.write(f"{now} - {request.path} - {int(duration * 1000)}ms\n")
         return response
