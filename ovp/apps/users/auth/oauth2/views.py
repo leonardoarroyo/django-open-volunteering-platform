@@ -1,3 +1,4 @@
+import requests
 from rest_framework import response
 from rest_framework.decorators import (
     api_view, authentication_classes, permission_classes
@@ -18,6 +19,7 @@ from ovp.apps.users.auth.oauth2 import serializers
 from ovp.apps.users.auth.backends import UserDeactivatedException
 from .validators import OAuth2Validator
 from .oauthlib_core import KeepRequestChannel
+from ovp.apps.core.notifybox import create_client
 
 
 class TokenView(BaseTokenView):
@@ -32,9 +34,15 @@ class TokenView(BaseTokenView):
     def post(self, *args, **kwargs):
         """ Exchange authentication credentials for authentication token. """
         try:
-            return super().post(*args, **kwargs)
+            result = super().post(*args, **kwargs)
+            try:
+                nfc = create_client(args[0].channel)
+                result.data["notifications_token"] = nfc.createUserToken(["user#1"], "user#1")["createUserToken"]
+            except requests.exceptions.ConnectionError:
+                result.data["notifications_token"] = None
         except UserDeactivatedException as e:
             return response.Response(e.response, status=401)
+        return result
 
 
 
