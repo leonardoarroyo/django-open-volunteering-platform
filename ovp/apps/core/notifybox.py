@@ -351,3 +351,11 @@ class NotifyBoxApi:
             return self.updateTrigger(kind_id, message_template_id, recipient_type)['update_notificationTrigger']['returning'][0]
         else:
             return self.createTrigger(kind_id, message_template_id, recipient_type)['insert_notificationTrigger_one']
+
+def create_client(channel):
+    try:
+        access_key = ChannelSetting.objects.get(channel__slug = channel, key="NOTIFYBOX_ACCESS_KEY").value
+        secret_key = ChannelSetting.objects.get(channel__slug = channel, key="NOTIFYBOX_SECRET_KEY").value
+    except:
+        return None
+    return NotifyBoxApi(access_key, secret_key)

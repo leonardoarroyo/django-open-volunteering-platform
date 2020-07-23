@@ -35,11 +35,13 @@ class TokenView(BaseTokenView):
         """ Exchange authentication credentials for authentication token. """
         try:
             result = super().post(*args, **kwargs)
+            result.data["notifications_token"] = None
             try:
                 nfc = create_client(args[0].channel)
-                result.data["notifications_token"] = nfc.createUserToken(["user#1"], "user#1")["createUserToken"]
+                if nfc:
+                    result.data["notifications_token"] = nfc.createUserToken(["user#1"], "user#1")["createUserToken"]
             except requests.exceptions.ConnectionError:
-                result.data["notifications_token"] = None
+                pass
         except UserDeactivatedException as e:
             return response.Response(e.response, status=401)
         return result
