@@ -1,9 +1,12 @@
+import requests
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from django.utils import timezone
 
 from ovp.apps.core.serializers.flair import FlairSerializer
+from ovp.apps.core.notifybox import create_client
 
 from ovp.apps.users import models
 from ovp.apps.users.helpers import get_settings, import_from_string
@@ -194,6 +197,7 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
     rating_requests_project_count = serializers.SerializerMethodField()
     rating_requests_projects_with_unrated_users = serializers.SerializerMethodField()
     chat_enabled = serializers.SerializerMethodField()
+    notifications_token = serializers.SerializerMethodField()
 
     class Meta:
         model = models.User
@@ -217,8 +221,30 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
             'document',
             'is_email_verified',
             'is_staff',
-            'is_superuser'
+            'is_superuser',
+            'notifications_token'
         ]
+
+    def get_notifications_token(self, obj):
+        channel_slug = obj.channel.slug
+        try:
+            nfc = create_client(channel_slug)
+            if nfc:
+                organizations = obj.active_organizations()
+                user_ref = f"user#{obj.pk}"
+                organization_refs = [f"organization#{x.pk}" for x in organizations]
+                recipients = [user_ref, *organization_refs]
+                cache_string = f"notifications-token-{channel_slug}-{obj.pk}-{'-'.join(recipients)}"
+
+                cached_token = cache.get(cache_string)
+
+                if not cached_token:
+                    cached_token = nfc.createUserToken(recipients, user_ref)["createUserToken"]
+                    cache.set(cache_string, cached_token, 180)
+                return cached_token
+        except requests.exceptions.ConnectionError:
+            pass
+        return None
 
     def get_chat_enabled(self, obj):
         applies = Apply.objects.filter(

@@ -1,6 +1,7 @@
 import json
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
+from ovp.apps.channels.models import ChannelSetting
 
 class GQLClient(Client):
     """ Patches execute method to return error object instead of stringified version """
@@ -75,6 +76,28 @@ class NotifyBoxApi:
 
         return result
 
+
+    def createUserToken(self, recipients, ref):
+        data = {
+            "ref": ref,
+            "recipients": recipients,
+        }
+        query = gql('''
+            mutation CreateToken($recipients: [String!]!, $ref: String!) {
+              createUserToken(recipient_ids: $recipients, ref: $ref)
+            }
+        ''')
+
+        try:
+            result = self.client.execute(query, variable_values=data)
+        except Exception as e:
+            raise
+            if e.args[0]['message'] == 'The provided secret is invalid':
+                raise InvalidAuth()
+
+            raise
+
+        return result
     def createApp(self, name):
         data = {
             "name": name
