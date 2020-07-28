@@ -15,9 +15,15 @@ POSSIBLE_TYPES = (
 
 
 class RatingParameter(ChannelRelationship):
-    slug = models.CharField(_('Name'), max_length=100, unique=True)
+    slug = models.CharField(_('Name'), max_length=100)
     description = models.TextField(_('Description'))
     type = models.IntegerField(_('Parameter type'), choices=POSSIBLE_TYPES)
+
+    class Meta:
+        app_label = 'ratings'
+        verbose_name = _('rating parameter')
+        verbose_name_plural = _('rating parameters')
+        unique_together = (("slug", "channel"), )
 
 
 class Rating(ChannelRelationship):
