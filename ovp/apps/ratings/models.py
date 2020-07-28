@@ -1,4 +1,4 @@
-import uuid
+import uuid as uuid_generator
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
@@ -27,7 +27,7 @@ class RatingParameter(ChannelRelationship):
 
 
 class Rating(ChannelRelationship):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    uuid = models.UUIDField(default=uuid_generator.uuid4, editable=False, unique=True)
     owner = models.ForeignKey('users.User', related_name='ratings_posted', on_delete=models.DO_NOTHING)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
@@ -43,7 +43,8 @@ class RatingAnswer(ChannelRelationship):
 
 
 class RatingRequest(ChannelRelationship):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    permission_token = models.UUIDField(default=uuid_generator.uuid4, editable=False, unique=True)
+    uuid = models.UUIDField(default=uuid_generator.uuid4, editable=False, unique=True)
     requested_user = models.ForeignKey(
         'users.User', related_name='rating_requests', on_delete=models.DO_NOTHING)
     rating_parameters = models.ManyToManyField('ratings.RatingParameter')

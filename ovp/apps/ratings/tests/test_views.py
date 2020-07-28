@@ -250,6 +250,43 @@ class RatingViewsTest(TestCase):
             Rating.objects.first().answers.last().value_qualitative,
             "Minha resposta :-)")
 
+    def test_can_rate_unauthenticated_with_permission_token(self):
+        data = {
+            "answers": [
+                {
+                    "parameter_slug": "test-project-score",
+                    "value_quantitative": 1
+                },
+                {
+                    "parameter_slug": "test-project-how-was-it",
+                    "value_qualitative": "Minha resposta :-)"
+                }
+            ]
+        }
+        uuid = str(RatingRequest.objects.last().uuid)
+        permission_token = str(RatingRequest.objects.last().permission_token)
+        client = APIClient()
+        response = client.post(
+            reverse(
+                "rating-request-rate",
+                [uuid]),
+            data,
+            format="json",
+            HTTP_X_OVP_PERMISSION_TOKEN=permission_token
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_cant_rate_if_unauthenticated(self):
+        uuid = str(RatingRequest.objects.first().uuid)
+        client = APIClient()
+        response = client.post(
+            reverse(
+                "rating-request-rate",
+                [uuid]),
+            {},
+            format="json")
+        self.assertEqual(response.status_code, 401)
+
     def test_cant_re_rate(self):
         self.test_can_rate()
         data = {"answers": [{"parameter_slug": "test-project-score",
