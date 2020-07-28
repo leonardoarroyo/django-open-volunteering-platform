@@ -295,7 +295,7 @@ class ProjectSearchTestCase(TestCase):
         # 1 is user related
         # 5 queries are search related
         # 2 are middleware/channel related
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get(
                 reverse("search-projects-list"), format="json")
 
@@ -674,7 +674,7 @@ class OrganizationSearchTestCase(TestCase):
         # 1 is user related
         # 2 queries are search related
         # 2 are middleware/channel related
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get(
                 reverse("search-organizations-list"), format="json")
 
@@ -1264,7 +1264,7 @@ class BookmarkTestCase(TestCase):
 
         # Logged out
         cache.clear()
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             # Only 7 queries
             # 1 is user related
             # 2 are channel related
@@ -1276,7 +1276,7 @@ class BookmarkTestCase(TestCase):
 
         # Logged in
         self.client.force_authenticate(user=user)
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get(
                 reverse("search-projects-list"), format="json")
             self.assertEqual(
@@ -1287,7 +1287,7 @@ class BookmarkTestCase(TestCase):
             user=user, project=project, object_channel="default")
 
         # Logged in and bookmarked
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get(
                 reverse("search-projects-list"), format="json")
             self.assertEqual(
@@ -1295,7 +1295,7 @@ class BookmarkTestCase(TestCase):
 
         # Logged in as another user(not bookmarked)
         self.client.force_authenticate(user=user2)
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get(
                 reverse("search-projects-list"), format="json")
             self.assertEqual(
@@ -1317,7 +1317,7 @@ class BookmarkTestCase(TestCase):
 
         # Logged out
         cache.clear()
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             # Only 4 queries
             # 1 user related
             # 2 are channel related
@@ -1329,7 +1329,7 @@ class BookmarkTestCase(TestCase):
 
         # Logged in
         self.client.force_authenticate(user=user)
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             response = self.client.get(
                 reverse("search-organizations-list"), format="json")
             self.assertEqual(
@@ -1340,7 +1340,7 @@ class BookmarkTestCase(TestCase):
             user=user, organization=organization, object_channel="default")
 
         # Logged in and bookmarked
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             response = self.client.get(
                 reverse("search-organizations-list"), format="json")
             self.assertEqual(
@@ -1348,7 +1348,7 @@ class BookmarkTestCase(TestCase):
 
         # Logged in as another user(not bookmarked)
         self.client.force_authenticate(user=user2)
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             response = self.client.get(
                 reverse("search-organizations-list"), format="json")
             self.assertEqual(
