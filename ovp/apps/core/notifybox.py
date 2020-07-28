@@ -382,3 +382,21 @@ def create_client(channel):
     except:
         return None
     return NotifyBoxApi(access_key, secret_key)
+
+class NotificationManager():
+    clients = {}
+
+    def trigger(self, channel, kind, recipients, data, meta):
+        client = self.get_client(channel)
+        if client:
+            client.triggerNotifications(self, kind, data, meta, recipients)
+
+    def get_client(self, channel):
+        try:
+            client = self.clients["channel"]
+        except KeyError:
+            client = create_client(channel)
+            self.clients["channel"] = client
+        return client
+
+notification_manager = NotificationManager()
