@@ -18,6 +18,7 @@ class RatingParameter(ChannelRelationship):
     slug = models.CharField(_('Name'), max_length=100)
     description = models.TextField(_('Description'))
     type = models.IntegerField(_('Parameter type'), choices=POSSIBLE_TYPES)
+    required = models.BooleanField(_('Required'), default=False)
 
     class Meta:
         app_label = 'ratings'

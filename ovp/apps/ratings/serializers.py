@@ -50,7 +50,6 @@ class RatedObject(RelatedField):
             return OrganizationRetrieveSerializer(
                 obj, context=self.context).data
 
-
 class RatingParameterRetriveSetrializer(ChannelRelationshipSerializer):
     type = SerializerMethodField()
 
@@ -60,6 +59,37 @@ class RatingParameterRetriveSetrializer(ChannelRelationshipSerializer):
 
     def get_type(self, obj):
         return obj.get_type_display()
+
+class RatingRequestCountSerializer(ChannelRelationshipSerializer):
+    rating_requests_user_count = SerializerMethodField()
+    rating_requests_project_count = SerializerMethodField()
+    rating_requests_projects_with_unrated_users = SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['rating_requests_user_count', 'rating_requests_project_count', 'rating_requests_projects_with_unrated_users']
+
+    def get_rating_requests_user_count(self, obj):
+        return obj.rating_requests.filter(
+            deleted_date=None,
+            rating=None,
+            content_type__model="user").count()
+
+    def get_rating_requests_project_count(self, obj):
+        return obj.rating_requests.filter(
+            deleted_date=None,
+            rating=None,
+            content_type__model="project").count()
+
+    def get_rating_requests_projects_with_unrated_users(self, obj):
+        return len(
+            obj.rating_requests.filter(
+                deleted_date=None,
+                rating=None,
+                content_type__model="user",
+                initiator_type__model="project").values_list(
+                "initiator_id",
+                flat=True).distinct())
 
 
 class RatingRequestRetrieveSerializer(ChannelRelationshipSerializer):
@@ -81,7 +111,7 @@ class RatingRequestRetrieveSerializer(ChannelRelationshipSerializer):
         return get_object_type(obj.rated_object)
 
 
-class RatingAnswerCreateSerializer(Serializer):
+class RatingAnswerCreateUpdateSerializer(Serializer):
     parameter_slug = CharField()
     value_quantitative = FloatField(required=False)
     value_qualitative = CharField(required=False)
@@ -104,13 +134,18 @@ class RatingAnswerCreateSerializer(Serializer):
         return RatingAnswer.objects.create(
             object_channel=self.context['request'].channel, **data)
 
+    def update(self, instance, data):
+        del data['parameter_slug']
+        return RatingAnswer.objects.filter(pk=instance.pk).update(
+            **data)
+
     def validate(self, data, *args, **kwargs):
         try:
             parameter = RatingParameter.objects.get(
                 slug=data['parameter_slug'])
         except RatingParameter.DoesNotExist:
             return super(
-                RatingAnswerCreateSerializer,
+                RatingAnswerCreateUpdateSerializer,
                 self).validate(
                 data,
                 *args,
@@ -139,11 +174,29 @@ class RatingAnswerCreateSerializer(Serializer):
 
 
 class RatingCreateSerializer(ChannelRelationshipSerializer):
-    answers = RatingAnswerCreateSerializer(many=True)
+    answers = RatingAnswerCreateUpdateSerializer(many=True)
 
     class Meta:
         model = Rating
         fields = ['owner', 'answers', 'request']
+
+    def update(self, rating, data, *args, **kwargs):
+        answers = data.pop('answers', [])
+        self.context['rating'] = rating
+
+        for answer in answers:
+            try:
+                existing_answer = RatingAnswer.objects.get(rating=rating, parameter__slug=answer["parameter_slug"])
+                serializer = RatingAnswerCreateUpdateSerializer(
+                    existing_answer, data=answer, context=self.context
+                )
+            except RatingAnswer.DoesNotExist:
+                serializer = RatingAnswerCreateUpdateSerializer(
+                    data=answer, context=self.context
+                )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        return rating
 
     def create(self, data, *args, **kwargs):
         answers = data.pop('answers', [])
@@ -151,13 +204,12 @@ class RatingCreateSerializer(ChannelRelationshipSerializer):
             RatingCreateSerializer,
             self).create(
             data,
-            *
-            args,
+            *args,
             **kwargs)
 
         self.context['rating'] = rating
         for answer in answers:
-            serializer = RatingAnswerCreateSerializer(
+            serializer = RatingAnswerCreateUpdateSerializer(
                 data=answer, context=self.context)
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -167,16 +219,18 @@ class RatingCreateSerializer(ChannelRelationshipSerializer):
         rating_request = self.context["rating_request"]
         tmp_rating_request_parameter_slugs = [
             x.slug for x in rating_request.rating_parameters.all()]
-
+        tmp_required_rating_request_parameter_slugs = [
+            x.slug for x in rating_request.rating_parameters.filter(required=True)]
         try:
-            if Rating.objects.get(request=rating_request):
-                raise ValidationError("This request has already been rated.")
+            rating = Rating.objects.get(request=rating_request)
+            existing_parameters = [x.parameter.slug for x in
+                    RatingAnswer.objects.filter(rating=rating)]
         except Rating.DoesNotExist:
-            pass
+            existing_parameters = []
 
         self.validate_duplicated_parameters(data)
         self.validate_missing_parameters(
-            data, tmp_rating_request_parameter_slugs)
+            data, tmp_required_rating_request_parameter_slugs, existing_parameters)
         self.validate_extra_parameters(
             data, tmp_rating_request_parameter_slugs)
 
@@ -197,11 +251,12 @@ class RatingCreateSerializer(ChannelRelationshipSerializer):
                 " Check you request body."
             )
 
-    def validate_missing_parameters(self, data, request_parameter_slugs):
+    def validate_missing_parameters(self, data, request_parameter_slugs, existing_parameters):
+        required_parameters = [x for x in request_parameter_slugs if x not in existing_parameters]
         sent_slugs = [answer["parameter_slug"] for answer in data["answers"]]
         missing = []
 
-        for parameter in request_parameter_slugs:
+        for parameter in required_parameters:
             if parameter not in sent_slugs:
                 missing.append(parameter)
 

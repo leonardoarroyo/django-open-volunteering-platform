@@ -55,7 +55,9 @@ class RatingRequestResourceViewSet(
     @decorators.action(methods=["POST"], detail=True)
     def rate(self, request, *args, **kwargs):
         ctx = self.get_serializer_context()
-        ctx['rating_request'] = self.get_object()
+        obj = self.get_object()
+        ctx['rating_request'] = obj
+        ratings = models.Rating.objects.filter(request=obj)
 
         # Owner
         request.data['owner'] = ctx['rating_request'].requested_user.pk
@@ -64,17 +66,26 @@ class RatingRequestResourceViewSet(
         request.data['request'] = ctx['rating_request'].pk
 
         serializer_class = self.get_serializer_class()
-        serializer = serializer_class(data=request.data, context=ctx)
+        if ratings.count():
+            serializer = serializer_class(ratings[0], data=request.data, context=ctx)
+        else:
+            serializer = serializer_class(data=request.data, context=ctx)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return response.Response({"success": True}, status=200)
+
+    @decorators.action(methods=["GET"], detail=False)
+    def count(self, request, *args, **kwargs):
+        ctx = self.get_serializer_context()
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(request.user, context=ctx)
+        return response.Response(serializer.data, status=200)
 
     def get_queryset(self, *args, **kwargs):
         token = self.request.headers.get('x-ovp-permission-token', None)
         qs = models.RatingRequest.objects.filter(
             channel__slug=self.request.channel,
-            deleted_date=None,
-            rating=None)
+            deleted_date=None)
         if token:
             qs = qs.filter(permission_token=token)
         else:
@@ -102,10 +113,16 @@ class RatingRequestResourceViewSet(
         if self.action == 'projects_with_unrated_users':
             return ProjectManageableRetrieveSerializer
 
+        if self.action == 'count':
+            return serializers.RatingRequestCountSerializer
+
         return serializers.RatingRequestRetrieveSerializer
 
     def get_permissions(self):
         if self.action == 'list':
+            self.permission_classes = (permissions.IsAuthenticated, )
+
+        if self.action == 'count':
             self.permission_classes = (permissions.IsAuthenticated, )
 
         if self.action == 'retrieve':
