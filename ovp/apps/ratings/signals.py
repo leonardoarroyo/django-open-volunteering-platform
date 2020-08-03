@@ -1,4 +1,5 @@
 from ovp.apps.channels.cache import get_channel_setting
+from ovp.apps.core.notifybox import notification_manager
 
 from ovp.apps.projects.models import Project
 from django.db.models.signals import post_save
@@ -28,9 +29,12 @@ def create_rating_request(sender, *args, **kwargs):
          instance.pk and
          Project.objects.get(pk=instance.pk).closed == False and
          enabled):
+        notifybox_client = notification_manager.get_client(channel)
         for apply in instance.apply_set.all():
           req = RatingRequest.objects.create(requested_user=apply.user, rated_object=instance, initiator_object=instance, object_channel=instance.channel.slug)
           req.rating_parameters.add(get_or_create_parameter("user-participated", 3, channel))
           req.rating_parameters.add(get_or_create_parameter("user-opinion", 1, channel))
           req.rating_parameters.add(get_or_create_parameter("user-project-rating", 2, channel))
+          #notification_manager.trigger(channel, "ratingRequested", [], {}, {})
+
 pre_save.connect(create_rating_request, sender=Project)

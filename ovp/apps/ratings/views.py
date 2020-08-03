@@ -22,11 +22,21 @@ from ovp.apps.channels.viewsets.decorators import ChannelViewSet
 
 @ChannelViewSet
 class RatingRequestResourceViewSet(
-        mixins.ListModelMixin,
         mixins.RetrieveModelMixin,
         viewsets.GenericViewSet):
     lookup_field = 'uuid'
     pagination_class = pagination.NoPagination
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset()).filter(rating=None)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return response.Response(serializer.data)
 
     @decorators.action(methods=["GET"], detail=False)
     def projects_with_unrated_users(self, request, *args, **kwargs):
