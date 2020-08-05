@@ -1,4 +1,8 @@
 import pytz
+import json
+import base64
+import binascii
+from PIL import Image
 from rest_framework import response
 from rest_framework import decorators
 from rest_framework import status
@@ -10,6 +14,7 @@ from ovp.apps.core import emails
 from ovp.apps.users.models.user import User
 from ovp.apps.organizations.models.organization import Organization
 from ovp.apps.projects.models.project import Project
+from ovp.apps.ratings.models import Rating, RatingAnswer
 
 from drf_yasg.utils import swagger_auto_schema
 
@@ -126,3 +131,22 @@ def footprint(request):
 @swagger_auto_schema(responses={200: 'OK'})
 def ready(request):
     return HttpResponse(status=200)
+
+@swagger_auto_schema(responses={200: 'OK'})
+def pixel(request):
+    red = Image.new('RGBA', (1, 1), (255,0,0,0))
+    response = HttpResponse(content_type="image/jpeg")
+    red.save(response, "PNG")
+
+    encoded = request.GET.get('b', '')
+    try:
+        decoded = base64.b64decode(encoded)
+    except binascii.Error:
+        decoded = json.dumps({"source": "invalid b64", "meta": {}})
+
+    try:
+        data = json.loads(decoded)
+    except json.decoder.JSONDecodeError:
+        data = {"source": "invalid json", "meta": {}}
+    models.Pixel.objects.create(**data, object_channel=request.channel)
+    return response

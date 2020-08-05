@@ -9,4 +9,5 @@ urlpatterns = [
     url("^lead/$", views.record_lead, name="lead"),
     url("^footprint/$", views.footprint, name="footprint"),
     url("^ready/$", views.ready, name="ready"),
+    url("^pix/$", views.pixel, name="pixel"),
 ]

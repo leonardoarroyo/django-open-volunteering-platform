@@ -15,7 +15,7 @@ from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
 from ovp.apps.channels.models import ChannelSetting
 
-kinds = ["applicationConfirmed", "applicationCanceled", "applicationCreated", "applicationReminder"]
+kinds = ["applicationConfirmed", "applicationCanceled", "applicationCreated", "applicationReminder", "ratingRequested"]
 
 def import_kinds(channel: str):
     """ Import email templates to notifybox
