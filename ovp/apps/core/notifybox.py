@@ -1,3 +1,4 @@
+import os
 import json
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
@@ -19,8 +20,8 @@ class InvalidAuth(Exception):
     pass
 
 class NotifyBoxApi:
-    endpoint = 'http://hasura-notifications-api_graphql-engine_1:8080/v1/graphql'
     def __init__(self, access_key = None, secret_key = None, token=None, admin_secret=None):
+        self.endpoint = os.environ.get('NOTIFYBOX_URL', 'http://hasura-notifications-api_graphql-engine_1:8080/v1/graphql')
         self.access_key = access_key
         self.secret_key = secret_key
         self.token = token
@@ -149,6 +150,7 @@ class NotifyBoxApi:
             "recipients": recipients,
             "kind": kind
         }
+        print(data)
         query = gql('''
             mutation TriggerNotification($data: TriggerNotificationJsonb!, $kind: String!, $meta: TriggerNotificationJsonb!, $recipients: [RecipientInput]!){
               trigger_notification(data: $data, kind: $kind, meta: $meta, recipients: $recipients) {
@@ -386,10 +388,10 @@ def create_client(channel):
 class NotificationManager():
     clients = {}
 
-    def trigger(self, channel, kind, recipients, data, meta):
+    def trigger(self, channel, kind, data, meta, recipients):
         client = self.get_client(channel)
         if client:
-            client.triggerNotifications(self, kind, data, meta, recipients)
+            client.triggerNotifications(kind, data, meta, recipients)
 
     def get_client(self, channel):
         try:

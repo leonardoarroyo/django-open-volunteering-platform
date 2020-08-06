@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 from ovp.apps.projects import emails
+from ovp.apps.core.notifybox import notification_manager
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
@@ -97,12 +98,50 @@ class Apply(ChannelRelationship):
         if creating and self.project.closed is False:
             self.mailing().sendAppliedToVolunteer({'apply': self})
             self.mailing().sendAppliedToOwner({'apply': self})
+            notification_manager.trigger(
+                self.channel.slug,
+                "applicationCreated",
+                {"path": f"/vaga/{self.project.slug}"},
+                {},
+                [{
+                    "recipient": f"organization#{self.project.organization.pk}",
+                    "via": "app",
+                    "type": "default"
+                }]
+            )
         else:
             if (self.__original_status != self.status
                     and self.status == "unapplied"
                     and self.project.closed is False):
                 self.mailing().sendUnappliedToVolunteer({'apply': self})
                 self.mailing().sendUnappliedToOwner({'apply': self})
+                notification_manager.trigger(
+                    self.channel.slug,
+                    "applicationCanceled",
+                    {"path": f"/ong/{self.project.organization.slug}/vaga/{self.project.slug}"},
+                    {},
+                    [{
+                        "recipient": f"organization#{self.project.organization.pk}",
+                        "via": "app",
+                        "type": "default"
+                    }]
+                )
+
+            if (self.__original_status != self.status
+                    and self.status == "confirmed-volunteer"
+                    and self.project.closed is False
+                    and self.user):
+                notification_manager.trigger(
+                    self.channel.slug,
+                    "applicationConfirmed",
+                    {"path": f"/ong/{self.project.organization.slug}/vaga/{self.project.slug}"},
+                    {},
+                    [{
+                        "recipient": f"user#{self.user.uuid}",
+                        "via": "app",
+                        "type": "default"
+                    }]
+                )
 
         # Update original values
         self.__original_status = self.status

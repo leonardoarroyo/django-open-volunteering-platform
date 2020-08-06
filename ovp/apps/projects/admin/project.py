@@ -275,7 +275,7 @@ class ProjectAdmin(BaseAux):
     }
 
     fields = [
-        ('id', 'highlighted'), ('name', 'slug'),
+        ('id', 'highlighted', 'order'), ('name', 'slug'),
         ('organization', 'owner'),
         ('owner__name', 'owner__email', 'owner__phone'),
 

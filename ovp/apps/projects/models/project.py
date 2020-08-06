@@ -106,6 +106,8 @@ class Project(ChannelRelationship, RatedModelMixin):
         related_name="projects",
         blank=True
     )
+    order = models.PositiveSmallIntegerField(
+        _('Order'), default=0)
 
     # Fields
     name = models.CharField(_('Project name'), max_length=100)
