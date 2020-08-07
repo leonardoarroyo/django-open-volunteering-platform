@@ -291,18 +291,23 @@ class NotifyBoxApi:
     ###########
     # Trigger #
     ###########
-    def getTrigger(self, kind_id, recipient_type):
+    def getTrigger(self, kind_id, recipient_type, via):
         data = {
             "kind_id": kind_id,
             "recipient_type": recipient_type,
+            "via": via
         }
         query = gql('''
             query GetTrigger(
                 $kind_id: bigint!,
-                $recipient_type: String!
+                $recipient_type: String!,
+                $via: notificationVia_enum!
             ) {
                 notificationTrigger(where: {
                     kind_id: {_eq: $kind_id},
+                    message_template: {
+                        via: {_eq: $via}
+                    }
                     recipient_type: {_eq: $recipient_type}
                 }) {
                     id,
@@ -340,21 +345,23 @@ class NotifyBoxApi:
 
         return result
 
-    def updateTrigger(self, kind_id, message_template_id, recipient_type):
+    def updateTrigger(self, kind_id, message_template_id, recipient_type, via):
         data = {
             "kind_id": kind_id,
             "message_template_id": message_template_id,
             "recipient_type": recipient_type,
+            "via": via
         }
         query = gql('''
             mutation UpdateTrigger(
                 $kind_id: bigint!,
                 $message_template_id: bigint!,
-                $recipient_type: String!
+                $recipient_type: String!,
+                $via: notificationVia_enum!
             ) {
                 update_notificationTrigger(
                     _set: {kind_id: $kind_id, message_template_id: $message_template_id, recipient_type: $recipient_type},
-                    where: {kind_id: {_eq: $kind_id}, recipient_type: {_eq: $recipient_type}}
+                    where: {kind_id: {_eq: $kind_id}, message_template: { via: {_eq: $via} } recipient_type: {_eq: $recipient_type}}
                 ) {
                     returning {
                         id,
@@ -369,11 +376,11 @@ class NotifyBoxApi:
 
         return result
 
-    def createOrUpdateTrigger(self, kind_id, message_template_id, recipient_type):
-        triggers = self.getTrigger(kind_id, recipient_type)['notificationTrigger']
+    def createOrUpdateTrigger(self, kind_id, message_template_id, recipient_type, via):
+        triggers = self.getTrigger(kind_id, recipient_type, via)['notificationTrigger']
 
         if len(triggers):
-            return self.updateTrigger(kind_id, message_template_id, recipient_type)['update_notificationTrigger']['returning'][0]
+            return self.updateTrigger(kind_id, message_template_id, recipient_type, via)['update_notificationTrigger']['returning'][0]
         else:
             return self.createTrigger(kind_id, message_template_id, recipient_type)['insert_notificationTrigger_one']
 

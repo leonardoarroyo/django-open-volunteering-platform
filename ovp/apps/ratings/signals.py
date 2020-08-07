@@ -1,3 +1,7 @@
+import datetime
+import base64
+import json
+from django.utils import timezone
 from ovp.apps.channels.cache import get_channel_setting
 from ovp.apps.core.notifybox import notification_manager
 
@@ -26,15 +30,51 @@ def create_rating_request(sender, *args, **kwargs):
       channel = instance.channel.slug
       enabled = get_channel_setting(channel, "ENABLE_USER_PRESENCE_RATING_REQUEST")[0] == "1"
       if (instance.closed == True and
-         instance.pk and
-         Project.objects.get(pk=instance.pk).closed == False and
-         enabled):
-        notifybox_client = notification_manager.get_client(channel)
-        for apply in instance.apply_set.all():
-          req = RatingRequest.objects.create(requested_user=apply.user, rated_object=instance, initiator_object=instance, object_channel=instance.channel.slug)
-          req.rating_parameters.add(get_or_create_parameter("user-participated", 3, channel))
-          req.rating_parameters.add(get_or_create_parameter("user-opinion", 1, channel))
-          req.rating_parameters.add(get_or_create_parameter("user-project-rating", 2, channel))
-          #notification_manager.trigger(channel, "ratingRequested", [], {}, {})
+           instance.pk and
+           Project.objects.get(pk=instance.pk).closed == False and
+           enabled):
+          notifybox_client = notification_manager.get_client(channel)
+          for apply in instance.apply_set.all():
+              req = RatingRequest.objects.create(requested_user=apply.user, rated_object=instance, initiator_object=instance, object_channel=instance.channel.slug)
+              req.rating_parameters.add(get_or_create_parameter("user-participated", 3, channel))
+              req.rating_parameters.add(get_or_create_parameter("user-opinion", 1, channel))
+              req.rating_parameters.add(get_or_create_parameter("user-project-rating", 2, channel))
+              if apply.user:
+                  diff = timezone.now() - apply.date
+                  notification_manager.trigger(
+                      channel,
+                      "ratingRequested",
+                      {
+                          "project_title": apply.project.name,
+                          "project_image": apply.project.image.image_small if (apply.project.image
+                                                and apply.project.image.image_small) else "",
+                          "days_diff": diff.days,
+                          "days_diff_is_one": diff.days == 1,
+                          "token": str(req.permission_token),
+                          "pixel": str(
+                              base64.b64encode(
+                                  json.dumps({
+                                      "source": "rating-request",
+                                      "meta": json.dumps({
+                                          "channel": channel,
+                                          "project": apply.project.slug
+                                      })
+                                  }).encode("utf-8")
+                              ),
+                              "utf-8"
+                          )
+                      },
+                      {},
+                      [{
+                          "recipient": f"user#{apply.user.uuid}",
+                          "via": "app",
+                          "type": "default"
+                      },
+                      {
+                          "recipient": apply.user.email,
+                          "via": "email",
+                          "type": "default"
+                      }]
+                  )
 
 pre_save.connect(create_rating_request, sender=Project)

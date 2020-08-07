@@ -133,6 +133,12 @@ def ready(request):
     return HttpResponse(status=200)
 
 @swagger_auto_schema(responses={200: 'OK'})
+def clear_ratings(request):
+    RatingAnswer.objects.all().delete()
+    Rating.objects.all().delete()
+    return HttpResponse(status=200)
+
+@swagger_auto_schema(responses={200: 'OK'})
 def pixel(request):
     red = Image.new('RGBA', (1, 1), (255,0,0,0))
     response = HttpResponse(content_type="image/jpeg")

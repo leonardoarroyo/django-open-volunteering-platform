@@ -27,7 +27,7 @@ def import_kinds(channel: str):
     for kind in kinds:
         kind_id, kind_value = itemgetter('id', 'value')(client.getOrCreateKind(kind))
         template = client.createOrUpdateTemplate(kind_id, 'app', 'default', 'pt-br', "{}", "")
-        trigger = client.createOrUpdateTrigger(kind_id, template["id"], 'default')
+        trigger = client.createOrUpdateTrigger(kind_id, template["id"], 'default', 'app')
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
