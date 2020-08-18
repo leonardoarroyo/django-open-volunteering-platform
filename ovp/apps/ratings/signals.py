@@ -51,6 +51,7 @@ def create_rating_request(sender, *args, **kwargs):
                           "days_diff": diff.days,
                           "days_diff_is_one": diff.days == 1,
                           "token": str(req.permission_token),
+                          "request_uuid": str(req.uuid),
                           "pixel": str(
                               base64.b64encode(
                                   json.dumps({

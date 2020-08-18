@@ -91,26 +91,6 @@ class RatingRequestCountSerializer(ChannelRelationshipSerializer):
                 "initiator_id",
                 flat=True).distinct())
 
-
-class RatingRequestRetrieveSerializer(ChannelRelationshipSerializer):
-    rated_object = RatedObject(read_only=True)
-    object_type = SerializerMethodField(read_only=True)
-    rating_parameters = RatingParameterRetriveSetrializer(
-        many=True, read_only=True)
-
-    class Meta:
-        model = RatingRequest
-        fields = [
-            'uuid',
-            'created_date',
-            'rated_object',
-            'object_type',
-            'rating_parameters']
-
-    def get_object_type(self, obj):
-        return get_object_type(obj.rated_object)
-
-
 class RatingAnswerCreateUpdateSerializer(Serializer):
     parameter_slug = CharField()
     value_quantitative = FloatField(required=False)
@@ -171,6 +151,52 @@ class RatingAnswerCreateUpdateSerializer(Serializer):
                         'for boolean parameters.'
                     )
         return super().validate(data, *args, **kwargs)
+
+class RatingAnswerRetrieveSerializer(Serializer):
+    parameter_slug = SerializerMethodField()
+    value_quantitative = FloatField()
+    value_qualitative = CharField()
+
+    class Meta:
+        fields = [
+            'parameter_slug'
+            'value_qualitative',
+            'value_quantitative']
+
+    def get_parameter_slug(self, obj):
+        return obj.parameter.slug
+
+class RatingRetrieveSerializer(ChannelRelationshipSerializer):
+    answers = RatingAnswerRetrieveSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Rating
+        fields = [
+            'uuid',
+            'answers',
+            'created_date']
+
+class RatingRequestRetrieveSerializer(ChannelRelationshipSerializer):
+    rated_object = RatedObject(read_only=True)
+    object_type = SerializerMethodField(read_only=True)
+    rating_parameters = RatingParameterRetriveSetrializer(
+        many=True, read_only=True)
+    ratings = RatingRetrieveSerializer(read_only=True, many=True, source='rating_set')
+
+    class Meta:
+        model = RatingRequest
+        fields = [
+            'uuid',
+            'created_date',
+            'rated_object',
+            'object_type',
+            'rating_parameters',
+            'ratings']
+
+    def get_object_type(self, obj):
+        return get_object_type(obj.rated_object)
+
+
 
 
 class RatingCreateSerializer(ChannelRelationshipSerializer):
