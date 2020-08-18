@@ -16,7 +16,7 @@ def get_auth_data(channel):
 def get_organization_dict(organization):
     return {
         "Name": organization.name,
-        "New_CNPJ__c": organization.document.strip().replace(".", "").replace("/", "").replace("-", "")
+        "New_CNPJ__c": organization.document.strip().replace(".", "").replace("/", "").replace("-", ""),
         "Description": organization.details,
         "New_Descricao_Reduzida__c": organization.description,
         "Website": organization.website,
