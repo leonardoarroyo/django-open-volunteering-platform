@@ -27,3 +27,4 @@ openpyxl
 tablib==1.1.0
 celery
 simple-salesforce
+raven
