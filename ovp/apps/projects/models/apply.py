@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from ovp.apps.projects import emails
 from ovp.apps.core.notifybox import notification_manager
+from ovp.apps.uploads.helpers import build_absolute_uri
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
 
@@ -79,6 +80,12 @@ class Apply(ChannelRelationship):
     def mailing(self, async_mail=None):
         return emails.ApplyMail(self, async_mail)
 
+    @property
+    def notification_context(self):
+        return {
+            "image": build_absolute_uri(self.image)
+        }
+
     def save(self, *args, **kwargs):
         creating = False
         if self.pk is None:
@@ -101,7 +108,10 @@ class Apply(ChannelRelationship):
             notification_manager.trigger(
                 self.channel.slug,
                 "applicationCreated",
-                {"path": f"/vaga/{self.project.slug}"},
+                {
+                    "path": f"/vaga/{self.project.slug}",
+                    **self.notification_context
+                },
                 {},
                 [{
                     "recipient": f"organization#{self.project.organization.pk}",
@@ -118,7 +128,10 @@ class Apply(ChannelRelationship):
                 notification_manager.trigger(
                     self.channel.slug,
                     "applicationCanceled",
-                    {"path": f"/ong/{self.project.organization.slug}/vaga/{self.project.slug}"},
+                    {
+                        "path": f"/ong/{self.project.organization.slug}/gerenciar/{self.project.slug}",
+                        **self.notification_context
+                    },
                     {},
                     [{
                         "recipient": f"organization#{self.project.organization.pk}",
@@ -134,7 +147,10 @@ class Apply(ChannelRelationship):
                 notification_manager.trigger(
                     self.channel.slug,
                     "applicationConfirmed",
-                    {"path": f"/ong/{self.project.organization.slug}/vaga/{self.project.slug}"},
+                    {
+                        "path": f"/ong/{self.project.organization.slug}/gerenciar/{self.project.slug}",
+                        **self.notification_content
+                    },
                     {},
                     [{
                         "recipient": f"user#{self.user.uuid}",
