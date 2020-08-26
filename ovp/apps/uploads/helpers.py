@@ -13,7 +13,7 @@ from PIL import Image
 # bucket and url to obtain a full qualified
 # absolute uri, preventing a #get_blog for each image
 
-def build_absolute_uri(req=None, image):
+def build_absolute_uri(req, image):
     try:
         if hasattr(settings, 'GCS_BUCKET'):
             return image.url

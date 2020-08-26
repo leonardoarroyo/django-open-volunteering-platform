@@ -83,7 +83,7 @@ class Apply(ChannelRelationship):
     @property
     def notification_context(self):
         return {
-            "image": build_absolute_uri(self.image)
+            "image": build_absolute_uri(None, self.image)
         }
 
     def save(self, *args, **kwargs):
