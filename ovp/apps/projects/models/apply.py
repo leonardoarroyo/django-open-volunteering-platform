@@ -129,7 +129,7 @@ class Apply(ChannelRelationship):
                     self.channel.slug,
                     "applicationCanceled",
                     {
-                        "path": f"/ong/{self.project.organization.slug}/gerenciar/{self.project.slug}",
+                        "path": f"/ong/{self.project.organization.slug}/gerenciar/vaga/{self.project.slug}",
                         **self.notification_context
                     },
                     {},
@@ -148,7 +148,7 @@ class Apply(ChannelRelationship):
                     self.channel.slug,
                     "applicationConfirmed",
                     {
-                        "path": f"/ong/{self.project.organization.slug}/gerenciar/{self.project.slug}",
+                        "path": f"/ong/{self.project.organization.slug}/gerenciar/vaga/{self.project.slug}",
                         **self.notification_content
                     },
                     {},
