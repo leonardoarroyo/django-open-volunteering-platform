@@ -149,7 +149,7 @@ class Apply(ChannelRelationship):
                     "applicationConfirmed",
                     {
                         "path": f"/ong/{self.project.organization.slug}/gerenciar/vaga/{self.project.slug}",
-                        **self.notification_content
+                        **self.notification_context
                     },
                     {},
                     [{
