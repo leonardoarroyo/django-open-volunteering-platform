@@ -225,7 +225,7 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
             nfc = create_client(channel_slug)
             if nfc:
                 organizations = obj.active_organizations()
-                user_ref = f"user#{obj.pk}"
+                user_ref = f"user#{obj.uuid}"
                 organization_refs = [f"organization#{x.pk}" for x in organizations]
                 recipients = [user_ref, *organization_refs]
                 cache_string = f"notifications-token-{channel_slug}-{obj.pk}-{'-'.join(recipients)}"
