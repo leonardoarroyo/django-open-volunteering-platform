@@ -130,13 +130,20 @@ class Apply(ChannelRelationship):
                     "applicationCanceled",
                     {
                         "path": f"/ong/{self.project.organization.slug}/gerenciar/vaga/{self.project.slug}",
+                        "volunteer_name": self.user.name if self.user else "",
+                        "organization_img": build_absolute_uri(None, self.project.organization.image.image),
                         **self.notification_context
                     },
                     {},
                     [{
                         "recipient": f"organization#{self.project.organization.pk}",
                         "via": "app",
-                        "type": "default"
+                        "type": "organization"
+                    },
+                    {
+                        "recipient": f"user#{self.user.uuid}",
+                        "via": "app",
+                        "type": "user"
                     }]
                 )
 
