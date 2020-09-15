@@ -150,15 +150,9 @@ class ContentGenerator():
         area_level = "administrative_area_level_1"
         address_filter = Q(
             address__address_components__short_name=state,
-            address__address_components__types__name=area_level,
-            categories__id=21
+            address__address_components__types__name=area_level
         )
-        remote_filter = Q(
-            Q(work__can_be_done_remotely=True) | Q(job__can_be_done_remotely=True)
-        )
-        filtered_qs = qs.filter(
-            address_filter | remote_filter
-        )
+        filtered_qs = qs.filter(address_filter)
 
         return filtered_qs if filtered_qs.count() > 0 else qs
 
