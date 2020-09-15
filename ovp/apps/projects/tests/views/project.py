@@ -58,7 +58,10 @@ base_project = {
         {
             "id": 4
         }
-    ]
+    ],
+    "extra_data": {
+        "test": "test"
+    }
 }
 
 
@@ -108,6 +111,7 @@ class ProjectResourceViewSetTestCase(TestCase):
         self.assertTrue(response.data["details"] == data["details"])
         self.assertTrue(response.data["description"] == data["description"])
         self.assertTrue(response.data["minimum_age"] == data["minimum_age"])
+        self.assertTrue(response.data["extra_data"] == data["extra_data"])
         self.assertTrue(len(response.data["causes"]) == 2)
         self.assertTrue(len(response.data["skills"]) == 2)
 
@@ -161,6 +165,7 @@ class ProjectResourceViewSetTestCase(TestCase):
         self.assertTrue(response.data["slug"] == "test-project")
         self.assertTrue(response.data["details"] == data["details"])
         self.assertTrue(response.data["description"] == data["description"])
+        self.assertTrue(response.data["extra_data"] == data["extra_data"])
         self.assertTrue(response.data["published"] is False)
         self.assertTrue(type(response.data["owner"]) in [dict, OrderedDict])
         self.assertTrue(isinstance(response.data["applies"], list))

@@ -133,6 +133,7 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
     organization = OrganizationRetrieveSerializer(read_only=True)
     organization_id = serializers.IntegerField(required=False)
     item_id = serializers.IntegerField(required=False)
+    extra_data = serializers.JSONField(required=False)
 
     class Meta:
         model = models.Project
@@ -168,7 +169,8 @@ class ProjectCreateUpdateSerializer(ChannelRelationshipSerializer):
             'galleries',
             'testimony',
             'documents',
-            'categories'
+            'categories',
+            'extra_data'
         ]
 
         read_only_fields = [
@@ -410,6 +412,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
     bookmark_count = serializers.SerializerMethodField()
     item = ItemSerializer()
     channel = ChannelRetrieveSerializer()
+    extra_data = serializers.JSONField()
 
     class Meta:
         model = models.Project
@@ -453,7 +456,8 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
             'canceled',
             'channel',
             'galleries',
-            'documents'
+            'documents',
+            'extra_data'
         ]
 
     def get_is_bookmarked(self, instance):
@@ -548,7 +552,8 @@ class ProjectManageableRetrieveSerializer(ProjectRetrieveSerializer):
             'canceled',
             'channel',
             'galleries',
-            'documents'
+            'documents',
+            'extra_data'
         ]
 
 

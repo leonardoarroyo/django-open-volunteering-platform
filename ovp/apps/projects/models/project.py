@@ -3,7 +3,9 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Sum
 from django.db.models.signals import post_save, post_delete
+from django.contrib.postgres.fields import JSONField
 from django.dispatch import receiver
+
 from ovp.apps.core.helpers import get_address_model
 
 from ovp.apps.core.helpers import generate_slug
@@ -125,6 +127,7 @@ class Project(ChannelRelationship, RatedModelMixin):
         default=0
     )
     max_applies = models.IntegerField(blank=False, null=False, default=1)
+    extra_data = JSONField(blank=True, null=True)
 
     #  This is not a hard limit, just an estimate based on roles vacancies
     max_applies_from_roles = models.IntegerField(

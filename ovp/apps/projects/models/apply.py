@@ -98,27 +98,11 @@ class Apply(ChannelRelationship):
         if creating and self.project.closed is False:
             self.mailing().sendAppliedToVolunteer({'apply': self})
             self.mailing().sendAppliedToOwner({'apply': self})
-            notification_manager.trigger(
-                self.channel.slug,
-                "applicationCreated",
-                {"path": f"/vaga/{self.project.slug}"},
-                {},
-                [{
-                    "recipient": f"organization#{self.project.organization.pk}",
-                    "via": "app",
-                    "type": "default"
-                }]
-            )
-        else:
-            if (self.__original_status != self.status
-                    and self.status == "unapplied"
-                    and self.project.closed is False):
-                self.mailing().sendUnappliedToVolunteer({'apply': self})
-                self.mailing().sendUnappliedToOwner({'apply': self})
+            if self.project.organization:
                 notification_manager.trigger(
                     self.channel.slug,
-                    "applicationCanceled",
-                    {"path": f"/ong/{self.project.organization.slug}/vaga/{self.project.slug}"},
+                    "applicationCreated",
+                    {"path": f"/vaga/{self.project.slug}"},
                     {},
                     [{
                         "recipient": f"organization#{self.project.organization.pk}",
@@ -126,6 +110,24 @@ class Apply(ChannelRelationship):
                         "type": "default"
                     }]
                 )
+        else:
+            if (self.__original_status != self.status
+                    and self.status == "unapplied"
+                    and self.project.closed is False):
+                self.mailing().sendUnappliedToVolunteer({'apply': self})
+                self.mailing().sendUnappliedToOwner({'apply': self})
+                if self.project.organization:
+                    notification_manager.trigger(
+                        self.channel.slug,
+                        "applicationCanceled",
+                        {"path": f"/ong/{self.project.organization.slug}/vaga/{self.project.slug}"},
+                        {},
+                        [{
+                            "recipient": f"organization#{self.project.organization.pk}",
+                            "via": "app",
+                            "type": "default"
+                        }]
+                    )
 
             if (self.__original_status != self.status
                     and self.status == "confirmed-volunteer"
