@@ -1,0 +1,96 @@
+<div style="padding-left: 100px;">
+  <br>
+  {% if mask %}
+    <p>
+      <b style="font-size: 16px">
+        Máscara:<br>
+      </b>
+      {% if mask == 'a' %}
+        Nós iremos fornecer máscara para os voluntários
+      {% elif mask == 'b' %}
+        Pedimos para que os voluntários venham de máscara
+      {% endif %}
+    </p>
+  {% endif %}
+
+
+  {% if alcohol %}
+    <p>
+      <b style="font-size: 16px">
+        Álcool em gel:<br>
+      </b>
+      {% if alcohol == 'a' %}
+        Nós iremos fornecer álcool em gel para os voluntários
+      {% elif alcohol == 'b' %}
+        Pedimos para que os voluntários tragam seu próprio álcool em gel
+      {% endif %}
+    </p>
+  {% endif %}
+
+  {% if open_space %}
+    <p>
+      <b style="font-size: 16px">
+        Espaço aberto:<br>
+      </b>
+      {% if open_space == 'a' %}
+        Sim
+      {% elif open_space == 'b' %}
+        Não
+      {% endif %}
+    </p>
+  {% endif %}
+
+  {% if more_than_ten %}
+    <p>
+      <b style="font-size: 16px">
+        Mais de 10 pessoas:<br>
+      </b>
+      {% if more_than_ten == 'a' %}
+        Sim
+      {% elif more_than_ten == 'b' %}
+        Não
+      {% endif %}
+    </p>
+  {% endif %}
+
+  {% if volunteer_must %}
+    <p>
+      <b style="font-size: 16px">
+        O voluntário deve:<br>
+      </b>
+      {% if volunteer_must %}
+        <ul style="margin-left: 0px; padding-left: 30px;">
+        {% if 'a' in volunteer_must %}
+          <li style="list-style: disc;">Não ser do grupo de risco</li>
+        {% endif %}
+        {% if 'b' in volunteer_must %}
+          <li style="list-style: disc;">Não morar com ninguém de grupo de risco</li>
+        {% endif %}
+        {% if 'c' in volunteer_must %}
+          <li style="list-style: disc;">Fazer teste de COVID para participar da ação</li>
+        {% endif %}
+        {% if 'd' in volunteer_must %}
+          <li style="list-style: disc;">Estar em quarentena (saindo apenas para o que é atividade essencial, sem frequentar bares, restaurantes, etc.)</li>
+        {% endif %}
+        {% if 'e' in volunteer_must %}
+          <li style="list-style: disc;">Ter transporte próprio para ir até a ONG. </li>
+        {% endif %}
+        {% if 'f' in volunteer_must %}
+          <li style="list-style: disc;">Não ter participado de nenhum tipo de aglomeração (mais de 10 pessoas) por no mínimo 10 dias</li>
+        {% endif %}
+        </ul>
+      {% endif %}
+    </p>
+  {% endif %}
+
+  {% if extra_info %}
+    <p>
+      <b style="font-size: 16px">
+        Informações adicionais:<br>
+      </b>
+      {% if extra_info %}
+        {{ extra_info }}
+      {% endif %}
+    </p>
+  {% endif %}
+</div>

@@ -1,10 +1,13 @@
 import os
+import json
 
 from django import forms
 from django.db import models
 from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html
+from django.shortcuts import render
+from django.template.loader import get_template
 from martor.widgets import AdminMartorWidget
 
 from ovp.apps.admin.resources import CleanModelResource
@@ -298,6 +301,7 @@ class ProjectAdmin(BaseAux):
 
         'description', 'details',
         'skills', 'causes',
+        'covid_form'
     ]
 
     resource_class = ProjectResource
@@ -349,6 +353,7 @@ class ProjectAdmin(BaseAux):
         'owner__email',
         'owner__phone',
         'can_be_done_remotely',
+        'covid_form',
         'volunteers__list'
     ]
 
@@ -424,6 +429,13 @@ class ProjectAdmin(BaseAux):
                 )
             return format_html(html_string)
         return ""
+
+    def covid_form(self, obj):
+        covid_data = obj.extra_data.get('coronavirus', {})
+        print(covid_data)
+        return get_template(
+            'admin/covid_form.html'
+        ).render(covid_data)
 
 
 admin_site.register(Project, ProjectAdmin)
