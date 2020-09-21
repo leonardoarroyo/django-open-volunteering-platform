@@ -412,7 +412,7 @@ class ProjectRetrieveSerializer(ChannelRelationshipSerializer):
     bookmark_count = serializers.SerializerMethodField()
     item = ItemSerializer()
     channel = ChannelRetrieveSerializer()
-    extra_data = serializers.JSONField()
+    extra_data = serializers.JSONField(required=False)
 
     class Meta:
         model = models.Project
