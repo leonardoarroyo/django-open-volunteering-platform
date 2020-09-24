@@ -27,7 +27,7 @@ config = {
         'maximum': 0
     },
     'projects': {
-        'minimum': 0,
+        'minimum': 3,
         'maximum': 6,
         'max_age': 60 * 60 * 24 * 7 * 2,
     }
