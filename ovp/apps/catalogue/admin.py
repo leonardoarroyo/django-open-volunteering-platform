@@ -1,5 +1,6 @@
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 
 from ovp.apps.channels.admin import admin_site
 from ovp.apps.channels.admin import ChannelModelAdmin
@@ -28,16 +29,15 @@ class FilterObjectMixin(object):
                 ),
                 args=[obj.filter.id]
             )
-            return '<a href="%s">Edit</a>' % url
+            return mark_safe('<a href="%s">Edit</a>' % url)
         else:
             return _('No filter')
     filter_object.allow_tags = True
 
     def filter_information(self, obj):
         if obj.filter:
-            return obj.filter.filter_information().replace("\n", "<br>")
+            return mark_safe(obj.filter.filter_information().replace("\n", "<br>"))
         return _('No filter')
-    filter_information.allow_tags = True
 
 
 ##################################
