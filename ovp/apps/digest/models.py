@@ -23,3 +23,11 @@ class DigestLogContent(ChannelRelationship):
     digest_log = models.ForeignKey('DigestLog', on_delete=models.DO_NOTHING)
     content_type = models.IntegerField('Content type', choices=CT_CHOICES)
     content_id = models.IntegerField('Content id')
+
+class DigestText(ChannelRelationship):
+    text_content = models.TextField('Conteúdo', blank=True, null=True)
+    default_content = models.TextField('Default context', blank=True, null=True)
+    keep_text = models.BooleanField('Manter conteúdo após envio', default=False)
+
+    def __str__(self):
+        return "Conteúdo da newsletter"

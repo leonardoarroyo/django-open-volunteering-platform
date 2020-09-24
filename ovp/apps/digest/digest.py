@@ -1,5 +1,6 @@
 from multiprocessing.dummy import Pool as ThreadPool
 from bs4 import BeautifulSoup
+from markdown import markdown
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from ovp.apps.projects.models import Project
@@ -7,6 +8,7 @@ from ovp.apps.projects.models import Category
 from ovp.apps.digest.emails import DigestEmail
 from ovp.apps.digest.models import DigestLog
 from ovp.apps.digest.models import DigestLogContent
+from ovp.apps.digest.models import DigestText
 from ovp.apps.digest.models import PROJECT
 from ovp.apps.digest.backends.smtp import SMTPBackend
 from ovp.apps.users.models import User
@@ -25,7 +27,7 @@ config = {
         'maximum': 0
     },
     'projects': {
-        'minimum': 3,
+        'minimum': 0,
         'maximum': 6,
         'max_age': 60 * 60 * 24 * 7 * 2,
     }
@@ -53,7 +55,6 @@ class ContentGenerator():
         return filter(lambda x: x is not None, real_result)
 
     def generate_content(self, email_list, campaign, channel='default'):
-        print("generating content")
         content_dict = {}
 
         users = User.objects.prefetch_related(
@@ -156,7 +157,8 @@ class ContentGenerator():
 
         return filtered_qs if filtered_qs.count() > 0 else qs
 
-    def get_blog_posts(self):
+    def get_template_context(self, channel):
+        digest_text = DigestText.objects.filter(channel__slug=channel).first()
         try:
             response = requests.get(
                 "https://blog.atados.com.br/wp-json/wp/v2/posts?per_page=2"
@@ -183,7 +185,8 @@ class ContentGenerator():
                          ["source_url"]
                     )
                 } for x in response.json()
-            ]
+            ],
+            "text_content": markdown(digest_text.text_content) if digest_text else ""
         }
 
 
@@ -251,8 +254,7 @@ class DigestCampaign():
                 chunks))
 
         out = []
-        template_context = self.cg.get_blog_posts()
-        #template_context = {}
+        template_context = self.cg.get_template_context(channel)
         for i in range(0, len(user_list), chunk_size):
             chunk_i = math.ceil(i / chunk_size) + 1
 
@@ -261,4 +263,10 @@ class DigestCampaign():
             content = self.cg.generate_content(chunk, self.campaign)
 
             out.append(self.backend.send_chunk(content, template_context))
+
+        digest_text = DigestText.objects.filter(channel__slug=channel).first()
+        if not digest_text.keep_text:
+            digest_text.text_content=""
+            digest_text.save()
+
         return out
