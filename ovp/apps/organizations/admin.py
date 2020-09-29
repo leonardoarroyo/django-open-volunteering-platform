@@ -300,6 +300,7 @@ class OrganizationAdmin(
         'name',
         'highlighted',
         'published',
+        'not_published_reason',
         'deleted',
         'owner__email',
         'owner__phone',

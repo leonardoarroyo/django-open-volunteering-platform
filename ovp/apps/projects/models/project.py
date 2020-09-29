@@ -30,13 +30,6 @@ types = (
 )
 
 
-NOT_PUBLISHED_REASON = (
-    (0, _('Duplicated')),
-    (1, _('Unfit')),
-    (2, _('No response from organization')),
-    (3, _('Other')),
-)
-
 class Project(ChannelRelationship, RatedModelMixin):
     """
     Project model
@@ -206,8 +199,6 @@ class Project(ChannelRelationship, RatedModelMixin):
         blank=True,
         null=True
     )
-    not_published_reason = models.PositiveSmallIntegerField(
-        _('Reason it\'s not published'), choices=NOT_PUBLISHED_REASON, blank=True, null=True)
 
     """
     Set this property to use in haystack template

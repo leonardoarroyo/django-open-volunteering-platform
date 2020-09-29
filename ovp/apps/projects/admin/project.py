@@ -288,7 +288,6 @@ class ProjectAdmin(BaseAux):
 
         ('published', 'closed', 'deleted', 'canceled'),
         ('published_date', 'closed_date', 'deleted_date', 'canceled_date'),
-        'not_published_reason',
 
         'address',
         'image',
@@ -313,7 +312,6 @@ class ProjectAdmin(BaseAux):
         'name',
         'highlighted',
         'published',
-        'not_published_reason',
         'closed',
         'deleted',
         'organization__name',
