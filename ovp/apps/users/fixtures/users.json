@@ -1548,36 +1548,5 @@
       "user_permissions": [],
       "flairs": []
     }
-  },
-  {
-    "model": "users.user",
-    "pk": 51,
-    "fields": {
-      "channel": 1,
-      "rating": null,
-      "password": "pbkdf2_sha256$36000$mXKu5SDwEzTr$WdabAwiQDdNrSIaBjPOY9gL0wrnujWpGn+XR0NvmxpE=",
-      "last_login": "2015-09-25T20:21:36.602Z",
-      "uuid": "821b0bfb-18cd-42a5-9ebf-918fea50841f",
-      "email": "7a1cb58352e025dc991399efdfdc04fa98dcf3db@fixture.ovp",
-      "locale": "en",
-      "name": "d3018e33ef4b75fdf5cb",
-      "slug": "MqeAVn3udRdKmDQDUFdUAR",
-      "avatar": null,
-      "phone": null,
-      "phone2": null,
-      "document": null,
-      "public": true,
-      "is_staff": false,
-      "is_superuser": false,
-      "is_active": false,
-      "is_email_verified": true,
-      "is_subscribed_to_newsletter": true,
-      "joined_date": "2012-08-28T03:45:23Z",
-      "modified_date": "2018-09-19T21:44:41.776Z",
-      "ratings": [],
-      "groups": [],
-      "user_permissions": [],
-      "flairs": []
-    }
   }
 ]

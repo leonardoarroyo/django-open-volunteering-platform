@@ -5,7 +5,7 @@ from django.template.exceptions import TemplateDoesNotExist
 from django.conf import settings
 from django.utils import translation
 from ovp.apps.core.helpers import is_email_enabled, get_email_subject
-from ovp.apps.channels.cache import get_channel_setting
+from ovp.apps.channels.cache import get_channel_setting, get_channel_name
 import os
 import json
 
@@ -54,6 +54,7 @@ class BaseMail:
             "html": "{}/email/base-body.html".format(self.channel),
             "txt": "{}/email/base-body.txt".format(self.channel)
         }
+        ctx["channel_name"] = get_channel_name(self.channel)
 
         self.__setLocale()
         subject = get_email_subject(self.channel, template_name, subject)

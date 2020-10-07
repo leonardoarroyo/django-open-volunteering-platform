@@ -31,6 +31,11 @@ def get_channel(slug):
     return result
 
 
+def get_channel_name(slug):
+    channel = get_channel(slug)
+
+    return channel.get('name', 'Atados')
+
 def get_channel_setting(slug, key):
     channel = get_channel(slug)
 
