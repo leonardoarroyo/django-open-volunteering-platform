@@ -32,7 +32,7 @@ class GoogleAddressModelTestCase(TestCase):
         self.assertEqual(a.typed_address, "Rua Teçaindá, 81, SP")
         self.assertEqual(a.typed_address2, "Casa")
 
-        address_line = "Rua Teçaindá, 81, Pinheiros, São Paulo, SP, Brazil"
+        address_line = "Rua Teçaindá, 81, Pinheiros, São Paulo, SP, Brasil"
         self.assertEqual(a.address_line, address_line)
         self.assertEqual(a.__str__(), address_line)
         self.assertTrue(a.lat)
@@ -45,7 +45,7 @@ class GoogleAddressModelTestCase(TestCase):
         self.assertEqual(a.typed_address2, "Casa")
 
         address_line_2 = "Rua Capote Valente, 701, " \
-                         "Pinheiros, São Paulo, SP, Brazil"
+                         "Pinheiros, São Paulo, SP, Brasil"
         self.assertEqual(a.address_line, address_line_2)
         self.assertEqual(a.__str__(), address_line_2)
         self.assertTrue(a.lat)
