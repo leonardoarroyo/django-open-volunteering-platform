@@ -3,6 +3,7 @@ from django.test import TestCase
 from ovp.apps.users.models import User
 
 from ovp.apps.channels.models import Channel
+from ovp.apps.users.auth.backends import UserDeactivatedException
 
 from ovp.apps.users.tests.helpers import authenticate
 from ovp.apps.users.tests.helpers import create_user
@@ -15,24 +16,25 @@ from rest_framework.test import APIClient
 class OAuth2AuthTestCase(TestCase):
     def test_can_login(self):
         """ Assert that it's possible to login """
-        user = create_user('test_can_login@test.com', 'validpassword')
+        create_user('test_can_login@test.com', 'validpassword')
         response = authenticate()
         self.assertTrue(response.data['access_token'] is not None)
 
     def test_cant_login_deactivated(self):
         """ Assert that it's not possible to login with deactivated account """
         create_user('test_can_login@test.com', 'validpassword')
-        u = User.objects.filter(email='test_can_login@test.com').update(is_active=False)
-        response = authenticate()
-        self.assertEqual(response.status_code, 401)
-        expected_response = {
-            'error': {
-                'detail': 'This user is deactivated and can not login anymore.',
-                'name': 'UserDeactivated'
-            },
-            'success': False
-        }
-        self.assertEqual(response.data, expected_response)
+        User.objects.filter(email='test_can_login@test.com').update(is_active=False)
+        self.assertRaises(UserDeactivatedException, authenticate)
+        # response = authenticate()
+        # self.assertEqual(response.status_code, 401)
+        # expected_response = {
+        #     'error': {
+        #         'detail': 'This user is deactivated and can not login anymore.',
+        #         'name': 'UserDeactivated'
+        #     },
+        #     'success': False
+        # }
+        # self.assertEqual(response.data, expected_response)
 
     def test_cant_login_wrong_password(self):
         """ Assert that it's not possible to login with wrong password """

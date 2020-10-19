@@ -186,7 +186,7 @@ class ContentGenerator():
                     )
                 } for x in response.json()
             ],
-            "text_content": markdown(digest_text.text_content) if digest_text else ""
+            "text_content": markdown(digest_text.text_content) if digest_text and digest_text.text_content else ""
         }
 
 

@@ -45,8 +45,8 @@ def create_sample_projects():
     category2 = Category.objects.create(
         name="cat2", slug="cat2", object_channel="default")
 
-    address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
-    address2 = GoogleAddress(typed_address="Campinas, SP - Brazil")
+    address1 = GoogleAddress(typed_address="São paulo, SP - Brasil")
+    address2 = GoogleAddress(typed_address="Campinas, SP - Brasil")
     address3 = GoogleAddress(
         typed_address="New york, New york - United States")
     address4 = GoogleAddress(
@@ -157,8 +157,8 @@ def create_sample_organizations():
         password="test_returned",
         object_channel="test-channel")
 
-    address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
-    address2 = GoogleAddress(typed_address="Santo André, SP - Brazil")
+    address1 = GoogleAddress(typed_address="São paulo, SP - Brasil")
+    address2 = GoogleAddress(typed_address="Santo André, SP - Brasil")
     address3 = GoogleAddress(
         typed_address="New york, New york - United States")
     address4 = GoogleAddress(
@@ -1186,7 +1186,7 @@ class CityCountryTestCase(TestCase):
         response = client.get(
             reverse(
                 "available-country-cities",
-                ["Brazil"]),
+                ["Brasil"]),
             format="json")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data["projects"]), 1)
@@ -1210,7 +1210,7 @@ class CityCountryTestCase(TestCase):
     def test_available_country_cities_cache(self):
         self.test_available_country_cities()
         self.assertTrue(
-            cache.get("available-cities-default-{}".format(hash("Brazil"))))
+            cache.get("available-cities-default-{}".format(hash("Brasil"))))
         self.assertTrue(cache.get(
             "available-cities-default-{}".format(hash("United States"))))
 
@@ -1220,7 +1220,7 @@ class CityCountryTestCase(TestCase):
         response = client.get(
             reverse(
                 "available-country-cities",
-                ["Brazil"]),
+                ["Brasil"]),
             format="json",
             HTTP_X_OVP_CHANNEL="test-channel")
         self.assertEqual(len(response.data["projects"]), 0)
