@@ -17,4 +17,4 @@ pytest-django
 pytest-pythonpath
 sentry-sdk==0.10.2
 django-gcloud-storage==0.4.0
-psycopg2-binary==2.8.3
+psycopg2-binary==2.8.5
