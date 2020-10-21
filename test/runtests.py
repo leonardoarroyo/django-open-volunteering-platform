@@ -19,7 +19,17 @@ sys.path.insert(
             os.path.dirname(__file__),
             ".."))))
 
-load_dotenv(os.path.join(BASE_DIR, '.env'))
+current_dir = BASE_DIR
+while True:
+    env_file = os.path.join(current_dir, '.env')
+    
+    if os.path.exists(env_file):
+        load_dotenv(env_file)
+
+    if current_dir == os.path.dirname(current_dir):
+        break
+
+    current_dir = os.path.dirname(current_dir)
 
 # Unfortunately, apps can not be installed via ``modify_settings``
 # decorator, because it would miss the database setup.
@@ -101,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 DATABASES = {
-    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+    'default': dj_database_url.parse(os.getenv('DATABASE_URL') or 'postgres://%(POSTGRES_USER)s:%(POSTGRES_PASSWORD)s@localhost:5432/%(POSTGRES_DB)s' % os.environ)
 }
 
 
