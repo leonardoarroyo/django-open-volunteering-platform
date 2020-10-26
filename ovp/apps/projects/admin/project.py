@@ -323,6 +323,7 @@ class ProjectAdmin(BaseAux):
     list_filter = [
         ('closed_date', DateRangeFilter),
         ('canceled_date', DateRangeFilter),
+        ('published_date', DateRangeFilter),
         ('created_date', DateRangeFilter),  # fix: PONTUAL OU RECORRENTE
         'highlighted',
         'published',
