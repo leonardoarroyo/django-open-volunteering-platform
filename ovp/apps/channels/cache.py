@@ -31,12 +31,13 @@ def get_channel(slug):
     return result
 
 
-def get_channel_name(slug):
+def get_channel_name(slug: str) -> str:
     channel = get_channel(slug)
 
     return channel.get('name', 'Atados')
 
-def get_channel_setting(slug, key):
+
+def get_channel_setting(slug: str, key: str) -> list:
     channel = get_channel(slug)
 
     if key in channel["settings"]:
