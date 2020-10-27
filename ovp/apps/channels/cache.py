@@ -1,6 +1,7 @@
 from django.core.cache import cache
 from ovp.apps.channels.models import Channel
 from ovp.apps.channels.defaults import DEFAULT_SETTINGS
+from typing import List
 
 
 def get_channel(slug):
@@ -37,7 +38,7 @@ def get_channel_name(slug: str) -> str:
     return channel.get('name', 'Atados')
 
 
-def get_channel_setting(slug: str, key: str) -> list:
+def get_channel_setting(slug: str, key: str) -> List[str]:
     channel = get_channel(slug)
 
     if key in channel["settings"]:
