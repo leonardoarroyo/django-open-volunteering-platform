@@ -113,7 +113,7 @@ class Indicators(DashboardModule):
             date_max,
             "date")
 
-        apply_distinct_qs = Apply.objects.all()
+        apply_distinct_qs = Apply.objects.filter(channel=channel)
         if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
             apply_distinct_qs = apply_distinct_qs.distinct('user')
         applies_distinct = self.date_filter(
@@ -128,6 +128,7 @@ class Indicators(DashboardModule):
         self.users_count = users.count()
         self.applies_count = applies.count()
         self.applies_count_distinct = applies_distinct.count()
+
         self.vacancies = VolunteerRole.objects.filter(
             project__pk__in=projects_published_pks).aggregate(
             Sum('vacancies'))['vacancies__sum']
