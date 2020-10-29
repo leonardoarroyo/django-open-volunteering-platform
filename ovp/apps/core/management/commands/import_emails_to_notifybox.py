@@ -109,7 +109,7 @@ def insert_template(email_sender, kind, recipient_type, subject, body, client):
     template = client.createOrUpdateTemplate(kind_id, 'email', recipient_type, 'pt-br', json.dumps(template_data), body)
 
     # Create trigger
-    trigger = client.createOrUpdateTrigger(kind_id, template["id"], recipient_type)
+    trigger = client.createOrUpdateTrigger(kind_id, template["id"], recipient_type, "email")
     logging.info(f'Kind: ({kind_id}) {kind_value}')
     logging.info(f'Recipient type: {recipient_type}')
     logging.info(f'Template version: {template["version"]}')

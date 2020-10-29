@@ -11,22 +11,24 @@ def set_aws_credentials(channel, aws_credentials):
     api.setAwsCredentials(*aws_credentials)
 
 def create_app(channel, admin_secret):
-    # Create app
-    api = NotifyBoxApi(admin_secret=admin_secret)
-    result = api.createApp(f'Channel: {channel}')
-    access_key = result['createApp']['access_key']
-    secret = result['createApp']['secret']
+    if not ChannelSetting.objects.filter(key__in=["NOTIFYBOX_ACCESS_KEY", "NOTIFYBOX_SECRET_KEY"], channel__slug=channel).count():
+        print('creating:app')
+        # Create app
+        api = NotifyBoxApi(admin_secret=admin_secret)
+        result = api.createApp(f'Channel: {channel}')
+        access_key = result['createApp']['access_key']
+        secret = result['createApp']['secret']
 
-    # Clear settings
-    (ChannelSetting.objects
-        .filter(
-            channel__slug = channel,
-            key__in=["NOTIFYBOX_ACCESS_KEY", "NOTIFYBOX_SECRET_KEY", "NOTIFYBOX_TOKEN"])
-        .delete())
+        # Clear settings
+        (ChannelSetting.objects
+            .filter(
+                channel__slug = channel,
+                key__in=["NOTIFYBOX_ACCESS_KEY", "NOTIFYBOX_SECRET_KEY", "NOTIFYBOX_TOKEN"])
+            .delete())
 
-    # Create settings
-    ChannelSetting.objects.create(object_channel = channel, key="NOTIFYBOX_ACCESS_KEY", value=access_key)
-    ChannelSetting.objects.create(object_channel = channel, key="NOTIFYBOX_SECRET_KEY", value=secret)
+        # Create settings
+        ChannelSetting.objects.create(object_channel = channel, key="NOTIFYBOX_ACCESS_KEY", value=access_key)
+        ChannelSetting.objects.create(object_channel = channel, key="NOTIFYBOX_SECRET_KEY", value=secret)
 
 class Command(BaseCommand):
     def add_arguments(self, parser):

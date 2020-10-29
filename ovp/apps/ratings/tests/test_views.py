@@ -36,11 +36,11 @@ class RatingViewsTest(TestCase):
             object_channel="default")
 
         rp1 = RatingParameter.objects.create(
-            slug="test-project-score", type=2, object_channel="default")
+            slug="test-project-score", type=2, required=True, object_channel="default")
         rp2 = RatingParameter.objects.create(
             slug="test-project-how-was-it", type=1, object_channel="default")
         rp3 = RatingParameter.objects.create(
-            slug="test-user-has-shown", type=3, object_channel="default")
+            slug="test-user-has-shown", type=3, required=True, object_channel="default")
 
         r1 = RatingRequest.objects.create(
             requested_user=self.user,
@@ -72,14 +72,14 @@ class RatingViewsTest(TestCase):
             channel="default"
         )
 
-    def test_current_user_returns_rating_requests(self):
+    def test_count_route_returns(self):
         response = self.client.get(
-            reverse("user-current-user"), {}, format="json")
+            reverse("rating-request-count"), {}, format="json")
         self.assertEqual(response.data["rating_requests_user_count"], 1)
 
         self.client.force_authenticate(self.user2)
         response = self.client.get(
-            reverse("user-current-user"), {}, format="json")
+            reverse("rating-request-count"), {}, format="json")
         self.assertEqual(response.data["rating_requests_user_count"], 0)
 
     def test_retrieve_rating_requests(self):
@@ -99,7 +99,7 @@ class RatingViewsTest(TestCase):
 
         self.client.force_authenticate(self.user2)
         response = self.client.get(
-            reverse("user-current-user"),
+            reverse("rating-request-count"),
             {},
             format="json"
         )
@@ -206,7 +206,7 @@ class RatingViewsTest(TestCase):
         self.assertEqual(
             response.json()["non_field_errors"][0],
             "The following parameters are missing: "
-            "test-project-score, test-project-how-was-it."
+            "test-project-score."
         )
 
     def test_can_rate(self):
@@ -250,23 +250,131 @@ class RatingViewsTest(TestCase):
             Rating.objects.first().answers.last().value_qualitative,
             "Minha resposta :-)")
 
-    def test_cant_re_rate(self):
-        self.test_can_rate()
-        data = {"answers": [{"parameter_slug": "test-project-score",
-                             "value_quantitative": 1},
-                            {"parameter_slug": "test-project-how-was-it",
-                             "value_qualitative": "Minha resposta :-)"}]}
+    def test_can_rate_partially(self):
+        data = {
+            "answers": [
+                {
+                    "parameter_slug": "test-project-score",
+                    "value_quantitative": 1
+                },
+            ]
+        }
         uuid = str(RatingRequest.objects.last().uuid)
         response = self.client.post(
             reverse(
                 "rating-request-rate",
-                [uuid]
-            ),
+                [uuid]),
             data,
-            format="json"
+            format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Rating.objects.all().count(), 1)
+
+    def test_can_update_rating(self):
+        self.test_can_rate_partially()
+        data = {
+            "answers": [
+                {
+                    "parameter_slug": "test-project-score",
+                    "value_quantitative": 0.5
+                },
+                {
+                    "parameter_slug": "test-project-how-was-it",
+                    "value_qualitative": "Nova resposta"
+                }
+            ]
+        }
+        uuid = str(RatingRequest.objects.last().uuid)
+        response = self.client.post(
+            reverse(
+                "rating-request-rate",
+                [uuid]),
+            data,
+            format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Rating.objects.all().count(), 1)
+
+        self.assertEqual(
+            Rating.objects.first().answers.first().parameter.slug,
+            "test-project-score")
+        self.assertEqual(
+            Rating.objects.first().answers.first().value_quantitative, 0.5)
+
+        self.assertEqual(
+            Rating.objects.first().answers.last().parameter.slug,
+            "test-project-how-was-it")
+        self.assertEqual(
+            Rating.objects.first().answers.last().value_qualitative,
+            "Nova resposta")
+
+    def test_update_omiting_already_answered(self):
+        self.test_can_rate_partially()
+        data = {
+            "answers": [
+                {
+                    "parameter_slug": "test-project-how-was-it",
+                    "value_qualitative": "Nova resposta"
+                }
+            ]
+        }
+        uuid = str(RatingRequest.objects.last().uuid)
+        response = self.client.post(
+            reverse(
+                "rating-request-rate",
+                [uuid]),
+            data,
+            format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Rating.objects.all().count(), 1)
+
+        self.assertEqual(
+            Rating.objects.first().answers.first().parameter.slug,
+            "test-project-score")
+        self.assertEqual(
+            Rating.objects.first().answers.first().value_quantitative, 1)
+
+        self.assertEqual(
+            Rating.objects.first().answers.last().parameter.slug,
+            "test-project-how-was-it")
+        self.assertEqual(
+            Rating.objects.first().answers.last().value_qualitative,
+            "Nova resposta")
+
+    def test_can_rate_unauthenticated_with_permission_token(self):
+        data = {
+            "answers": [
+                {
+                    "parameter_slug": "test-project-score",
+                    "value_quantitative": 1
+                },
+                {
+                    "parameter_slug": "test-project-how-was-it",
+                    "value_qualitative": "Minha resposta :-)"
+                }
+            ]
+        }
+        uuid = str(RatingRequest.objects.last().uuid)
+        permission_token = str(RatingRequest.objects.last().permission_token)
+        client = APIClient()
+        response = client.post(
+            reverse(
+                "rating-request-rate",
+                [uuid]),
+            data,
+            format="json",
+            HTTP_X_OVP_PERMISSION_TOKEN=permission_token
         )
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.json()["detail"], "Not found.")
+        self.assertEqual(response.status_code, 200)
+
+    def test_cant_rate_if_unauthenticated(self):
+        uuid = str(RatingRequest.objects.first().uuid)
+        client = APIClient()
+        response = client.post(
+            reverse(
+                "rating-request-rate",
+                [uuid]),
+            {},
+            format="json")
+        self.assertEqual(response.status_code, 401)
 
     def test_quantitative(self):
         data = {

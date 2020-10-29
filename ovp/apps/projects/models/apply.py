@@ -4,9 +4,9 @@ from django.utils import timezone
 
 from ovp.apps.projects import emails
 from ovp.apps.core.notifybox import notification_manager
+from ovp.apps.uploads.helpers import build_absolute_uri
 
 from ovp.apps.channels.models.abstract import ChannelRelationship
-
 
 apply_status_choices = (
     ('applied', 'Applied'),
@@ -18,7 +18,6 @@ apply_status_choices = (
 
 
 class Apply(ChannelRelationship):
-
     user = models.ForeignKey(
         'users.User',
         blank=True,
@@ -26,7 +25,8 @@ class Apply(ChannelRelationship):
         verbose_name=_('user'),
         on_delete=models.DO_NOTHING
     )
-    project = models.ForeignKey('projects.Project', verbose_name=_('project'), on_delete=models.DO_NOTHING)
+    project = models.ForeignKey('projects.Project', verbose_name=_(
+        'project'), on_delete=models.DO_NOTHING)
     status = models.CharField(
         _('status'),
         max_length=30,
@@ -79,6 +79,12 @@ class Apply(ChannelRelationship):
     def mailing(self, async_mail=None):
         return emails.ApplyMail(self, async_mail)
 
+    @property
+    def notification_context(self):
+        return {
+            "image": build_absolute_uri(None, self.project.image.image)
+        }
+
     def save(self, *args, **kwargs):
         creating = False
         if self.pk is None:
@@ -98,11 +104,58 @@ class Apply(ChannelRelationship):
         if creating and self.project.closed is False:
             self.mailing().sendAppliedToVolunteer({'apply': self})
             self.mailing().sendAppliedToOwner({'apply': self})
+            notification_manager.trigger(
+                self.channel.slug,
+                "applicationCreated",
+                {
+                    "path": f"/vaga/{self.project.slug}",
+                    **self.notification_context
+                },
+                {},
+                [{
+                    "recipient": f"organization#{self.project.organization.pk}",
+                    "via": "app",
+                    "type": "default"
+                }]
+            )
+        else:
+            if (self.__original_status != self.status
+                    and self.status == "unapplied"
+                    and self.project.closed is False):
+                self.mailing().sendUnappliedToVolunteer({'apply': self})
+                self.mailing().sendUnappliedToOwner({'apply': self})
+                notification_manager.trigger(
+                    self.channel.slug,
+                    "applicationCanceled",
+                    {
+                        "path": f"/ong/{self.project.organization.slug}/gerenciar/vaga/{self.project.slug}",
+                        "volunteer_name": self.user.name if self.user else "",
+                        "organization_img": build_absolute_uri(None, self.project.organization.image.image),
+                        **self.notification_context
+                    },
+                    {},
+                    [{
+                        "recipient": f"organization#{self.project.organization.pk}",
+                        "via": "app",
+                        "type": "organization"
+                    },
+                        {
+                            "recipient": f"user#{self.user.uuid}",
+                            "via": "app",
+                            "type": "user"
+                        }]
+                )
+        else:
+        if (self.__original_status != self.status
+                and self.status == "unapplied"
+                and self.project.closed is False):
+            self.mailing().sendUnappliedToVolunteer({'apply': self})
+            self.mailing().sendUnappliedToOwner({'apply': self})
             if self.project.organization:
                 notification_manager.trigger(
                     self.channel.slug,
-                    "applicationCreated",
-                    {"path": f"/vaga/{self.project.slug}"},
+                    "applicationCanceled",
+                    {"path": f"/ong/{self.project.organization.slug}/vaga/{self.project.slug}"},
                     {},
                     [{
                         "recipient": f"organization#{self.project.organization.pk}",
@@ -110,56 +163,42 @@ class Apply(ChannelRelationship):
                         "type": "default"
                     }]
                 )
-        else:
-            if (self.__original_status != self.status
-                    and self.status == "unapplied"
-                    and self.project.closed is False):
-                self.mailing().sendUnappliedToVolunteer({'apply': self})
-                self.mailing().sendUnappliedToOwner({'apply': self})
-                if self.project.organization:
-                    notification_manager.trigger(
-                        self.channel.slug,
-                        "applicationCanceled",
-                        {"path": f"/ong/{self.project.organization.slug}/vaga/{self.project.slug}"},
-                        {},
-                        [{
-                            "recipient": f"organization#{self.project.organization.pk}",
-                            "via": "app",
-                            "type": "default"
-                        }]
-                    )
 
-            if (self.__original_status != self.status
-                    and self.status == "confirmed-volunteer"
-                    and self.project.closed is False
-                    and self.user):
-                notification_manager.trigger(
-                    self.channel.slug,
-                    "applicationConfirmed",
-                    {"path": f"/ong/{self.project.organization.slug}/vaga/{self.project.slug}"},
-                    {},
-                    [{
-                        "recipient": f"user#{self.user.uuid}",
-                        "via": "app",
-                        "type": "default"
-                    }]
-                )
+        if (self.__original_status != self.status
+                and self.status == "confirmed-volunteer"
+                and self.project.closed is False
+                and self.user):
+            notification_manager.trigger(
+                self.channel.slug,
+                "applicationConfirmed",
+                {
+                    "path": f"/ong/{self.project.organization.slug}/gerenciar/vaga/{self.project.slug}",
+                    **self.notification_context
+                },
+                {},
+                [{
+                    "recipient": f"user#{self.user.uuid}",
+                    "via": "app",
+                    "type": "default"
+                }]
+            )
 
-        # Update original values
-        self.__original_status = self.status
+    # Update original values
+    self.__original_status = self.status
 
-        if self.role:
-            self.role.applied_count = self.role.get_volunteers_numbers()
-            self.role.save()
+    if self.role:
+        self.role.applied_count = self.role.get_volunteers_numbers()
+        self.role.save()
 
-        # Updating project applied_count
-        self.project.applied_count = self.project.get_volunteers_numbers()
-        self.project.save()
+    # Updating project applied_count
+    self.project.applied_count = self.project.get_volunteers_numbers()
+    self.project.save()
 
-        return return_data
+    return return_data
 
-    class Meta:
-        app_label = 'projects'
-        verbose_name = _('apply')
-        verbose_name_plural = _('applies')
-        unique_together = (("email", "project"), )
+
+class Meta:
+    app_label = 'projects'
+    verbose_name = _('apply')
+    verbose_name_plural = _('applies')
+    unique_together = (("email", "project"),)

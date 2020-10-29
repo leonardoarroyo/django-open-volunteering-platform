@@ -193,9 +193,6 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
     profile = get_profile_serializers()[1]()
     organizations = OrganizationOwnerRetrieveSerializer(
         many=True, source='active_organizations')
-    rating_requests_user_count = serializers.SerializerMethodField()
-    rating_requests_project_count = serializers.SerializerMethodField()
-    rating_requests_projects_with_unrated_users = serializers.SerializerMethodField()
     chat_enabled = serializers.SerializerMethodField()
     notifications_token = serializers.SerializerMethodField()
 
@@ -213,9 +210,6 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
             'slug',
             'public',
             'organizations',
-            'rating_requests_user_count',
-            'rating_requests_project_count',
-            'rating_requests_projects_with_unrated_users',
             'is_subscribed_to_newsletter',
             'chat_enabled',
             'document',
@@ -231,7 +225,7 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
             nfc = create_client(channel_slug)
             if nfc:
                 organizations = obj.active_organizations()
-                user_ref = f"user#{obj.pk}"
+                user_ref = f"user#{obj.uuid}"
                 organization_refs = [f"organization#{x.pk}" for x in organizations]
                 recipients = [user_ref, *organization_refs]
                 cache_string = f"notifications-token-{channel_slug}-{obj.pk}-{'-'.join(recipients)}"
@@ -253,28 +247,6 @@ class CurrentUserSerializer(ChannelRelationshipSerializer):
             user=obj
         )
         return applies.count() > 0
-
-    def get_rating_requests_user_count(self, obj):
-        return obj.rating_requests.filter(
-            deleted_date=None,
-            rating=None,
-            content_type__model="user").count()
-
-    def get_rating_requests_project_count(self, obj):
-        return obj.rating_requests.filter(
-            deleted_date=None,
-            rating=None,
-            content_type__model="project").count()
-
-    def get_rating_requests_projects_with_unrated_users(self, obj):
-        return len(
-            obj.rating_requests.filter(
-                deleted_date=None,
-                rating=None,
-                content_type__model="user",
-                initiator_type__model="project").values_list(
-                "initiator_id",
-                flat=True).distinct())
 
     @expired_password
     def to_representation(self, *args, **kwargs):

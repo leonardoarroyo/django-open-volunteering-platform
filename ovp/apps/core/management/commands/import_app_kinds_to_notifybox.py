@@ -15,7 +15,14 @@ from ovp.apps.users.models import User
 from ovp.apps.organizations.models import Organization
 from ovp.apps.channels.models import ChannelSetting
 
-kinds = ["applicationConfirmed", "applicationCanceled", "applicationCreated", "applicationReminder"]
+kinds = {
+    "applicationConfirmed": ["default"],
+    "applicationCanceled": ["user", "organization"],
+    "applicationCreated": ["default"],
+    "applicationReminder": ["default"],
+    "ratingRequested": ["default"]
+}
+
 
 def import_kinds(channel: str):
     """ Import email templates to notifybox
@@ -24,10 +31,12 @@ def import_kinds(channel: str):
     secret_key = ChannelSetting.objects.get(channel__slug = channel, key="NOTIFYBOX_SECRET_KEY").value
     client = NotifyBoxApi(access_key, secret_key)
 
-    for kind in kinds:
+    for kind, recipient_types in kinds.items():
         kind_id, kind_value = itemgetter('id', 'value')(client.getOrCreateKind(kind))
-        template = client.createOrUpdateTemplate(kind_id, 'app', 'default', 'pt-br', "{}", "")
-        trigger = client.createOrUpdateTrigger(kind_id, template["id"], 'default')
+
+        for recipient_type in recipient_types:
+            template = client.createOrUpdateTemplate(kind_id, 'app', recipient_type, 'pt-br', "{}", "")
+            trigger = client.createOrUpdateTrigger(kind_id, template["id"], recipient_type, 'app')
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
