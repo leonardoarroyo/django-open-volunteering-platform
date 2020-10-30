@@ -25,8 +25,7 @@ class Apply(ChannelRelationship):
         verbose_name=_('user'),
         on_delete=models.DO_NOTHING
     )
-    project = models.ForeignKey('projects.Project', verbose_name=_(
-        'project'), on_delete=models.DO_NOTHING)
+    project = models.ForeignKey('projects.Project', verbose_name=_('project'), on_delete=models.DO_NOTHING)
     status = models.CharField(
         _('status'),
         max_length=30,
@@ -145,60 +144,41 @@ class Apply(ChannelRelationship):
                             "type": "user"
                         }]
                 )
-        else:
-        if (self.__original_status != self.status
-                and self.status == "unapplied"
-                and self.project.closed is False):
-            self.mailing().sendUnappliedToVolunteer({'apply': self})
-            self.mailing().sendUnappliedToOwner({'apply': self})
-            if self.project.organization:
+
+            if (self.__original_status != self.status
+                    and self.status == "confirmed-volunteer"
+                    and self.project.closed is False
+                    and self.user):
                 notification_manager.trigger(
                     self.channel.slug,
-                    "applicationCanceled",
-                    {"path": f"/ong/{self.project.organization.slug}/vaga/{self.project.slug}"},
+                    "applicationConfirmed",
+                    {
+                        "path": f"/ong/{self.project.organization.slug}/gerenciar/vaga/{self.project.slug}",
+                        **self.notification_context
+                    },
                     {},
                     [{
-                        "recipient": f"organization#{self.project.organization.pk}",
+                        "recipient": f"user#{self.user.uuid}",
                         "via": "app",
                         "type": "default"
                     }]
                 )
 
-        if (self.__original_status != self.status
-                and self.status == "confirmed-volunteer"
-                and self.project.closed is False
-                and self.user):
-            notification_manager.trigger(
-                self.channel.slug,
-                "applicationConfirmed",
-                {
-                    "path": f"/ong/{self.project.organization.slug}/gerenciar/vaga/{self.project.slug}",
-                    **self.notification_context
-                },
-                {},
-                [{
-                    "recipient": f"user#{self.user.uuid}",
-                    "via": "app",
-                    "type": "default"
-                }]
-            )
+        # Update original values
+        self.__original_status = self.status
 
-    # Update original values
-    self.__original_status = self.status
+        if self.role:
+            self.role.applied_count = self.role.get_volunteers_numbers()
+            self.role.save()
 
-    if self.role:
-        self.role.applied_count = self.role.get_volunteers_numbers()
-        self.role.save()
+        # Updating project applied_count
+        self.project.applied_count = self.project.get_volunteers_numbers()
+        self.project.save()
 
-    # Updating project applied_count
-    self.project.applied_count = self.project.get_volunteers_numbers()
-    self.project.save()
+        return return_data
 
-    return return_data
-
-
-class Meta:
-    app_label = 'projects'
-    verbose_name = _('apply')
-    verbose_name_plural = _('applies')
-    unique_together = (("email", "project"),)
+    class Meta:
+        app_label = 'projects'
+        verbose_name = _('apply')
+        verbose_name_plural = _('applies')
+        unique_together = (("email", "project"),)
