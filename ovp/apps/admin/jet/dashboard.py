@@ -26,7 +26,7 @@ class CustomIndexDashboard(Dashboard):
             children=[
                 [_('Return to site'), '/'],
                 [_('Change password'),
-                    reverse('%s:password_change' % site_name)],
+                 reverse('%s:password_change' % site_name)],
                 [_('Log out'), reverse('%s:logout' % site_name)],
             ],
             column=0,
@@ -51,7 +51,7 @@ class CustomIndexDashboard(Dashboard):
 
         # append a recent actions module
         self.children.append(OVPRecentActions(
-            _('Recent Actions'),
+            _('Recent Actions b'),
             10,
             column=0,
             order=1
@@ -60,4 +60,26 @@ class CustomIndexDashboard(Dashboard):
         # append a recent actions module
         self.children.append(Indicators(
             _('Indicators'),
+        ))
+
+
+class CustomAppIndexDashboard(AppIndexDashboard):
+    def init_with_context(self, context):
+        self.children = []
+        self.available_children = []
+        self.available_children.append(modules.LinkList)
+
+        self.children.append(modules.ModelList(
+            title=_('Application models'),
+            models=self.models(),
+            column=0,
+            order=0
+        ))
+
+        self.children.append(OVPRecentActions(
+            _('Recent Actions'),
+            10,
+            include_list=None,
+            column=1,
+            order=0
         ))
