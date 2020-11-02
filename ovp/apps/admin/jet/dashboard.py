@@ -5,13 +5,14 @@ from ovp.apps.admin.jet.modules import Indicators
 from jet.dashboard.dashboard import Dashboard, AppIndexDashboard
 from jet.dashboard import modules
 from jet.utils import get_admin_site_name
+from django.template.context import RequestContext
 from typing import Dict
 
 
 class CustomIndexDashboard(Dashboard):
     columns = 3
 
-    def init_with_context(self, context: Dict[str, str]) -> None:
+    def init_with_context(self, context: Dict[str, object]) -> None:
         self.available_children.append(modules.LinkList)
         self.available_children.append(modules.Feed)
 
