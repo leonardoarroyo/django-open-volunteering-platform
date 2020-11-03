@@ -31,6 +31,7 @@ from import_export.fields import Field
 
 from jet.filters import RelatedFieldAjaxListFilter
 from jet.filters import DateRangeFilter
+from typing import List, Tuple, Union
 
 
 class VolunteerRoleInline(TabularInline):
@@ -320,7 +321,7 @@ class ProjectAdmin(BaseAux):
         'total_opportunities'
     ]
 
-    list_filter = [
+    list_filter: List[Union[Tuple, str]] = [
         ('closed_date', DateRangeFilter),
         ('canceled_date', DateRangeFilter),
         ('published_date', DateRangeFilter),

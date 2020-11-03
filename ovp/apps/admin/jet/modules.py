@@ -14,9 +14,6 @@ from django.conf import settings
 
 
 class OVPRecentActions(RecentActions):
-    def __init__(self, title=None, limit=10, **kwargs):
-        kwargs.update({'limit': limit})
-        super(RecentActions, self).__init__(title, **kwargs)
 
     def init_with_context(self, context):
         def get_qset(list):
